@@ -1,0 +1,14 @@
+Ibex - 3D Virtual Reality Compositing Manager for X11 and Linux
+
+Setting up my Ubuntu 12.04 install:
+sudo apt-get install mesa-utils eclipse-cdt freeglut3-dev glew-utils libglew1.6-dev libxrender-dev libxrender1-dbg libxrender1 libxdamage-dev libxdamage1-dbg libxcomposite1-dbg libxcomposite-dev libxxf86vm-dev libxxf86vm1-dbg libxcb1-dev libxrandr-dev libxft-dev libx11-xcb-dev libxi-dev cmake
+sudo apt-get install nvidia-current-updates-dev
+ 
+To run:
+cd ~/workspace
+mkdir build
+cd build
+cmake ../ibex
+make install
+./ibex
+ 
