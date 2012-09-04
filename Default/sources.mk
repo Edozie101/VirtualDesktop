@@ -25,5 +25,4 @@ C_UPPER_DEPS :=
 SUBDIRS := \
 . \
 glm \
-.metadata/.plugins/org.eclipse.cdt.make.core \
 

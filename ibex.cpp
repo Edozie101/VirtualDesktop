@@ -56,6 +56,8 @@ double strafeRight = 0;
 
 const double WALK_SPEED = 1.0;
 
+const bool ortho = true;
+
 ///// FROM COMPIZ
 static int errors = 0;
 
@@ -227,7 +229,7 @@ void prep_root (void)
     screen = XDefaultScreen(dpy);
     for ( int i = 0; i < ScreenCount( dpy ); ++i ) {
 		XCompositeRedirectSubwindows( dpy, RootWindow( dpy, i ), CompositeRedirectAutomatic); // Manual);//Automatic ); // CompositeRedirectManual);
-		XSelectInput(dpy, RootWindow(dpy, i), SubstructureNotifyMask /*| PointerMotionMask */ | KeyPressMask);
+		XSelectInput(dpy, RootWindow(dpy, i), SubstructureNotifyMask | StructureNotifyMask /*| PointerMotionMask */ | KeyPressMask);
 //
 //		XSelectInput (dpy, root,
 //				      SubstructureNotifyMask|
@@ -286,7 +288,7 @@ void prep_input (void)
                            InputOnly, DefaultVisual (dpy, 0), 0, NULL);
 
     XSelectInput (dpy, input,
-                  StructureNotifyMask | FocusChangeMask | PointerMotionMask
+                  StructureNotifyMask | SubstructureNotifyMask | FocusChangeMask | PointerMotionMask
                   | KeyPressMask | KeyReleaseMask | ButtonPressMask
                   | ButtonReleaseMask | PropertyChangeMask);
     XMapWindow (dpy, input);
@@ -301,11 +303,12 @@ static GLfloat top(0), bottom(1);
 static GLXFBConfig fbconfig;
 static GLuint texture = 0;
 //double b = 0;
-typedef struct {
+typedef struct _WindowInfo {
 	Window window;
 	Pixmap pixmap;
 	GLXPixmap glxpixmap;
 	GLuint texture;
+	_WindowInfo() : window(0),pixmap(0),glxpixmap(0),texture(0) { }
 } WindowInfo;
 
 std::map<Window, WindowInfo> redirectedWindows;
@@ -314,10 +317,16 @@ void unbindRedirectedWindow(Window window) {
 	if(redirectedWindows.find(window) != redirectedWindows.end()) {
 		WindowInfo windowInfo = redirectedWindows[window];
 
-		glXReleaseTexImageEXT (display, windowInfo.glxpixmap, GLX_FRONT_LEFT_EXT);
-		glXDestroyGLXPixmap(display, windowInfo.glxpixmap);
-		glDeleteTextures(1, &windowInfo.texture);
-		XFreePixmap(display, windowInfo.pixmap);
+		if(windowInfo.glxpixmap > 0) {
+			glXReleaseTexImageEXT (display, windowInfo.glxpixmap, GLX_FRONT_LEFT_EXT);
+			glXDestroyGLXPixmap(display, windowInfo.glxpixmap);
+		}
+		if(windowInfo.texture > 0) {
+			glDeleteTextures(1, &windowInfo.texture);
+		}
+		if(windowInfo.pixmap > 0) {
+			XFreePixmap(display, windowInfo.pixmap);
+		}
 		redirectedWindows.erase(window);
 	}
 }
@@ -554,8 +563,18 @@ void renderDesktop() {
 	XGrabServer(dpy);
 	mousePositionGrabbed = XQueryPointer(display, XDefaultRootWindow(dpy), &window_returned, &window_returned, &root_x, &root_y, &win_x, &win_y, &mask_return);
 	XQueryTree(dpy, XDefaultRootWindow(dpy), &parent, &root2, &children, &countChildren);
+
+//	if(ortho) {
+//		glMatrixMode(GL_PROJECTION);
+//		glLoadIdentity();
+//		glOrtho(-0.5, 0.5, -0.5, 0.5, -10, 10);
+//		glMatrixMode(GL_MODELVIEW);
+//		glDisable(GL_DEPTH_TEST);
+//	}
+
 	glPushMatrix();
 	glTranslatef(0, 0, -1.21);
+
 	for(unsigned int i = 0; i < countChildren; ++i) {
 		wId = children[i];
 		if(wId == window || wId == overlay) continue;
@@ -578,6 +597,15 @@ void renderDesktop() {
 		}
 	}
 	glPopMatrix();
+
+//	if(ortho) {
+//		glMatrixMode(GL_PROJECTION);
+//		glLoadIdentity();
+////			gluPerspective(45.0f, 1, 0.1f, 1000.0f);//(GLfloat)width / (GLfloat)height, 0.1f, 100.0f);
+//		gluPerspective(120.0f, 0.75, 0.01f, 1000.0f);
+//		glMatrixMode(GL_MODELVIEW);
+//		glEnable(GL_DEPTH_TEST);
+//	}
 
 	XUngrabServer(dpy);
 
@@ -683,7 +711,6 @@ void renderGL(void) {
 				bottom = 0.0f;
 			}
 
-		XFree(fbconfigs);
 
 		glEnable(GL_TEXTURE_2D);
 
@@ -691,6 +718,8 @@ void renderGL(void) {
 		bottom = -bottom;
 
 		fbconfig = fbconfigs[i];
+
+		XFree(fbconfigs);
 	}
 
 	for(int i2 = 0; i2 < 2; ++i2) {
@@ -799,7 +828,7 @@ void renderGL(void) {
 		}
 	}
 
-	const bool ortho = true;
+
 	if(USE_FBO) {
 		if(ortho) {
 			glMatrixMode(GL_PROJECTION);
@@ -1183,11 +1212,13 @@ int main(int argc, char ** argv)
             }
             switch (event.type)
             {
+//            case MapNotify:
+////            	std::cerr << "MapNotify" << std::endl;
+//            	break;
             case MapNotify:
-//            	std::cerr << "MapNotify" << std::endl;
-            	break;
+            	std::cerr << "MapNotify" << std::endl;
             case UnmapNotify:
-//				std::cerr << "UnmapNotify" << std::endl;
+				std::cerr << "UnmapNotify" << std::endl;
             	unbindRedirectedWindow(event.xclient.window);
 				break;
             case ButtonPress:

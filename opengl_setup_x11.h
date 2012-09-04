@@ -181,7 +181,7 @@ void createWindow()
         /* set window attributes */
         winAttr.override_redirect = True;
         winAttr.event_mask = ExposureMask | KeyPressMask | ButtonPressMask |
-            StructureNotifyMask;// | PointerMotionMask;
+            StructureNotifyMask | SubstructureNotifyMask;// | PointerMotionMask;
         window = XCreateWindow(display, RootWindow(display, vi->screen),
             0, 0, dpyWidth, dpyHeight, 0, vi->depth, InputOutput, vi->visual,
             CWBorderPixel | CWColormap | CWEventMask | CWOverrideRedirect,
@@ -197,7 +197,7 @@ void createWindow()
     {
         /* create a window in window mode*/
         winAttr.event_mask = ExposureMask | KeyPressMask | ButtonPressMask |
-            StructureNotifyMask;
+            StructureNotifyMask | SubstructureNotifyMask;
         window = XCreateWindow(display, RootWindow(display, vi->screen),
             0, 0, width, height, 0, vi->depth, InputOutput, vi->visual,
             CWBorderPixel | CWColormap | CWEventMask, &winAttr);
