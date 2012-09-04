@@ -999,8 +999,11 @@ void toggleControl() {
 }
 
 void walk(double forward, double right, double seconds) {
-	xPosition = xPosition - sin(yRotation/90.0*M_PI_2) * WALK_SPEED * seconds * forward;
-	zPosition = zPosition + cos(yRotation/90.0*M_PI_2) * WALK_SPEED * seconds * forward;
+	xPosition -= sin(yRotation/90.0*M_PI_2) * WALK_SPEED * seconds * forward;
+	zPosition += cos(yRotation/90.0*M_PI_2) * WALK_SPEED * seconds * forward;
+
+	xPosition -= cos(-yRotation/90.0*M_PI_2) * WALK_SPEED * seconds * right;
+	zPosition += sin(-yRotation/90.0*M_PI_2) * WALK_SPEED * seconds * right;
 }
 
 void processKey(XKeyEvent ke) {
@@ -1092,6 +1095,8 @@ void processKey(XIDeviceEvent *event, bool pressed) {
 	static KeyCode S = XKeysymToKeycode(dpy,XK_S);
 	static KeyCode A = XKeysymToKeycode(dpy,XK_A);
 	static KeyCode D = XKeysymToKeycode(dpy,XK_D);
+	static KeyCode Q = XKeysymToKeycode(dpy,XK_Q);
+	static KeyCode E = XKeysymToKeycode(dpy,XK_E);
 
 	static KeyCode R = XKeysymToKeycode(dpy,XK_R);
 
@@ -1106,6 +1111,12 @@ void processKey(XIDeviceEvent *event, bool pressed) {
 			strafeRight = -1;
 //			walk(0, -1);
 		} else if(event->detail == D) {
+			strafeRight = 1;
+//			walk(0, 1);
+		} else if(event->detail == Q) {
+			strafeRight = -1;
+//			walk(0, -1);
+		} else if(event->detail == E) {
 			strafeRight = 1;
 //			walk(0, 1);
 		} else if(event->detail == R) {
