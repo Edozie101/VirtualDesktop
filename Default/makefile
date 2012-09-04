@@ -8,15 +8,7 @@ RM := rm
 
 # All of the sources participating in the build are defined here
 -include sources.mk
--include ibex/subdir.mk
 -include glm/subdir.mk
--include composite-test-20120825/Default/subdir.mk
--include composite-test-20120825/subdir.mk
--include build/CMakeFiles/ibex.dir/glm/subdir.mk
--include build/CMakeFiles/ibex.dir/subdir.mk
--include build/CMakeFiles/CompilerIdCXX/subdir.mk
--include build/CMakeFiles/CompilerIdC/subdir.mk
--include build/subdir.mk
 -include .metadata/.plugins/org.eclipse.cdt.make.core/subdir.mk
 -include subdir.mk
 -include objects.mk

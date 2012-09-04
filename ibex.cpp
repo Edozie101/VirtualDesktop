@@ -14,6 +14,8 @@
 #include <set>
 #include <map>
 
+#include <time.h>
+
 
 #define GLX_GLXEXT_PROTOTYPES
 #include <GL/glew.h>
@@ -39,6 +41,7 @@ GLMmodel *pmodel = NULL;
 
 double yRotation = 0.0;
 double xRotation = 0.0;
+double zRotation = 0.0;
 double xPosition = 0.0;
 double yPosition = 0.0;
 double zPosition = 0.0;
@@ -47,6 +50,11 @@ static bool controlDesktop = true;
 static bool USE_FBO = 1;
 
 static int xi_opcode;
+
+double walkForward = 0;
+double strafeRight = 0;
+
+const double WALK_SPEED = 1.0;
 
 ///// FROM COMPIZ
 static int errors = 0;
@@ -971,6 +979,7 @@ void toggleControl() {
 		XISetMask(eventmask.mask, XI_Motion);
 		XISetMask(eventmask.mask, XI_RawMotion);
 		XISetMask(eventmask.mask, XI_KeyPress);
+		XISetMask(eventmask.mask, XI_KeyRelease);
 
 		/* select on the window */
 		XISelectEvents(dpy, root, &eventmask, 1);
@@ -989,32 +998,17 @@ void toggleControl() {
 	}
 }
 
-void walk(double forward, double right) {
-	xPosition -= sin(yRotation/90.0*M_PI_2) * forward*1.0/10.0;
-	zPosition += cos(yRotation/90.0*M_PI_2) * forward*1.0/10.0;
+void walk(double forward, double right, double seconds) {
+	xPosition = xPosition - sin(yRotation/90.0*M_PI_2) * WALK_SPEED * seconds * forward;
+	zPosition = zPosition + cos(yRotation/90.0*M_PI_2) * WALK_SPEED * seconds * forward;
 }
+
 void processKey(XKeyEvent ke) {
 	static KeyCode toggleKey = XKeysymToKeycode(dpy,XK_Y);
-	static KeyCode W = XKeysymToKeycode(dpy,XK_W);
-	static KeyCode S = XKeysymToKeycode(dpy,XK_S);
-	static KeyCode A = XKeysymToKeycode(dpy,XK_A);
-	static KeyCode D = XKeysymToKeycode(dpy,XK_D);
 
 	if((ke.state & ControlMask) && (ke.state & ShiftMask) && ke.keycode == toggleKey) {
 		toggleControl();
 		return;
-	}
-
-	if(!controlDesktop) {
-		if(ke.keycode == W) {
-			walk(1, 0);
-		} else if(ke.keycode == S) {
-			walk(-1, 0);
-		} else if(ke.keycode == A) {
-			walk(0, -1);
-		} else if(ke.keycode == D) {
-			walk(0, 1);
-		}
 	}
 }
 
@@ -1093,7 +1087,7 @@ static void print_deviceevent(XIDeviceEvent* event)
     printf("    windows: root 0x%lx event 0x%lx child 0x%ld\n",
             event->root, event->event, event->child);
 }
-void processKey(XIDeviceEvent *event) {
+void processKey(XIDeviceEvent *event, bool pressed) {
 	static KeyCode W = XKeysymToKeycode(dpy,XK_W);
 	static KeyCode S = XKeysymToKeycode(dpy,XK_S);
 	static KeyCode A = XKeysymToKeycode(dpy,XK_A);
@@ -1103,20 +1097,29 @@ void processKey(XIDeviceEvent *event) {
 
 	if(!controlDesktop) {
 		if(event->detail == W) {
-			walk(1, 0);
+			walkForward = 1;
+//			walk(1, 0);
 		} else if(event->detail == S) {
-			walk(-1, 0);
+			walkForward = -1;
+//			walk(-1, 0);
 		} else if(event->detail == A) {
-			walk(0, -1);
+			strafeRight = -1;
+//			walk(0, -1);
 		} else if(event->detail == D) {
-			walk(0, 1);
+			strafeRight = 1;
+//			walk(0, 1);
 		} else if(event->detail == R) {
+			std::cerr << "RESET POSITION!" << std::endl;
 			xRotation = 0;
 			yRotation = 0;
-			yRotation = 0;
+			zRotation = 0;
 			xPosition = 0;
 			yPosition = 0;
 			zPosition = 0;
+		}
+
+		if(!pressed) {
+			walkForward = strafeRight = 0;
 		}
 	}
 }
@@ -1175,6 +1178,9 @@ int main(int argc, char ** argv)
 
 	loadModel();
 
+	struct timespec ts_start;
+	clock_gettime(CLOCK_MONOTONIC, &ts_start);
+
     XEvent peekEvent;
     int pointerX, pointerY;
     unsigned int pointerMods;
@@ -1202,7 +1208,13 @@ int main(int argc, char ** argv)
 //					std::cerr << "Key PRESS!!!!!!!!!!!!!!!!!!" << std::endl;
 //					print_deviceevent(xi_event);
 					if(!controlDesktop) {
-						processKey(xi_event);
+						processKey(xi_event, true);
+					}
+					break;
+				case XI_KeyRelease:
+					std::cerr << "RELEASE" << std::endl;
+					if(!controlDesktop) {
+						processKey(xi_event, false);
 					}
 					break;
 				case XI_RawMotion:
@@ -1274,7 +1286,18 @@ int main(int argc, char ** argv)
             		break;
             }
         }
+
+        struct timespec ts_current;
+        clock_gettime(CLOCK_MONOTONIC, &ts_current);
+
+        if(controlDesktop) {
+        	walkForward = strafeRight = 0;
+        }
+        walk(walkForward, strafeRight, (double)(ts_current.tv_sec-ts_start.tv_sec)+((double)(ts_current.tv_nsec-ts_start.tv_nsec)/(double)1.0e9));
+
         renderGL();
+
+        ts_start = ts_current;
     }
 
     destroyWindow();
