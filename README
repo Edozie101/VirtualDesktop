@@ -1,5 +1,25 @@
 Ibex - 3D Virtual Reality Compositing Manager for X11 and Linux
 
+About
+-----
+Ibex is a simple 3D Virtual Reality (VR) world that will allow you to have a
+number of virtual monitors that contain your current actual desktop.  The idea
+is for you to have a pretty virtual world to work in regardless of where you are
+so that you can be flying on a plane, for example, but still be flanked by
+multiple large high resolution monitors and still be effective rather than be
+limited by a tiny laptop screen.
+
+Controls
+--------
+Toggle Control Desktop/Move Around World: CTRL+SHIFT+Y
+Look: Move Mouse
+Move Forward: W
+Move Backwards: S
+Walk Sideways Left (Strafe Left): A/Q
+Walk Sideways Right (Strafe Right): D/E 
+
+--
+
 Setting up my Ubuntu 12.04 install:
 sudo apt-get install mesa-utils eclipse-cdt freeglut3-dev glew-utils libglew1.6-dev libxrender-dev libxrender1-dbg libxrender1 libxdamage-dev libxdamage1-dbg libxcomposite1-dbg libxcomposite-dev libxxf86vm-dev libxxf86vm1-dbg libxcb1-dev libxrandr-dev libxft-dev libx11-xcb-dev libxi-dev cmake
 sudo apt-get install nvidia-current-updates-dev
