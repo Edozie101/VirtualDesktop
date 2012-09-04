@@ -868,8 +868,8 @@ void renderGL(void) {
 		if(ortho) {
 			glMatrixMode(GL_PROJECTION);
 			glLoadIdentity();
-//			gluPerspective(45.0f, 1, 0.1f, 100.0f);//(GLfloat)width / (GLfloat)height, 0.1f, 100.0f);
-		    gluPerspective(120.0f, 0.75, 0.1f, 100.0f);//(GLfloat)width / (GLfloat)height, 0.1f, 100.0f);
+//			gluPerspective(45.0f, 1, 0.1f, 1000.0f);//(GLfloat)width / (GLfloat)height, 0.1f, 100.0f);
+		    gluPerspective(120.0f, 0.75, 0.01f, 1000.0f);
 			glMatrixMode(GL_MODELVIEW);
 		}
 	}
@@ -949,7 +949,7 @@ void disallow_input_passthrough(Window w) {
 	XserverRegion region = XFixesCreateRegion (dpy, &r, 1);
 
 
-//	XFixesSetWindowShapeRegion (dpy, w, ShapeBounding, 0, 0, region);
+	XFixesSetWindowShapeRegion (dpy, w, ShapeBounding, 0, 0, region);
 	XFixesSetWindowShapeRegion (dpy, w, ShapeInput, 0, 0, region);
 //	XFixesSetWindowShapeRegion (dpy, w, None, 0, 0, region);
 
@@ -967,11 +967,7 @@ void toggleControl() {
 
 
 		XIEventMask eventmask;
-//		unsigned char mask[2] = { 0, 0 }; /* the actual mask */
-
 		eventmask.deviceid = XIAllDevices;
-//		eventmask.mask_len = sizeof(mask); /* always in bytes */
-//		eventmask.mask = mask;
 		eventmask.mask_len = XIMaskLen(XI_RawMotion);
 		eventmask.mask = (unsigned char *)calloc(eventmask.mask_len, sizeof(char));
 		/* now set the mask */
@@ -1032,64 +1028,25 @@ void print_rawmotion(XIRawEvent *event)
 }
 
 void process_rawmotion(XIRawEvent *event) {
-	int i;
-	    double *raw_valuator = event->raw_values,
-	           *valuator = event->valuators.values;
+	double *raw_valuator = event->raw_values;
+	double *valuator = event->valuators.values;
 
-	    for (i = 0; i < event->valuators.mask_len * 8; i++) {
-	        if (XIMaskIsSet(event->valuators.mask, i)) {
-//	            printf("Acceleration on valuator %d: %f\n",
-//	                   i, *valuator - *raw_valuator);
-	        	switch(i) {
-	        	case 0:
-	        		yRotation += (double)(*valuator - *raw_valuator)/(double)width * 180.0;;
-	        		break;
-	        	case 1:
-	        		xRotation += (double)(*valuator - *raw_valuator)/(double)width * 180.0;
-	        		break;
-	        	}
-	            valuator++;
-	            raw_valuator++;
-	        }
-	    }
+	for (int i = 0; i < event->valuators.mask_len * 8; i++) {
+		if (XIMaskIsSet(event->valuators.mask, i)) {
+			switch(i) {
+			case 0:
+				yRotation += (double)(*valuator - *raw_valuator)/(double)width * 180.0;;
+				break;
+			case 1:
+				xRotation += (double)(*valuator - *raw_valuator)/(double)width * 180.0;
+				break;
+			}
+			valuator++;
+			raw_valuator++;
+		}
+	}
 }
 
-static void print_deviceevent(XIDeviceEvent* event)
-{
-    double *val;
-    int i;
-
-    printf("    device: %d (%d)\n", event->deviceid, event->sourceid);
-    printf("    detail: %d\n", event->detail);
-    if (event->flags & XIKeyRepeat)
-       printf("    event is a key repeat.\n");
-
-    printf("    root: %.2f/%.2f\n", event->root_x, event->root_y);
-    printf("    event: %.2f/%.2f\n", event->event_x, event->event_y);
-
-    printf("    buttons:");
-    for (i = 0; i < event->buttons.mask_len * 8; i++)
-        if (XIMaskIsSet(event->buttons.mask, i))
-            printf(" %d", i);
-    printf("\n");
-
-    printf("    modifiers: locked %#x latched %#x base %#x\n",
-            event->mods.locked, event->mods.latched,
-            event->mods.base);
-    printf("    group: locked %#x latched %#x base %#x\n",
-            event->group.locked, event->group.latched,
-            event->group.base);
-    printf("    valuators:");
-
-    val = event->valuators.values;
-    for (i = 0; i < event->valuators.mask_len * 8; i++)
-        if (XIMaskIsSet(event->valuators.mask, i))
-            printf(" %.2f", *val++);
-    printf("\n");
-
-    printf("    windows: root 0x%lx event 0x%lx child 0x%ld\n",
-            event->root, event->event, event->child);
-}
 void processKey(XIDeviceEvent *event, bool pressed) {
 	static KeyCode W = XKeysymToKeycode(dpy,XK_W);
 	static KeyCode S = XKeysymToKeycode(dpy,XK_S);
@@ -1103,22 +1060,16 @@ void processKey(XIDeviceEvent *event, bool pressed) {
 	if(!controlDesktop) {
 		if(event->detail == W) {
 			walkForward = 1;
-//			walk(1, 0);
 		} else if(event->detail == S) {
 			walkForward = -1;
-//			walk(-1, 0);
 		} else if(event->detail == A) {
 			strafeRight = -1;
-//			walk(0, -1);
 		} else if(event->detail == D) {
 			strafeRight = 1;
-//			walk(0, 1);
 		} else if(event->detail == Q) {
 			strafeRight = -1;
-//			walk(0, -1);
 		} else if(event->detail == E) {
 			strafeRight = 1;
-//			walk(0, 1);
 		} else if(event->detail == R) {
 			std::cerr << "RESET POSITION!" << std::endl;
 			xRotation = 0;
@@ -1143,11 +1094,10 @@ int main(int argc, char ** argv)
     XEvent event;
     Bool done = False;
 
-
     XWindowAttributes attr;
     XGetWindowAttributes( dpy, root, &attr );
-    width = attr.width;//WIDTH;
-    height = attr.height;//HEIGHT;
+    width = attr.width;
+    height = attr.height;
 
     createWindow();
 
@@ -1185,8 +1135,6 @@ int main(int argc, char ** argv)
 	XFixesHideCursor (dpy, overlay);
 	setup_hotkey(dpy);
 
-//	XUndefineCursor(dpy, root);
-
 	loadModel();
 
 	struct timespec ts_start;
@@ -1195,50 +1143,39 @@ int main(int argc, char ** argv)
     XEvent peekEvent;
     int pointerX, pointerY;
     unsigned int pointerMods;
-    /* wait for events and eat up cpu. ;-) */
+    // wait for events and eat up cpu. ;-)
     while (!done)
     {
-//    	display = dpy;
-        /* handle the events in the queue */
+        // handle the events in the queue
         while (XPending(dpy) > 0)
         {
-//        	std::cerr << XPending(dpy) << std::endl;
+        	// std::cerr << XPending(dpy) << std::endl;
             XNextEvent(dpy, &event);
-//            std::cerr << "Event: " << event.type << std::endl;
+            // std::cerr << "Event: " << event.type << std::endl;
 
             XGenericEventCookie *cookie = &event.xcookie;
             if(event.xcookie.extension==xi_opcode && event.xcookie.type == GenericEvent) {
             	XGetEventData(dpy, cookie);
-
-//            	std::cerr << "XI_OPCODE!" << std::endl;
             	XIDeviceEvent *xi_event = (XIDeviceEvent*)event.xcookie.data;
 //				printf("XI EVENT type %d\n", xi_event->evtype);
 				switch (xi_event->evtype)
 				{
 				case XI_KeyPress:
-//					std::cerr << "Key PRESS!!!!!!!!!!!!!!!!!!" << std::endl;
-//					print_deviceevent(xi_event);
 					if(!controlDesktop) {
 						processKey(xi_event, true);
 					}
 					break;
 				case XI_KeyRelease:
-					std::cerr << "RELEASE" << std::endl;
+//					std::cerr << "RELEASE" << std::endl;
 					if(!controlDesktop) {
 						processKey(xi_event, false);
 					}
 					break;
 				case XI_RawMotion:
-//					std::cerr << "XI_RawMotion!" << std::endl;
-//					print_rawmotion((XIRawEvent*)event.xcookie.data);
 					if(!controlDesktop) {
 						process_rawmotion((XIRawEvent*)event.xcookie.data);
 					}
 					break;
-//				case XI_Motion:
-//					std::cerr << "XI_Motion!" << std::endl;
-//					std::cerr << xi_event->event_x << std::endl;
-//					break;
 				}
 
 				XFreeEventData(dpy, cookie);
@@ -1261,7 +1198,7 @@ int main(int argc, char ** argv)
             	    break;
             	case KeyPress:
             	case KeyRelease:
-            		std::cerr << "KEY PreSS" << std::endl;
+//            		std::cerr << "KEY PreSS" << std::endl;
             	    pointerX = event.xkey.x_root;
             	    pointerY = event.xkey.y_root;
             	    pointerMods = event.xbutton.state;
@@ -1273,12 +1210,12 @@ int main(int argc, char ** argv)
 //            		std::cerr << "MOTION" << std::endl;
             	    while (XPending (dpy))
             	    {
-            		XPeekEvent (dpy, &peekEvent);
+						XPeekEvent (dpy, &peekEvent);
 
-            		if (peekEvent.type != MotionNotify)
-            		    break;
+						if (peekEvent.type != MotionNotify)
+							break;
 
-            		XNextEvent (dpy, &event);
+						XNextEvent (dpy, &event);
             	    }
 
             	    pointerX = event.xmotion.x_root;
