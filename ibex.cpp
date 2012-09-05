@@ -67,7 +67,7 @@ static int
 errorHandler (Display     *dpy,
 	      XErrorEvent *e)
 {
-
+#define DEBUG 0
 #ifdef DEBUG
     char str[128];
 #endif
@@ -100,6 +100,7 @@ errorHandler (Display     *dpy,
 
     /* abort (); */
 #endif
+#undef DEBUG
 
     return 0;
 }
@@ -230,16 +231,10 @@ void prep_root (void)
     scrn = DefaultScreenOfDisplay(dpy);
     screen = XDefaultScreen(dpy);
     for ( int i = 0; i < ScreenCount( dpy ); ++i ) {
+		XSelectInput(dpy, RootWindow(dpy, i), SubstructureNotifyMask | PointerMotionMask | KeyPressMask);
 		XCompositeRedirectSubwindows( dpy, RootWindow( dpy, i ), CompositeRedirectAutomatic); // Manual);//Automatic ); // CompositeRedirectManual);
-		XSelectInput(dpy, RootWindow(dpy, i), SubstructureNotifyMask | StructureNotifyMask /*| PointerMotionMask */ | KeyPressMask);
-//
-//		XSelectInput (dpy, root,
-//				      SubstructureNotifyMask|
-//				      ExposureMask|
-//				      StructureNotifyMask|
-//				      PropertyChangeMask);
+		XSync(dpy, false);
 //			XShapeSelectInput (dpy, root, ShapeNotifyMask);
-
 
 	    XIEventMask evmask;
 	    unsigned char mask[2] = { 0, 0 };
@@ -273,7 +268,7 @@ Window stage_win;
 void prep_stage (void)
 {
     XReparentWindow (dpy, window, overlay, 0, 0);
-    XSelectInput (dpy, window, ExposureMask | PointerMotionMask | KeyPressMask | StructureNotifyMask | SubstructureNotifyMask);
+    XSelectInput (dpy, window, ExposureMask | PointerMotionMask | KeyPressMask | SubstructureNotifyMask);
     allow_input_passthrough (window);
 }
 
@@ -290,7 +285,7 @@ void prep_input (void)
                            InputOnly, DefaultVisual (dpy, 0), 0, NULL);
 
     XSelectInput (dpy, input,
-                  StructureNotifyMask | SubstructureNotifyMask | FocusChangeMask | PointerMotionMask
+                  StructureNotifyMask /*| SubstructureNotifyMask*/ | FocusChangeMask | PointerMotionMask
                   | KeyPressMask | KeyReleaseMask | ButtonPressMask
                   | ButtonReleaseMask | PropertyChangeMask);
     XMapWindow (dpy, input);
@@ -319,12 +314,12 @@ void unbindRedirectedWindow(Window window) {
 	if(redirectedWindows.find(window) != redirectedWindows.end()) {
 		WindowInfo windowInfo = redirectedWindows[window];
 
+		if(windowInfo.texture > 0) {
+			glDeleteTextures(1, &windowInfo.texture);
+		}
 		if(windowInfo.glxpixmap > 0) {
 			glXReleaseTexImageEXT (display, windowInfo.glxpixmap, GLX_FRONT_LEFT_EXT);
 			glXDestroyGLXPixmap(display, windowInfo.glxpixmap);
-		}
-		if(windowInfo.texture > 0) {
-			glDeleteTextures(1, &windowInfo.texture);
 		}
 		if(windowInfo.pixmap > 0) {
 			XFreePixmap(display, windowInfo.pixmap);
@@ -621,7 +616,7 @@ void renderDesktopToTexture() {
 		if(s.find(wId) == s.end()) {
 			s.insert(wId);
 			XCompositeRedirectSubwindows( dpy, wId, CompositeRedirectAutomatic); // Manual);
-			// XSelectInput(dpy, wId, SubstructureNotifyMask | PointerMotionMask);
+			XSelectInput(dpy, wId, SubstructureNotifyMask | PointerMotionMask);
 		}
 		XGetWindowAttributes( dpy, wId, &attr );
 
@@ -1057,6 +1052,9 @@ void toggleControl() {
 	if(controlDesktop) {
 		allow_input_passthrough (overlay);
 		allow_input_passthrough (window);
+
+		XUngrabKeyboard(dpy, CurrentTime);
+		XUngrabPointer(dpy, CurrentTime);
 	} else {
 		disallow_input_passthrough (overlay);
 		disallow_input_passthrough (window);
@@ -1087,6 +1085,17 @@ void toggleControl() {
 		XIGrabDevice(dpy, XIAllDevices, window, CurrentTime,
 				           0 /*cursor*/, GrabModeAsync, 0 /*pairedMode*/,
 				           False, &eventmask);
+
+		XGrabKeyboard(dpy, DefaultRootWindow(dpy),
+		                 False, GrabModeAsync, GrabModeAsync, CurrentTime);
+		XGrabPointer(dpy, DefaultRootWindow(dpy),
+		                 False,  ButtonPressMask |
+		                 ButtonReleaseMask |
+		                 PointerMotionMask |
+		                 FocusChangeMask |
+		                 EnterWindowMask |
+		                  LeaveWindowMask
+		                  , GrabModeAsync, GrabModeAsync, DefaultRootWindow(dpy), None, CurrentTime);
 	}
 }
 
@@ -1282,8 +1291,11 @@ int main(int argc, char ** argv)
 //            case MapNotify:
 ////            	std::cerr << "MapNotify" << std::endl;
 //            	break;
+            case ConfigureNotify:
             case MapNotify:
             	std::cerr << "MapNotify" << std::endl;
+            case DestroyNotify:
+            	std::cerr << "DestroyNotify" << std::endl;
             case UnmapNotify:
 				std::cerr << "UnmapNotify" << std::endl;
             	unbindRedirectedWindow(event.xclient.window);

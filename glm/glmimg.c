@@ -212,7 +212,6 @@ glmLoadTexture(const char *filename, GLboolean alpha, GLboolean repeat, GLboolea
     }
 #endif
 #ifdef HAVE_LIBJPEG
-    printf("HEREEEE!!!!!!!!! JPEG");
     data = glmReadJPG(filename, alpha, &width, &height, &type);
     if(data != NULL) {
 	DBG_(__glmWarning("glmLoadTexture(): got JPG for %s",filename));

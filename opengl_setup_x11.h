@@ -48,7 +48,7 @@
 #define WIDTH  (1280.0)
 #define HEIGHT (800.0)
 //#define HEIGHT (WIDTH*900./1440.)
-#define TITLE "HeshWM"
+#define TITLE "Ibex"
 
 typedef struct {
     Display *dpy;
@@ -82,8 +82,6 @@ XF86VidModeModeInfo     desktopMode;
 int                     x, y;
 unsigned int            width, height;
 unsigned int            depth;
-
-GLfloat                 rotQuad = 0.0f;
 
 /* attributes for a single buffered visual in RGBA format with at least
  * 4 bits per color and a 16 bit depth buffer */
@@ -181,7 +179,7 @@ void createWindow()
         /* set window attributes */
         winAttr.override_redirect = True;
         winAttr.event_mask = ExposureMask | KeyPressMask | ButtonPressMask |
-            StructureNotifyMask | SubstructureNotifyMask;// | PointerMotionMask;
+            SubstructureNotifyMask;// | SubstructureNotifyMask;// | PointerMotionMask;
         window = XCreateWindow(display, RootWindow(display, vi->screen),
             0, 0, dpyWidth, dpyHeight, 0, vi->depth, InputOutput, vi->visual,
             CWBorderPixel | CWColormap | CWEventMask | CWOverrideRedirect,
@@ -197,7 +195,7 @@ void createWindow()
     {
         /* create a window in window mode*/
         winAttr.event_mask = ExposureMask | KeyPressMask | ButtonPressMask |
-            StructureNotifyMask | SubstructureNotifyMask;
+            SubstructureNotifyMask;// | SubstructureNotifyMask;
         window = XCreateWindow(display, RootWindow(display, vi->screen),
             0, 0, width, height, 0, vi->depth, InputOutput, vi->visual,
             CWBorderPixel | CWColormap | CWEventMask, &winAttr);
