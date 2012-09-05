@@ -46,17 +46,19 @@ double xPosition = 0.0;
 double yPosition = 0.0;
 double zPosition = 0.0;
 
-static bool controlDesktop = true;
-static bool USE_FBO = 1;
+static bool controlDesktop  = 1;
+static bool ortho           = 1;
+static bool renderToTexture = 1;
+static bool USE_FBO         = 1;
 
 static int xi_opcode;
 
 double walkForward = 0;
 double strafeRight = 0;
 
-const double WALK_SPEED = 1.0;
+double WALK_SPEED = 1.0;
 
-const bool ortho = true;
+
 
 ///// FROM COMPIZ
 static int errors = 0;
@@ -368,21 +370,22 @@ void bindRedirectedWindowToTexture(Display *display, Window window, int screen, 
 	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     // draw using pixmap as texture
-	double originX = attrib.x/(double)width-0.5;
-	double originY = -attrib.y/(double)height+0.5;
+	const double originX = attrib.x/(double)width-0.5;
+	const double originY = -attrib.y/(double)height+0.5;
+	const double originZ = (renderToTexture) ? 0 : -1.21;
 	glColor4f(1, 1, 1, 1);
 	glBegin(GL_TRIANGLE_STRIP);
 		glTexCoord2d(0, bottom);
-		glVertex3f(originX,originY,0);
+		glVertex3f(originX,originY,originZ);
 
 		glTexCoord2d(1, bottom);
-		glVertex3f(originX+right,originY,0);
+		glVertex3f(originX+right,originY,originZ);
 
 		glTexCoord2d(0, top);
-		glVertex3f(originX,originY+t,0);
+		glVertex3f(originX,originY+t,originZ);
 
 		glTexCoord2d(1, top);
-		glVertex3f(originX+right,originY+t,0);
+		glVertex3f(originX+right,originY+t,originZ);
 	glEnd();
 
 	glBindTexture(GL_TEXTURE_2D, 0);
@@ -571,13 +574,15 @@ void renderSkybox() {
 }
 
 void renderDesktopToTexture() {
-	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glBindFramebuffer(GL_FRAMEBUFFER, desktopFBO);
-	if(!CheckForErrors()) {
-		exit(1);
+	if(renderToTexture) {
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, 0);
+		glBindFramebuffer(GL_FRAMEBUFFER, desktopFBO);
+		if(!CheckForErrors()) {
+			exit(1);
+		}
+		glClear(GL_COLOR_BUFFER_BIT);
 	}
-	glClear(GL_COLOR_BUFFER_BIT);
 
 	long unsigned int wId;
 	static std::set<Window> s;
@@ -593,7 +598,7 @@ void renderDesktopToTexture() {
 	int win_x, win_y;
 	unsigned int mask_return;
 
-	if(ortho) {
+	if(ortho && renderToTexture) {
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
 		glOrtho(-0.5, 0.5, -0.5, 0.5, -10, 10);
@@ -608,6 +613,7 @@ void renderDesktopToTexture() {
 	mousePositionGrabbed = XQueryPointer(display, XDefaultRootWindow(dpy), &window_returned, &window_returned, &root_x, &root_y, &win_x, &win_y, &mask_return);
 	XQueryTree(dpy, XDefaultRootWindow(dpy), &parent, &root2, &children, &countChildren);
 
+	int d = 0;
 	for(unsigned int i = 0; i < countChildren; ++i) {
 		wId = children[i];
 		if(wId == window || wId == overlay) continue;
@@ -625,8 +631,9 @@ void renderDesktopToTexture() {
 			bool isInputOnly = attr.class == InputOnly;
 		#endif
 		if(attr.map_state == IsViewable && !isInputOnly) { // && attr.override_redirect == 0
-//			glTranslatef(0, 0, i*0.001);
+			if(!renderToTexture) glTranslatef(0, 0, d*0.0001);
 			bindRedirectedWindowToTexture(dpy, wId, screen, attr);
+			++d;
 		}
 	}
 	glPopMatrix();
@@ -636,22 +643,24 @@ void renderDesktopToTexture() {
 		glBindTexture(GL_TEXTURE_2D, 0);
 		glColor4f(1, 0, 0, 1);
 		glBegin(GL_TRIANGLES);
-		glVertex3f(((double)root_x-5)/width-0.5,0.5-((double)root_y+15.0)/height,-1.21+0.02);
-		glVertex3f(((double)root_x+5)/width-0.5,0.5-((double)root_y+15.0)/height,-1.21+0.02);
-		glVertex3f((double)root_x/width-0.5,0.5-(double)root_y/height,-1.21+0.02);
+		glVertex3f(((double)root_x-5)/width-0.5,0.5-((double)root_y+15.0)/height,-1.21+d*0.0001);
+		glVertex3f(((double)root_x+5)/width-0.5,0.5-((double)root_y+15.0)/height,-1.21+d*0.0001);
+		glVertex3f((double)root_x/width-0.5,0.5-(double)root_y/height,-1.21+d*0.0001);
 		glEnd();
 	}
 
-	if(ortho) {
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-//			gluPerspective(45.0f, 1, 0.1f, 1000.0f);//(GLfloat)width / (GLfloat)height, 0.1f, 100.0f);
-		gluPerspective(120.0f, 0.75, 0.01f, 1000.0f);
-		glMatrixMode(GL_MODELVIEW);
-		glEnable(GL_DEPTH_TEST);
-	}
+	if(renderToTexture) {
+		if(ortho) {
+			glMatrixMode(GL_PROJECTION);
+			glLoadIdentity();
+	//			gluPerspective(45.0f, 1, 0.1f, 1000.0f);//(GLfloat)width / (GLfloat)height, 0.1f, 100.0f);
+			gluPerspective(120.0f, 0.75, 0.01f, 1000.0f);
+			glMatrixMode(GL_MODELVIEW);
+			glEnable(GL_DEPTH_TEST);
+		}
 
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	}
 }
 
 void renderGL(void) {
@@ -756,7 +765,9 @@ void renderGL(void) {
 		XFree(fbconfigs);
 	}
 
-	renderDesktopToTexture();
+	if(renderToTexture) {
+		renderDesktopToTexture();
+	}
 
 	for(int i2 = 0; i2 < 2; ++i2) {
 		if(USE_FBO) {
@@ -784,89 +795,93 @@ void renderGL(void) {
 			{
 				renderSkybox();
 				glTranslated(xPosition, yPosition, zPosition);
-				glTranslated((i2 == 0) ? -0.01 : 0.01, 0, 0);
+				glTranslated((i2 == 0) ? -0.1 : 0.1, 0, 0);
 
 				glPushMatrix();
 				{
 
 					/* Lighting Variables */
-					GLfloat light_ambient[] = {
+					const GLfloat light_ambient[] = {
 						0.0, 0.0, 0.0, 1.0
 					};
 
-					GLfloat light_diffuse[] = {
+					const GLfloat light_diffuse[] = {
 						1.0, 1.0, 1.0, 1.0
 					};
 
-					GLfloat light_specular[] = {
+					const GLfloat light_specular[] = {
 						1.0, 1.0, 1.0, 1.0
 					};
 
-					GLfloat light_position[] = {
+					const GLfloat light_position[] = {
 						1.0, 1.0, 1.0, 0.0
 					};
 
-					GLfloat mat_ambient[] = {
+					const GLfloat mat_ambient[] = {
 						0.7, 0.7, 0.7, 1.0
 					};
 
-					GLfloat mat_diffuse[] = {
+					const GLfloat mat_diffuse[] = {
 						0.8, 0.8, 0.8, 1.0
 					};
 
-					GLfloat mat_specular[] = {
+					const GLfloat mat_specular[] = {
 						1.0, 1.0, 1.0, 1.0
 					};
 
-					GLfloat high_shininess[] = {
+					const GLfloat high_shininess[] = {
 						100.0
 					};
 
-					glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
-					glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
-					glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
-					glLightfv(GL_LIGHT0, GL_POSITION, light_position);
-					glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
-					glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
-					glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
-					glMaterialfv(GL_FRONT, GL_SHININESS, high_shininess);
-					glEnable(GL_LIGHTING);
-					glEnable(GL_LIGHT0);
-					glDepthFunc(GL_LESS);
-					glEnable(GL_DEPTH_TEST);
-					glEnable(GL_NORMALIZE);
+//					glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
+//					glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
+//					glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
+//					glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+//					glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
+//					glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
+//					glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+//					glMaterialfv(GL_FRONT, GL_SHININESS, high_shininess);
+//					glEnable(GL_LIGHTING);
+//					glEnable(GL_LIGHT0);
+//					glDepthFunc(GL_LESS);
+//					glEnable(GL_DEPTH_TEST);
+//					glEnable(GL_NORMALIZE);
+//
+//					glEnable(GL_LIGHTING);
+//					glPushMatrix();
+//					{
+//						glTranslated(0, -0.1, -2.21);
+//						glRotated(90, 0, 1, 0);
+//						glScaled(1, 0.72, 0.6);
+//						glPushMatrix();
+//						{
+////							glmDraw(pmodel, GLM_FLAT | GLM_COLOR);
+//						}
+//						glPopMatrix();
+//					}
+//					glPopMatrix();
+//					glDisable(GL_LIGHTING);
 
-					glEnable(GL_LIGHTING);
-					glPushMatrix();
-					{
-						glTranslated(0, -0.1, -2.21);
-						glRotated(90, 0, 1, 0);
-						glScaled(1, 0.72, 0.6);
-						glPushMatrix();
-						{
-//							glmDraw(pmodel, GLM_SMOOTH | GLM_COLOR);
-						}
-						glPopMatrix();
-						glDisable(GL_LIGHTING);
+					if(renderToTexture) {
+						const double monitorOriginZ = -0.5;
+						glBindTexture(GL_TEXTURE_2D, desktopTexture);
+						glBegin(GL_TRIANGLE_STRIP);
+							glTexCoord2d(0, 0);
+							glVertex3f(-0.5,-0.5,monitorOriginZ);
+
+							glTexCoord2d(1, 0);
+							glVertex3f(0.5,-0.5,monitorOriginZ);
+
+							glTexCoord2d(0, 1);
+							glVertex3f(-0.5,0.5,monitorOriginZ);
+
+							glTexCoord2d(1, 1);
+							glVertex3f(0.5,0.5,monitorOriginZ);
+						glEnd();
+						glBindTexture(GL_TEXTURE_2D, 0);
+					} else {
+						renderDesktopToTexture();
 					}
-					glPopMatrix();
-
-					const double monitorOriginZ = -0.5;
-					glBindTexture(GL_TEXTURE_2D, desktopTexture);
-					glBegin(GL_TRIANGLE_STRIP);
-						glTexCoord2d(0, 0);
-						glVertex3f(-0.5,-0.5,monitorOriginZ);
-
-						glTexCoord2d(1, 0);
-						glVertex3f(0.5,-0.5,monitorOriginZ);
-
-						glTexCoord2d(0, 1);
-						glVertex3f(-0.5,0.5,monitorOriginZ);
-
-						glTexCoord2d(1, 1);
-						glVertex3f(0.5,0.5,monitorOriginZ);
-					glEnd();
-					glBindTexture(GL_TEXTURE_2D, 0);
 				}
 				glPopMatrix();
 			}
