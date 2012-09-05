@@ -273,7 +273,7 @@ Window stage_win;
 void prep_stage (void)
 {
     XReparentWindow (dpy, window, overlay, 0, 0);
-    XSelectInput (dpy, window, ExposureMask | PointerMotionMask | KeyPressMask);
+    XSelectInput (dpy, window, ExposureMask | PointerMotionMask | KeyPressMask | StructureNotifyMask | SubstructureNotifyMask);
     allow_input_passthrough (window);
 }
 
@@ -863,20 +863,21 @@ void renderGL(void) {
 //					glDisable(GL_LIGHTING);
 
 					if(renderToTexture) {
+						double ySize = ((double)height/(double)width)/2.0;
 						const double monitorOriginZ = -0.5;
 						glBindTexture(GL_TEXTURE_2D, desktopTexture);
 						glBegin(GL_TRIANGLE_STRIP);
 							glTexCoord2d(0, 0);
-							glVertex3f(-0.5,-0.5,monitorOriginZ);
+							glVertex3f(-0.5,-ySize,monitorOriginZ);
 
 							glTexCoord2d(1, 0);
-							glVertex3f(0.5,-0.5,monitorOriginZ);
+							glVertex3f(0.5,-ySize,monitorOriginZ);
 
 							glTexCoord2d(0, 1);
-							glVertex3f(-0.5,0.5,monitorOriginZ);
+							glVertex3f(-0.5,ySize,monitorOriginZ);
 
 							glTexCoord2d(1, 1);
-							glVertex3f(0.5,0.5,monitorOriginZ);
+							glVertex3f(0.5,ySize,monitorOriginZ);
 						glEnd();
 						glBindTexture(GL_TEXTURE_2D, 0);
 					} else {
