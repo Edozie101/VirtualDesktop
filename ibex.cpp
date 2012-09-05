@@ -795,7 +795,7 @@ void renderGL(void) {
 			{
 				renderSkybox();
 				glTranslated(xPosition, yPosition, zPosition);
-				glTranslated((i2 == 0) ? -0.1 : 0.1, 0, 0);
+				glTranslated((i2 == 0) ? -0.01 : 0.01, 0, 0);
 
 				glPushMatrix();
 				{
