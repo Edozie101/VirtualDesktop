@@ -409,6 +409,9 @@ glTranslatef(eye * parallax_factor * convergence_distance, 0, 0);
  *  for large screens (think cinema) it's something like 0.01
  */
 
+GLuint desktopFBO;
+GLuint desktopTexture;
+
 GLuint fbos[2];
 GLuint textures[2];
 GLuint depthBuffer;
@@ -419,6 +422,28 @@ void prep_framebuffers() {
 	} else {
 		std::cerr << "GL_ARB_framebuffer_object SUPPORT" << std::endl;
 	}
+
+
+	////
+	glGenFramebuffers(1, &desktopFBO);
+	glBindFramebuffer(GL_FRAMEBUFFER, desktopFBO);
+
+	glGenTextures(1, &desktopTexture);
+	glBindTexture(GL_TEXTURE_2D, desktopTexture);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0,
+	                GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+	glFramebufferTexture2D (GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+							 GL_TEXTURE_2D, desktopTexture,
+							 0);
+	if(!CheckForErrors() || glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+		std::cerr << "Stage 0 - Problem generating desktop FBO" << std::endl;
+		exit(0);
+	}
+	glBindFramebuffer(GL_FRAMEBUFFER,0);
+	/////
 
 	glGenFramebuffers(2, fbos);
 	glGenRenderbuffers(1, &depthBuffer);
@@ -545,7 +570,15 @@ void renderSkybox() {
     glPopMatrix();
 }
 
-void renderDesktop() {
+void renderDesktopToTexture() {
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glBindFramebuffer(GL_FRAMEBUFFER, desktopFBO);
+	if(!CheckForErrors()) {
+		exit(1);
+	}
+	glClear(GL_COLOR_BUFFER_BIT);
+
 	long unsigned int wId;
 	static std::set<Window> s;
 
@@ -559,21 +592,21 @@ void renderDesktop() {
 	int root_x, root_y;
 	int win_x, win_y;
 	unsigned int mask_return;
+
+	if(ortho) {
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glOrtho(-0.5, 0.5, -0.5, 0.5, -10, 10);
+		glMatrixMode(GL_MODELVIEW);
+		glDisable(GL_DEPTH_TEST);
+	}
+	glPushMatrix();
+//	glTranslatef(0, 0, -1.21);
+
 	XSync(dpy, false);
 	XGrabServer(dpy);
 	mousePositionGrabbed = XQueryPointer(display, XDefaultRootWindow(dpy), &window_returned, &window_returned, &root_x, &root_y, &win_x, &win_y, &mask_return);
 	XQueryTree(dpy, XDefaultRootWindow(dpy), &parent, &root2, &children, &countChildren);
-
-//	if(ortho) {
-//		glMatrixMode(GL_PROJECTION);
-//		glLoadIdentity();
-//		glOrtho(-0.5, 0.5, -0.5, 0.5, -10, 10);
-//		glMatrixMode(GL_MODELVIEW);
-//		glDisable(GL_DEPTH_TEST);
-//	}
-
-	glPushMatrix();
-	glTranslatef(0, 0, -1.21);
 
 	for(unsigned int i = 0; i < countChildren; ++i) {
 		wId = children[i];
@@ -592,21 +625,11 @@ void renderDesktop() {
 			bool isInputOnly = attr.class == InputOnly;
 		#endif
 		if(attr.map_state == IsViewable && !isInputOnly) { // && attr.override_redirect == 0
-			glTranslatef(0, 0, i*0.001);
+//			glTranslatef(0, 0, i*0.001);
 			bindRedirectedWindowToTexture(dpy, wId, screen, attr);
 		}
 	}
 	glPopMatrix();
-
-//	if(ortho) {
-//		glMatrixMode(GL_PROJECTION);
-//		glLoadIdentity();
-////			gluPerspective(45.0f, 1, 0.1f, 1000.0f);//(GLfloat)width / (GLfloat)height, 0.1f, 100.0f);
-//		gluPerspective(120.0f, 0.75, 0.01f, 1000.0f);
-//		glMatrixMode(GL_MODELVIEW);
-//		glEnable(GL_DEPTH_TEST);
-//	}
-
 	XUngrabServer(dpy);
 
 	if(mousePositionGrabbed == True) {
@@ -618,6 +641,17 @@ void renderDesktop() {
 		glVertex3f((double)root_x/width-0.5,0.5-(double)root_y/height,-1.21+0.02);
 		glEnd();
 	}
+
+	if(ortho) {
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+//			gluPerspective(45.0f, 1, 0.1f, 1000.0f);//(GLfloat)width / (GLfloat)height, 0.1f, 100.0f);
+		gluPerspective(120.0f, 0.75, 0.01f, 1000.0f);
+		glMatrixMode(GL_MODELVIEW);
+		glEnable(GL_DEPTH_TEST);
+	}
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void renderGL(void) {
@@ -722,6 +756,8 @@ void renderGL(void) {
 		XFree(fbconfigs);
 	}
 
+	renderDesktopToTexture();
+
 	for(int i2 = 0; i2 < 2; ++i2) {
 		if(USE_FBO) {
 			glBindFramebuffer(GL_FRAMEBUFFER, fbos[i2]);
@@ -815,7 +851,22 @@ void renderGL(void) {
 					}
 					glPopMatrix();
 
-					renderDesktop();
+					const double monitorOriginZ = -0.5;
+					glBindTexture(GL_TEXTURE_2D, desktopTexture);
+					glBegin(GL_TRIANGLE_STRIP);
+						glTexCoord2d(0, 0);
+						glVertex3f(-0.5,-0.5,monitorOriginZ);
+
+						glTexCoord2d(1, 0);
+						glVertex3f(0.5,-0.5,monitorOriginZ);
+
+						glTexCoord2d(0, 1);
+						glVertex3f(-0.5,0.5,monitorOriginZ);
+
+						glTexCoord2d(1, 1);
+						glVertex3f(0.5,0.5,monitorOriginZ);
+					glEnd();
+					glBindTexture(GL_TEXTURE_2D, 0);
 				}
 				glPopMatrix();
 			}
