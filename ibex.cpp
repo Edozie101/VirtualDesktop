@@ -616,16 +616,16 @@ void renderDesktopToTexture() {
 		if(s.find(wId) == s.end()) {
 			s.insert(wId);
 			XCompositeRedirectSubwindows( dpy, wId, CompositeRedirectAutomatic); // Manual);
-			XSelectInput(dpy, wId, SubstructureNotifyMask | PointerMotionMask);
+			XSelectInput(dpy, wId, SubstructureNotifyMask | PointerMotionMask | ExposureMask);
 		}
 		XGetWindowAttributes( dpy, wId, &attr );
 
-		#if defined(__cplusplus) || defined(c_plusplus)
-			bool isInputOnly = attr.c_class == InputOnly;
-		#else
-			bool isInputOnly = attr.class == InputOnly;
-		#endif
-		if(attr.map_state == IsViewable && !isInputOnly) { // && attr.override_redirect == 0
+//		#if defined(__cplusplus) || defined(c_plusplus)
+//			bool isInputOnly = attr.c_class == InputOnly;
+//		#else
+//			bool isInputOnly = attr.class == InputOnly;
+//		#endif
+		if(attr.map_state == IsViewable) { //	&& !isInputOnly) { // && attr.override_redirect == 0
 			if(!renderToTexture) glTranslatef(0, 0, d*0.0001);
 			bindRedirectedWindowToTexture(dpy, wId, screen, attr);
 			++d;
@@ -1294,6 +1294,7 @@ int main(int argc, char ** argv)
 //            case MapNotify:
 ////            	std::cerr << "MapNotify" << std::endl;
 //            	break;
+            case Expose:
             case ConfigureNotify:
             case MapNotify:
             	std::cerr << "MapNotify" << std::endl;
