@@ -1186,10 +1186,10 @@ void processKey(XIDeviceEvent *event, bool pressed) {
 				zPosition = 0;
 			}
 		} else {
-			if(walkForward == 1 && event->detail == W) walkForward = 0;
+			if(walkForward ==  1 && event->detail == W) walkForward = 0;
 			if(walkForward == -1 && event->detail == S) walkForward = 0;
-			if(strafeRight == 1 && event->detail == D) strafeRight = 0;
-			if(strafeRight == 1 && event->detail == E) strafeRight = 0;
+			if(strafeRight ==  1 && (event->detail == D || event->detail == E)) strafeRight = 0;
+			if(strafeRight == -1 && (event->detail == A || event->detail == Q)) strafeRight = 0;
 		}
 	}
 }
