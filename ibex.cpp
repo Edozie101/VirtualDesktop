@@ -1163,30 +1163,33 @@ void processKey(XIDeviceEvent *event, bool pressed) {
 	static KeyCode R = XKeysymToKeycode(dpy,XK_R);
 
 	if(!controlDesktop) {
-		if(event->detail == W) {
-			walkForward = 1;
-		} else if(event->detail == S) {
-			walkForward = -1;
-		} else if(event->detail == A) {
-			strafeRight = -1;
-		} else if(event->detail == D) {
-			strafeRight = 1;
-		} else if(event->detail == Q) {
-			strafeRight = -1;
-		} else if(event->detail == E) {
-			strafeRight = 1;
-		} else if(event->detail == R) {
-			std::cerr << "RESET POSITION!" << std::endl;
-			xRotation = 0;
-			yRotation = 0;
-			zRotation = 0;
-			xPosition = 0;
-			yPosition = 0;
-			zPosition = 0;
-		}
-
-		if(!pressed) {
-			walkForward = strafeRight = 0;
+		if(pressed) {
+			if(event->detail == W) {
+				walkForward = 1;
+			} else if(event->detail == S) {
+				walkForward = -1;
+			} else if(event->detail == A) {
+				strafeRight = -1;
+			} else if(event->detail == D) {
+				strafeRight = 1;
+			} else if(event->detail == Q) {
+				strafeRight = -1;
+			} else if(event->detail == E) {
+				strafeRight = 1;
+			} else if(event->detail == R) {
+				std::cerr << "RESET POSITION!" << std::endl;
+				xRotation = 0;
+				yRotation = 0;
+				zRotation = 0;
+				xPosition = 0;
+				yPosition = 0;
+				zPosition = 0;
+			}
+		} else {
+			if(walkForward == 1 && event->detail == W) walkForward = 0;
+			if(walkForward == -1 && event->detail == S) walkForward = 0;
+			if(strafeRight == 1 && event->detail == D) strafeRight = 0;
+			if(strafeRight == 1 && event->detail == E) strafeRight = 0;
 		}
 	}
 }
