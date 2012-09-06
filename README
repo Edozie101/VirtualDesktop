@@ -1,4 +1,4 @@
-Ibex - 3D Virtual Reality Compositing Manager for X11 and Linux
+Ibex - 3D Virtual Reality Desktop/Compositing Manager for X11 and Linux
 
 About
 -----
@@ -31,4 +31,7 @@ cd build
 cmake ../ibex
 make install
 ./ibex
- 
+
+Author: Hesham Wahba (http://hwahba.com)
+
+Copyright Hesham Wahba 2012
