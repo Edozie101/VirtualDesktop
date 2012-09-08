@@ -11,6 +11,7 @@
 #include <cmath>
 #include <string>
 #include <iostream>
+#include <iomanip>
 #include <set>
 #include <map>
 
@@ -52,13 +53,14 @@ static bool renderToTexture = 1;
 static bool USE_FBO         = 1;
 
 static int xi_opcode;
+static int xfixes_event_base;
 
 double walkForward = 0;
 double strafeRight = 0;
 
 double WALK_SPEED = 1.0;
 
-
+GLuint cursorTexture(0);
 
 ///// FROM COMPIZ
 static int errors = 0;
@@ -227,6 +229,19 @@ void prep_root (void)
 	  exit(-1);
 	}
 
+	/* XFixes Extension available? */
+	int fixesversion(5), fixeserror;
+	if (!XFixesQueryExtension(dpy, &xfixes_event_base, &fixeserror)) {
+	   fprintf(stderr, "X Fixes extension not available.\n");
+	   exit(-1);
+	}
+	/* XFixes Version available? We support 5.0*/
+	int fixes_major(5), fixes_minor;
+	if (!XFixesQueryVersion(dpy, &fixes_major, &fixes_minor)) {
+	   fprintf(stderr, "X Fixes version 5 not available. Server supports %d.%d\n", fixes_major, fixes_minor);
+	   exit(-1);
+	}
+
     root = DefaultRootWindow(dpy);
     scrn = DefaultScreenOfDisplay(dpy);
     screen = XDefaultScreen(dpy);
@@ -245,6 +260,7 @@ void prep_root (void)
 	    evmask.mask = mask;
 
 	    XISelectEvents(dpy, RootWindow(dpy, i), &evmask, 1);
+	    XFixesSelectCursorInput(dpy, RootWindow(dpy, i), XFixesDisplayCursorNotifyMask);
 	}
 
     XIEventMask evmask;
@@ -256,6 +272,7 @@ void prep_root (void)
     evmask.mask = mask;
 
     XISelectEvents(dpy, DefaultRootWindow(dpy), &evmask, 1);
+    XFixesSelectCursorInput(dpy, DefaultRootWindow(dpy), XFixesDisplayCursorNotifyMask);
 }
 
 void prep_overlay (void)
@@ -635,13 +652,32 @@ void renderDesktopToTexture() {
 	XUngrabServer(dpy);
 
 	if(mousePositionGrabbed == True) {
-		glBindTexture(GL_TEXTURE_2D, 0);
-		glColor4f(1, 0, 0, 1);
-		glBegin(GL_TRIANGLES);
-		glVertex3f(((double)root_x-5)/width-0.5,0.5-((double)root_y+15.0)/height,-1.21+d*0.0001);
-		glVertex3f(((double)root_x+5)/width-0.5,0.5-((double)root_y+15.0)/height,-1.21+d*0.0001);
-		glVertex3f((double)root_x/width-0.5,0.5-(double)root_y/height,-1.21+d*0.0001);
+		glEnable(GL_BLEND);
+		double originX = ((double)root_x-12)/width-0.5;
+		double originY = 0.5-((double)root_y+24.0)/height;
+		double originZ = -1.21+d*0.0001;
+		double t = 24.0/height;
+		double right = 24.0/width;
+		glBindTexture(GL_TEXTURE_2D, cursorTexture);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glColor4f(1, 1, 1, 1);
+		glBegin(GL_TRIANGLE_STRIP);
+			glTexCoord2d(0, 1);
+			glVertex3f(originX,originY,originZ);
+
+			glTexCoord2d(1, 1);
+			glVertex3f(originX+right,originY,originZ);
+
+			glTexCoord2d(0, 0);
+			glVertex3f(originX,originY+t,originZ);
+
+			glTexCoord2d(1, 0);
+			glVertex3f(originX+right,originY+t,originZ);
 		glEnd();
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		glDisable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 
 	if(renderToTexture) {
@@ -1194,6 +1230,39 @@ void processKey(XIDeviceEvent *event, bool pressed) {
 	}
 }
 
+void getCursorTexture() {
+	if(!cursorTexture) {
+		glGenTextures(1, &cursorTexture);
+	}
+
+	XFixesCursorImage *cursor_image;
+	cursor_image = XFixesGetCursorImage (dpy);
+
+	//Annoyingly, xfixes specifies the data to be 32bit, but places it in an unsigned long *
+	//which can be 64 bit.  So we need to iterate over a 64bit structure to put it in a 32bit
+	//structure.
+//	std::cerr << cursor_image->width << "x" << cursor_image->height << std::endl;
+	GLuint *pixels = new GLuint[cursor_image->width * cursor_image->height];
+	for (int i = 0; i < cursor_image->width * cursor_image->height; ++i) {
+		pixels[i] = cursor_image->pixels[i] & 0xffffffff;
+		pixels[i] = (pixels[i]>>24 & 0x000000FF) ? (pixels[i]|0xFF000000) : pixels[i];
+	}
+
+	glBindTexture(GL_TEXTURE_2D, cursorTexture);
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, cursor_image->width, cursor_image->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);//cursor_image->pixels);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	  //cursor_image->xhot;
+	  //cursor_image->yhot;
+
+	delete[] pixels;
+}
+
 int main(int argc, char ** argv)
 {
 	prep_root();
@@ -1289,6 +1358,14 @@ int main(int argc, char ** argv)
 				XFreeEventData(dpy, cookie);
 				continue;
             }
+            if (event.xany.type == xfixes_event_base + XFixesCursorNotify) {
+				XFixesCursorNotifyEvent *notify_event = (XFixesCursorNotifyEvent *)(&event);
+				if (notify_event->subtype == XFixesDisplayCursorNotify) {
+//					std::cerr << "CURSOR NOTIFY" << std::endl;
+					getCursorTexture();
+				}
+				continue;
+            }
             switch (event.type)
             {
 //            case MapNotify:
@@ -1297,11 +1374,11 @@ int main(int argc, char ** argv)
             case Expose:
             case ConfigureNotify:
             case MapNotify:
-            	std::cerr << "MapNotify" << std::endl;
+//            	std::cerr << "MapNotify" << std::endl;
             case DestroyNotify:
-            	std::cerr << "DestroyNotify" << std::endl;
+//            	std::cerr << "DestroyNotify" << std::endl;
             case UnmapNotify:
-				std::cerr << "UnmapNotify" << std::endl;
+//				std::cerr << "UnmapNotify" << std::endl;
             	unbindRedirectedWindow(event.xclient.window);
 				break;
             case ButtonPress:
