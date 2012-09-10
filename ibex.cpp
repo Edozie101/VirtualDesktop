@@ -1146,6 +1146,8 @@ void toggleControl() {
 		                 EnterWindowMask |
 		                  LeaveWindowMask
 		                  , GrabModeAsync, GrabModeAsync, DefaultRootWindow(dpy), None, CurrentTime);
+
+		free(eventmask.mask);
 	}
 }
 
