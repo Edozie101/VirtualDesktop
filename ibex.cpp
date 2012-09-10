@@ -1281,10 +1281,12 @@ void getCursorTexture() {
 	XFree(cursor_image);
 }
 
+static Bool WaitForNotify(Display *d, XEvent *e, char *arg) {
+    return (e->type == MapNotify) && (e->xmap.window == (Window)arg);
+}
 int main(int argc, char ** argv)
 {
 	prep_root();
-	XSetErrorHandler(errorHandler);
 
     XEvent event;
     Bool done = False;
@@ -1295,11 +1297,13 @@ int main(int argc, char ** argv)
     height = attr.height;
 
     createWindow();
+    XIfEvent(dpy, &event, WaitForNotify, (char*)window);
 
     prep_overlay();
     prep_stage();
 //    prep_input();
 //    prep_input2();
+    XIfEvent(dpy, &event, WaitForNotify, (char*)overlay);
 
     glutInit(&argc, argv);
 
@@ -1323,6 +1327,9 @@ int main(int argc, char ** argv)
 	glXMakeContextCurrent(dpy, d, d, ctx);
 
 	std::cerr << "dpy: " << dpy << ", display: " << display << std::endl;
+
+	// set X error handler here since expected errors on some window mappings
+	XSetErrorHandler(errorHandler);
 
 	loadSkybox();
 

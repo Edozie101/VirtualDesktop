@@ -170,7 +170,14 @@ void createWindow()
     if (fullscreen)
     {
         /* switch to fullscreen */
-        XF86VidModeSwitchToMode(display, screen, modes[bestMode]);
+    	XSync(display, false);
+    	std::cerr << "Best Mode: " << bestMode << ", " <<  modes[bestMode]->hdisplay << "x" <<  modes[bestMode]->vdisplay << std::endl;
+        Bool switched = XF86VidModeSwitchToMode(display, screen, modes[bestMode]);
+        XSync(display, false);
+        if(switched == False) {
+        	std::cerr << "Couldn't switch to resolution: " << WIDTH << ", " << HEIGHT << std::endl;
+        	exit(1);
+        }
         XF86VidModeSetViewPort(display, screen, 0, 0);
         dpyWidth = modes[bestMode]->hdisplay;
         dpyHeight = modes[bestMode]->vdisplay;
