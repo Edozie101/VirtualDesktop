@@ -318,6 +318,7 @@ static GLXFBConfig fbconfig;
 static GLuint texture = 0;
 //double b = 0;
 typedef struct _WindowInfo {
+	XWindowAttributes attrib;
 	Window window;
 	Pixmap pixmap;
 	GLXPixmap glxpixmap;
@@ -344,11 +345,8 @@ void unbindRedirectedWindow(Window window) {
 		redirectedWindows.erase(window);
 	}
 }
-void bindRedirectedWindowToTexture(Display *display, Window window, int screen, XWindowAttributes &attrib) {
-	const double w = attrib.width/(double)width;
-	const double h = attrib.height/(double)height;
-	const double right = w;
-	const double t = -h;
+void bindRedirectedWindowToTexture(Display *display, Window window, int screen) {
+	XWindowAttributes *attrib;
 
 	static const int pixmapAttribs[] = { GLX_TEXTURE_TARGET_EXT, GLX_TEXTURE_2D_EXT,
 					  GLX_TEXTURE_FORMAT_EXT, GLX_TEXTURE_FORMAT_RGBA_EXT,
@@ -358,6 +356,12 @@ void bindRedirectedWindowToTexture(Display *display, Window window, int screen, 
 	if(redirectedWindows.find(window) != redirectedWindows.end()) {
 		windowInfo = redirectedWindows[window];
 	} else {
+		XGetWindowAttributes( display, window, &windowInfo.attrib );
+		if(windowInfo.attrib.map_state != IsViewable) { //	&& !isInputOnly) { // && attr.override_redirect == 0
+			redirectedWindows[window] = windowInfo;
+			return;
+		}
+
 		Pixmap pixmap = XCompositeNameWindowPixmap(display, window);
 		if(!pixmap) return;
 
@@ -375,6 +379,17 @@ void bindRedirectedWindowToTexture(Display *display, Window window, int screen, 
 		glBindTexture(GL_TEXTURE_2D, windowInfo.texture);
 		glXBindTexImageEXT(display, windowInfo.glxpixmap, GLX_FRONT_LEFT_EXT, NULL);
 	}
+	attrib = &windowInfo.attrib;
+
+	if(attrib->map_state != IsViewable) { //	&& !isInputOnly) { // && attr.override_redirect == 0
+		return;
+	}
+
+	const double w = attrib->width/(double)width;
+	const double h = attrib->height/(double)height;
+	const double right = w;
+	const double t = -h;
+
 	glBindTexture(GL_TEXTURE_2D, windowInfo.texture);
 
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
@@ -382,8 +397,8 @@ void bindRedirectedWindowToTexture(Display *display, Window window, int screen, 
 	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     // draw using pixmap as texture
-	const double originX = attrib.x/(double)width-0.5;
-	const double originY = -attrib.y/(double)height+0.5;
+	const double originX = attrib->x/(double)width-0.5;
+	const double originY = -attrib->y/(double)height+0.5;
 	const double originZ = (renderToTexture) ? 0 : -1.21;
 	glColor4f(1, 1, 1, 1);
 	glBegin(GL_TRIANGLE_STRIP);
@@ -600,7 +615,7 @@ void renderDesktopToTexture() {
 	static std::set<Window> s;
 
 	static Window parent, root2;
-	static Window *children;
+	Window *children;
 	static unsigned int countChildren;
 	static XWindowAttributes attr;
 
@@ -642,12 +657,11 @@ void renderDesktopToTexture() {
 //		#else
 //			bool isInputOnly = attr.class == InputOnly;
 //		#endif
-		if(attr.map_state == IsViewable) { //	&& !isInputOnly) { // && attr.override_redirect == 0
-			if(!renderToTexture) glTranslatef(0, 0, d*0.0001);
-			bindRedirectedWindowToTexture(dpy, wId, screen, attr);
-			++d;
-		}
+		if(!renderToTexture) glTranslatef(0, 0, d*0.0001);
+		bindRedirectedWindowToTexture(dpy, wId, screen);
+		++d;
 	}
+	XFree(children);
 	glPopMatrix();
 	XUngrabServer(dpy);
 
@@ -1261,6 +1275,8 @@ void getCursorTexture() {
 	  //cursor_image->yhot;
 
 	delete[] pixels;
+
+	XFree(cursor_image);
 }
 
 int main(int argc, char ** argv)
