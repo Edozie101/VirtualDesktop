@@ -2,7 +2,7 @@
  * listener.h
  *
  *  Created on: Sep 11, 2012
- *      Author: parallels
+ *      Author: Hesham Wahba
  */
 
 #ifndef IPHONE_ORIENTATION_LISTENER_H_

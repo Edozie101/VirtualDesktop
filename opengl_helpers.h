@@ -2,7 +2,7 @@
  * opengl_helpers.h
  *
  *  Created on: Sep 12, 2012
- *      Author: parallels
+ *      Author: Hesham Wahba
  */
 
 #ifndef OPENGL_HELPERS_H_
