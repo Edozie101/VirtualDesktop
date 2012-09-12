@@ -4,19 +4,25 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
+../distortions.cpp \
 ../ibex.cpp \
-../opengl_helpers.cpp 
+../opengl_helpers.cpp \
+../utils.cpp 
 
 OBJ_SRCS += \
 ../lcd_monitor.obj 
 
 OBJS += \
+./distortions.o \
 ./ibex.o \
-./opengl_helpers.o 
+./opengl_helpers.o \
+./utils.o 
 
 CPP_DEPS += \
+./distortions.d \
 ./ibex.d \
-./opengl_helpers.d 
+./opengl_helpers.d \
+./utils.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
