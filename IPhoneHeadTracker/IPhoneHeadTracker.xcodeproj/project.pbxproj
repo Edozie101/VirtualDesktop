@@ -1,0 +1,314 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		4C92642515FEE49400720AE3 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C92642415FEE49400720AE3 /* UIKit.framework */; };
+		4C92642715FEE49400720AE3 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C92642615FEE49400720AE3 /* Foundation.framework */; };
+		4C92642915FEE49400720AE3 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C92642815FEE49400720AE3 /* CoreGraphics.framework */; };
+		4C92642F15FEE49400720AE3 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4C92642D15FEE49400720AE3 /* InfoPlist.strings */; };
+		4C92643115FEE49400720AE3 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C92643015FEE49400720AE3 /* main.m */; };
+		4C92643515FEE49400720AE3 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C92643415FEE49400720AE3 /* AppDelegate.m */; };
+		4C92643815FEE49400720AE3 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C92643715FEE49400720AE3 /* ViewController.m */; };
+		4C92643B15FEE49400720AE3 /* ViewController_iPhone.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4C92643915FEE49400720AE3 /* ViewController_iPhone.xib */; };
+		4C92643E15FEE49400720AE3 /* ViewController_iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4C92643C15FEE49400720AE3 /* ViewController_iPad.xib */; };
+		4C92645D15FEE58700720AE3 /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C92645C15FEE58700720AE3 /* CoreMotion.framework */; };
+		4C92645F15FEE9AC00720AE3 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C92645E15FEE9AC00720AE3 /* CFNetwork.framework */; };
+		4C92646115FF601700720AE3 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C92646015FF601700720AE3 /* QuartzCore.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		4C92642015FEE49400720AE3 /* IPhoneHeadTracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IPhoneHeadTracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4C92642415FEE49400720AE3 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		4C92642615FEE49400720AE3 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		4C92642815FEE49400720AE3 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		4C92642C15FEE49400720AE3 /* IPhoneHeadTracker-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "IPhoneHeadTracker-Info.plist"; sourceTree = "<group>"; };
+		4C92642E15FEE49400720AE3 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		4C92643015FEE49400720AE3 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		4C92643215FEE49400720AE3 /* IPhoneHeadTracker-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "IPhoneHeadTracker-Prefix.pch"; sourceTree = "<group>"; };
+		4C92643315FEE49400720AE3 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		4C92643415FEE49400720AE3 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		4C92643615FEE49400720AE3 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		4C92643715FEE49400720AE3 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		4C92643A15FEE49400720AE3 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/ViewController_iPhone.xib; sourceTree = "<group>"; };
+		4C92643D15FEE49400720AE3 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/ViewController_iPad.xib; sourceTree = "<group>"; };
+		4C92644515FEE49400720AE3 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
+		4C92645C15FEE58700720AE3 /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = System/Library/Frameworks/CoreMotion.framework; sourceTree = SDKROOT; };
+		4C92645E15FEE9AC00720AE3 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
+		4C92646015FF601700720AE3 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		4C92641D15FEE49400720AE3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4C92646115FF601700720AE3 /* QuartzCore.framework in Frameworks */,
+				4C92645F15FEE9AC00720AE3 /* CFNetwork.framework in Frameworks */,
+				4C92645D15FEE58700720AE3 /* CoreMotion.framework in Frameworks */,
+				4C92642515FEE49400720AE3 /* UIKit.framework in Frameworks */,
+				4C92642715FEE49400720AE3 /* Foundation.framework in Frameworks */,
+				4C92642915FEE49400720AE3 /* CoreGraphics.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		4C92641515FEE49400720AE3 = {
+			isa = PBXGroup;
+			children = (
+				4C92642A15FEE49400720AE3 /* IPhoneHeadTracker */,
+				4C92642315FEE49400720AE3 /* Frameworks */,
+				4C92642115FEE49400720AE3 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		4C92642115FEE49400720AE3 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				4C92642015FEE49400720AE3 /* IPhoneHeadTracker.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		4C92642315FEE49400720AE3 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				4C92646015FF601700720AE3 /* QuartzCore.framework */,
+				4C92645E15FEE9AC00720AE3 /* CFNetwork.framework */,
+				4C92645C15FEE58700720AE3 /* CoreMotion.framework */,
+				4C92642415FEE49400720AE3 /* UIKit.framework */,
+				4C92642615FEE49400720AE3 /* Foundation.framework */,
+				4C92642815FEE49400720AE3 /* CoreGraphics.framework */,
+				4C92644515FEE49400720AE3 /* SenTestingKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		4C92642A15FEE49400720AE3 /* IPhoneHeadTracker */ = {
+			isa = PBXGroup;
+			children = (
+				4C92643315FEE49400720AE3 /* AppDelegate.h */,
+				4C92643415FEE49400720AE3 /* AppDelegate.m */,
+				4C92643615FEE49400720AE3 /* ViewController.h */,
+				4C92643715FEE49400720AE3 /* ViewController.m */,
+				4C92643915FEE49400720AE3 /* ViewController_iPhone.xib */,
+				4C92643C15FEE49400720AE3 /* ViewController_iPad.xib */,
+				4C92642B15FEE49400720AE3 /* Supporting Files */,
+			);
+			path = IPhoneHeadTracker;
+			sourceTree = "<group>";
+		};
+		4C92642B15FEE49400720AE3 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				4C92642C15FEE49400720AE3 /* IPhoneHeadTracker-Info.plist */,
+				4C92642D15FEE49400720AE3 /* InfoPlist.strings */,
+				4C92643015FEE49400720AE3 /* main.m */,
+				4C92643215FEE49400720AE3 /* IPhoneHeadTracker-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		4C92641F15FEE49400720AE3 /* IPhoneHeadTracker */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4C92645615FEE49400720AE3 /* Build configuration list for PBXNativeTarget "IPhoneHeadTracker" */;
+			buildPhases = (
+				4C92641C15FEE49400720AE3 /* Sources */,
+				4C92641D15FEE49400720AE3 /* Frameworks */,
+				4C92641E15FEE49400720AE3 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = IPhoneHeadTracker;
+			productName = IPhoneHeadTracker;
+			productReference = 4C92642015FEE49400720AE3 /* IPhoneHeadTracker.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		4C92641715FEE49400720AE3 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0440;
+				ORGANIZATIONNAME = "Hesham Wahba";
+			};
+			buildConfigurationList = 4C92641A15FEE49400720AE3 /* Build configuration list for PBXProject "IPhoneHeadTracker" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 4C92641515FEE49400720AE3;
+			productRefGroup = 4C92642115FEE49400720AE3 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				4C92641F15FEE49400720AE3 /* IPhoneHeadTracker */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		4C92641E15FEE49400720AE3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4C92642F15FEE49400720AE3 /* InfoPlist.strings in Resources */,
+				4C92643B15FEE49400720AE3 /* ViewController_iPhone.xib in Resources */,
+				4C92643E15FEE49400720AE3 /* ViewController_iPad.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		4C92641C15FEE49400720AE3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4C92643115FEE49400720AE3 /* main.m in Sources */,
+				4C92643515FEE49400720AE3 /* AppDelegate.m in Sources */,
+				4C92643815FEE49400720AE3 /* ViewController.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		4C92642D15FEE49400720AE3 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				4C92642E15FEE49400720AE3 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		4C92643915FEE49400720AE3 /* ViewController_iPhone.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				4C92643A15FEE49400720AE3 /* en */,
+			);
+			name = ViewController_iPhone.xib;
+			sourceTree = "<group>";
+		};
+		4C92643C15FEE49400720AE3 /* ViewController_iPad.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				4C92643D15FEE49400720AE3 /* en */,
+			);
+			name = ViewController_iPad.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		4C92645415FEE49400720AE3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		4C92645515FEE49400720AE3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		4C92645715FEE49400720AE3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "IPhoneHeadTracker/IPhoneHeadTracker-Prefix.pch";
+				INFOPLIST_FILE = "IPhoneHeadTracker/IPhoneHeadTracker-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		4C92645815FEE49400720AE3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "IPhoneHeadTracker/IPhoneHeadTracker-Prefix.pch";
+				INFOPLIST_FILE = "IPhoneHeadTracker/IPhoneHeadTracker-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		4C92641A15FEE49400720AE3 /* Build configuration list for PBXProject "IPhoneHeadTracker" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4C92645415FEE49400720AE3 /* Debug */,
+				4C92645515FEE49400720AE3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4C92645615FEE49400720AE3 /* Build configuration list for PBXNativeTarget "IPhoneHeadTracker" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4C92645715FEE49400720AE3 /* Debug */,
+				4C92645815FEE49400720AE3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 4C92641715FEE49400720AE3 /* Project object */;
+}
