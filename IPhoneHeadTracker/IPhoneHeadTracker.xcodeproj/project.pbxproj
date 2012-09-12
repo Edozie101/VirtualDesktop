@@ -307,6 +307,7 @@
 				4C92645815FEE49400720AE3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
