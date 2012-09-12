@@ -14,6 +14,7 @@
 #include <iomanip>
 #include <set>
 #include <map>
+#include <pthread.h>
 
 #include <time.h>
 
@@ -26,8 +27,12 @@
 #include <GL/glext.h>
 #include <GL/glxext.h>
 #include <GL/glut.h>
+#include <GL/glu.h>
 
 #include "opengl_setup_x11.h"
+
+#include "opengl_helpers.h"
+#include "iphone_orientation_plugin/iphone_orientation_listener.h"
 
 #define HAVE_LIBJPEG 1
 #include <jpeglib.h>
@@ -648,7 +653,7 @@ void renderDesktopToTexture() {
 		if(s.find(wId) == s.end()) {
 			s.insert(wId);
 			XCompositeRedirectSubwindows( dpy, wId, CompositeRedirectAutomatic); // Manual);
-			XSelectInput(dpy, wId, SubstructureNotifyMask | PointerMotionMask | ExposureMask);
+			XSelectInput(dpy, wId, StructureNotifyMask | PointerMotionMask | ExposureMask);
 		}
 		XGetWindowAttributes( dpy, wId, &attr );
 
@@ -833,6 +838,9 @@ void renderGL(void) {
 
 		glPushMatrix();
 		{
+			double orientation[16];
+			gluInvertMatrix(get_orientation(), orientation);
+			glMultMatrixd(orientation);
 			glRotated(xRotation, 1, 0, 0);
 			glRotated(yRotation, 0, 1, 0);
 
@@ -1304,6 +1312,8 @@ int main(int argc, char ** argv)
 //    prep_input();
 //    prep_input2();
     XIfEvent(dpy, &event, WaitForNotify, (char*)overlay);
+    
+    setup_iphone_listener();
 
     glutInit(&argc, argv);
 
@@ -1398,6 +1408,7 @@ int main(int argc, char ** argv)
 //            	break;
             case Expose:
             case ConfigureNotify:
+//            	std::cerr << "configureNotify" << std::endl;
             case MapNotify:
 //            	std::cerr << "MapNotify" << std::endl;
             case DestroyNotify:
