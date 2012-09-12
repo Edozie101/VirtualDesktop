@@ -12,7 +12,7 @@
 
 @class CMMotionManager;
 
-@interface ViewController : UIViewController {
+@interface ViewController : UIViewController<UITextFieldDelegate> {
     bool broadcast;
     
     CMMotionManager *m;
