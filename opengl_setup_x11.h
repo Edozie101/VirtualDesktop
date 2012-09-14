@@ -65,6 +65,9 @@ typedef struct {
     unsigned int depth;
 } GLWindow;
 
+GLXFBConfig fbconfig;
+bool glxYInverted;
+
 GLWindow GLWin;
 
 /* most important variable
@@ -115,7 +118,73 @@ void destroyWindow();
 void resizeGL(unsigned int, unsigned int);
 void initGL();
 
-void createWindow()
+void initFBConfig(Display *dpy, Window root)
+{
+  XWindowAttributes attr;
+  int value;
+  int nfbconfigs;
+  GLXFBConfig *fbconfigs = glXGetFBConfigs(display, screen, &nfbconfigs);
+  int i = 0;
+  XGetWindowAttributes(dpy, root, &attr);
+
+  int attrib[] =
+    { GLX_RENDER_TYPE, GLX_RGBA_BIT, GLX_DRAWABLE_TYPE, GLX_WINDOW_BIT,
+        GLX_RED_SIZE, 1, GLX_GREEN_SIZE, 1, GLX_BLUE_SIZE, 1, GLX_ALPHA_SIZE, 1,
+        GLX_DOUBLEBUFFER, True, GLX_DEPTH_SIZE, 1, None };
+
+  int numfbconfigs, render_event_base, render_error_base;
+  XVisualInfo *visinfo;
+  XRenderPictFormat *pictFormat;
+
+  // Make sure we have the RENDER extension
+  if (!XRenderQueryExtension(dpy, &render_event_base, &render_error_base)) {
+    std::cerr << "No RENDER extension found" << std::endl;
+    exit(EXIT_FAILURE);
+  }
+
+  // Get the list of FBConfigs that match our criteria
+  int scrnum = 0;
+  fbconfigs = glXChooseFBConfig(dpy, scrnum, attrib, &numfbconfigs);
+  if (!fbconfigs) {
+    // None matched
+    exit(EXIT_FAILURE);
+  }
+
+  // Find an FBConfig with a visual that has a RENDER picture format that
+  // has alpha
+  for (i = 0; i < numfbconfigs; i++) {
+    visinfo = glXGetVisualFromFBConfig(dpy, fbconfigs[i]);
+    if (!visinfo) continue;
+    pictFormat = XRenderFindVisualFormat(dpy, visinfo->visual);
+    if (!pictFormat) continue;
+
+    if (pictFormat->direct.alphaMask > 0) {
+      fbconfig = fbconfigs[i];
+      break;
+    }
+
+    XFree(visinfo);
+  }
+
+  if (i == numfbconfigs) {
+    // None of the FBConfigs have alpha.  Use a normal (opaque)
+    // FBConfig instead
+    fbconfig = fbconfigs[0];
+    visinfo = glXGetVisualFromFBConfig(dpy, fbconfig);
+    pictFormat = XRenderFindVisualFormat(dpy, visinfo->visual);
+  }
+
+  glXGetFBConfigAttrib(dpy, fbconfigs[i], GLX_Y_INVERTED_EXT, &value);
+  glxYInverted = value;
+
+  glEnable(GL_TEXTURE_2D);
+
+  fbconfig = fbconfigs[i];
+
+  XFree(fbconfigs);
+}
+
+void createWindow(Display *dpy_, Window root_)
 {
     XVisualInfo *vi;
     Colormap cmap;
@@ -225,14 +294,17 @@ void createWindow()
     } else
         printf("no DRI available\n");
 
-	glewExperimental = true;
-	GLenum err = glewInit();
-	std::cerr << "Inited GLEW: " << err << std::endl;
-	if (GLEW_OK != err)
-	{
-	    // GLEW failed!
-	    exit(1);
-	}
+    glewExperimental = true;
+    GLenum err = glewInit();
+    std::cerr << "Inited GLEW: " << err << std::endl;
+    if (GLEW_OK != err)
+    {
+        // GLEW failed!
+        exit(1);
+    }
+
+    XSync(display, false);
+    initFBConfig(display, root_);
 
     initGL();
 }
@@ -273,8 +345,6 @@ void resizeGL(unsigned int width, unsigned int height)
 //    gluPerspective(120.0f, 0.75, 0.1f, 100.0f);//(GLfloat)width / (GLfloat)height, 0.1f, 100.0f);
     glMatrixMode(GL_MODELVIEW);
 }
-
-
 
 // load a 256x256 RGB .RAW file as a texture
 GLuint LoadTextureRAW( const char * filename, int wrap )

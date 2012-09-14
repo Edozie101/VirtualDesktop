@@ -467,7 +467,6 @@ static Bool WaitForNotify(Display *d, XEvent *e, char *arg)
 // ===========================================================================
 
 static GLfloat top(0), bottom(1);
-static GLXFBConfig fbconfig;
 static GLuint texture = 0;
 
 // ---------------------------------------------------------------------------
@@ -933,7 +932,6 @@ void renderDesktopToTexture()
   }
 }
 
-
 // ---------------------------------------------------------------------------
 // Function: renderGL
 // Design:   Belongs (mostly) to OpenGL component
@@ -952,88 +950,6 @@ void renderGL(const Desktop3DLocation& loc)
     fprintf(stderr, "FPS:%4.2f\n", frame * 1000.0 / (time - timebase));
     timebase = time;
     frame = 0;
-  }
-
-  static XWindowAttributes attr;
-  static int value;
-  static int nfbconfigs;
-  static GLXFBConfig *fbconfigs = glXGetFBConfigs(display, screen, &nfbconfigs);
-  static int i = 0;
-
-  XGetWindowAttributes( dpy, root, &attr );
-  static bool init = false;
-  if (!init) {
-    init = true;
-    int attrib[] = { GLX_RENDER_TYPE, GLX_RGBA_BIT,
-                     GLX_DRAWABLE_TYPE, GLX_WINDOW_BIT,
-                     GLX_RED_SIZE, 1,
-                     GLX_GREEN_SIZE, 1,
-                     GLX_BLUE_SIZE, 1,
-                     GLX_ALPHA_SIZE, 1,
-                     GLX_DOUBLEBUFFER, True,
-                     GLX_DEPTH_SIZE, 1,
-                     None };
-
-    int numfbconfigs, render_event_base, render_error_base;
-    XVisualInfo *visinfo;
-    XRenderPictFormat *pictFormat;
-
-    // Make sure we have the RENDER extension
-    if (!XRenderQueryExtension(dpy, &render_event_base, &render_error_base)) {
-      std::cerr << "No RENDER extension found" << std::endl;
-      exit(EXIT_FAILURE);
-    }
-
-    // Get the list of FBConfigs that match our criteria
-    int scrnum = 0;
-    fbconfigs = glXChooseFBConfig(dpy, scrnum, attrib, &numfbconfigs);
-    if (!fbconfigs) {
-      // None matched
-      exit(EXIT_FAILURE);
-    }
-
-    // Find an FBConfig with a visual that has a RENDER picture format that
-    // has alpha
-    for (i = 0; i < numfbconfigs; i++) {
-      visinfo = glXGetVisualFromFBConfig(dpy, fbconfigs[i]);
-      if (!visinfo)
-        continue;
-      pictFormat = XRenderFindVisualFormat(dpy, visinfo->visual);
-      if (!pictFormat)
-        continue;
-
-      if (pictFormat->direct.alphaMask > 0) {
-        fbconfig = fbconfigs[i];
-        break;
-      }
-
-      XFree(visinfo);
-    }
-
-    if (i == numfbconfigs) {
-      // None of the FBConfigs have alpha.  Use a normal (opaque)
-      // FBConfig instead
-      fbconfig = fbconfigs[0];
-      visinfo = glXGetVisualFromFBConfig(dpy, fbconfig);
-      pictFormat = XRenderFindVisualFormat(dpy, visinfo->visual);
-    }
-
-    glXGetFBConfigAttrib(dpy, fbconfigs[i], GLX_Y_INVERTED_EXT, &value);
-    if (value == TRUE) {
-      top = 0.0f;
-      bottom = 1.0f;
-    } else {
-      top = 1.0f;
-      bottom = 0.0f;
-    }
-
-    glEnable(GL_TEXTURE_2D);
-
-    top = -top;
-    bottom = -bottom;
-    fbconfig = fbconfigs[i];
-
-    XFree(fbconfigs);
   }
 
   if (renderToTexture) {
@@ -1218,6 +1134,17 @@ void initGL()
               << std::endl;
     exit(EXIT_FAILURE);
   }
+
+  if(glxYInverted) {
+    top = 0.0f;
+    bottom = 1.0f;
+  }
+  else {
+    top = 1.0f;
+    bottom = 0.0f;
+  }
+  top = -top;
+  bottom = -bottom;
 
   glFlush();
 }
@@ -1549,12 +1476,18 @@ int main(int argc, char ** argv)
   width = attr.width;
   height = attr.height;
 
-  createWindow();
+  createWindow(display, root);
   XIfEvent(dpy, &event, WaitForNotify, (char*)window);
 
   prep_overlay();
   prep_stage();
   XIfEvent(dpy, &event, WaitForNotify, (char*)overlay);
+
+  XSync(dpy, false);
+
+  static GLXContext ctx = glXGetCurrentContext();
+  static GLXDrawable d = glXGetCurrentDrawable();
+  glXMakeContextCurrent(dpy, d, d, ctx);
 
   setup_iphone_listener();
 
@@ -1575,12 +1508,6 @@ int main(int argc, char ** argv)
 
   if (USE_FBO)
     prep_framebuffers();
-
-  XSync(dpy, false);
-
-  static GLXContext ctx = glXGetCurrentContext();
-  static GLXDrawable d = glXGetCurrentDrawable();
-  glXMakeContextCurrent(dpy, d, d, ctx);
 
   std::cout << "dpy: " << dpy << ", display: " << display << std::endl;
 
