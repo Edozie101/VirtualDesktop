@@ -34,6 +34,7 @@
 
 #include "opengl_helpers.h"
 #include "iphone_orientation_plugin/iphone_orientation_listener.h"
+#include "distortions.h"
 
 #define HAVE_LIBJPEG 1
 #include <jpeglib.h>
@@ -127,6 +128,7 @@ static bool controlDesktop  = 1;
 static bool ortho           = 1;
 static bool renderToTexture = 1;
 static bool USE_FBO         = 1;
+static bool barrelDistort   = 0;
 
 static int xi_opcode;
 static int xfixes_event_base;
@@ -564,8 +566,8 @@ void bindRedirectedWindowToTexture(Display *display, Window window, int screen)
   if (attrib->map_state != IsViewable)
     return;
 
-  const double w = attrib->width / (double)width;
-  const double h = attrib->height / (double)height;
+  const double w = (double)attrib->width / (double)width;
+  const double h = (double)attrib->height / (double)height;
   const double right = w;
   const double t = -h;
 
@@ -575,8 +577,8 @@ void bindRedirectedWindowToTexture(Display *display, Window window, int screen)
   glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
   // draw using pixmap as texture
-  const double originX = attrib->x/(double)width - 0.5;
-  const double originY = -attrib->y/(double)height + 0.5;
+  const double originX = (double)attrib->x/(double)width - 0.5;
+  const double originY = (double)-attrib->y/(double)height + 0.5;
   const double originZ = (renderToTexture) ? 0 : -1.21;
   glColor4f(1, 1, 1, 1);
   glBegin(GL_TRIANGLE_STRIP);
@@ -1130,45 +1132,50 @@ void renderGL(const Desktop3DLocation& loc)
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glColor4f(1, 1, 1, 1);
-    for (int i = 0; i < 2; ++i) {
-      if (ortho) {
-        double originX = (i == 0) ? 0 : 0.5;
-        glBindTexture(GL_TEXTURE_2D, textures[i]);
-        glPushMatrix();
-        glColor4f(1, 1, 1, 1);
-        glBegin(GL_TRIANGLE_STRIP);
-          glTexCoord2d(0, bottom);
-          glVertex3f(originX, 0, 0);
+    if(barrelDistort) {
+        render_distorted_frame(true, textures[0]);
+        render_distorted_frame(false, textures[1]);
+    } else {
+      for (int i = 0; i < 2; ++i) {
+        if (ortho) {
+          double originX = (i == 0) ? 0 : 0.5;
+          glBindTexture(GL_TEXTURE_2D, textures[i]);
+          glPushMatrix();
+          glColor4f(1, 1, 1, 1);
+          glBegin(GL_TRIANGLE_STRIP);
+            glTexCoord2d(0, bottom);
+            glVertex3f(originX, 0, 0);
 
-          glTexCoord2d(1, bottom);
-          glVertex3f(originX + 0.5, 0, 0);
+            glTexCoord2d(1, bottom);
+            glVertex3f(originX + 0.5, 0, 0);
 
-          glTexCoord2d(0, top);
-          glVertex3f(originX, 1, 0);
+            glTexCoord2d(0, top);
+            glVertex3f(originX, 1, 0);
 
-          glTexCoord2d(1, top);
-          glVertex3f(originX + 0.5, 1, 0);
-        glEnd();
-        glPopMatrix();
-      } else {
-        glBindTexture(GL_TEXTURE_2D, textures[i]);
-        glPushMatrix();
-        glTranslated((i < 1) ? -0.98 : 0, -0.5, -2.4);
-        glColor4f(1, 1, 1, 1);
-        glBegin(GL_TRIANGLE_STRIP);
-          glTexCoord2d(0, bottom);
-          glVertex3f(0, 0, 0);
+            glTexCoord2d(1, top);
+            glVertex3f(originX + 0.5, 1, 0);
+          glEnd();
+          glPopMatrix();
+        } else {
+          glBindTexture(GL_TEXTURE_2D, textures[i]);
+          glPushMatrix();
+          glTranslated((i < 1) ? -0.98 : 0, -0.5, -2.4);
+          glColor4f(1, 1, 1, 1);
+          glBegin(GL_TRIANGLE_STRIP);
+            glTexCoord2d(0, bottom);
+            glVertex3f(0, 0, 0);
 
-          glTexCoord2d(1, bottom);
-          glVertex3f(1,0,0);
+            glTexCoord2d(1, bottom);
+            glVertex3f(1,0,0);
 
-          glTexCoord2d(0, top);
-          glVertex3f(0,1,0);
+            glTexCoord2d(0, top);
+            glVertex3f(0,1,0);
 
-          glTexCoord2d(1, top);
-          glVertex3f(1,1,0);
-        glEnd();
-        glPopMatrix();
+            glTexCoord2d(1, top);
+            glVertex3f(1,1,0);
+          glEnd();
+          glPopMatrix();
+        }
       }
     }
 
@@ -1474,6 +1481,7 @@ void processRawMotion(XIRawEvent *event, Desktop3DLocation& loc)
 // ---------------------------------------------------------------------------
 bool processKey(XIDeviceEvent *event, bool pressed, Desktop3DLocation& loc)
 {
+  static KeyCode B = XKeysymToKeycode(dpy, XK_B);
   static KeyCode W = XKeysymToKeycode(dpy, XK_W);
   static KeyCode S = XKeysymToKeycode(dpy, XK_S);
   static KeyCode A = XKeysymToKeycode(dpy, XK_A);
@@ -1496,10 +1504,12 @@ bool processKey(XIDeviceEvent *event, bool pressed, Desktop3DLocation& loc)
         strafeRight = -1;
       } else if (event->detail == E) {
         strafeRight = 1;
+      } else if (event->detail == B) {
+          barrelDistort = !barrelDistort;
       } else if (event->detail == R) {
-        std::cout << "RESET POSITION!" << std::endl;
-        // Reset the desktop location to all zero state
-        loc.resetState();
+       std::cout << "RESET POSITION!" << std::endl;
+       // Reset the desktop location to all zero state
+       loc.resetState();
       }
     } else {
       if (walkForward ==  1 && event->detail == W)
@@ -1549,6 +1559,12 @@ int main(int argc, char ** argv)
   setup_iphone_listener();
 
   glutInit(&argc, argv);
+
+  bool success = init_distortion_shader();
+  if(!success) {
+      std::cerr << "Failed to init distortion shader!" << std::endl;
+      exit(1);
+  }
 
   if (texture == 0) {
     std::cout << "gen texture" << std::endl;
