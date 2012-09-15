@@ -923,7 +923,8 @@ void renderDesktopToTexture()
     if (ortho) {
       glMatrixMode(GL_PROJECTION);
       glLoadIdentity();
-      gluPerspective(120.0f, 0.75, 0.01f, 1000.0f);
+//      gluPerspective(120.0f, 0.75, 0.01f, 1000.0f);
+      gluPerspective(110.0f, 0.81818181, 0.01f, 1000.0f);
       glMatrixMode(GL_MODELVIEW);
       glEnable(GL_DEPTH_TEST);
     }
@@ -1090,7 +1091,8 @@ void renderGL(const Desktop3DLocation& loc)
     if (ortho) {
       glMatrixMode(GL_PROJECTION);
       glLoadIdentity();
-      gluPerspective(120.0f, 0.75, 0.01f, 1000.0f);
+//      gluPerspective(120.0f, 0.75, 0.01f, 1000.0f);
+      gluPerspective(110.0f, 0.81818181, 0.01f, 1000.0f);
       glMatrixMode(GL_MODELVIEW);
     }
   }
