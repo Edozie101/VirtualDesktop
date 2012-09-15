@@ -128,6 +128,7 @@ static bool controlDesktop  = 1;
 static bool ortho           = 1;
 static bool renderToTexture = 1;
 static bool USE_FBO         = 1;
+static bool showGround      = 0;
 static bool barrelDistort   = 0;
 
 static int xi_opcode;
@@ -738,9 +739,10 @@ void loadSkybox()
 // ---------------------------------------------------------------------------
 void renderSkybox()
 {
+  static const double skyboxScale = 1000;
   // Store the current matrix
   glPushMatrix();
-  glScaled(100, 100, 100);
+  glScaled(skyboxScale, skyboxScale, skyboxScale);
 
   // Enable/Disable features
   glPushAttrib(GL_ENABLE_BIT);
@@ -809,6 +811,8 @@ void renderSkybox()
   // Restore enable bits and matrix
   glPopAttrib();
   glPopMatrix();
+
+  glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 
@@ -985,6 +989,7 @@ void renderGL(const Desktop3DLocation& loc)
         glMultMatrixd(orientation);
         glRotated(loc.getXRotation(), 1, 0, 0);
         glRotated(loc.getYRotation(), 0, 1, 0);
+        glTranslated(0, -1.5, 0);
 
         glPushMatrix();
         {
@@ -995,8 +1000,32 @@ void renderGL(const Desktop3DLocation& loc)
 
           glPushMatrix();
           {
+            if(showGround) {
+              static float sizeX = 64;
+              static float sizeY = 64;
+              static const int gridSize = 25;
+              static const int textureRepeat = 2*gridSize;
+              static const GLuint groundTexture = glmLoadTexture("humus-skybox/negy.jpg", GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE, &sizeX, &sizeY);
+              glBindTexture(GL_TEXTURE_2D, groundTexture);
+              glBegin(GL_TRIANGLE_STRIP);
+                glTexCoord2d(0, 0);
+                glVertex3f(-gridSize, 0, -gridSize);
+
+                glTexCoord2d(textureRepeat, 0);
+                glVertex3f(gridSize, 0, -gridSize);
+
+                glTexCoord2d(0, textureRepeat);
+                glVertex3f(-gridSize, 0, gridSize);
+
+                glTexCoord2d(textureRepeat, textureRepeat);
+                glVertex3f(gridSize, 0, gridSize);
+              glEnd();
+              glBindTexture(GL_TEXTURE_2D, 0);
+            }
+
             if (renderToTexture) {
                   double ySize = ((double)height / (double)width) / 2.0;
+                  glTranslated(0, 1.5, 0);
                   const double monitorOriginZ = -0.5;
                   glBindTexture(GL_TEXTURE_2D, desktopTexture);
                   glBegin(GL_TRIANGLE_STRIP);
@@ -1398,11 +1427,14 @@ void processRawMotion(XIRawEvent *event, Desktop3DLocation& loc)
 // Function: processKey
 // Design:   Belongs to Input Hardware Control component
 // Purpose:  Modifies desktop orientation/position based on key pressed
+//           Also toggles barrel distort and ground layer
 // Updated:  Sep 10, 2012
 // ---------------------------------------------------------------------------
-bool processKey(XIDeviceEvent *event, bool pressed, Desktop3DLocation& loc)
+bool processXInput2Key(XIDeviceEvent *event, bool pressed, Desktop3DLocation& loc)
 {
-  static KeyCode B = XKeysymToKeycode(dpy, XK_B);
+  static KeyCode B = XKeysymToKeycode(dpy, XK_B); // toggle barrel distort
+  static KeyCode G = XKeysymToKeycode(dpy, XK_G); // toggle ground
+
   static KeyCode W = XKeysymToKeycode(dpy, XK_W);
   static KeyCode S = XKeysymToKeycode(dpy, XK_S);
   static KeyCode A = XKeysymToKeycode(dpy, XK_A);
@@ -1427,6 +1459,8 @@ bool processKey(XIDeviceEvent *event, bool pressed, Desktop3DLocation& loc)
         strafeRight = 1;
       } else if (event->detail == B) {
           barrelDistort = !barrelDistort;
+      } else if (event->detail == G) {
+          showGround = !showGround;
       } else if (event->detail == R) {
        std::cout << "RESET POSITION!" << std::endl;
        // Reset the desktop location to all zero state
@@ -1533,12 +1567,12 @@ int main(int argc, char ** argv)
         switch (xi_event->evtype) {
         case XI_KeyPress:
           if (!controlDesktop) {
-            processKey(xi_event, true, desktop3DLocation);
+            processXInput2Key(xi_event, true, desktop3DLocation);
           }
           break;
         case XI_KeyRelease:
           if (!controlDesktop) {
-            processKey(xi_event, false, desktop3DLocation);
+            processXInput2Key(xi_event, false, desktop3DLocation);
           }
           break;
         case XI_RawMotion:
