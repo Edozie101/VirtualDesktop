@@ -975,56 +975,48 @@ void renderGL(const Desktop3DLocation& loc)
     glBindTexture(GL_TEXTURE_2D, 0);
 
     glPushMatrix();
-
     {
-      double orientation[16];
-      gluInvertMatrix(get_orientation(), orientation);
-      glMultMatrixd(orientation);
-      glRotated(loc.getXRotation(), 1, 0, 0);
-      glRotated(loc.getYRotation(), 0, 1, 0);
-
+      glTranslated((i2 == 0) ? -0.01 : 0.01, 0, 0);
       glPushMatrix();
-
       {
-        renderSkybox();
-        glTranslated(loc.getXPosition(),
-                     loc.getYPosition(),
-                     loc.getZPosition());
-        glTranslated((i2 == 0) ? -0.01 : 0.01, 0, 0);
+        double orientation[16];
+        gluInvertMatrix(get_orientation(), orientation);
+        glMultMatrixd(orientation);
+        glRotated(loc.getXRotation(), 1, 0, 0);
+        glRotated(loc.getYRotation(), 0, 1, 0);
 
         glPushMatrix();
         {
-          // Lighting Variables
-          const GLfloat light_ambient[]  = { 0.0, 0.0, 0.0, 1.0 };
-          const GLfloat light_diffuse[]  = { 1.0, 1.0, 1.0, 1.0 };
-          const GLfloat light_specular[] = { 1.0, 1.0, 1.0, 1.0 };
-          const GLfloat light_position[] = { 1.0, 1.0, 1.0, 0.0 };
-          const GLfloat mat_ambient[]    = { 0.7, 0.7, 0.7, 1.0 };
-          const GLfloat mat_diffuse[]    = { 0.8, 0.8, 0.8, 1.0 };
-          const GLfloat mat_specular[]   = { 1.0, 1.0, 1.0, 1.0 };
-          const GLfloat high_shininess[] = { 100.0 };
+          renderSkybox();
+          glTranslated(loc.getXPosition(),
+                                   loc.getYPosition(),
+                                   loc.getZPosition());
 
-          if (renderToTexture) {
-            double ySize = ((double)height / (double)width) / 2.0;
-            const double monitorOriginZ = -0.5;
-            glBindTexture(GL_TEXTURE_2D, desktopTexture);
-            glBegin(GL_TRIANGLE_STRIP);
-              glTexCoord2d(0, 0);
-              glVertex3f(-0.5, -ySize, monitorOriginZ);
+          glPushMatrix();
+          {
+            if (renderToTexture) {
+                  double ySize = ((double)height / (double)width) / 2.0;
+                  const double monitorOriginZ = -0.5;
+                  glBindTexture(GL_TEXTURE_2D, desktopTexture);
+                  glBegin(GL_TRIANGLE_STRIP);
+                    glTexCoord2d(0, 0);
+                    glVertex3f(-0.5, -ySize, monitorOriginZ);
 
-              glTexCoord2d(1, 0);
-              glVertex3f(0.5, -ySize, monitorOriginZ);
+                    glTexCoord2d(1, 0);
+                    glVertex3f(0.5, -ySize, monitorOriginZ);
 
-              glTexCoord2d(0, 1);
-              glVertex3f(-0.5, ySize, monitorOriginZ);
+                    glTexCoord2d(0, 1);
+                    glVertex3f(-0.5, ySize, monitorOriginZ);
 
-              glTexCoord2d(1, 1);
-              glVertex3f(0.5, ySize, monitorOriginZ);
-            glEnd();
-            glBindTexture(GL_TEXTURE_2D, 0);
-          } else {
-            renderDesktopToTexture();
+                    glTexCoord2d(1, 1);
+                    glVertex3f(0.5, ySize, monitorOriginZ);
+                  glEnd();
+                  glBindTexture(GL_TEXTURE_2D, 0);
+            } else {
+                renderDesktopToTexture();
+            }
           }
+          glPopMatrix();
         }
         glPopMatrix();
       }
@@ -1513,10 +1505,12 @@ int main(int argc, char ** argv)
   XFixesHideCursor (dpy, overlay);
   setup_hotkey(dpy);
 
-  loadMonitorModel();
+  // loadMonitorModel();
 
   struct timespec ts_start;
   clock_gettime(CLOCK_MONOTONIC, &ts_start);
+
+  getCursorTexture();
 
   XEvent peekEvent;
   int pointerX, pointerY;
