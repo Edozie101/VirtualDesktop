@@ -1476,18 +1476,12 @@ int main(int argc, char ** argv)
   width = attr.width;
   height = attr.height;
 
-  createWindow(display, root);
+  createWindow(dpy, root);
   XIfEvent(dpy, &event, WaitForNotify, (char*)window);
 
   prep_overlay();
   prep_stage();
   XIfEvent(dpy, &event, WaitForNotify, (char*)overlay);
-
-  XSync(dpy, false);
-
-  static GLXContext ctx = glXGetCurrentContext();
-  static GLXDrawable d = glXGetCurrentDrawable();
-  glXMakeContextCurrent(dpy, d, d, ctx);
 
   setup_iphone_listener();
 

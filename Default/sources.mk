@@ -26,5 +26,4 @@ SUBDIRS := \
 . \
 iphone_orientation_plugin \
 glm \
-.metadata/.plugins/org.eclipse.cdt.make.core \
 

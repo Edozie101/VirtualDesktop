@@ -199,7 +199,7 @@ void createWindow(Display *dpy_, Window root_)
     /* set best mode to current */
     bestMode = 0;
     /* get a connection */
-    display = XOpenDisplay(0);
+    display = dpy_;
     screen = DefaultScreen(display);
     XF86VidModeQueryVersion(display, &vmMajor, &vmMinor);
     printf("XF86 VideoMode extension version %d.%d\n", vmMajor, vmMinor);
