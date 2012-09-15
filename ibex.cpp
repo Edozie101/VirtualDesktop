@@ -1430,7 +1430,7 @@ void processRawMotion(XIRawEvent *event, Desktop3DLocation& loc)
 //           Also toggles barrel distort and ground layer
 // Updated:  Sep 10, 2012
 // ---------------------------------------------------------------------------
-bool processXInput2Key(XIDeviceEvent *event, bool pressed, Desktop3DLocation& loc)
+void processXInput2Key(XIDeviceEvent *event, bool pressed, Desktop3DLocation& loc)
 {
   static KeyCode B = XKeysymToKeycode(dpy, XK_B); // toggle barrel distort
   static KeyCode G = XKeysymToKeycode(dpy, XK_G); // toggle ground
