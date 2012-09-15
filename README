@@ -18,6 +18,14 @@ Move Backwards: S
 Walk Sideways Left (Strafe Left): A/Q
 Walk Sideways Right (Strafe Right): D/E 
 
+Toggle Barrel Lens Distort: B
+Toggle Ground Layer: G
+
+If using the iPhone controller app (source included) you need to connect to the
+correct IP for your computer in the iPhone app.  When you hit "Broadcast" the
+orientation of the phone becomes the base orientation and you will start looking
+around from there.
+
 --
 
 Setting up my Ubuntu 12.04 install:
