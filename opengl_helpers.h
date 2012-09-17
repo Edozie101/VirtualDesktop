@@ -9,5 +9,6 @@
 #define OPENGL_HELPERS_H_
 
 bool gluInvertMatrix(const double m[16], double invOut[16]);
+double distort2ShaderScaleFactor(double ax, double ay);
 
 #endif /* OPENGL_HELPERS_H_ */
