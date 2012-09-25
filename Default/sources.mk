@@ -24,6 +24,9 @@ C_UPPER_DEPS :=
 # Every subdirectory with source files must be described here
 SUBDIRS := \
 . \
+simpleworld_plugin \
+ogre3d_plugin \
+irrlicht_plugin \
 iphone_orientation_plugin \
 glm \
 .metadata/.plugins/org.eclipse.cdt.make.core \

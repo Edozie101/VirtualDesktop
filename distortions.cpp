@@ -4,10 +4,12 @@
  *  Created on: Sep 12, 2012
  *      Author: Hesham Wahba
  */
+#include <stdio.h>
 
 #include "utils.h"
 
-#include <stdio.h>
+#include "distortions.h"
+#include "ibex.h"
 
 typedef struct {
     GLuint vertex_shader, fragment_shader, program;
@@ -117,6 +119,9 @@ GLuint vao1;
 GLuint _vertexBuffer;
 GLuint _indexBuffer;
 int setup_buffers() {
+  glGenVertexArrays(1,&vao1);
+  glBindVertexArray(vao1);
+
   glGenBuffers(1, &_vertexBuffer);
   glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
   glBufferData(GL_ARRAY_BUFFER, sizeof(dataArray), dataArray, GL_STATIC_DRAW);
@@ -125,14 +130,16 @@ int setup_buffers() {
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBuffer);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-  glGenVertexArrays(1,&vao1);
-  glBindVertexArray(vao1);
   glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBuffer);
   glEnableVertexAttribArray(a_position);
-  glEnableVertexAttribArray(a_texCoord);
   glVertexAttribPointer(a_position, 4, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*7, 0);
+  glEnableVertexAttribArray(a_texCoord);
   glVertexAttribPointer(a_texCoord, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*7, (GLvoid*) (sizeof(GLfloat) * 4));
+
+//  glEnableVertexAttribArray(0);
+//  glBindBuffer(GL_ARRAY_BUFFER, 0);
+//  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
   glBindVertexArray(0);
 
   return 1;
@@ -161,14 +168,14 @@ int init_distortion_shader()
 {
         distortion_shader.vertex_shader = make_shader(
                 GL_VERTEX_SHADER,
-                "distortions.v.glsl"
+                "./resources/shaders/distortions.v.glsl"
         );
         if (distortion_shader.vertex_shader == 0)
                 return 0;
 
         distortion_shader.fragment_shader = make_shader(
                 GL_FRAGMENT_SHADER,
-                "distortions.f.glsl"
+                "./resources/shaders/distortions.f.glsl"
         );
         if (distortion_shader.fragment_shader == 0)
           return 0;
@@ -180,9 +187,11 @@ int init_distortion_shader()
         if (distortion_shader.program == 0)
           return 0;
 
-        bool success = setup_buffers();
-        if(!success)
-          return 0;
+        if(!IRRLICHT && !OGRE3D) {
+          bool success = setup_buffers();
+          if(!success)
+            return 0;
+        }
 
         return 1;
 }

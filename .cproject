@@ -26,6 +26,9 @@
 								<option id="gnu.cpp.compiler.option.include.paths.643758422" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="/usr/include/nvidia-current-updates/GL/"/>
 									<listOptionValue builtIn="false" value="/usr/include/X11"/>
+									<listOptionValue builtIn="false" value="/usr/include/OGRE"/>
+									<listOptionValue builtIn="false" value="/usr/include/OIS"/>
+									<listOptionValue builtIn="false" value="/usr/include/irrlicht"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.462667388" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="HAVE_LIBJPEG=1"/>
@@ -36,6 +39,9 @@
 								<option id="gnu.c.compiler.option.include.paths.533718126" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="/usr/include/nvidia-current-updates/GL/"/>
 									<listOptionValue builtIn="false" value="/usr/include/X11"/>
+									<listOptionValue builtIn="false" value="/usr/include/OGRE"/>
+									<listOptionValue builtIn="false" value="/usr/include/OIS"/>
+									<listOptionValue builtIn="false" value="/usr/include/irrlicht"/>
 								</option>
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.326525036" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="HAVE_LIBJPEG=1"/>
@@ -63,6 +69,9 @@
 									<listOptionValue builtIn="false" value="Xi"/>
 									<listOptionValue builtIn="false" value="jpeg"/>
 									<listOptionValue builtIn="false" value="rt"/>
+									<listOptionValue builtIn="false" value="OgreMain"/>
+									<listOptionValue builtIn="false" value="OIS"/>
+									<listOptionValue builtIn="false" value="Irrlicht"/>
 								</option>
 								<option id="gnu.cpp.link.option.paths.1151853828" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="/usr/lib/X11"/>
@@ -77,6 +86,9 @@
 								<option id="gnu.both.asm.option.include.paths.1532626384" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="/usr/include/nvidia-current-updates/GL/"/>
 									<listOptionValue builtIn="false" value="/usr/include/X11"/>
+									<listOptionValue builtIn="false" value="/usr/include/OGRE"/>
+									<listOptionValue builtIn="false" value="/usr/include/OIS"/>
+									<listOptionValue builtIn="false" value="/usr/include/irrlicht"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1649048328" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>

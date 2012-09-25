@@ -40,6 +40,26 @@
 #include <jpeglib.h>
 #include "glm/glm.h"
 
+#include "RendererPlugin.h"
+
+#define ENABLE_OGRE3D 1
+#define ENABLE_IRRLICHT 1
+
+#ifdef ENABLE_OGRE3D
+#include "ogre3d_plugin/TutorialApplication.h"
+#endif
+
+#ifdef ENABLE_IRRLICHT
+#include "irrlicht_plugin/irrlicht_plugin.h"
+#endif
+
+#include "simpleworld_plugin/SimpleWorldRendererPlugin.h"
+
+#include "ibex.h"
+
+RendererPlugin *renderer;
+Ogre3DRendererPlugin *app;
+
 // TODO: get rid of global variables
 Display *dpy;
 Screen *scrn;
@@ -48,88 +68,28 @@ Window overlay;
 
 GLMmodel *pmodel = 0;
 
-// ---------------------------------------------------------------------------
-// Class:    Desktop3DLocation
-// Design:   Belongs to ?
-// Purpose:  Owns information on the global position of desktop in 3D
-// Updated:  Sep 10, 2012
-// ---------------------------------------------------------------------------
-class Desktop3DLocation
-{
-public:
-  // Prevent unforeseen copying
-  explicit Desktop3DLocation()
-    : WALK_SPEED(1.0),
-      m_xRotation(0.0), m_yRotation(0.0), m_zRotation(0.0),
-      m_xPosition(0.0), m_yPosition(0.0), m_zPosition(0.0) {};
-  // Class not intended for inheritence
-  ~Desktop3DLocation() {};
-
-  // Resets the state
-  inline void resetState()
-  {
-    m_xRotation = 0.0;
-    m_yRotation = 0.0;
-    m_zRotation = 0.0;
-    m_xPosition = 0.0;
-    m_yPosition = 0.0;
-    m_zPosition = 0.0;
-  }
-
-  // Get methods for position and rotation
-  inline double getXRotation() const { return m_xRotation; };
-  inline double getYRotation() const { return m_yRotation; };
-  inline double getZRotation() const { return m_zRotation; };
-
-  inline double getXPosition() const { return m_xPosition; };
-  inline double getYPosition() const { return m_yPosition; };
-  inline double getZPosition() const { return m_zPosition; };
-
-  // Set methods for position and rotation
-  inline void setXRotation(const double xRotation) { m_xRotation = xRotation; }
-  inline void setYRotation(const double yRotation) { m_yRotation = yRotation; }
-  inline void setZRotation(const double zRotation) { m_zRotation = zRotation; }
-
-  inline void setXPosition(const double xPosition) { m_xPosition = xPosition; }
-  inline void setYPosition(const double yPosition) { m_yPosition = yPosition; }
-  inline void setZPosition(const double zPosition) { m_zPosition = zPosition; }
-
-  // Modify location of the desktop in 3D
-  inline void walk(double forward, double right, double seconds)
-  {
-    const double walkSpeedSec = WALK_SPEED * seconds;
-
-    m_xPosition -= sin(m_yRotation / 90.0 * M_PI_2) * walkSpeedSec * forward;
-    m_zPosition += cos(m_yRotation / 90.0 * M_PI_2) * walkSpeedSec * forward;
-
-    m_xPosition -= cos(-m_yRotation / 90.0 * M_PI_2) * walkSpeedSec * right;
-    m_zPosition += sin(-m_yRotation / 90.0 * M_PI_2) * walkSpeedSec * right;
-  }
-
-private:
-  // Prevent compiler from generating copy semantics by default
-  Desktop3DLocation(const Desktop3DLocation& loc);
-  Desktop3DLocation& operator=(const Desktop3DLocation& loc);
-
-  // Local constants
-  const double WALK_SPEED;
-
-  // State of the class: location and orientation in 3D
-  double m_yRotation;
-  double m_xRotation;
-  double m_zRotation;
-  double m_xPosition;
-  double m_yPosition;
-  double m_zPosition;
-};
-
 // TODO: get rid of global variables
 static bool controlDesktop  = 1;
-static bool ortho           = 1;
-static bool renderToTexture = 1;
-static bool USE_FBO         = 1;
-static bool showGround      = 0;
-static bool barrelDistort   = 0;
+
+// external variables
+bool showGround             = 0;
+bool barrelDistort          = 0;
+bool ortho                  = 1;
+bool renderToTexture        = 1;
+bool USE_FBO                = 1;
+bool OGRE3D                 = 0;
+bool IRRLICHT               = 0;
+GLuint fbos[2];
+GLuint textures[2];
+
+GLuint depthBuffer;
+
+GLuint desktopFBO;
+GLuint desktopTexture(0);
+
+
+
+GLuint cursorTexture(0);
 
 static int xi_opcode;
 static int xfixes_event_base;
@@ -137,7 +97,6 @@ static int xfixes_event_base;
 double walkForward = 0;
 double strafeRight = 0;
 
-GLuint cursorTexture(0);
 
 ///// FROM COMPIZ
 static int errors = 0;
@@ -208,70 +167,6 @@ int checkForError (Display *dpy)
 */
 
 // ---------------------------------------------------------------------------
-// Function: checkForErrors
-// Design:   Belongs to OpenGL component
-// Purpose:  Prints OpenGL errors
-// Updated:  Sep 10, 2012
-// ---------------------------------------------------------------------------
-inline static bool checkForErrors()
-{
-  static bool doCheck = true;
-
-  if (!doCheck)
-    return false;
-
-  const char* errorString = 0;
-  bool retVal = false;
-
-  switch( glGetError() ) {
-    case GL_NO_ERROR:
-      retVal = true;
-      break;
-
-    case GL_INVALID_ENUM:
-      errorString = "GL_INVALID_ENUM";
-      break;
-
-    case GL_INVALID_VALUE:
-      errorString = "GL_INVALID_VALUE";
-      break;
-
-    case GL_INVALID_OPERATION:
-      errorString = "GL_INVALID_OPERATION";
-      break;
-
-    case GL_INVALID_FRAMEBUFFER_OPERATION:
-      errorString = "GL_INVALID_FRAMEBUFFER_OPERATION";
-      break;
-
-    // OpenGLES Specific Errors
-#ifdef ATHENA_OPENGLES
-    case GL_STACK_OVERFLOW:
-      errorString = "GL_STACK_OVERFLOW";
-      break;
-
-    case GL_STACK_UNDERFLOW:
-      errorString = "GL_STACK_UNDERFLOW";
-      break;
-#endif
-
-    case GL_OUT_OF_MEMORY:
-      errorString = "GL_OUT_OF_MEMORY";
-      break;
-
-    default:
-      errorString = "UNKNOWN";
-      break;
-  }
-
-  if (!retVal)
-    std::cerr << "OpenGL ERROR: " << errorString << std::endl;
-
-  return retVal;
-}
-
-
-// ---------------------------------------------------------------------------
 // Function: allow_input_passthrough
 // Design:   Belongs to X11 component
 // Purpose:
@@ -297,6 +192,7 @@ void allow_input_passthrough(Window w)
 void prep_root(void)
 {
   dpy = XOpenDisplay(0);
+  display = dpy;
 
   bool hasNamePixmap = false;
   int event_base, error_base;
@@ -374,7 +270,6 @@ void prep_root(void)
                           XFixesDisplayCursorNotifyMask);
 }
 
-
 // ---------------------------------------------------------------------------
 // Function: prep_overlay
 // Design:   Belongs to X11 component
@@ -396,14 +291,14 @@ Window stage_win;
 // Purpose:
 // Updated:  Sep 10, 2012
 // ---------------------------------------------------------------------------
-void prep_stage(void)
+void prep_stage(Window window_)
 {
-  XReparentWindow(dpy, window, overlay, 0, 0);
-  XSelectInput(dpy, window, ExposureMask |
+  XReparentWindow(dpy, window_, overlay, 0, 0);
+  XSelectInput(dpy, window_, ExposureMask |
                             PointerMotionMask |
                             KeyPressMask |
                             SubstructureNotifyMask);
-  allow_input_passthrough(window);
+  allow_input_passthrough(window_);
 }
 
 
@@ -467,7 +362,7 @@ static Bool WaitForNotify(Display *d, XEvent *e, char *arg)
 // TODO: split into a separate file
 // ===========================================================================
 
-static GLfloat top(0), bottom(1);
+GLfloat top(0), bottom(1);
 static GLuint texture = 0;
 
 // ---------------------------------------------------------------------------
@@ -495,21 +390,21 @@ std::map<Window, WindowInfo> redirectedWindows;
 // Purpose:
 // Updated:  Sep 10, 2012
 // ---------------------------------------------------------------------------
-void unbindRedirectedWindow(Window window)
+void unbindRedirectedWindow(Display *display_, Window window)
 {
   if (redirectedWindows.find(window) != redirectedWindows.end()) {
-    WindowInfo windowInfo = redirectedWindows[window];
+    const WindowInfo &windowInfo = redirectedWindows[window];
 
     if (windowInfo.texture > 0)
       glDeleteTextures(1, &windowInfo.texture);
 
     if (windowInfo.glxpixmap > 0) {
-      glXReleaseTexImageEXT (display, windowInfo.glxpixmap, GLX_FRONT_LEFT_EXT);
-      glXDestroyGLXPixmap(display, windowInfo.glxpixmap);
+      glXReleaseTexImageEXT (display_, windowInfo.glxpixmap, GLX_FRONT_LEFT_EXT);
+      glXDestroyGLXPixmap(display_, windowInfo.glxpixmap);
     }
 
     if (windowInfo.pixmap > 0)
-      XFreePixmap(display, windowInfo.pixmap);
+      XFreePixmap(display_, windowInfo.pixmap);
 
     redirectedWindows.erase(window);
   }
@@ -522,7 +417,7 @@ void unbindRedirectedWindow(Window window)
 // Purpose:
 // Updated:  Sep 10, 2012
 // ---------------------------------------------------------------------------
-void bindRedirectedWindowToTexture(Display *display, Window window, int screen)
+void bindRedirectedWindowToTexture(Display *display_, Window window_, int screen_)
 {
   static const int pixmapAttribs[] = { GLX_TEXTURE_TARGET_EXT,
                                        GLX_TEXTURE_2D_EXT,
@@ -532,20 +427,20 @@ void bindRedirectedWindowToTexture(Display *display, Window window, int screen)
 
   WindowInfo windowInfo;
   XWindowAttributes *attrib;
-  if (redirectedWindows.find(window) != redirectedWindows.end()) {
-    windowInfo = redirectedWindows[window];
+  if (redirectedWindows.find(window_) != redirectedWindows.end()) {
+    windowInfo = redirectedWindows[window_];
   } else {
-    XGetWindowAttributes( display, window, &windowInfo.attrib );
+    XGetWindowAttributes( display_, window_, &windowInfo.attrib );
     if (windowInfo.attrib.map_state != IsViewable) {
-      redirectedWindows[window] = windowInfo;
+      redirectedWindows[window_] = windowInfo;
       return;
     }
 
-    Pixmap pixmap = XCompositeNameWindowPixmap(display, window);
+    Pixmap pixmap = XCompositeNameWindowPixmap(display_, window_);
     if (!pixmap)
       return;
 
-    GLXPixmap glxpixmap = glXCreatePixmap(display, fbconfig, pixmap,
+    GLXPixmap glxpixmap = glXCreatePixmap(display_, fbconfig, pixmap,
                                           pixmapAttribs);
 
     GLuint tempTexture;
@@ -553,12 +448,12 @@ void bindRedirectedWindowToTexture(Display *display, Window window, int screen)
     windowInfo.pixmap    = pixmap;
     windowInfo.glxpixmap = glxpixmap;
     windowInfo.texture   = tempTexture;
-    windowInfo.window    = window;
+    windowInfo.window    = window_;
 
-    redirectedWindows[window] = windowInfo;
+    redirectedWindows[window_] = windowInfo;
 
     glBindTexture(GL_TEXTURE_2D, windowInfo.texture);
-    glXBindTexImageEXT(display, windowInfo.glxpixmap, GLX_FRONT_LEFT_EXT, 0);
+    glXBindTexImageEXT(display_, windowInfo.glxpixmap, GLX_FRONT_LEFT_EXT, 0);
   }
 
   attrib = &windowInfo.attrib;
@@ -580,6 +475,11 @@ void bindRedirectedWindowToTexture(Display *display, Window window, int screen)
   const double originX = (double)attrib->x/(double)width - 0.5;
   const double originY = (double)-attrib->y/(double)height + 0.5;
   const double originZ = (renderToTexture) ? 0 : -1.21;
+
+  if(OGRE3D) {
+    std::cerr << attrib->width << ", " << attrib->height << ", " << originX << ", " << originY << ", " << right << ", " << t << " -- " << windowInfo.texture << std::endl;
+  }
+
   glColor4f(1, 1, 1, 1);
   glBegin(GL_TRIANGLE_STRIP);
   glTexCoord2d(0, bottom);
@@ -621,13 +521,6 @@ glTranslatef(eye * parallax_factor * convergence_distance, 0, 0);
  * for large screens (think cinema) it's something like 0.01
  */
 
-GLuint desktopFBO;
-GLuint desktopTexture;
-
-GLuint fbos[2];
-GLuint textures[2];
-GLuint depthBuffer;
-
 // ---------------------------------------------------------------------------
 // Function: prep_framebuffers
 // Design:   Belongs to OpenGL component
@@ -647,7 +540,9 @@ void prep_framebuffers()
   glGenFramebuffers(1, &desktopFBO);
   glBindFramebuffer(GL_FRAMEBUFFER, desktopFBO);
 
-  glGenTextures(1, &desktopTexture);
+  if(desktopTexture == 0) {
+    glGenTextures(1, &desktopTexture);
+  }
   glBindTexture(GL_TEXTURE_2D, desktopTexture);
 
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -664,6 +559,7 @@ void prep_framebuffers()
     exit(EXIT_FAILURE);
   }
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  glBindTexture(GL_TEXTURE_2D, 0);
 
   glGenFramebuffers(2, fbos);
   glGenRenderbuffers(1, &depthBuffer);
@@ -703,121 +599,6 @@ void prep_framebuffers()
   }
 }
 
-
-GLuint _skybox[6];
-
-// ---------------------------------------------------------------------------
-// Function: loadSkybox
-// Design:   Belongs to OpenGL component
-// Purpose:
-// Updated:  Sep 10, 2012
-// ---------------------------------------------------------------------------
-void loadSkybox()
-{
-  float sizeX = 2048;
-  float sizeY = 2048;
-  _skybox[0] = glmLoadTexture("humus-skybox/negz.jpg", GL_TRUE, GL_FALSE,
-                              GL_TRUE, GL_FALSE, &sizeX, &sizeY);
-  _skybox[1] = glmLoadTexture("humus-skybox/posx.jpg", GL_TRUE, GL_FALSE,
-                              GL_TRUE, GL_FALSE, &sizeX, &sizeY);
-  _skybox[2] = glmLoadTexture("humus-skybox/posz.jpg", GL_TRUE, GL_FALSE,
-                              GL_TRUE, GL_FALSE, &sizeX, &sizeY);
-  _skybox[3] = glmLoadTexture("humus-skybox/negx.jpg", GL_TRUE, GL_FALSE,
-                              GL_TRUE, GL_FALSE, &sizeX, &sizeY);
-  _skybox[4] = glmLoadTexture("humus-skybox/posy.jpg", GL_TRUE, GL_FALSE,
-                              GL_TRUE, GL_FALSE, &sizeX, &sizeY);
-  _skybox[5] = glmLoadTexture("humus-skybox/negy.jpg", GL_TRUE, GL_FALSE,
-                              GL_TRUE, GL_FALSE, &sizeX, &sizeY);
-
-  std::cout << _skybox[5] << std::endl;
-}
-
-
-// ---------------------------------------------------------------------------
-// Function: renderSkybox
-// Design:   Belongs to OpenGL component
-// Purpose:
-// Updated:  Sep 10, 2012
-// ---------------------------------------------------------------------------
-void renderSkybox()
-{
-  static const double skyboxScale = 1000;
-  // Store the current matrix
-  glPushMatrix();
-  glScaled(skyboxScale, skyboxScale, skyboxScale);
-
-  // Enable/Disable features
-  glPushAttrib(GL_ENABLE_BIT);
-  glEnable(GL_TEXTURE_2D);
-  glDisable(GL_DEPTH_TEST);
-  glDisable(GL_LIGHTING);
-  glDisable(GL_BLEND);
-
-  // Just in case we set all vertices to white.
-  glColor4f(1, 1, 1, 1);
-
-  // Render the front quad
-  glBindTexture(GL_TEXTURE_2D, _skybox[0]);
-  glBegin(GL_QUADS);
-    glTexCoord2f(0, 0); glVertex3f(  0.5f, -0.5f, -0.5f );
-    glTexCoord2f(1, 0); glVertex3f( -0.5f, -0.5f, -0.5f );
-    glTexCoord2f(1, 1); glVertex3f( -0.5f,  0.5f, -0.5f );
-    glTexCoord2f(0, 1); glVertex3f(  0.5f,  0.5f, -0.5f );
-  glEnd();
-
-  // Render the left quad
-  glBindTexture(GL_TEXTURE_2D, _skybox[1]);
-  glBegin(GL_QUADS);
-    glTexCoord2f(0, 0); glVertex3f(  0.5f, -0.5f,  0.5f );
-    glTexCoord2f(1, 0); glVertex3f(  0.5f, -0.5f, -0.5f );
-    glTexCoord2f(1, 1); glVertex3f(  0.5f,  0.5f, -0.5f );
-    glTexCoord2f(0, 1); glVertex3f(  0.5f,  0.5f,  0.5f );
-  glEnd();
-
-  // Render the back quad
-  glBindTexture(GL_TEXTURE_2D, _skybox[2]);
-  glBegin(GL_QUADS);
-    glTexCoord2f(0, 0); glVertex3f( -0.5f, -0.5f,  0.5f );
-    glTexCoord2f(1, 0); glVertex3f(  0.5f, -0.5f,  0.5f );
-    glTexCoord2f(1, 1); glVertex3f(  0.5f,  0.5f,  0.5f );
-    glTexCoord2f(0, 1); glVertex3f( -0.5f,  0.5f,  0.5f );
-  glEnd();
-
-  // Render the right quad
-  glBindTexture(GL_TEXTURE_2D, _skybox[3]);
-  glBegin(GL_QUADS);
-    glTexCoord2f(0, 0); glVertex3f( -0.5f, -0.5f, -0.5f );
-    glTexCoord2f(1, 0); glVertex3f( -0.5f, -0.5f,  0.5f );
-    glTexCoord2f(1, 1); glVertex3f( -0.5f,  0.5f,  0.5f );
-    glTexCoord2f(0, 1); glVertex3f( -0.5f,  0.5f, -0.5f );
-  glEnd();
-
-  // Render the top quad
-  glBindTexture(GL_TEXTURE_2D, _skybox[4]);
-  glBegin(GL_QUADS);
-    glTexCoord2f(0, 1); glVertex3f( -0.5f,  0.5f, -0.5f );
-    glTexCoord2f(0, 0); glVertex3f( -0.5f,  0.5f,  0.5f );
-    glTexCoord2f(1, 0); glVertex3f(  0.5f,  0.5f,  0.5f );
-    glTexCoord2f(1, 1); glVertex3f(  0.5f,  0.5f, -0.5f );
-  glEnd();
-
-  // Render the bottom quad
-  glBindTexture(GL_TEXTURE_2D, _skybox[5]);
-  glBegin(GL_QUADS);
-    glTexCoord2f(0, 0); glVertex3f( -0.5f, -0.5f, -0.5f );
-    glTexCoord2f(0, 1); glVertex3f( -0.5f, -0.5f,  0.5f );
-    glTexCoord2f(1, 1); glVertex3f(  0.5f, -0.5f,  0.5f );
-    glTexCoord2f(1, 0); glVertex3f(  0.5f, -0.5f, -0.5f );
-  glEnd();
-
-  // Restore enable bits and matrix
-  glPopAttrib();
-  glPopMatrix();
-
-  glBindTexture(GL_TEXTURE_2D, 0);
-}
-
-
 // ---------------------------------------------------------------------------
 // Function: renderDesktopToTexture
 // Design:   Interface between OpenGL and Input Hardware Control component
@@ -833,7 +614,7 @@ void renderDesktopToTexture()
     if (!checkForErrors()) {
       exit(EXIT_FAILURE);
     }
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   }
 
   long unsigned int wId;
@@ -842,7 +623,6 @@ void renderDesktopToTexture()
   static Window parent, root2;
   Window *children;
   static unsigned int countChildren;
-  static XWindowAttributes attr;
 
   Bool mousePositionGrabbed(false);
   Window window_returned;
@@ -861,7 +641,7 @@ void renderDesktopToTexture()
 
   XSync(dpy, false);
   XGrabServer(dpy);
-  mousePositionGrabbed = XQueryPointer(display, XDefaultRootWindow(dpy),
+  mousePositionGrabbed = XQueryPointer(dpy, XDefaultRootWindow(dpy),
                                        &window_returned, &window_returned,
                                        &root_x, &root_y, &win_x, &win_y,
                                        &mask_return);
@@ -881,8 +661,6 @@ void renderDesktopToTexture()
                              PointerMotionMask |
                              ExposureMask);
     }
-
-    XGetWindowAttributes( dpy, wId, &attr );
 
     if (!renderToTexture)
       glTranslatef(0, 0, d*0.0001);
@@ -934,9 +712,23 @@ void renderDesktopToTexture()
       glMatrixMode(GL_MODELVIEW);
       glEnable(GL_DEPTH_TEST);
     }
-
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
   }
+}
+
+
+
+// ---------------------------------------------------------------------------
+// Function: initedOpenGL
+// Design:   Belongs (mostly) to OpenGL component
+// Purpose:  Whether OpenGL has been inited for rendering to texture
+// Updated:  Sep 10, 2012
+// TODO:     Split into separate functions
+// ---------------------------------------------------------------------------
+static bool initedOpenGL = false;
+bool didInitOpenGL() {
+//  std::cerr << "didInitOpenGL: " << initedOpenGL << std::endl;
+  return initedOpenGL;
 }
 
 // ---------------------------------------------------------------------------
@@ -946,7 +738,7 @@ void renderDesktopToTexture()
 // Updated:  Sep 10, 2012
 // TODO:     Split into separate functions
 // ---------------------------------------------------------------------------
-void renderGL(const Desktop3DLocation& loc)
+void renderGL(Desktop3DLocation& loc, double timeDiff_)
 {
   static int frame = 0, time, timebase = 0, count = 0;
   frame++;
@@ -959,180 +751,57 @@ void renderGL(const Desktop3DLocation& loc)
     frame = 0;
   }
 
-  if (renderToTexture) {
+  renderer->step(loc, timeDiff_);
+
+  if (!initedOpenGL) {
+    initedOpenGL = true;
+
+    if(renderer->getWindowID()) window = renderer->getWindowID();
+    if (OGRE3D || IRRLICHT) {
+      context = glXGetCurrentContext();
+      bool r = glXMakeCurrent(dpy, window, context);
+      std::cerr << "R: " << r << std::endl;
+
+      glewExperimental = true;
+      GLenum err = glewInit();
+      std::cerr << "Inited GLEW: " << err << std::endl;
+      if (GLEW_OK != err) {
+        // GLEW failed!
+        exit(1);
+      }
+
+      fbconfig = getFBConfigFromContext(dpy, context);
+      std::cerr << "Got fbconfig: " << fbconfig << std::endl;
+    }
+
+    bool success = init_distortion_shader();
+    if (!success) {
+      std::cerr << "Failed to init distortion shader!" << std::endl;
+      exit(1);
+    }
+
+    if (texture == 0) {
+      std::cout << "gen texture" << std::endl;
+      glGenTextures(1, &texture);
+      checkForErrors();
+      std::cout << "gen texture done" << std::endl;
+    }
+
+    if (USE_FBO) prep_framebuffers();
+
+    renderer->setDesktopTexture(desktopTexture);
+
+    getCursorTexture();
+  }
+
+  if (renderToTexture && !OGRE3D && !IRRLICHT) {
     renderDesktopToTexture();
   }
 
-  for (int i2 = 0; i2 < 2; ++i2) {
-    if (USE_FBO) {
-      glBindFramebuffer(GL_FRAMEBUFFER, fbos[i2]);
-      if (!checkForErrors()) {
-        std::cerr << "GL ISSUE" << std::endl;
-        exit(EXIT_FAILURE);
-      }
-      glPushMatrix();
-    } else {
-      if (i2 > 0)
-        break;
-    }
-
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, 0);
-
-    glPushMatrix();
-    {
-      glTranslated((i2 == 0) ? -0.01 : 0.01, 0, 0);
-      glPushMatrix();
-      {
-        double orientation[16];
-        gluInvertMatrix(get_orientation(), orientation);
-        glMultMatrixd(orientation);
-        glRotated(loc.getXRotation(), 1, 0, 0);
-        glRotated(loc.getYRotation(), 0, 1, 0);
-        glTranslated(0, -1.5, 0);
-
-        glPushMatrix();
-        {
-          renderSkybox();
-          glTranslated(loc.getXPosition(),
-                                   loc.getYPosition(),
-                                   loc.getZPosition());
-
-          glPushMatrix();
-          {
-            if(showGround) {
-              static float sizeX = 64;
-              static float sizeY = 64;
-              static const int gridSize = 25;
-              static const int textureRepeat = 2*gridSize;
-              static const GLuint groundTexture = glmLoadTexture("humus-skybox/negy.jpg", GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE, &sizeX, &sizeY);
-              glBindTexture(GL_TEXTURE_2D, groundTexture);
-              glBegin(GL_TRIANGLE_STRIP);
-                glTexCoord2d(0, 0);
-                glVertex3f(-gridSize, 0, -gridSize);
-
-                glTexCoord2d(textureRepeat, 0);
-                glVertex3f(gridSize, 0, -gridSize);
-
-                glTexCoord2d(0, textureRepeat);
-                glVertex3f(-gridSize, 0, gridSize);
-
-                glTexCoord2d(textureRepeat, textureRepeat);
-                glVertex3f(gridSize, 0, gridSize);
-              glEnd();
-              glBindTexture(GL_TEXTURE_2D, 0);
-            }
-
-            if (renderToTexture) {
-                  double ySize = ((double)height / (double)width) / 2.0;
-                  glTranslated(0, 1.5, 0);
-                  const double monitorOriginZ = -0.5;
-                  glBindTexture(GL_TEXTURE_2D, desktopTexture);
-                  glBegin(GL_TRIANGLE_STRIP);
-                    glTexCoord2d(0, 0);
-                    glVertex3f(-0.5, -ySize, monitorOriginZ);
-
-                    glTexCoord2d(1, 0);
-                    glVertex3f(0.5, -ySize, monitorOriginZ);
-
-                    glTexCoord2d(0, 1);
-                    glVertex3f(-0.5, ySize, monitorOriginZ);
-
-                    glTexCoord2d(1, 1);
-                    glVertex3f(0.5, ySize, monitorOriginZ);
-                  glEnd();
-                  glBindTexture(GL_TEXTURE_2D, 0);
-            } else {
-                renderDesktopToTexture();
-            }
-          }
-          glPopMatrix();
-        }
-        glPopMatrix();
-      }
-      glPopMatrix();
-    }
-    glPopMatrix();
-
-    if (USE_FBO) {
-      glPopMatrix();
-    }
-  }
-
-  if (USE_FBO) {
-    if (ortho) {
-      glMatrixMode(GL_PROJECTION);
-      glLoadIdentity();
-      glOrtho(0, 1, 0, 1, -1, 1);
-      glMatrixMode(GL_MODELVIEW);
-    }
-
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glColor4f(1, 1, 1, 1);
-    if(barrelDistort) {
-        render_distorted_frame(true, textures[0]);
-        render_distorted_frame(false, textures[1]);
-    } else {
-      for (int i = 0; i < 2; ++i) {
-        if (ortho) {
-          double originX = (i == 0) ? 0 : 0.5;
-          glBindTexture(GL_TEXTURE_2D, textures[i]);
-          glPushMatrix();
-          glColor4f(1, 1, 1, 1);
-          glBegin(GL_TRIANGLE_STRIP);
-            glTexCoord2d(0, bottom);
-            glVertex3f(originX, 0, 0);
-
-            glTexCoord2d(1, bottom);
-            glVertex3f(originX + 0.5, 0, 0);
-
-            glTexCoord2d(0, top);
-            glVertex3f(originX, 1, 0);
-
-            glTexCoord2d(1, top);
-            glVertex3f(originX + 0.5, 1, 0);
-          glEnd();
-          glPopMatrix();
-        } else {
-          glBindTexture(GL_TEXTURE_2D, textures[i]);
-          glPushMatrix();
-          glTranslated((i < 1) ? -0.98 : 0, -0.5, -2.4);
-          glColor4f(1, 1, 1, 1);
-          glBegin(GL_TRIANGLE_STRIP);
-            glTexCoord2d(0, bottom);
-            glVertex3f(0, 0, 0);
-
-            glTexCoord2d(1, bottom);
-            glVertex3f(1,0,0);
-
-            glTexCoord2d(0, top);
-            glVertex3f(0,1,0);
-
-            glTexCoord2d(1, top);
-            glVertex3f(1,1,0);
-          glEnd();
-          glPopMatrix();
-        }
-      }
-    }
-
-    if (ortho) {
-      glMatrixMode(GL_PROJECTION);
-      glLoadIdentity();
-//      gluPerspective(120.0f, 0.75, 0.01f, 1000.0f);
-      gluPerspective(110.0f, 0.81818181, 0.01f, 1000.0f);
-      glMatrixMode(GL_MODELVIEW);
-    }
-  }
-
-  if (doubleBuffered) {
+  if(renderer->needsSwapBuffers()) {
     glXSwapBuffers(display, window);
   }
 }
-
 
 // ---------------------------------------------------------------------------
 // Function: initGL
@@ -1173,8 +842,6 @@ void initGL()
 
   glFlush();
 }
-
-
 
 // ---------------------------------------------------------------------------
 // Function: loadMonitorModel
@@ -1396,6 +1063,8 @@ void debugRawMotion(XIRawEvent *event)
 // Purpose:  Modifies desktop orientation/position using mouse as a tracker
 // Updated:  Sep 10, 2012
 // ---------------------------------------------------------------------------
+double relativeMouseX = 0;
+double relativeMouseY = 0;
 void processRawMotion(XIRawEvent *event, Desktop3DLocation& loc)
 {
   double *raw_valuator = event->raw_values;
@@ -1410,12 +1079,14 @@ void processRawMotion(XIRawEvent *event, Desktop3DLocation& loc)
         yRotation += (double)(*valuator - *raw_valuator) /
                      (double)width * 180.0;
         loc.setYRotation(yRotation);
+        relativeMouseY = (double)(*valuator - *raw_valuator);
         break;
       case 1:
         xRotation = loc.getXRotation();
         xRotation += (double)(*valuator - *raw_valuator) /
                      (double)width * 180.0;
         loc.setXRotation(xRotation);
+        relativeMouseX = (double)(*valuator - *raw_valuator);
         break;
       }
       valuator++;
@@ -1432,6 +1103,7 @@ void processRawMotion(XIRawEvent *event, Desktop3DLocation& loc)
 //           Also toggles barrel distort and ground layer
 // Updated:  Sep 10, 2012
 // ---------------------------------------------------------------------------
+static bool jump = false;
 void processXInput2Key(XIDeviceEvent *event, bool pressed, Desktop3DLocation& loc)
 {
   static KeyCode B = XKeysymToKeycode(dpy, XK_B); // toggle barrel distort
@@ -1444,6 +1116,7 @@ void processXInput2Key(XIDeviceEvent *event, bool pressed, Desktop3DLocation& lo
   static KeyCode Q = XKeysymToKeycode(dpy, XK_Q);
   static KeyCode E = XKeysymToKeycode(dpy, XK_E);
   static KeyCode R = XKeysymToKeycode(dpy, XK_R);
+  static KeyCode SPACE = XKeysymToKeycode(dpy, XK_space);
 
   if (!controlDesktop) {
     if (pressed) {
@@ -1467,6 +1140,8 @@ void processXInput2Key(XIDeviceEvent *event, bool pressed, Desktop3DLocation& lo
        std::cout << "RESET POSITION!" << std::endl;
        // Reset the desktop location to all zero state
        loc.resetState();
+      } else if (event->detail == SPACE) {
+        jump = true;
       }
     } else {
       if (walkForward ==  1 && event->detail == W)
@@ -1477,6 +1152,8 @@ void processXInput2Key(XIDeviceEvent *event, bool pressed, Desktop3DLocation& lo
         strafeRight = 0;
       if (strafeRight == -1 && (event->detail == A || event->detail == Q))
         strafeRight = 0;
+      if (jump && event->detail == SPACE)
+        jump = false;
     }
   }
 }
@@ -1506,39 +1183,36 @@ int main(int argc, char ** argv)
   width = attr.width;
   height = attr.height;
 
-  createWindow(dpy, root);
-  XIfEvent(dpy, &event, WaitForNotify, (char*)window);
+  if(OGRE3D) {
+    renderer = new Ogre3DRendererPlugin(dpy, screen, window, visinfo, (unsigned long)context);
+    renderer->init();
+  } else if(IRRLICHT) {
+    renderer = new IrrlichtRendererPlugin();
+    renderer->init();
+    dpy = display;
+//    irrlicht_run_loop();
+  } else {
+    createWindow(dpy, root);
+    XIfEvent(dpy, &event, WaitForNotify, (char*)window);
 
-  prep_overlay();
-  prep_stage();
-  XIfEvent(dpy, &event, WaitForNotify, (char*)overlay);
-
-  setup_iphone_listener();
+    renderer = new SimpleWorldRendererPlugin();
+    renderer->init();
+  }
 
   glutInit(&argc, argv);
 
-  bool success = init_distortion_shader();
-  if(!success) {
-      std::cerr << "Failed to init distortion shader!" << std::endl;
-      exit(1);
+  prep_overlay();
+  if(renderer->getWindowID()) {
+    window = renderer->getWindowID();
   }
+  prep_stage(window);
+//  XIfEvent(dpy, &event, WaitForNotify, (char*)overlay);
 
-  if (texture == 0) {
-    std::cout << "gen texture" << std::endl;
-    glGenTextures (1, &texture);
-    checkForErrors();
-    std::cout << "gen texture done" << std::endl;
-  }
-
-  if (USE_FBO)
-    prep_framebuffers();
-
-  std::cout << "dpy: " << dpy << ", display: " << display << std::endl;
+  setup_iphone_listener();
+  std::cerr << "dpy: " << dpy << ", display: " << display << std::endl;
 
   // Set X error handler here since expected errors on some window mappings
   XSetErrorHandler(errorHandler);
-
-  loadSkybox();
 
   XFixesHideCursor (dpy, overlay);
   setup_hotkey(dpy);
@@ -1548,12 +1222,9 @@ int main(int argc, char ** argv)
   struct timespec ts_start;
   clock_gettime(CLOCK_MONOTONIC, &ts_start);
 
-  getCursorTexture();
-
   XEvent peekEvent;
   int pointerX, pointerY;
   unsigned int pointerMods;
-
   // wait for events and eat up cpu. ;-)
   while (!done) {
     // handle the events in the queue
@@ -1605,7 +1276,7 @@ int main(int argc, char ** argv)
         case MapNotify:
         case DestroyNotify:
         case UnmapNotify:
-          unbindRedirectedWindow(event.xclient.window);
+          unbindRedirectedWindow(dpy, event.xclient.window);
           break;
 
         case ButtonPress:
@@ -1649,6 +1320,8 @@ int main(int argc, char ** argv)
       }
     }
 
+    renderer->processEvents();
+
     struct timespec ts_current;
     clock_gettime(CLOCK_MONOTONIC, &ts_current);
 
@@ -1656,11 +1329,15 @@ int main(int argc, char ** argv)
       walkForward = strafeRight = 0;
     }
 
-    desktop3DLocation.walk(walkForward, strafeRight,
-                   (double)(ts_current.tv_sec - ts_start.tv_sec) +
-                   (double)(ts_current.tv_nsec - ts_start.tv_nsec) * 1.0e-09);
+    double timeDiff = (double)(ts_current.tv_sec - ts_start.tv_sec) + (double)(ts_current.tv_nsec - ts_start.tv_nsec) * 1.0e-09;
+    desktop3DLocation.walk(walkForward, strafeRight, timeDiff);
 
-    renderGL(desktop3DLocation);
+    renderer->move(walkForward, strafeRight, jump, relativeMouseX, relativeMouseY);
+
+    renderGL(desktop3DLocation, timeDiff);
+
+    relativeMouseX = 0;
+    relativeMouseY = 0;
 
     ts_start = ts_current;
   }
@@ -1669,3 +1346,4 @@ int main(int argc, char ** argv)
 
   return 0;
 }
+
