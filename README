@@ -9,6 +9,11 @@ so that you can be flying on a plane, for example, but still be flanked by
 multiple large high resolution monitors and still be effective rather than be
 limited by a tiny laptop screen.
 
+Launch
+------
+Default simple renderer: ./ibex
+Fancy Irrlicht renderer with Quake 3 level: ./ibex -i
+
 Controls
 --------
 Toggle Control Desktop/Move Around World: CTRL+SHIFT+Y
@@ -17,6 +22,7 @@ Move Forward: W
 Move Backwards: S
 Walk Sideways Left (Strafe Left): A/Q
 Walk Sideways Right (Strafe Right): D/E 
+Jump: SPACE (irrlicht renderer only)
 
 Toggle Barrel Lens Distort: B
 Toggle Ground Layer: G
@@ -31,6 +37,7 @@ around from there.
 Setting up my Ubuntu 12.04 install:
 sudo apt-get install mesa-utils eclipse-cdt freeglut3-dev glew-utils libglew1.6-dev libxrender-dev libxrender1-dbg libxrender1 libxdamage-dev libxdamage1-dbg libxcomposite1-dbg libxcomposite-dev libxxf86vm-dev libxxf86vm1-dbg libxcb1-dev libxrandr-dev libxft-dev libx11-xcb-dev libxi-dev cmake
 sudo apt-get install nvidia-current-updates-dev
+sudo apt-get install libirrlicht-dev irrlicht-doc
  
 To run:
 cd ~/workspace
