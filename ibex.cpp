@@ -8,6 +8,8 @@
 
 // --- Standard library ------------------------------------------------------
 #include <stdlib.h>
+#include <ctype.h>
+#include <unistd.h>
 #include <time.h>
 #include <cstdio>
 #include <cmath>
@@ -42,8 +44,8 @@
 
 #include "RendererPlugin.h"
 
-#define ENABLE_OGRE3D 1
-#define ENABLE_IRRLICHT 1
+//#define ENABLE_OGRE3D 0
+//#define ENABLE_IRRLICHT 1
 
 #ifdef ENABLE_OGRE3D
 #include "ogre3d_plugin/TutorialApplication.h"
@@ -58,7 +60,6 @@
 #include "ibex.h"
 
 RendererPlugin *renderer;
-Ogre3DRendererPlugin *app;
 
 // TODO: get rid of global variables
 Display *dpy;
@@ -1170,6 +1171,26 @@ void processXInput2Key(XIDeviceEvent *event, bool pressed, Desktop3DLocation& lo
 // ===========================================================================
 int main(int argc, char ** argv)
 {
+  int c;
+  while ((c = getopt(argc, argv, "oih")) != -1)
+    switch (c) {
+    case 'o':
+      OGRE3D = true;
+      break;
+    case 'i':
+      IRRLICHT = true;
+      break;
+    case 'h':
+    case '?':
+    default:
+      if (isprint(optopt))
+        fprintf(stderr, "Unknown option `-%c'.\n", optopt);
+      else
+        fprintf(stderr, "Unknown option character `\\x%x'.\n", optopt);
+      return 1;
+    }
+
+
   // Instance of the class that tracks position/orientation of desktop
   Desktop3DLocation desktop3DLocation;
 
@@ -1184,11 +1205,15 @@ int main(int argc, char ** argv)
   height = attr.height;
 
   if(OGRE3D) {
+#ifdef ENABLE_OGRE3D
     renderer = new Ogre3DRendererPlugin(dpy, screen, window, visinfo, (unsigned long)context);
     renderer->init();
+#endif
   } else if(IRRLICHT) {
+#ifdef ENABLE_IRRLICHT
     renderer = new IrrlichtRendererPlugin();
     renderer->init();
+#endif
     dpy = display;
 //    irrlicht_run_loop();
   } else {
