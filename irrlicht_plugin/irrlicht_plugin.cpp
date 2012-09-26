@@ -396,6 +396,7 @@ irrlicht_plugin()
   if (mesh)
     node = smgr->addOctreeSceneNode(mesh->getMesh(0), 0, IDFlag_IsPickable,
         1024); //-1, 1024);
+
 //              node = smgr->addMeshSceneNode(mesh->getMesh(0));
 
   /*
@@ -443,6 +444,19 @@ irrlicht_plugin()
 //  smgr->getActiveCamera()->setID(ID_IsNotPickable);
 
 //  smgr->addCameraSceneNode(0, core::vector3df(0,-40,0), core::vector3df(0,0,0));
+
+
+  // create sky box
+    driver->setTextureCreationFlag(video::ETCF_CREATE_MIP_MAPS, false);
+    scene::ISceneNode* skyboxNode;
+    skyboxNode = smgr->addSkyBoxSceneNode(
+            driver->getTexture("./resources/irrlicht-media/irrlicht2_up.jpg"),
+            driver->getTexture("./resources/irrlicht-media/irrlicht2_dn.jpg"),
+            driver->getTexture("./resources/irrlicht-media/irrlicht2_lf.jpg"),
+            driver->getTexture("./resources/irrlicht-media/irrlicht2_rt.jpg"),
+            driver->getTexture("./resources/irrlicht-media/irrlicht2_ft.jpg"),
+            driver->getTexture("./resources/irrlicht-media/irrlicht2_bk.jpg"));
+    driver->setTextureCreationFlag(video::ETCF_CREATE_MIP_MAPS, true);
 
   /*
    Create our scene node. I don't check the result of calling new, as it

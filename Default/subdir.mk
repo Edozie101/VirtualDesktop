@@ -11,9 +11,6 @@ CPP_SRCS += \
 ../opengl_setup_x11.cpp \
 ../utils.cpp 
 
-OBJ_SRCS += \
-../lcd_monitor.obj 
-
 OBJS += \
 ./RendererPlugin.o \
 ./distortions.o \

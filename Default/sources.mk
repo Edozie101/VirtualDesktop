@@ -25,6 +25,7 @@ C_UPPER_DEPS :=
 SUBDIRS := \
 . \
 simpleworld_plugin \
+resources \
 ogre3d_plugin \
 irrlicht_plugin \
 iphone_orientation_plugin \
