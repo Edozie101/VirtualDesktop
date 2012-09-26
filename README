@@ -37,7 +37,7 @@ around from there.
 Setting up my Ubuntu 12.04 install:
 sudo apt-get install mesa-utils eclipse-cdt freeglut3-dev glew-utils libglew1.6-dev libxrender-dev libxrender1-dbg libxrender1 libxdamage-dev libxdamage1-dbg libxcomposite1-dbg libxcomposite-dev libxxf86vm-dev libxxf86vm1-dbg libxcb1-dev libxrandr-dev libxft-dev libx11-xcb-dev libxi-dev cmake
 sudo apt-get install nvidia-current-updates-dev
-sudo apt-get install libirrlicht-dev irrlicht-doc
+sudo apt-get install libirrlicht-dev
  
 To run:
 cd ~/workspace
