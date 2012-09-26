@@ -2,7 +2,7 @@
  * SimpleWorldRendererPlugin.h
  *
  *  Created on: Sep 25, 2012
- *      Author: parallels
+ *      Author: Hesham Wahba
  */
 
 #ifndef SIMPLEWORLDRENDERERPLUGIN_H_

@@ -2,7 +2,7 @@
  * opengl_setup_x11.cpp
  *
  *  Created on: Sep 22, 2012
- *      Author: parallels
+ *      Author: Hesham Wahba
  */
 #include <iostream>
 

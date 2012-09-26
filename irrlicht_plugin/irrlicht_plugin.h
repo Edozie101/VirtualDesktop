@@ -2,7 +2,7 @@
  * irrlicht_plugin.h
  *
  *  Created on: Sep 22, 2012
- *      Author: parallels
+ *      Author: Hesham Wahba
  */
 
 #ifndef IRRLICHT_PLUGIN_H_

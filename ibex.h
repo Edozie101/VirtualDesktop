@@ -2,7 +2,7 @@
  * ibex.h
  *
  *  Created on: Sep 22, 2012
- *      Author: parallels
+ *      Author: Hesham Wahba
  */
 
 #ifndef IBEX_H_
