@@ -131,7 +131,7 @@ restoreState()
   glPopMatrix();
 }
 
-class CSampleSceneNode : public scene::ISceneNode
+class CDesktopSceneNode : public scene::ISceneNode
 {
 
   /*
@@ -153,7 +153,7 @@ class CSampleSceneNode : public scene::ISceneNode
    */
 public:
 
-  CSampleSceneNode(scene::ISceneNode* parent, scene::ISceneManager* mgr, s32 id) :
+  CDesktopSceneNode(scene::ISceneNode* parent, scene::ISceneManager* mgr, s32 id) :
       scene::ISceneNode(parent, mgr, id)
   {
     Material.Wireframe = false;
@@ -290,7 +290,14 @@ public:
   }
 };
 
-scene::IMeshSceneNode* node = 0;
+static scene::ISceneNode* skyboxNode;
+static scene::IMeshSceneNode* quake3LevelNode = 0;
+static CDesktopSceneNode *desktopNode = 0;
+
+static video::ITexture* rtLeft = 0;
+static video::ITexture* rtRight = 0;
+static scene::ICameraSceneNode* fixedCamera = 0;
+static scene::ICameraSceneNode* mainCamera = 0;
 /*
  Ok, lets start. Again, we use the main() method as start, not the WinMain().
  */
@@ -361,6 +368,24 @@ irrlicht_plugin()
   window = (Window) driver->getExposedVideoData().OpenGLLinux.X11Window;
   display = (Display*) driver->getExposedVideoData().OpenGLLinux.X11Display;
 
+
+  ///////////////////////////////
+  // create render target
+  if (driver->queryFeature(video::EVDF_RENDER_TO_TARGET))
+  {
+    rtLeft = driver->addRenderTargetTexture(core::dimension2d<u32>(640,800), "RTTLeft");
+    rtRight = driver->addRenderTargetTexture(core::dimension2d<u32>(640,800), "RTTRight");
+//          test->setMaterialTexture(0, rt); // set material of cube to render target
+
+    // add fixed camera
+    fixedCamera = smgr->addCameraSceneNode(0, core::vector3df(0, 0, -10), //10,10,-80),
+            core::vector3df(0, 0, 0));//-10,10,-100));
+    core::matrix4 m;
+    fixedCamera->setProjectionMatrix(m.buildProjectionMatrixOrthoLH(1440.0,900.0, -1000.0, 1000.0), true);
+  } else {
+    std::cerr << "** ERROR: SYSTEM DOESN'T SUPPORT RENDER TO TEXTURE" << std::endl;
+  }
+  ///////////////////////////////
   /*
    To display the Quake 3 map, we first need to load it. Quake 3 maps
    are packed into .pk3 files which are nothing else than .zip files.
@@ -394,7 +419,7 @@ irrlicht_plugin()
 //  scene::ISceneNode* node = 0;
 
   if (mesh)
-    node = smgr->addOctreeSceneNode(mesh->getMesh(0), 0, IDFlag_IsPickable,
+    quake3LevelNode = smgr->addOctreeSceneNode(mesh->getMesh(0), 0, IDFlag_IsPickable,
         1024); //-1, 1024);
 
 //              node = smgr->addMeshSceneNode(mesh->getMesh(0));
@@ -407,12 +432,12 @@ irrlicht_plugin()
    irr::scene::ISceneNode::setRotation(), and
    irr::scene::ISceneNode::setScale().
    */
-  if (node) node->setPosition(core::vector3df(-1300+50, -144-20, -1249));
+  if (quake3LevelNode) quake3LevelNode->setPosition(core::vector3df(-1300+50, -144-20, -1249));
 
   scene::ITriangleSelector* selector = 0;
-  if (node) {
-    selector = smgr->createOctreeTriangleSelector(node->getMesh(), node, 128);
-    node->setTriangleSelector(selector);
+  if (quake3LevelNode) {
+    selector = smgr->createOctreeTriangleSelector(quake3LevelNode->getMesh(), quake3LevelNode, 128);
+    quake3LevelNode->setTriangleSelector(selector);
   }
 
   /*
@@ -427,8 +452,8 @@ irrlicht_plugin()
    first person shooter games (FPS) and hence use
    irr::scene::ISceneManager::addCameraSceneNodeFPS().
    */
-  scene::ICameraSceneNode *camera = smgr->addCameraSceneNodeFPS(0, 100.0f, .3f, ID_IsNotPickable, 0, 0, true, 3.f);//,false, true);
-//  scene::ICameraSceneNode *camera =smgr->addCameraSceneNode(0, core::vector3df(0, 0, 0), core::vector3df(0, 0, -10));
+  mainCamera = smgr->addCameraSceneNodeFPS(0, 100.0f, .3f, ID_IsNotPickable, 0, 0, true, 3.f);//,false, true);
+// mainCamera =smgr->addCameraSceneNode(0, core::vector3df(0, 0, 0), core::vector3df(0, 0, -10));
 
   /*
    The mouse cursor needs not be visible, so we hide it via the
@@ -438,8 +463,8 @@ irrlicht_plugin()
 
   ///////////////////////////////////////////////
 
-  smgr->getActiveCamera()->setFOV(110.0 / 180.0 * M_PI);
-  smgr->getActiveCamera()->setAspectRatio(110. / 90.);
+  mainCamera->setFOV(110.0 / 180.0 * M_PI);
+  mainCamera->setAspectRatio(110. / 90.);
 
 //  smgr->getActiveCamera()->setID(ID_IsNotPickable);
 
@@ -448,7 +473,6 @@ irrlicht_plugin()
 
   // create sky box
     driver->setTextureCreationFlag(video::ETCF_CREATE_MIP_MAPS, false);
-    scene::ISceneNode* skyboxNode;
     skyboxNode = smgr->addSkyBoxSceneNode(
             driver->getTexture("./resources/irrlicht-media/irrlicht2_up.jpg"),
             driver->getTexture("./resources/irrlicht-media/irrlicht2_dn.jpg"),
@@ -467,7 +491,7 @@ irrlicht_plugin()
    to drop it only *after* I have finished using it, regardless of what
    the reference count of the object is after creation.
    */
-  CSampleSceneNode *myNode = new CSampleSceneNode(smgr->getRootSceneNode(), smgr, 666);
+  desktopNode = new CDesktopSceneNode(smgr->getRootSceneNode(), smgr, 666);
 
   /*
    To animate something in this boring scene consisting only of one
@@ -492,14 +516,14 @@ irrlicht_plugin()
     anim = 0;
   }
 
-  /*
-   I'm done with my CSampleSceneNode object, and so must drop my reference.
-   This won't delete the object, yet, because it is still attached to the
-   scene graph, which prevents the deletion until the graph is deleted or the
-   custom scene node is removed from it.
-   */
-  myNode->drop();
-  myNode = 0; // As I shouldn't refer to it again, ensure that I can't
+//  /*
+//   I'm done with my CSampleSceneNode object, and so must drop my reference.
+//   This won't delete the object, yet, because it is still attached to the
+//   scene graph, which prevents the deletion until the graph is deleted or the
+//   custom scene node is removed from it.
+//   */
+//  desktopNode->drop();
+//  desktopNode = 0; // As I shouldn't refer to it again, ensure that I can't
 
 //  scene::ISceneNodeAnimator* anim2 = smgr->createCollisionResponseAnimator(
 //          selector,
@@ -508,10 +532,10 @@ irrlicht_plugin()
 //
   if (selector) {
     scene::ISceneNodeAnimator* anim2 = smgr->createCollisionResponseAnimator(
-        selector, camera, core::vector3df(30, 50, 30),
+        selector, mainCamera, core::vector3df(30, 50, 30),
         core::vector3df(0, -10, 0), core::vector3df(0, 30, 0));
     selector->drop(); // As soon as we're done with the selector, drop it.
-    camera->addAnimator(anim2);
+    mainCamera->addAnimator(anim2);
     anim2->drop(); // And likewise, drop the animator when we're done referring to it.
   }
 
@@ -525,7 +549,6 @@ checkCollisions(Desktop3DLocation& loc)
   static scene::ISceneNode* highlightedSceneNode = 0;
   static scene::ISceneCollisionManager* collMan =
       smgr->getSceneCollisionManager();
-  static scene::ICameraSceneNode *camera = smgr->getActiveCamera();
 
   // Unlight any currently highlighted scene node
   if (highlightedSceneNode) {
@@ -538,8 +561,8 @@ checkCollisions(Desktop3DLocation& loc)
   // trajectory or a sword's position, or create a ray from a mouse click position using
   // ISceneCollisionManager::getRayFromScreenCoordinates()
   core::line3d<f32> ray;
-  ray.start = camera->getPosition();
-  ray.end = ray.start + (camera->getTarget() - ray.start).normalize() * 1000.0f;
+  ray.start = mainCamera->getPosition();
+  ray.end = ray.start + (mainCamera->getTarget() - ray.start).normalize() * 1000.0f;
 
   // Tracks the current intersection point with the level or a mesh
   core::vector3df intersection;
@@ -584,6 +607,21 @@ checkCollisions(Desktop3DLocation& loc)
 void
 irrlicht_step(const Desktop3DLocation& loc)
 {
+  // create test cube
+  static bool init = true;
+  static scene::ISceneNode* leftEye = smgr->addBillboardSceneNode(smgr->getRootSceneNode(), core::dimension2df(720, 900));
+  static scene::ISceneNode* rightEye = smgr->addBillboardSceneNode(smgr->getRootSceneNode(), core::dimension2df(720, 900));
+  if(init) {
+    init = false;
+    leftEye->setPosition(core::vector3df(-1440.0/4.0, 0, 0));//-1440.0/2.0,0,-1440.0/2.0));///2.0));
+    leftEye->setMaterialFlag(video::EMF_LIGHTING, false); // disable dynamic lighting
+    leftEye->setMaterialTexture(0, rtLeft); // set material of cube to render target
+
+    rightEye->setPosition(core::vector3df(1440.0/4.0,0,0));//1440.0/2.0));
+    rightEye->setMaterialFlag(video::EMF_LIGHTING, false); // disable dynamic lighting
+    rightEye->setMaterialTexture(0, rtRight); // set material of cube to render target
+  }
+
   device->run();
 
   static u32 then = device->getTimer()->getTime();
@@ -648,8 +686,30 @@ irrlicht_step(const Desktop3DLocation& loc)
 
   driver->beginScene(true, true, video::SColor(255, 255, 255, 255));
 //  checkCollisions(loc);
+  smgr->setActiveCamera(mainCamera);
+  skyboxNode->setVisible(true);
+  quake3LevelNode->setVisible(true);
+  desktopNode->setVisible(true);
+  leftEye->setVisible(false);
+  rightEye->setVisible(false);
+  driver->setRenderTarget(rtLeft, true, true, video::SColor(0,0,0,255));
+  smgr->drawAll();
+  driver->setRenderTarget(rtRight, true, true, video::SColor(0,0,0,255));
+  smgr->drawAll();
+
+  driver->setRenderTarget(0, true, true, video::SColor(0,0,0,255));
+
+  smgr->setActiveCamera(fixedCamera);
+  skyboxNode->setVisible(false);
+  quake3LevelNode->setVisible(false);
+  desktopNode->setVisible(false);
+  leftEye->setVisible(true);
+  rightEye->setVisible(true);
+
   smgr->drawAll();
   driver->endScene();
+
+  smgr->setActiveCamera(mainCamera);
 
   int fps = driver->getFPS();
 
