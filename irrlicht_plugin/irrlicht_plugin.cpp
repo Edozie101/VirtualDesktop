@@ -728,23 +728,25 @@ irrlicht_step(const Desktop3DLocation& loc)
   desktopNode->setVisible(true);
   leftEye->setVisible(false);
   rightEye->setVisible(false);
-  driver->setRenderTarget(rtLeft, true, true, video::SColor(0, 0, 0, 255));
-  smgr->drawAll();
-  driver->setRenderTarget(rtRight, true, true, video::SColor(0, 0, 0, 255));
-  smgr->drawAll();
+  if(SBS) {
+    driver->setRenderTarget(rtLeft, true, true, video::SColor(0, 0, 0, 255));
+    smgr->drawAll();
+    driver->setRenderTarget(rtRight, true, true, video::SColor(0, 0, 0, 255));
+    smgr->drawAll();
 
-  driver->setRenderTarget(0, true, true, video::SColor(0, 0, 0, 255));
+    driver->setRenderTarget(0, true, true, video::SColor(0, 0, 0, 255));
 
-  smgr->setActiveCamera(fixedCamera);
-  skyboxNode->setVisible(false);
-  quake3LevelNode->setVisible(false);
-  desktopNode->setVisible(false);
-//  leftEye->setPosition(core::vector3df(0,0,0));
-  leftEye->setVisible(true);
-//  rightEye->setPosition(core::vector3df(0,0,0));
-  rightEye->setVisible(true);
+    smgr->setActiveCamera(fixedCamera);
+    skyboxNode->setVisible(false);
+    quake3LevelNode->setVisible(false);
+    desktopNode->setVisible(false);
+    leftEye->setVisible(true);  //  leftEye->setPosition(core::vector3df(0,0,0));
+    rightEye->setVisible(true); //  rightEye->setPosition(core::vector3df(0,0,0));
 
-  smgr->drawAll();
+    smgr->drawAll();
+  } else {
+    smgr->drawAll();
+  }
   driver->endScene();
 
   smgr->setActiveCamera(mainCamera);

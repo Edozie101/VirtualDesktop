@@ -80,6 +80,7 @@ bool renderToTexture        = 1;
 bool USE_FBO                = 1;
 bool OGRE3D                 = 0;
 bool IRRLICHT               = 0;
+bool SBS                    = 1;
 GLuint fbos[2];
 GLuint textures[2];
 
@@ -1172,13 +1173,16 @@ void processXInput2Key(XIDeviceEvent *event, bool pressed, Desktop3DLocation& lo
 int main(int argc, char ** argv)
 {
   int c;
-  while ((c = getopt(argc, argv, "oih")) != -1)
+  while ((c = getopt(argc, argv, "oihm")) != -1)
     switch (c) {
     case 'o':
       OGRE3D = true;
       break;
     case 'i':
       IRRLICHT = true;
+      break;
+    case 'm':
+      SBS = false;
       break;
     case 'h':
     case '?':

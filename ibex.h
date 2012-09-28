@@ -25,6 +25,7 @@ extern bool renderToTexture;
 extern bool USE_FBO;
 extern bool OGRE3D;
 extern bool IRRLICHT;
+extern bool SBS;
 
 // ---------------------------------------------------------------------------
 // Class:    Desktop3DLocation
