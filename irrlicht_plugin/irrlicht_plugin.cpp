@@ -723,6 +723,9 @@ irrlicht_step(const Desktop3DLocation& loc)
   driver->beginScene(true, true, video::SColor(255, 255, 255, 255));
 //  checkCollisions(loc);
   smgr->setActiveCamera(mainCamera);
+  core::matrix4 m;
+  m.setM(get_orientation_f());
+  mainCamera->setViewMatrixAffector(m);
   skyboxNode->setVisible(true);
   quake3LevelNode->setVisible(true);
   desktopNode->setVisible(true);

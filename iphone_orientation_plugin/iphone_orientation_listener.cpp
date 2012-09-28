@@ -98,24 +98,47 @@ void* setup_socket(void *inputData)
 }
 
 static double matrix_returned[16] = {
-		1, 0, 0, 0,
-		0, 1, 0, 0,
-		0, 0, 1, 0,
-		0, 0, 0, 1
+                1, 0, 0, 0,
+                0, 1, 0, 0,
+                0, 0, 1, 0,
+                0, 0, 0, 1
 };
 const double *get_orientation() {
-	int i2 = 0;
-	pthread_mutex_lock(&mymutex);
-	for(int i = 0; i < 16; ++i) {
-		if((i%4)!=3) {
-			matrix_returned[i] = matrix[i2++];
-//			std::cerr << matrix_returned[i];
-//			if(i2%3 == 0) std::cerr  << std::endl;
-		}
-//		std::cerr << matrix_returned[i];
-//		if((i+1)%4 == 0) std::cerr  << std::endl;
-	}
-//	std::cerr << std::endl;
-	pthread_mutex_unlock(&mymutex);
-	return matrix_returned;
+        int i2 = 0;
+        pthread_mutex_lock(&mymutex);
+        for(int i = 0; i < 16; ++i) {
+                if((i%4)!=3) {
+                        matrix_returned[i] = matrix[i2++];
+//                      std::cerr << matrix_returned[i];
+//                      if(i2%3 == 0) std::cerr  << std::endl;
+                }
+//              std::cerr << matrix_returned[i];
+//              if((i+1)%4 == 0) std::cerr  << std::endl;
+        }
+//      std::cerr << std::endl;
+        pthread_mutex_unlock(&mymutex);
+        return matrix_returned;
+}
+
+static float matrix_returned_f[16] = {
+                1, 0, 0, 0,
+                0, 1, 0, 0,
+                0, 0, 1, 0,
+                0, 0, 0, 1
+};
+const float *get_orientation_f() {
+        int i2 = 0;
+        pthread_mutex_lock(&mymutex);
+        for(int i = 0; i < 16; ++i) {
+                if((i%4)!=3) {
+                        matrix_returned_f[i] = matrix[i2++];
+//                      std::cerr << matrix_returned[i];
+//                      if(i2%3 == 0) std::cerr  << std::endl;
+                }
+//              std::cerr << matrix_returned[i];
+//              if((i+1)%4 == 0) std::cerr  << std::endl;
+        }
+//      std::cerr << std::endl;
+        pthread_mutex_unlock(&mymutex);
+        return matrix_returned_f;
 }

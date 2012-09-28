@@ -10,5 +10,6 @@
 
 void setup_iphone_listener();
 const double *get_orientation();
+const float *get_orientation_f();
 
 #endif /* IPHONE_ORIENTATION_LISTENER_H_ */
