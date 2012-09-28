@@ -41,19 +41,31 @@ static scene::ISceneManager* smgr;
 static GLboolean depthTestEnabled;
 static GLboolean stencilTestEnabled;
 
-IrrlichtRendererPlugin::IrrlichtRendererPlugin() {
+static s32 newMaterialType1 = 0;
+static s32 newMaterialType2 = 0;
+
+IrrlichtRendererPlugin::IrrlichtRendererPlugin()
+{
   irrlicht_plugin();
 }
-IrrlichtRendererPlugin::~IrrlichtRendererPlugin() {
+IrrlichtRendererPlugin::~IrrlichtRendererPlugin()
+{
 }
 
-Window IrrlichtRendererPlugin::getWindowID() {
+Window
+IrrlichtRendererPlugin::getWindowID()
+{
   return (Window) driver->getExposedVideoData().OpenGLLinux.X11Window;
 }
-void IrrlichtRendererPlugin::move(int forward_, int right_, bool jump_, double relativeMouseX_, double relativeMouseY_) {
+void
+IrrlichtRendererPlugin::move(int forward_, int right_, bool jump_,
+    double relativeMouseX_, double relativeMouseY_)
+{
   irrlicht_move(forward_, right_, jump_, relativeMouseX_, relativeMouseY_);
 }
-void IrrlichtRendererPlugin::step(const Desktop3DLocation &loc, double timeDiff_) {
+void
+IrrlichtRendererPlugin::step(const Desktop3DLocation &loc, double timeDiff_)
+{
   irrlicht_step(loc);
 }
 
@@ -153,11 +165,13 @@ class CDesktopSceneNode : public scene::ISceneNode
    */
 public:
 
-  CDesktopSceneNode(scene::ISceneNode* parent, scene::ISceneManager* mgr, s32 id) :
+  CDesktopSceneNode(scene::ISceneNode* parent, scene::ISceneManager* mgr,
+      s32 id) :
       scene::ISceneNode(parent, mgr, id)
   {
     Material.Wireframe = false;
     Material.Lighting = false;
+    Material.MaterialType = irr::video::EMT_SOLID;
 
     Vertices[0] = video::S3DVertex(0, 0, 10, 1, 1, 0,
         video::SColor(255, 0, 255, 255), 0, 1);
@@ -180,10 +194,10 @@ public:
 //                for (s32 i=1; i<4; ++i)
 //                        Box.addInternalPoint(Vertices[i].Pos);
 //                Box.reset(Vertices[0].Pos);
-    Box.reset(core::vector3df(-80, -80+yOffset, 150 - 0));
-    Box.addInternalPoint(core::vector3df(80, 0+yOffset, 150 - 0));
-    Box.addInternalPoint(core::vector3df(-80, 80+yOffset, 150 - 0));
-    Box.addInternalPoint(core::vector3df(80, 80+yOffset, 150 - 0));
+    Box.reset(core::vector3df(-80, -80 + yOffset, 150 - 0));
+    Box.addInternalPoint(core::vector3df(80, 0 + yOffset, 150 - 0));
+    Box.addInternalPoint(core::vector3df(-80, 80 + yOffset, 150 - 0));
+    Box.addInternalPoint(core::vector3df(80, 80 + yOffset, 150 - 0));
   }
 
   /*
@@ -222,7 +236,8 @@ public:
   {
     video::IVideoDriver* driver = SceneManager->getVideoDriver();
 
-    static video::ITexture *tex = driver->getTexture("./resources/humus-skybox/posy.jpg");
+    static video::ITexture *tex = driver->getTexture(
+        "./resources/humus-skybox/posy.jpg");
     Material.setTexture(0, tex);
 
     u16 indices[] =
@@ -246,16 +261,16 @@ public:
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glBegin(GL_TRIANGLE_STRIP);
     glTexCoord2d(0, 0);
-    glVertex3f(-0.5, -ySize+yOffset, monitorOriginZ);
+    glVertex3f(-0.5, -ySize + yOffset, monitorOriginZ);
 
     glTexCoord2d(1, 0);
-    glVertex3f(0.5, -ySize+yOffset, monitorOriginZ);
+    glVertex3f(0.5, -ySize + yOffset, monitorOriginZ);
 
     glTexCoord2d(0, 1);
-    glVertex3f(-0.5, ySize+yOffset, monitorOriginZ);
+    glVertex3f(-0.5, ySize + yOffset, monitorOriginZ);
 
     glTexCoord2d(1, 1);
-    glVertex3f(0.5, ySize+yOffset, monitorOriginZ);
+    glVertex3f(0.5, ySize + yOffset, monitorOriginZ);
     glEnd();
     glBindTexture(GL_TEXTURE_2D, 0);
     glPopMatrix();
@@ -368,22 +383,25 @@ irrlicht_plugin()
   window = (Window) driver->getExposedVideoData().OpenGLLinux.X11Window;
   display = (Display*) driver->getExposedVideoData().OpenGLLinux.X11Display;
 
-
   ///////////////////////////////
   // create render target
-  if (driver->queryFeature(video::EVDF_RENDER_TO_TARGET))
-  {
-    rtLeft = driver->addRenderTargetTexture(core::dimension2d<u32>(640,800), "RTTLeft");
-    rtRight = driver->addRenderTargetTexture(core::dimension2d<u32>(640,800), "RTTRight");
+  if (driver->queryFeature(video::EVDF_RENDER_TO_TARGET)) {
+    rtLeft = driver->addRenderTargetTexture(core::dimension2d<u32>(640, 800),
+        "RTTLeft");
+    rtRight = driver->addRenderTargetTexture(core::dimension2d<u32>(640, 800),
+        "RTTRight");
 //          test->setMaterialTexture(0, rt); // set material of cube to render target
 
     // add fixed camera
     fixedCamera = smgr->addCameraSceneNode(0, core::vector3df(0, 0, -10), //10,10,-80),
-            core::vector3df(0, 0, 0));//-10,10,-100));
+    core::vector3df(0, 0, 0)); //-10,10,-100));
     core::matrix4 m;
-    fixedCamera->setProjectionMatrix(m.buildProjectionMatrixOrthoLH(1440.0,900.0, -1000.0, 1000.0), true);
-  } else {
-    std::cerr << "** ERROR: SYSTEM DOESN'T SUPPORT RENDER TO TEXTURE" << std::endl;
+    fixedCamera->setProjectionMatrix(
+        m.buildProjectionMatrixOrthoLH(1440.0, 900.0, -1000.0, 1000.0), true);
+  }
+  else {
+    std::cerr << "** ERROR: SYSTEM DOESN'T SUPPORT RENDER TO TEXTURE"
+        << std::endl;
   }
   ///////////////////////////////
   /*
@@ -393,7 +411,8 @@ irrlicht_plugin()
    we are able to read from the files in that archive as if they are
    directly stored on the disk.
    */
-  device->getFileSystem()->addZipFileArchive("./resources/irrlicht-media/map-20kdm2.pk3");
+  device->getFileSystem()->addZipFileArchive(
+      "./resources/irrlicht-media/map-20kdm2.pk3");
 
   /*
    Now we can load the mesh by calling
@@ -419,8 +438,8 @@ irrlicht_plugin()
 //  scene::ISceneNode* node = 0;
 
   if (mesh)
-    quake3LevelNode = smgr->addOctreeSceneNode(mesh->getMesh(0), 0, IDFlag_IsPickable,
-        1024); //-1, 1024);
+    quake3LevelNode = smgr->addOctreeSceneNode(mesh->getMesh(0), 0,
+        IDFlag_IsPickable, 1024); //-1, 1024);
 
 //              node = smgr->addMeshSceneNode(mesh->getMesh(0));
 
@@ -432,11 +451,13 @@ irrlicht_plugin()
    irr::scene::ISceneNode::setRotation(), and
    irr::scene::ISceneNode::setScale().
    */
-  if (quake3LevelNode) quake3LevelNode->setPosition(core::vector3df(-1300+50, -144-20, -1249));
+  if (quake3LevelNode)
+    quake3LevelNode->setPosition(core::vector3df(-1300 + 50, -144 - 20, -1249));
 
   scene::ITriangleSelector* selector = 0;
   if (quake3LevelNode) {
-    selector = smgr->createOctreeTriangleSelector(quake3LevelNode->getMesh(), quake3LevelNode, 128);
+    selector = smgr->createOctreeTriangleSelector(quake3LevelNode->getMesh(),
+        quake3LevelNode, 128);
     quake3LevelNode->setTriangleSelector(selector);
   }
 
@@ -452,7 +473,8 @@ irrlicht_plugin()
    first person shooter games (FPS) and hence use
    irr::scene::ISceneManager::addCameraSceneNodeFPS().
    */
-  mainCamera = smgr->addCameraSceneNodeFPS(0, 100.0f, .3f, ID_IsNotPickable, 0, 0, true, 3.f);//,false, true);
+  mainCamera = smgr->addCameraSceneNodeFPS(0, 100.0f, .3f, ID_IsNotPickable, 0,
+      0, true, 3.f); //,false, true);
 // mainCamera =smgr->addCameraSceneNode(0, core::vector3df(0, 0, 0), core::vector3df(0, 0, -10));
 
   /*
@@ -470,17 +492,16 @@ irrlicht_plugin()
 
 //  smgr->addCameraSceneNode(0, core::vector3df(0,-40,0), core::vector3df(0,0,0));
 
-
   // create sky box
-    driver->setTextureCreationFlag(video::ETCF_CREATE_MIP_MAPS, false);
-    skyboxNode = smgr->addSkyBoxSceneNode(
-            driver->getTexture("./resources/irrlicht-media/irrlicht2_up.jpg"),
-            driver->getTexture("./resources/irrlicht-media/irrlicht2_dn.jpg"),
-            driver->getTexture("./resources/irrlicht-media/irrlicht2_lf.jpg"),
-            driver->getTexture("./resources/irrlicht-media/irrlicht2_rt.jpg"),
-            driver->getTexture("./resources/irrlicht-media/irrlicht2_ft.jpg"),
-            driver->getTexture("./resources/irrlicht-media/irrlicht2_bk.jpg"));
-    driver->setTextureCreationFlag(video::ETCF_CREATE_MIP_MAPS, true);
+  driver->setTextureCreationFlag(video::ETCF_CREATE_MIP_MAPS, false);
+  skyboxNode = smgr->addSkyBoxSceneNode(
+      driver->getTexture("./resources/irrlicht-media/irrlicht2_up.jpg"),
+      driver->getTexture("./resources/irrlicht-media/irrlicht2_dn.jpg"),
+      driver->getTexture("./resources/irrlicht-media/irrlicht2_lf.jpg"),
+      driver->getTexture("./resources/irrlicht-media/irrlicht2_rt.jpg"),
+      driver->getTexture("./resources/irrlicht-media/irrlicht2_ft.jpg"),
+      driver->getTexture("./resources/irrlicht-media/irrlicht2_bk.jpg"));
+  driver->setTextureCreationFlag(video::ETCF_CREATE_MIP_MAPS, true);
 
   /*
    Create our scene node. I don't check the result of calling new, as it
@@ -501,7 +522,8 @@ irrlicht_plugin()
    irr::scene::ISceneManager::createRotationAnimator() could return 0, so
    should be checked.
    */
-  scene::ISceneNodeAnimator* anim = smgr->createRotationAnimator(core::vector3df(0.8f, 0, 0.8f));
+  scene::ISceneNodeAnimator* anim = smgr->createRotationAnimator(
+      core::vector3df(0.8f, 0, 0.8f));
 
   if (anim) {
 //            myNode->addAnimator(anim);
@@ -562,7 +584,8 @@ checkCollisions(Desktop3DLocation& loc)
   // ISceneCollisionManager::getRayFromScreenCoordinates()
   core::line3d<f32> ray;
   ray.start = mainCamera->getPosition();
-  ray.end = ray.start + (mainCamera->getTarget() - ray.start).normalize() * 1000.0f;
+  ray.end = ray.start
+      + (mainCamera->getTarget() - ray.start).normalize() * 1000.0f;
 
   // Tracks the current intersection point with the level or a mesh
   core::vector3df intersection;
@@ -609,17 +632,30 @@ irrlicht_step(const Desktop3DLocation& loc)
 {
   // create test cube
   static bool init = true;
-  static scene::ISceneNode* leftEye = smgr->addBillboardSceneNode(smgr->getRootSceneNode(), core::dimension2df(720, 900));
-  static scene::ISceneNode* rightEye = smgr->addBillboardSceneNode(smgr->getRootSceneNode(), core::dimension2df(720, 900));
-  if(init) {
+  static scene::ISceneNode* leftEye = smgr->addBillboardSceneNode(
+  smgr->getRootSceneNode(), core::dimension2df(720,900));
+//  smgr->getRootSceneNode(), core::dimension2df(1,1));//720, 900));
+  static scene::ISceneNode* rightEye = smgr->addBillboardSceneNode(
+      smgr->getRootSceneNode(), core::dimension2df(720,900));//1,1));//720, 900));
+  if (init) {
     init = false;
-    leftEye->setPosition(core::vector3df(-1440.0/4.0, 0, 0));//-1440.0/2.0,0,-1440.0/2.0));///2.0));
+
+    loadShaders();
+
+    leftEye->setPosition(core::vector3df(-1440.0 / 4.0, 0, 0)); //-1440.0/2.0,0,-1440.0/2.0));///2.0));
     leftEye->setMaterialFlag(video::EMF_LIGHTING, false); // disable dynamic lighting
     leftEye->setMaterialTexture(0, rtLeft); // set material of cube to render target
+//    leftEye->setMaterialType((video::E_MATERIAL_TYPE)newMaterialType1);
+//
+//    leftEye->setMaterialFlag( irr::video::EMF_BILINEAR_FILTER, false );
+//    leftEye->setMaterialFlag( irr::video::EMF_TRILINEAR_FILTER, false );
+//    leftEye->setMaterialFlag( irr::video::EMF_ANISOTROPIC_FILTER, false );
 
-    rightEye->setPosition(core::vector3df(1440.0/4.0,0,0));//1440.0/2.0));
+    rightEye->setPosition(core::vector3df(1440.0 / 4.0, 0, 0)); //1440.0/2.0));
     rightEye->setMaterialFlag(video::EMF_LIGHTING, false); // disable dynamic lighting
     rightEye->setMaterialTexture(0, rtRight); // set material of cube to render target
+//    rightEye->setMaterialType((video::E_MATERIAL_TYPE)newMaterialType2);
+
   }
 
   device->run();
@@ -648,7 +684,7 @@ irrlicht_step(const Desktop3DLocation& loc)
 //  smgr->getActiveCamera()->setPosition(position);
 //  smgr->getActiveCamera()->setTarget(position + direction);
 
-  core::vector3df p =  smgr->getActiveCamera()->getPosition();
+  core::vector3df p = smgr->getActiveCamera()->getPosition();
 //  p.X += MOVEMENT_SPEED*frameDeltaTime*direction.X;
 ////  p.Y += MOVEMENT_SPEED*frameDeltaTime*direction.Y;
 //  p.Z += MOVEMENT_SPEED*frameDeltaTime*direction.Z;
@@ -692,18 +728,20 @@ irrlicht_step(const Desktop3DLocation& loc)
   desktopNode->setVisible(true);
   leftEye->setVisible(false);
   rightEye->setVisible(false);
-  driver->setRenderTarget(rtLeft, true, true, video::SColor(0,0,0,255));
+  driver->setRenderTarget(rtLeft, true, true, video::SColor(0, 0, 0, 255));
   smgr->drawAll();
-  driver->setRenderTarget(rtRight, true, true, video::SColor(0,0,0,255));
+  driver->setRenderTarget(rtRight, true, true, video::SColor(0, 0, 0, 255));
   smgr->drawAll();
 
-  driver->setRenderTarget(0, true, true, video::SColor(0,0,0,255));
+  driver->setRenderTarget(0, true, true, video::SColor(0, 0, 0, 255));
 
   smgr->setActiveCamera(fixedCamera);
   skyboxNode->setVisible(false);
   quake3LevelNode->setVisible(false);
   desktopNode->setVisible(false);
+//  leftEye->setPosition(core::vector3df(0,0,0));
   leftEye->setVisible(true);
+//  rightEye->setPosition(core::vector3df(0,0,0));
   rightEye->setVisible(true);
 
   smgr->drawAll();
@@ -763,108 +801,114 @@ irrlicht_run_loop()
   return;
 }
 
-void irrlicht_move(int forward, int right, bool jump, double relativeMouseX, double relativeMouseY) {
-  if(forward == 1) {
-      SEvent e;
-      e.EventType = EET_KEY_INPUT_EVENT;
-      e.KeyInput.Char = 0;
-      e.KeyInput.PressedDown = true;
-      e.KeyInput.Control = false;
-      e.KeyInput.Shift = false;
-      e.KeyInput.Key =  KEY_UP;
-      smgr->getActiveCamera()->OnEvent(e);
-    } else {
-      SEvent e;
-      e.EventType = EET_KEY_INPUT_EVENT;
-      e.KeyInput.Char = 0;
-      e.KeyInput.PressedDown = false;
-      e.KeyInput.Control = false;
-      e.KeyInput.Shift = false;
-      e.KeyInput.Key = KEY_UP;
-      smgr->getActiveCamera()->OnEvent(e);
-    }
+void
+irrlicht_move(int forward, int right, bool jump, double relativeMouseX,
+    double relativeMouseY)
+{
+  if (forward == 1) {
+    SEvent e;
+    e.EventType = EET_KEY_INPUT_EVENT;
+    e.KeyInput.Char = 0;
+    e.KeyInput.PressedDown = true;
+    e.KeyInput.Control = false;
+    e.KeyInput.Shift = false;
+    e.KeyInput.Key = KEY_UP;
+    smgr->getActiveCamera()->OnEvent(e);
+  }
+  else {
+    SEvent e;
+    e.EventType = EET_KEY_INPUT_EVENT;
+    e.KeyInput.Char = 0;
+    e.KeyInput.PressedDown = false;
+    e.KeyInput.Control = false;
+    e.KeyInput.Shift = false;
+    e.KeyInput.Key = KEY_UP;
+    smgr->getActiveCamera()->OnEvent(e);
+  }
 
-  if(forward == -1) {
-      SEvent e;
-      e.EventType = EET_KEY_INPUT_EVENT;
-      e.KeyInput.Char = 0;
-      e.KeyInput.PressedDown = true;
-      e.KeyInput.Control = false;
-      e.KeyInput.Shift = false;
-      e.KeyInput.Key = KEY_DOWN;
-      smgr->getActiveCamera()->OnEvent(e);
-    } else {
-      SEvent e;
-      e.EventType = EET_KEY_INPUT_EVENT;
-      e.KeyInput.Char = 0;
-      e.KeyInput.PressedDown = false;
-      e.KeyInput.Control = false;
-      e.KeyInput.Shift = false;
-      e.KeyInput.Key = KEY_DOWN;
-      smgr->getActiveCamera()->OnEvent(e);
-    }
+  if (forward == -1) {
+    SEvent e;
+    e.EventType = EET_KEY_INPUT_EVENT;
+    e.KeyInput.Char = 0;
+    e.KeyInput.PressedDown = true;
+    e.KeyInput.Control = false;
+    e.KeyInput.Shift = false;
+    e.KeyInput.Key = KEY_DOWN;
+    smgr->getActiveCamera()->OnEvent(e);
+  }
+  else {
+    SEvent e;
+    e.EventType = EET_KEY_INPUT_EVENT;
+    e.KeyInput.Char = 0;
+    e.KeyInput.PressedDown = false;
+    e.KeyInput.Control = false;
+    e.KeyInput.Shift = false;
+    e.KeyInput.Key = KEY_DOWN;
+    smgr->getActiveCamera()->OnEvent(e);
+  }
 
-  if(right == 1) {
-      SEvent e;
-      e.EventType = EET_KEY_INPUT_EVENT;
-      e.KeyInput.Char = 0;
-      e.KeyInput.PressedDown = true;
-      e.KeyInput.Control = false;
-      e.KeyInput.Shift = false;
-      e.KeyInput.Key =  KEY_RIGHT;
-      smgr->getActiveCamera()->OnEvent(e);
-    } else {
-      SEvent e;
-      e.EventType = EET_KEY_INPUT_EVENT;
-      e.KeyInput.Char = 0;
-      e.KeyInput.PressedDown = false;
-      e.KeyInput.Control = false;
-      e.KeyInput.Shift = false;
-      e.KeyInput.Key = KEY_RIGHT;
-      smgr->getActiveCamera()->OnEvent(e);
-    }
+  if (right == 1) {
+    SEvent e;
+    e.EventType = EET_KEY_INPUT_EVENT;
+    e.KeyInput.Char = 0;
+    e.KeyInput.PressedDown = true;
+    e.KeyInput.Control = false;
+    e.KeyInput.Shift = false;
+    e.KeyInput.Key = KEY_RIGHT;
+    smgr->getActiveCamera()->OnEvent(e);
+  }
+  else {
+    SEvent e;
+    e.EventType = EET_KEY_INPUT_EVENT;
+    e.KeyInput.Char = 0;
+    e.KeyInput.PressedDown = false;
+    e.KeyInput.Control = false;
+    e.KeyInput.Shift = false;
+    e.KeyInput.Key = KEY_RIGHT;
+    smgr->getActiveCamera()->OnEvent(e);
+  }
 
-  if(right == -1) {
-      SEvent e;
-      e.EventType = EET_KEY_INPUT_EVENT;
-      e.KeyInput.Char = 0;
-      e.KeyInput.PressedDown = true;
-      e.KeyInput.Control = false;
-      e.KeyInput.Shift = false;
-      e.KeyInput.Key = KEY_LEFT;
-      smgr->getActiveCamera()->OnEvent(e);
-    } else {
-      SEvent e;
-      e.EventType = EET_KEY_INPUT_EVENT;
-      e.KeyInput.Char = 0;
-      e.KeyInput.PressedDown = false;
-      e.KeyInput.Control = false;
-      e.KeyInput.Shift = false;
-      e.KeyInput.Key = KEY_LEFT;
-      smgr->getActiveCamera()->OnEvent(e);
-    }
+  if (right == -1) {
+    SEvent e;
+    e.EventType = EET_KEY_INPUT_EVENT;
+    e.KeyInput.Char = 0;
+    e.KeyInput.PressedDown = true;
+    e.KeyInput.Control = false;
+    e.KeyInput.Shift = false;
+    e.KeyInput.Key = KEY_LEFT;
+    smgr->getActiveCamera()->OnEvent(e);
+  }
+  else {
+    SEvent e;
+    e.EventType = EET_KEY_INPUT_EVENT;
+    e.KeyInput.Char = 0;
+    e.KeyInput.PressedDown = false;
+    e.KeyInput.Control = false;
+    e.KeyInput.Shift = false;
+    e.KeyInput.Key = KEY_LEFT;
+    smgr->getActiveCamera()->OnEvent(e);
+  }
 
-
-
-  if(jump) {
-      SEvent e;
-      e.EventType = EET_KEY_INPUT_EVENT;
-      e.KeyInput.Char = 'j';
-      e.KeyInput.PressedDown = true;
-      e.KeyInput.Control = false;
-      e.KeyInput.Shift = false;
-      e.KeyInput.Key = KEY_KEY_J;
-      smgr->getActiveCamera()->OnEvent(e);
-    } else {
-      SEvent e;
-      e.EventType = EET_KEY_INPUT_EVENT;
-      e.KeyInput.Char = 'j';
-      e.KeyInput.PressedDown = false;
-      e.KeyInput.Control = false;
-      e.KeyInput.Shift = false;
-      e.KeyInput.Key = KEY_KEY_J;
-      smgr->getActiveCamera()->OnEvent(e);
-    }
+  if (jump) {
+    SEvent e;
+    e.EventType = EET_KEY_INPUT_EVENT;
+    e.KeyInput.Char = 'j';
+    e.KeyInput.PressedDown = true;
+    e.KeyInput.Control = false;
+    e.KeyInput.Shift = false;
+    e.KeyInput.Key = KEY_KEY_J;
+    smgr->getActiveCamera()->OnEvent(e);
+  }
+  else {
+    SEvent e;
+    e.EventType = EET_KEY_INPUT_EVENT;
+    e.KeyInput.Char = 'j';
+    e.KeyInput.PressedDown = false;
+    e.KeyInput.Control = false;
+    e.KeyInput.Shift = false;
+    e.KeyInput.Key = KEY_KEY_J;
+    smgr->getActiveCamera()->OnEvent(e);
+  }
 //
 //  SEvent e;
 //  e.EventType = EET_MOUSE_INPUT_EVENT;
@@ -874,6 +918,107 @@ void irrlicht_move(int forward, int right, bool jump, double relativeMouseX, dou
 
 }
 
-/*
- That's it. Compile and play around with the program.
- **/
+class MyShaderCallBack : public video::IShaderConstantSetCallBack
+{
+public:
+
+  virtual void
+  OnSetConstants(video::IMaterialRendererServices* services, s32 userData)
+  {
+//    video::IVideoDriver* driver = services->getVideoDriver();
+
+    // set inverted world matrix
+    // if we are using highlevel shaders (the user can select this when
+    // starting the program), we must set the constants by name.
+
+//    core::matrix4 invWorld = driver->getTransform(video::ETS_WORLD);
+//    invWorld.makeInverse();
+//
+//    services->setVertexShaderConstant("mInvWorld", invWorld.pointer(), 16);
+
+    // set clip matrix
+
+//    core::matrix4 worldViewProj;
+//    worldViewProj = driver->getTransform(video::ETS_PROJECTION);
+//    worldViewProj *= driver->getTransform(video::ETS_VIEW);
+//    worldViewProj *= driver->getTransform(video::ETS_WORLD);
+
+//    services->setVertexShaderConstant("mWorldViewProj", worldViewProj.pointer(), 16);
+//    // set camera position
+//
+//    core::vector3df pos = device->getSceneManager()->getActiveCamera()->getAbsolutePosition();
+//
+//    services->setVertexShaderConstant("mLightPos", reinterpret_cast<f32*>(&pos), 3);
+//
+//    // set light color
+//
+//    video::SColorf col(0.0f, 1.0f, 1.0f, 0.0f);
+//
+//    services->setVertexShaderConstant("mLightColor", reinterpret_cast<f32*>(&col), 4);
+//
+//    // set transposed world matrix
+//
+//    core::matrix4 world = driver->getTransform(video::ETS_WORLD);
+//    world = world.getTransposed();
+//
+//    services->setVertexShaderConstant("mTransWorld", world.pointer(), 16);
+
+    f32 offset = 0;
+    bool result = services->setVertexShaderConstant("offsetUniform", reinterpret_cast<f32*>(&offset), 1);
+    if(!result) {
+      std::cerr << "FAILED TO LOAD" << std::endl;
+      exit(1);
+    } else {
+//      std::cerr << "LOADED " << std::endl;
+    }
+
+    //using this code inside the shader callback
+    int tex_1 = 0; //the index you previously set up the texture
+    result = services->setPixelShaderConstant("texture",(float*)(&tex_1),1);
+    if(!result) {
+      std::cerr << "FAILED TO LOAD" << std::endl;
+      exit(1);
+    } else {
+//      std::cerr << "LOADED " << std::endl;
+    }
+
+  }
+};
+
+void
+loadShaders()
+{
+  // create materials
+  io::path vsFileName = "./resources/shaders/distortions.v.glsl"; // filename for the vertex shader
+  io::path psFileName = "./resources/shaders/distortions.f.glsl"; // filename for the pixel shader
+  if (!driver->queryFeature(video::EVDF_PIXEL_SHADER_1_2)
+      && !driver->queryFeature(video::EVDF_ARB_FRAGMENT_PROGRAM_1 )) {
+    device->getLogger()->log(
+        "WARNING: Pixel shaders disabled because of missing driver/hardware support.");
+    psFileName = "";
+  }
+  if (!driver->queryFeature(video::EVDF_VERTEX_SHADER_1_1)
+      && !driver->queryFeature(video::EVDF_ARB_VERTEX_PROGRAM_1)) {
+    device->getLogger()->log(
+        "WARNING: Vertex shaders disabled because of missing driver/hardware support.");
+    vsFileName = "";
+  }
+
+  video::IGPUProgrammingServices* gpu = driver->getGPUProgrammingServices();
+  if (gpu) {
+    MyShaderCallBack* mc = new MyShaderCallBack();
+
+    newMaterialType1 = gpu->addHighLevelShaderMaterialFromFiles(vsFileName,
+        "main", video::EVST_VS_1_1,
+        psFileName, "main",
+        video::EPST_PS_1_2, mc, video::EMT_TRANSPARENT_ALPHA_CHANNEL);//EMT_SOLID);
+
+    newMaterialType2 = gpu->addHighLevelShaderMaterialFromFiles(vsFileName,
+        "main", video::EVST_VS_1_1, psFileName, "main",
+        video::EPST_PS_1_2, mc, video::EMT_TRANSPARENT_ADD_COLOR);
+
+    mc->drop();
+
+    std::cerr << "********************** " << std::endl;
+  }
+}

@@ -26,4 +26,6 @@ public:
   void step(const Desktop3DLocation &loc, double timeDiff_);
 };
 
+void loadShaders();
+
 #endif /* IRRLICHT_PLUGIN_H_ */
