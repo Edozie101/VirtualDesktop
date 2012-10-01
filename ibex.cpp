@@ -633,6 +633,7 @@ void renderDesktopToTexture()
   unsigned int mask_return;
 
   if (ortho && renderToTexture) {
+    glViewport(0,0,width, height);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glOrtho(-0.5, 0.5, -0.5, 0.5, -10, 10);
@@ -1207,6 +1208,7 @@ int main(int argc, char ** argv)
   XGetWindowAttributes( dpy, root, &attr );
   width = attr.width;
   height = attr.height;
+  std::cerr << "width: " << width << " height: " << height << std::endl;
 
   if(OGRE3D) {
 #ifdef ENABLE_OGRE3D

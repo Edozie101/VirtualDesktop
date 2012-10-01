@@ -366,7 +366,7 @@ irrlicht_plugin()
   }
 
   // create device and exit if creation failed
-  device = createDevice(driverType, core::dimension2d<u32>(width, height), 32, //1440, 900), 32,
+  device = createDevice(driverType, core::dimension2d<u32>(1280,800), 32,//width, height), 32, //1440, 900), 32,
       true);
 
   if (device == 0) return 1; // could not create selected driver.
@@ -386,9 +386,9 @@ irrlicht_plugin()
   ///////////////////////////////
   // create render target
   if (driver->queryFeature(video::EVDF_RENDER_TO_TARGET)) {
-    rtLeft = driver->addRenderTargetTexture(core::dimension2d<u32>(640, 800),
+    rtLeft = driver->addRenderTargetTexture(core::dimension2d<u32>(1280,1600),//640, 800),
         "RTTLeft");
-    rtRight = driver->addRenderTargetTexture(core::dimension2d<u32>(640, 800),
+    rtRight = driver->addRenderTargetTexture(core::dimension2d<u32>(1280,1600),//640, 800),
         "RTTRight");
 //          test->setMaterialTexture(0, rt); // set material of cube to render target
 
@@ -648,8 +648,8 @@ irrlicht_step(const Desktop3DLocation& loc)
 //    leftEye->setMaterialType((video::E_MATERIAL_TYPE)newMaterialType1);
 //
 //    leftEye->setMaterialFlag( irr::video::EMF_BILINEAR_FILTER, false );
-//    leftEye->setMaterialFlag( irr::video::EMF_TRILINEAR_FILTER, false );
-//    leftEye->setMaterialFlag( irr::video::EMF_ANISOTROPIC_FILTER, false );
+//    leftEye->setMaterialFlag( irr::video::EMF_TRILINEAR_FILTER, true );
+//    leftEye->setMaterialFlag( irr::video::EMF_ANISOTROPIC_FILTER, true );
 
     rightEye->setPosition(core::vector3df(1440.0 / 4.0, 0, 0)); //1440.0/2.0));
     rightEye->setMaterialFlag(video::EMF_LIGHTING, false); // disable dynamic lighting
