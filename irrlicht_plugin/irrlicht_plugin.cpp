@@ -313,6 +313,7 @@ static video::ITexture* rtLeft = 0;
 static video::ITexture* rtRight = 0;
 static scene::ICameraSceneNode* fixedCamera = 0;
 static scene::ICameraSceneNode* mainCamera = 0;
+static scene::ICameraSceneNode* orthoCamera = 0;
 /*
  Ok, lets start. Again, we use the main() method as start, not the WinMain().
  */
@@ -630,32 +631,53 @@ checkCollisions(Desktop3DLocation& loc)
 void
 irrlicht_step(const Desktop3DLocation& loc)
 {
-  // create test cube
-  static bool init = true;
-  static scene::ISceneNode* leftEye = smgr->addBillboardSceneNode(
-  smgr->getRootSceneNode(), core::dimension2df(720,900));
-//  smgr->getRootSceneNode(), core::dimension2df(1,1));//720, 900));
-  static scene::ISceneNode* rightEye = smgr->addBillboardSceneNode(
-      smgr->getRootSceneNode(), core::dimension2df(720,900));//1,1));//720, 900));
-  if (init) {
-    init = false;
+  static bool needsInit = true;
+  static int use_barrel = -1;
+
+  static scene::ISceneNode* leftEye = 0;
+  static scene::ISceneNode* rightEye = 0;
+
+  if(needsInit) {
+    needsInit = false;
+
+    orthoCamera = smgr->addCameraSceneNode();
+    orthoCamera->setPosition(core::vector3df(0, 0, 0));
+    orthoCamera->setTarget(core::vector3df(0, 0, -1));
+    core::matrix4 projMat;
+    projMat.buildProjectionMatrixOrthoLH(1, 1, -1, 1);
+    orthoCamera->setProjectionMatrix(projMat, true);
 
     loadShaders();
+  }
 
-    leftEye->setPosition(core::vector3df(-1440.0 / 4.0, 0, 0)); //-1440.0/2.0,0,-1440.0/2.0));///2.0));
+  if(use_barrel != barrelDistort) {
+    use_barrel = barrelDistort;
+    if(leftEye) leftEye->remove();
+    if(rightEye) rightEye->remove();
+
+    if(use_barrel) {
+      leftEye = smgr->addBillboardSceneNode(smgr->getRootSceneNode(), core::dimension2df(1,2));
+      rightEye = smgr->addBillboardSceneNode(smgr->getRootSceneNode(), core::dimension2df(1,2));
+
+      leftEye->setPosition(core::vector3df(-0.5,0,0));
+      rightEye->setPosition(core::vector3df(0.5,0,0));
+
+      leftEye->setMaterialTexture(0, rtLeft); // set material to left render target
+      leftEye->setMaterialType((video::E_MATERIAL_TYPE)newMaterialType1);
+      rightEye->setMaterialTexture(0, rtRight); // set material to right render target
+      rightEye->setMaterialType((video::E_MATERIAL_TYPE)newMaterialType1);//2);
+    } else {
+      leftEye = smgr->addBillboardSceneNode(smgr->getRootSceneNode(), core::dimension2df(720, 900));
+      rightEye = smgr->addBillboardSceneNode(smgr->getRootSceneNode(), core::dimension2df(720, 900));
+
+      leftEye->setPosition(core::vector3df(-1440.0 / 4.0, 0, 0));
+      rightEye->setPosition(core::vector3df(1440.0 / 4.0, 0, 0));
+
+      leftEye->setMaterialTexture(0, rtLeft); // set material to left render target
+      rightEye->setMaterialTexture(0, rtRight); // set material to right render target
+    }
     leftEye->setMaterialFlag(video::EMF_LIGHTING, false); // disable dynamic lighting
-    leftEye->setMaterialTexture(0, rtLeft); // set material of cube to render target
-//    leftEye->setMaterialType((video::E_MATERIAL_TYPE)newMaterialType1);
-//
-//    leftEye->setMaterialFlag( irr::video::EMF_BILINEAR_FILTER, false );
-//    leftEye->setMaterialFlag( irr::video::EMF_TRILINEAR_FILTER, true );
-//    leftEye->setMaterialFlag( irr::video::EMF_ANISOTROPIC_FILTER, true );
-
-    rightEye->setPosition(core::vector3df(1440.0 / 4.0, 0, 0)); //1440.0/2.0));
     rightEye->setMaterialFlag(video::EMF_LIGHTING, false); // disable dynamic lighting
-    rightEye->setMaterialTexture(0, rtRight); // set material of cube to render target
-//    rightEye->setMaterialType((video::E_MATERIAL_TYPE)newMaterialType2);
-
   }
 
   device->run();
@@ -716,6 +738,8 @@ irrlicht_step(const Desktop3DLocation& loc)
     bottom = -bottom;
 
     saveState();
+    glUseProgram(0);
+    glUseProgramObjectARB(0);
     renderDesktopToTexture();
     restoreState();
   }
@@ -743,8 +767,12 @@ irrlicht_step(const Desktop3DLocation& loc)
     skyboxNode->setVisible(false);
     quake3LevelNode->setVisible(false);
     desktopNode->setVisible(false);
-    leftEye->setVisible(true);  //  leftEye->setPosition(core::vector3df(0,0,0));
-    rightEye->setVisible(true); //  rightEye->setPosition(core::vector3df(0,0,0));
+
+    if(use_barrel) {
+      smgr->setActiveCamera(orthoCamera);
+    }
+    leftEye->setVisible(true);
+    rightEye->setVisible(true);
 
     smgr->drawAll();
   } else {
@@ -930,61 +958,19 @@ public:
   virtual void
   OnSetConstants(video::IMaterialRendererServices* services, s32 userData)
   {
-//    video::IVideoDriver* driver = services->getVideoDriver();
-
-    // set inverted world matrix
-    // if we are using highlevel shaders (the user can select this when
-    // starting the program), we must set the constants by name.
-
-//    core::matrix4 invWorld = driver->getTransform(video::ETS_WORLD);
-//    invWorld.makeInverse();
-//
-//    services->setVertexShaderConstant("mInvWorld", invWorld.pointer(), 16);
-
-    // set clip matrix
-
-//    core::matrix4 worldViewProj;
-//    worldViewProj = driver->getTransform(video::ETS_PROJECTION);
-//    worldViewProj *= driver->getTransform(video::ETS_VIEW);
-//    worldViewProj *= driver->getTransform(video::ETS_WORLD);
-
-//    services->setVertexShaderConstant("mWorldViewProj", worldViewProj.pointer(), 16);
-//    // set camera position
-//
-//    core::vector3df pos = device->getSceneManager()->getActiveCamera()->getAbsolutePosition();
-//
-//    services->setVertexShaderConstant("mLightPos", reinterpret_cast<f32*>(&pos), 3);
-//
-//    // set light color
-//
-//    video::SColorf col(0.0f, 1.0f, 1.0f, 0.0f);
-//
-//    services->setVertexShaderConstant("mLightColor", reinterpret_cast<f32*>(&col), 4);
-//
-//    // set transposed world matrix
-//
-//    core::matrix4 world = driver->getTransform(video::ETS_WORLD);
-//    world = world.getTransposed();
-//
-//    services->setVertexShaderConstant("mTransWorld", world.pointer(), 16);
-
     f32 offset = 0;
     bool result = services->setVertexShaderConstant("offsetUniform", reinterpret_cast<f32*>(&offset), 1);
     if(!result) {
       std::cerr << "FAILED TO LOAD" << std::endl;
       exit(1);
-    } else {
-//      std::cerr << "LOADED " << std::endl;
     }
 
     //using this code inside the shader callback
     int tex_1 = 0; //the index you previously set up the texture
-    result = services->setPixelShaderConstant("texture",(float*)(&tex_1),1);
+    result = services->setPixelShaderConstant("myTexture",(float*)(&tex_1),1);
     if(!result) {
       std::cerr << "FAILED TO LOAD" << std::endl;
       exit(1);
-    } else {
-//      std::cerr << "LOADED " << std::endl;
     }
 
   }
@@ -994,8 +980,8 @@ void
 loadShaders()
 {
   // create materials
-  io::path vsFileName = "./resources/shaders/distortions.v.glsl"; // filename for the vertex shader
-  io::path psFileName = "./resources/shaders/distortions.f.glsl"; // filename for the pixel shader
+  io::path vsFileName = "./resources/shaders/distortions.v.irrlicht.glsl"; // filename for the vertex shader
+  io::path psFileName = "./resources/shaders/distortions.f.irrlicht.glsl"; // filename for the pixel shader
   if (!driver->queryFeature(video::EVDF_PIXEL_SHADER_1_2)
       && !driver->queryFeature(video::EVDF_ARB_FRAGMENT_PROGRAM_1 )) {
     device->getLogger()->log(
@@ -1016,14 +1002,12 @@ loadShaders()
     newMaterialType1 = gpu->addHighLevelShaderMaterialFromFiles(vsFileName,
         "main", video::EVST_VS_1_1,
         psFileName, "main",
-        video::EPST_PS_1_2, mc, video::EMT_TRANSPARENT_ALPHA_CHANNEL);//EMT_SOLID);
+        video::EPST_PS_1_2, mc, video::EMT_SOLID);
 
     newMaterialType2 = gpu->addHighLevelShaderMaterialFromFiles(vsFileName,
         "main", video::EVST_VS_1_1, psFileName, "main",
         video::EPST_PS_1_2, mc, video::EMT_TRANSPARENT_ADD_COLOR);
 
     mc->drop();
-
-    std::cerr << "********************** " << std::endl;
   }
 }
