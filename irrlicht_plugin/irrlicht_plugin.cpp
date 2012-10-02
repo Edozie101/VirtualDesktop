@@ -367,7 +367,7 @@ irrlicht_plugin()
   }
 
   // create device and exit if creation failed
-  device = createDevice(driverType, core::dimension2d<u32>(1280,800), 32,//width, height), 32, //1440, 900), 32,
+  device = createDevice(driverType, core::dimension2d<u32>(width, height), 32, //1440, 900), 32,
       true);
 
   if (device == 0) return 1; // could not create selected driver.
