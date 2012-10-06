@@ -14,6 +14,7 @@
 
 extern GLfloat top, bottom;
 extern GLuint desktopTexture;
+extern Window overlay;
 
 extern GLuint fbos[2];
 extern GLuint textures[2];

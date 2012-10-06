@@ -22,6 +22,7 @@ public:
   ~IrrlichtRendererPlugin();
 
   Window getWindowID();
+  GLXContext getOpenGLContext();
   void move(int forward_, int right_, bool jump_, double relativeMouseX_, double relativeMouseY_);
   void step(const Desktop3DLocation &loc, double timeDiff_);
 };

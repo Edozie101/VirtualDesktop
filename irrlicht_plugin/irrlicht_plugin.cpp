@@ -57,6 +57,13 @@ IrrlichtRendererPlugin::getWindowID()
 {
   return (Window) driver->getExposedVideoData().OpenGLLinux.X11Window;
 }
+GLXContext
+IrrlichtRendererPlugin::getOpenGLContext()
+{
+  return (GLXContext) driver->getExposedVideoData().OpenGLLinux.X11Context;
+}
+
+
 void
 IrrlichtRendererPlugin::move(int forward_, int right_, bool jump_,
     double relativeMouseX_, double relativeMouseY_)
@@ -93,6 +100,7 @@ enum
 #pragma comment(lib, "Irrlicht.lib")
 #endif
 
+static int matrixMode;
 static void
 saveState()
 {
@@ -100,6 +108,8 @@ saveState()
   //======================================================================
   //rendering the raw opengl code in a custom scene node
   // save matrices
+  glGetIntegerv(GL_MATRIX_MODE, &matrixMode);
+
   glMatrixMode(GL_MODELVIEW);
   glPushMatrix();
   glLoadIdentity();
@@ -128,11 +138,11 @@ restoreState()
   ////////////////
   // restore original state
   glPopAttrib();
-  if (depthTestEnabled) {
-    glEnable(GL_DEPTH_TEST);
-  }
   if (stencilTestEnabled) {
     glEnable(GL_STENCIL_TEST);
+  }
+  if (depthTestEnabled) {
+    glEnable(GL_DEPTH_TEST);
   }
   // restore matrices
   glMatrixMode(GL_TEXTURE);
@@ -141,6 +151,8 @@ restoreState()
   glPopMatrix();
   glMatrixMode(GL_MODELVIEW);
   glPopMatrix();
+
+  glMatrixMode(matrixMode);
 }
 
 class CDesktopSceneNode : public scene::ISceneNode
@@ -398,7 +410,7 @@ irrlicht_plugin()
     core::vector3df(0, 0, 0)); //-10,10,-100));
     core::matrix4 m;
     fixedCamera->setProjectionMatrix(
-        m.buildProjectionMatrixOrthoLH(1440.0, 900.0, -1000.0, 1000.0), true);
+        m.buildProjectionMatrixOrthoLH(width, height, -1000.0, 1000.0), true);
   }
   else {
     std::cerr << "** ERROR: SYSTEM DOESN'T SUPPORT RENDER TO TEXTURE"
@@ -652,6 +664,8 @@ irrlicht_step(const Desktop3DLocation& loc)
 
   if(use_barrel != barrelDistort) {
     use_barrel = barrelDistort;
+//    use_barrel = 1;
+//    barrelDistort = 1;
     if(leftEye) leftEye->remove();
     if(rightEye) rightEye->remove();
 
@@ -667,11 +681,11 @@ irrlicht_step(const Desktop3DLocation& loc)
       rightEye->setMaterialTexture(0, rtRight); // set material to right render target
       rightEye->setMaterialType((video::E_MATERIAL_TYPE)newMaterialType1);//2);
     } else {
-      leftEye = smgr->addBillboardSceneNode(smgr->getRootSceneNode(), core::dimension2df(720, 900));
-      rightEye = smgr->addBillboardSceneNode(smgr->getRootSceneNode(), core::dimension2df(720, 900));
+      leftEye = smgr->addBillboardSceneNode(smgr->getRootSceneNode(), core::dimension2df(width/2.0, height));
+      rightEye = smgr->addBillboardSceneNode(smgr->getRootSceneNode(), core::dimension2df(width/2.0, height));
 
-      leftEye->setPosition(core::vector3df(-1440.0 / 4.0, 0, 0));
-      rightEye->setPosition(core::vector3df(1440.0 / 4.0, 0, 0));
+      leftEye->setPosition(core::vector3df(-1*((double)width/4.0), 0, 0));
+      rightEye->setPosition(core::vector3df(width / 4.0, 0, 0));
 
       leftEye->setMaterialTexture(0, rtLeft); // set material to left render target
       rightEye->setMaterialTexture(0, rtRight); // set material to right render target
@@ -706,12 +720,13 @@ irrlicht_step(const Desktop3DLocation& loc)
 //  smgr->getActiveCamera()->setPosition(position);
 //  smgr->getActiveCamera()->setTarget(position + direction);
 
-  core::vector3df p = smgr->getActiveCamera()->getPosition();
+  core::vector3df p = mainCamera->getPosition();//smgr->getActiveCamera()->getPosition();
 //  p.X += MOVEMENT_SPEED*frameDeltaTime*direction.X;
 ////  p.Y += MOVEMENT_SPEED*frameDeltaTime*direction.Y;
 //  p.Z += MOVEMENT_SPEED*frameDeltaTime*direction.Z;
 //  smgr->getActiveCamera()->setPosition(p);
-  smgr->getActiveCamera()->setTarget(p + direction);
+//  smgr->getActiveCamera()->setTarget(p + direction);
+  mainCamera->setTarget(p + direction);
 
   /*
    We have done everything, so lets draw it. We also write the current
@@ -743,8 +758,7 @@ irrlicht_step(const Desktop3DLocation& loc)
     renderDesktopToTexture();
     restoreState();
   }
-
-  driver->beginScene(true, true, video::SColor(255, 255, 255, 255));
+  driver->beginScene(true, true, video::SColor(255, 255, 255, 255));//, video::SExposedVideoData((void*)driver->getExposedVideoData().OpenGLLinux.X11Window));//, driver->getExposedVideoData(), &size);
 //  checkCollisions(loc);
   smgr->setActiveCamera(mainCamera);
   core::matrix4 m;
@@ -778,12 +792,10 @@ irrlicht_step(const Desktop3DLocation& loc)
   } else {
     smgr->drawAll();
   }
+  smgr->setActiveCamera(mainCamera);
   driver->endScene();
 
-  smgr->setActiveCamera(mainCamera);
-
   int fps = driver->getFPS();
-
   if (lastFPS != fps) {
     lastFPS = fps;
   }
@@ -846,7 +858,8 @@ irrlicht_move(int forward, int right, bool jump, double relativeMouseX,
     e.KeyInput.Control = false;
     e.KeyInput.Shift = false;
     e.KeyInput.Key = KEY_UP;
-    smgr->getActiveCamera()->OnEvent(e);
+//    smgr->getActiveCamera()->OnEvent(e);
+    mainCamera->OnEvent(e);
   }
   else {
     SEvent e;
@@ -856,7 +869,8 @@ irrlicht_move(int forward, int right, bool jump, double relativeMouseX,
     e.KeyInput.Control = false;
     e.KeyInput.Shift = false;
     e.KeyInput.Key = KEY_UP;
-    smgr->getActiveCamera()->OnEvent(e);
+    //    smgr->getActiveCamera()->OnEvent(e);
+        mainCamera->OnEvent(e);
   }
 
   if (forward == -1) {
@@ -867,7 +881,8 @@ irrlicht_move(int forward, int right, bool jump, double relativeMouseX,
     e.KeyInput.Control = false;
     e.KeyInput.Shift = false;
     e.KeyInput.Key = KEY_DOWN;
-    smgr->getActiveCamera()->OnEvent(e);
+    //    smgr->getActiveCamera()->OnEvent(e);
+        mainCamera->OnEvent(e);
   }
   else {
     SEvent e;
@@ -877,7 +892,8 @@ irrlicht_move(int forward, int right, bool jump, double relativeMouseX,
     e.KeyInput.Control = false;
     e.KeyInput.Shift = false;
     e.KeyInput.Key = KEY_DOWN;
-    smgr->getActiveCamera()->OnEvent(e);
+    //    smgr->getActiveCamera()->OnEvent(e);
+        mainCamera->OnEvent(e);
   }
 
   if (right == 1) {
@@ -888,7 +904,8 @@ irrlicht_move(int forward, int right, bool jump, double relativeMouseX,
     e.KeyInput.Control = false;
     e.KeyInput.Shift = false;
     e.KeyInput.Key = KEY_RIGHT;
-    smgr->getActiveCamera()->OnEvent(e);
+    //    smgr->getActiveCamera()->OnEvent(e);
+        mainCamera->OnEvent(e);
   }
   else {
     SEvent e;
@@ -898,7 +915,8 @@ irrlicht_move(int forward, int right, bool jump, double relativeMouseX,
     e.KeyInput.Control = false;
     e.KeyInput.Shift = false;
     e.KeyInput.Key = KEY_RIGHT;
-    smgr->getActiveCamera()->OnEvent(e);
+    //    smgr->getActiveCamera()->OnEvent(e);
+        mainCamera->OnEvent(e);
   }
 
   if (right == -1) {
@@ -909,7 +927,8 @@ irrlicht_move(int forward, int right, bool jump, double relativeMouseX,
     e.KeyInput.Control = false;
     e.KeyInput.Shift = false;
     e.KeyInput.Key = KEY_LEFT;
-    smgr->getActiveCamera()->OnEvent(e);
+    //    smgr->getActiveCamera()->OnEvent(e);
+        mainCamera->OnEvent(e);
   }
   else {
     SEvent e;
@@ -919,7 +938,8 @@ irrlicht_move(int forward, int right, bool jump, double relativeMouseX,
     e.KeyInput.Control = false;
     e.KeyInput.Shift = false;
     e.KeyInput.Key = KEY_LEFT;
-    smgr->getActiveCamera()->OnEvent(e);
+    //    smgr->getActiveCamera()->OnEvent(e);
+        mainCamera->OnEvent(e);
   }
 
   if (jump) {
@@ -930,7 +950,8 @@ irrlicht_move(int forward, int right, bool jump, double relativeMouseX,
     e.KeyInput.Control = false;
     e.KeyInput.Shift = false;
     e.KeyInput.Key = KEY_KEY_J;
-    smgr->getActiveCamera()->OnEvent(e);
+    //    smgr->getActiveCamera()->OnEvent(e);
+        mainCamera->OnEvent(e);
   }
   else {
     SEvent e;
@@ -940,7 +961,8 @@ irrlicht_move(int forward, int right, bool jump, double relativeMouseX,
     e.KeyInput.Control = false;
     e.KeyInput.Shift = false;
     e.KeyInput.Key = KEY_KEY_J;
-    smgr->getActiveCamera()->OnEvent(e);
+    //    smgr->getActiveCamera()->OnEvent(e);
+        mainCamera->OnEvent(e);
   }
 //
 //  SEvent e;

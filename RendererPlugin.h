@@ -31,6 +31,9 @@ public:
   // what is the WindowHandle or XID of the renderer plugin, return 0 for default
   virtual Window getWindowID();
 
+  // what is the OpenGL context for the renderer, 0 for default
+  virtual GLXContext getOpenGLContext();
+
   // set desktop texture if we are processing separately
   virtual void setDesktopTexture(GLuint desktopTexture_) {}
 

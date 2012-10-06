@@ -116,7 +116,7 @@ static int errors = 0;
 // ---------------------------------------------------------------------------
 static int errorHandler(Display *dpy, XErrorEvent *e)
 {
-#define DEBUG 0
+#define DEBUG 1
 #ifdef DEBUG
   char str[128];
 #endif
@@ -761,9 +761,16 @@ void renderGL(Desktop3DLocation& loc, double timeDiff_)
 
     if(renderer->getWindowID()) window = renderer->getWindowID();
     if (OGRE3D || IRRLICHT) {
-      context = glXGetCurrentContext();
-      bool r = glXMakeCurrent(dpy, window, context);
-      std::cerr << "R: " << r << std::endl;
+      context = renderer->getOpenGLContext();
+      if(!IRRLICHT) {
+        std::cerr << "context: " << context << ", " << glXGetCurrentContext() << std::endl;
+        if(!context) {
+            context = glXGetCurrentContext();
+        }
+
+        bool r = glXMakeCurrent(dpy, window, context);
+        std::cerr << "R: " << r << std::endl;
+      }
 
       glewExperimental = true;
       GLenum err = glewInit();
