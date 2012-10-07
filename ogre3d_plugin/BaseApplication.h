@@ -48,7 +48,7 @@ public:
 
     virtual void go(void);
 
-    void render();
+    virtual void render();
 
     unsigned long windowId;
 protected:

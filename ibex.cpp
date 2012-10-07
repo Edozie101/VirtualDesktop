@@ -439,8 +439,10 @@ void bindRedirectedWindowToTexture(Display *display_, Window window_, int screen
     }
 
     Pixmap pixmap = XCompositeNameWindowPixmap(display_, window_);
-    if (!pixmap)
+    if (!pixmap) {
+      redirectedWindows[window_] = windowInfo;
       return;
+    }
 
     GLXPixmap glxpixmap = glXCreatePixmap(display_, fbconfig, pixmap,
                                           pixmapAttribs);
@@ -457,7 +459,6 @@ void bindRedirectedWindowToTexture(Display *display_, Window window_, int screen
     glBindTexture(GL_TEXTURE_2D, windowInfo.texture);
     glXBindTexImageEXT(display_, windowInfo.glxpixmap, GLX_FRONT_LEFT_EXT, 0);
   }
-
   attrib = &windowInfo.attrib;
 
   if (attrib->map_state != IsViewable)
@@ -665,9 +666,9 @@ void renderDesktopToTexture()
                              ExposureMask);
     }
 
-    if (!renderToTexture)
+    if (!renderToTexture) {
       glTranslatef(0, 0, d*0.0001);
-
+    }
     bindRedirectedWindowToTexture(dpy, wId, screen);
     ++d;
   }
@@ -767,6 +768,7 @@ void renderGL(Desktop3DLocation& loc, double timeDiff_)
         if(!context) {
             context = glXGetCurrentContext();
         }
+        std::cerr << "context: " << context << ", " << glXGetCurrentContext() << std::endl;
 
         bool r = glXMakeCurrent(dpy, window, context);
         std::cerr << "R: " << r << std::endl;
@@ -1247,7 +1249,7 @@ int main(int argc, char ** argv)
 //  XIfEvent(dpy, &event, WaitForNotify, (char*)overlay);
 
   setup_iphone_listener();
-  std::cerr << "dpy: " << dpy << ", display: " << display << std::endl;
+  std::cerr << "dpy: " << dpy << ", display: " << display << ", " << window << std::endl;
 
   // Set X error handler here since expected errors on some window mappings
   XSetErrorHandler(errorHandler);

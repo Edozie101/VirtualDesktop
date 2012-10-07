@@ -39,6 +39,7 @@ public:
     Window getWindowID() {
       return this->windowId;
     }
+    void render();
     void step(const Desktop3DLocation &loc_, double timeDiff_) {
       render();
     }
@@ -52,6 +53,7 @@ public:
 protected:
     OpenGLNativeRenderSystemCommandsRenderQueueListener * mRenderSystemCommandsRenderQueueListener;
     virtual void createScene(void);
+    void createDesktopObject();
 };
 
 #endif // #ifndef __TutorialApplication_h_
