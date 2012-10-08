@@ -79,18 +79,18 @@ bool BaseApplication::configure()
   std::ostringstream out2;
   out2 << (unsigned long)context;
   Ogre::NameValuePairList params;
-//  params[Ogre::String("externalWindowHandle")] = out.str();
+  params[Ogre::String("externalWindowHandle")] = out.str();
 //  params[Ogre::String("parentWindowHandle")] = out.str();
 //  params[Ogre::String("externalGLControl")]    = "true";
-//  params[Ogre::String("externalGLContext")]    = out2.str();
+  params[Ogre::String("externalGLContext")]    = out2.str();
 
 
-//  char *name = "OgreApp";
-//  mWindow = mRoot->initialise(false);//, "TutorialApplication Render Window");
-//    mWindow = mRoot->createRenderWindow( name, 1440, 900, false, &params);
+  char *name = "OgreApp";
+  mWindow = mRoot->initialise(false);//, "TutorialApplication Render Window");
+    mWindow = mRoot->createRenderWindow( name, 1440, 900, false, &params);
 
 //        mWindow = mRoot->createRenderWindow( name, width, height, true);//, &params);
-    mWindow = mRoot->initialise(true, "ibex");//true, "ibex");
+//    mWindow = mRoot->initialise(true, "ibex");//true, "ibex");
     mWindow->getCustomAttribute("WINDOW",&windowId);
     std::cerr << "Ogre Window ID: " << windowId << ", input windowId: " << out.str() << std::endl;
     return true;

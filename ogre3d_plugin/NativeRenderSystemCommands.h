@@ -1,43 +1,22 @@
 /*
-
  -----------------------------------------------------------------------------
-
  This source file is part of OGRE
-
  (Object-oriented Graphics Rendering Engine)
-
  For the latest info, see http://www.ogre3d.org/
 
-
-
  Copyright (c) 2000-2006 Torus Knot Software Ltd
-
  Also see acknowledgements in Readme.html
 
-
-
  You may use this sample code for anything you like, it is not covered by the
-
  LGPL like the rest of the engine.
-
  -----------------------------------------------------------------------------
-
  */
-
 /**
-
  \file
-
  NativeRenderSystemCommands.h
-
  \brief
-
  A sample demonstrating how to add render system specific native code to an existing scene.
-
  I based this sample on the SkyDome sample, just added a FrameListener
-
-
-
  */
 
 #ifndef __NativeRenderSystemCommands_h_
@@ -75,7 +54,6 @@
 
 using namespace Ogre;
 
-
 class NativeRenderSystemCommandsRenderQueueListener : public RenderQueueListener
 {
 protected:
@@ -86,11 +64,8 @@ protected:
 class OpenGLNativeRenderSystemCommandsRenderQueueListener : public NativeRenderSystemCommandsRenderQueueListener
 {
 protected:
-
   MovableObject* mObject;
-
   const Camera* mCamera;
-
   SceneManager* mSceneMgr;
 
   void
@@ -99,15 +74,15 @@ protected:
   {
 //    glDisable (GL_TEXTURE_2D);
 
-    glDisable (GL_LIGHTING);
+    glDisable(GL_LIGHTING);
 
     glDisable(GL_BLEND);
 
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, this->desktopTexture);
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-      glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-      glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     glTranslated(-10, 0, 0);
     glScalef(10.0, 10.0, 10.0);
@@ -117,11 +92,9 @@ protected:
     glRotated(i, 1.0, 0.2, 0.5);
 
     // I took the following sample code from here: http://www.oreillynet.com/network/2000/06/23/magazine/cube.c
-
     // OK, let's start drawing our planer quads.
 
-    glBegin (GL_QUADS);
-
+    glBegin(GL_QUADS);
     // Bottom Face.  Red, 75% opaque, magnified texture
 
     glNormal3f(0.0f, -1.0f, 0.0f); // Needed for lighting
@@ -265,13 +238,15 @@ public:
   {
   }
 
-  void blah() {
+  void
+  blah()
+  {
     // save matrices
-    glMatrixMode (GL_MODELVIEW);
+    glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
-    glMatrixMode (GL_PROJECTION);
+    glMatrixMode(GL_PROJECTION);
     glPushMatrix();
-    glMatrixMode (GL_TEXTURE);
+    glMatrixMode(GL_TEXTURE);
     glPushMatrix();
     glLoadIdentity(); //Texture addressing should start out as direct.
     RenderSystem* renderSystem =
@@ -282,76 +257,46 @@ public:
     renderSystem->_setProjectionMatrix(mCamera->getProjectionMatrixRS());
     static Pass* clearPass = NULL;
     if (!clearPass)
-
-    {
-
-      MaterialPtr clearMat = MaterialManager::getSingleton().getByName(
-          "BaseWhite");
-
-      clearPass = clearMat->getTechnique(0)->getPass(0);
-
-    }
-
+      {
+        MaterialPtr clearMat = MaterialManager::getSingleton().getByName(
+            "BaseWhite");
+        clearPass = clearMat->getTechnique(0)->getPass(0);
+      }
     //Set a clear pass to give the renderer a clear renderstate
-
     mSceneMgr->_setPass(clearPass, true, false);
-
     GLboolean depthTestEnabled = glIsEnabled(GL_DEPTH_TEST);
-
-    glDisable (GL_DEPTH_TEST);
-
+    glDisable(GL_DEPTH_TEST);
     GLboolean stencilTestEnabled = glIsEnabled(GL_STENCIL_TEST);
-
-    glDisable (GL_STENCIL_TEST);
-
+    glDisable(GL_STENCIL_TEST);
     // save attribs
-
-    glPushAttrib (GL_ALL_ATTRIB_BITS);
-
+    glPushAttrib(GL_ALL_ATTRIB_BITS);
     // call native rendering function
-
     //////////////////
-
     glEnable(GL_TEXTURE_2D);
 
-    if(didInitOpenGL()) {
-      renderDesktopToTexture();
-    }
+    if (didInitOpenGL())
+      {
+        renderDesktopToTexture();
+      }
 
     //////////////////
-
     // restore original state
 
     glPopAttrib();
-
     if (depthTestEnabled)
-
-    {
-
-      glEnable(GL_DEPTH_TEST);
-
-    }
-
+      {
+        glEnable(GL_DEPTH_TEST);
+      }
     if (stencilTestEnabled)
-
-    {
-
-      glEnable(GL_STENCIL_TEST);
-
-    }
-
+      {
+        glEnable(GL_STENCIL_TEST);
+      }
     // restore matrices
-
     glMatrixMode(GL_TEXTURE);
-
     glPopMatrix();
-
     glMatrixMode(GL_PROJECTION);
-
     glPopMatrix();
-
     glMatrixMode(GL_MODELVIEW);
-
     glPopMatrix();
   }
   virtual void
@@ -360,20 +305,19 @@ public:
   bool& repeatThisInvocation)
 
   {
-
     // Set wanted render queue here - make sure there are - make sure that something is on
     // this queue - else you will never pass this if.
     if (queueGroupId != RENDER_QUEUE_MAIN)
-    return;
+      return;
 
     blah();
 
     // save matrices
-    glMatrixMode (GL_MODELVIEW);
+    glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
-    glMatrixMode (GL_PROJECTION);
+    glMatrixMode(GL_PROJECTION);
     glPushMatrix();
-    glMatrixMode (GL_TEXTURE);
+    glMatrixMode(GL_TEXTURE);
     glPushMatrix();
     glLoadIdentity(); //Texture addressing should start out as direct.
     RenderSystem* renderSystem =
@@ -385,14 +329,14 @@ public:
     static Pass* clearPass = NULL;
     if (!clearPass)
 
-    {
+      {
 
-      MaterialPtr clearMat = MaterialManager::getSingleton().getByName(
-          "BaseWhite");
+        MaterialPtr clearMat = MaterialManager::getSingleton().getByName(
+            "BaseWhite");
 
-      clearPass = clearMat->getTechnique(0)->getPass(0);
+        clearPass = clearMat->getTechnique(0)->getPass(0);
 
-    }
+      }
 
     //Set a clear pass to give the renderer a clear renderstate
 
@@ -400,15 +344,15 @@ public:
 
     GLboolean depthTestEnabled = glIsEnabled(GL_DEPTH_TEST);
 
-    glDisable (GL_DEPTH_TEST);
+    glDisable(GL_DEPTH_TEST);
 
     GLboolean stencilTestEnabled = glIsEnabled(GL_STENCIL_TEST);
 
-    glDisable (GL_STENCIL_TEST);
+    glDisable(GL_STENCIL_TEST);
 
     // save attribs
 
-    glPushAttrib (GL_ALL_ATTRIB_BITS);
+    glPushAttrib(GL_ALL_ATTRIB_BITS);
 
     // call native rendering function
 
@@ -424,19 +368,19 @@ public:
 
     if (depthTestEnabled)
 
-    {
+      {
 
-      glEnable(GL_DEPTH_TEST);
+        glEnable(GL_DEPTH_TEST);
 
-    }
+      }
 
     if (stencilTestEnabled)
 
-    {
+      {
 
-      glEnable(GL_STENCIL_TEST);
+        glEnable(GL_STENCIL_TEST);
 
-    }
+      }
 
     // restore matrices
 

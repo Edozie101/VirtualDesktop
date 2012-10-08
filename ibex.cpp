@@ -443,7 +443,6 @@ void bindRedirectedWindowToTexture(Display *display_, Window window_, int screen
       redirectedWindows[window_] = windowInfo;
       return;
     }
-
     GLXPixmap glxpixmap = glXCreatePixmap(display_, fbconfig, pixmap,
                                           pixmapAttribs);
 
@@ -762,9 +761,10 @@ void renderGL(Desktop3DLocation& loc, double timeDiff_)
 
     if(renderer->getWindowID()) window = renderer->getWindowID();
     if (OGRE3D || IRRLICHT) {
-      context = renderer->getOpenGLContext();
-      if(!IRRLICHT) {
+      if(renderer->getOpenGLContext()) context = renderer->getOpenGLContext();
+      if(!IRRLICHT && !OGRE3D) {
         std::cerr << "context: " << context << ", " << glXGetCurrentContext() << std::endl;
+        std::cerr << "dpy: " << dpy << ", window: " << window << std::endl;
         if(!context) {
             context = glXGetCurrentContext();
         }
@@ -1221,6 +1221,10 @@ int main(int argc, char ** argv)
 
   if(OGRE3D) {
 #ifdef ENABLE_OGRE3D
+    createWindow(dpy, root);
+    XIfEvent(dpy, &event, WaitForNotify, (char*)window);
+    bool r = glXMakeCurrent(dpy, window, context);
+    std::cerr << "* glXMakeCurrent(dpy, window, context): " << r << std::endl;
     renderer = new Ogre3DRendererPlugin(dpy, screen, window, visinfo, (unsigned long)context);
     renderer->init();
 #endif

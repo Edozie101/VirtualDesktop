@@ -25,7 +25,7 @@ using namespace Ogre;
 
 //-------------------------------------------------------------------------------------
 Ogre3DRendererPlugin::Ogre3DRendererPlugin(Display *dpy, unsigned long screen, Window window, XVisualInfo *visualinfo, unsigned long context)
-: BaseApplication(dpy, screen, window, visualinfo, context)
+: BaseApplication(dpy, screen, window, visualinfo, context), desktopTexture(0), mRenderSystemCommandsRenderQueueListener(0)
 {
 }
 //-------------------------------------------------------------------------------------
@@ -35,19 +35,16 @@ Ogre3DRendererPlugin::~Ogre3DRendererPlugin()
 
 void Ogre3DRendererPlugin::setDesktopTexture(GLuint desktopTexture_) {
   this->desktopTexture = desktopTexture_;
-  mRenderSystemCommandsRenderQueueListener->desktopTexture = desktopTexture_;
+  if(mRenderSystemCommandsRenderQueueListener) {
+      mRenderSystemCommandsRenderQueueListener->desktopTexture = desktopTexture_;
+  }
 }
 void Ogre3DRendererPlugin::render() {
 //  mWindow->getViewport(0)->setClearEveryFrame(false,0);
   std::cerr << "*DRAW" << std::endl;
-  bool needsInit = true;
-  if(needsInit) {
-      needsInit = false;
-      createDesktopObject();
-  }
   bool r = mRoot->renderOneFrame();
   if(!r) {
-    std::cerr << "FAILED OT RENDER" << std::endl;
+    std::cerr << "FAILED TO RENDER" << std::endl;
   }
 //  material->touch();
 //  material->reload();
@@ -55,6 +52,18 @@ void Ogre3DRendererPlugin::render() {
 
 //-------------------------------------------------------------------------------------
 void Ogre3DRendererPlugin::createDesktopObject() {
+  // Create the texture
+//  Ogre::TexturePtr texture = Ogre::TextureManager::getSingleton().createManual(
+//      "DynamicTexture", // name
+//      Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+//      Ogre::TEX_TYPE_2D,      // type
+//      1280, 800,         // width & height
+//      0,                // number of mipmaps
+//      Ogre::PF_BYTE_BGRA,     // pixel format
+//      Ogre::TU_DYNAMIC_WRITE_ONLY_DISCARDABLE);//TU_DEFAULT);      // usage; should be TU_DYNAMIC_WRITE_ONLY_DISCARDABLE for
+//                        // textures updated very often (e.g. each frame)
+//  GLTexturePtr t(texture);
+
   //GLTexturePtr t = GLTextureManager::getSingleton().createManual("DynamicTexture", // name
   //    Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
   //    Ogre::TEX_TYPE_2D,      // type
@@ -69,13 +78,13 @@ void Ogre3DRendererPlugin::createDesktopObject() {
         1, //depth
         MIP_DEFAULT,//0,                // number of mipmaps
         Ogre::PF_BYTE_RGBA,     // pixel format
-        Ogre::TU_DEFAULT,// TU_DYNAMIC_WRITE_ONLY_DISCARDABLE,
+        Ogre::TU_DYNAMIC_WRITE_ONLY_DISCARDABLE,
         0);//TU_DEFAULT);
+
   t->_fireLoadingComplete(true);
   std::cerr << "**** DESKTOP TEXTURE: " << this->desktopTexture << std::endl;
   desktopTexture = t->getHandle();//getGLID();//texture->getHandle();
   std::cerr << "**** DESKTOP TEXTURE: " << this->desktopTexture << std::endl;
-  return;
 
 // Create a material using the texture
  /*Ogre::MaterialPtr */material = Ogre::MaterialManager::getSingleton().create(
@@ -111,38 +120,21 @@ void Ogre3DRendererPlugin::createDesktopObject() {
   mSceneMgr->getRootSceneNode()->createChildSceneNode()->attachObject(manObj);
 
   String RenderSystemName = mSceneMgr->getDestinationRenderSystem()->getName();
-  mRenderSystemCommandsRenderQueueListener = NULL;
-  if ("OpenGL Rendering Subsystem" == RenderSystemName) {
-    mRenderSystemCommandsRenderQueueListener =
+  mRenderSystemCommandsRenderQueueListener =
         new OpenGLNativeRenderSystemCommandsRenderQueueListener(
         manObj, mCamera, mSceneMgr);
 
     mSceneMgr->addRenderQueueListener(mRenderSystemCommandsRenderQueueListener);
-  }
   std::cerr << "***** DONE CONFIGURE and INIT SCENE" << std::endl;
   }
 void Ogre3DRendererPlugin::createScene(void)
 {
-  // Create the texture
-//  Ogre::TexturePtr texture = Ogre::TextureManager::getSingleton().createManual(
-//      "DynamicTexture", // name
-//      Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
-//      Ogre::TEX_TYPE_2D,      // type
-//      1280, 800,         // width & height
-//      0,                // number of mipmaps
-//      Ogre::PF_BYTE_BGRA,     // pixel format
-//      Ogre::TU_DYNAMIC_WRITE_ONLY_DISCARDABLE);//TU_DEFAULT);      // usage; should be TU_DYNAMIC_WRITE_ONLY_DISCARDABLE for
-//                        // textures updated very often (e.g. each frame)
-//  GLTexturePtr t(texture);
-
     // create your scene here :)
   Ogre::Entity* ogreHead = mSceneMgr->createEntity("Head", "ogrehead.mesh");
   Ogre::SceneNode* headNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("HeadNode");
   headNode->attachObject(ogreHead);
   Ogre::Light* light = mSceneMgr->createLight( "MainLight" );
   light->setPosition(20, 80, 50);
-
-  return;
 
   createDesktopObject();
 }

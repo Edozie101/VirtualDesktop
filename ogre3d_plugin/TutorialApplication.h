@@ -44,7 +44,7 @@ public:
       render();
     }
     bool needsSwapBuffers() {
-      return true;
+      return false;
     }
     void processEvents() {
       Ogre::WindowEventUtilities::messagePump();
