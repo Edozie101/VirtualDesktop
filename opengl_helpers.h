@@ -21,6 +21,11 @@
 #include <GL/glut.h>
 #include <GL/glu.h>
 
+bool gluInvertMatrix(const double m[16], double invOut[16]);
+double distort2ShaderScaleFactor(double ax, double ay);
+void saveState();
+void restoreState();
+
 // ---------------------------------------------------------------------------
 // Function: checkForErrors
 // Design:   Belongs to OpenGL component
@@ -83,8 +88,5 @@ inline static bool checkForErrors()
 
   return retVal;
 }
-
-bool gluInvertMatrix(const double m[16], double invOut[16]);
-double distort2ShaderScaleFactor(double ax, double ay);
 
 #endif /* OPENGL_HELPERS_H_ */
