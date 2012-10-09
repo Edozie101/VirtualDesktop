@@ -41,7 +41,6 @@ void Ogre3DRendererPlugin::setDesktopTexture(GLuint desktopTexture_) {
 }
 void Ogre3DRendererPlugin::render() {
 //  mWindow->getViewport(0)->setClearEveryFrame(false,0);
-  std::cerr << "*DRAW" << std::endl;
   bool r = mRoot->renderOneFrame();
   if(!r) {
     std::cerr << "FAILED TO RENDER" << std::endl;

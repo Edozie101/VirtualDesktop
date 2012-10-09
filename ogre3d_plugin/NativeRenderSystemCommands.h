@@ -52,10 +52,6 @@
 
 #include "../ibex.h"
 
-#define HAVE_LIBJPEG 1
-#include <jpeglib.h>
-#include "../glm/glm.h"
-
 using namespace Ogre;
 
 class NativeRenderSystemCommandsRenderQueueListener : public RenderQueueListener
@@ -76,27 +72,6 @@ protected:
   NativeRender()
 
   {
-    static GLuint _skybox[6];
-    static int init = 1;
-    if(init) {
-        init = 0;
-        float sizeX = 2048;
-          float sizeY = 2048;
-          _skybox[0] = glmLoadTexture("./resources/humus-skybox/negz.jpg", GL_TRUE, GL_FALSE,
-                                      GL_TRUE, GL_FALSE, &sizeX, &sizeY);
-          _skybox[1] = glmLoadTexture("./resources/humus-skybox/posx.jpg", GL_TRUE, GL_FALSE,
-                                      GL_TRUE, GL_FALSE, &sizeX, &sizeY);
-          _skybox[2] = glmLoadTexture("./resources/humus-skybox/posz.jpg", GL_TRUE, GL_FALSE,
-                                      GL_TRUE, GL_FALSE, &sizeX, &sizeY);
-          _skybox[3] = glmLoadTexture("./resources/humus-skybox/negx.jpg", GL_TRUE, GL_FALSE,
-                                      GL_TRUE, GL_FALSE, &sizeX, &sizeY);
-          _skybox[4] = glmLoadTexture("./resources/humus-skybox/posy.jpg", GL_TRUE, GL_FALSE,
-                                      GL_TRUE, GL_FALSE, &sizeX, &sizeY);
-          _skybox[5] = glmLoadTexture("./resources/humus-skybox/negy.jpg", GL_TRUE, GL_FALSE,
-                                      GL_TRUE, GL_FALSE, &sizeX, &sizeY);
-
-          std::cout << _skybox[5] << std::endl;
-    }
 //    glDisable (GL_TEXTURE_2D);
 
     glDisable(GL_LIGHTING);
@@ -105,7 +80,6 @@ protected:
 
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, this->desktopTexture);
-    std::cerr << "texture: " << this->desktopTexture << std::endl;
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);

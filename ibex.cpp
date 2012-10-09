@@ -538,10 +538,6 @@ void bindRedirectedWindowToTexture(Display *display_, Window window_, int screen
   const double originY = (double)-attrib->y/(double)height + 0.5;
   const double originZ = (renderToTexture) ? 0 : -1.21;
 
-  if(OGRE3D) {
-    std::cerr << attrib->width << ", " << attrib->height << ", " << originX << ", " << originY << ", " << right << ", " << t << " -- " << windowInfo.texture << std::endl;
-  }
-
   glColor4f(1, 1, 1, 1);
   glBegin(GL_TRIANGLE_STRIP);
   glTexCoord2d(0, bottom);
