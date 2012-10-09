@@ -103,6 +103,66 @@ double strafeRight = 0;
 ///// FROM COMPIZ
 static int errors = 0;
 
+
+
+static GLboolean depthTestEnabled =0;
+static GLboolean stencilTestEnabled =0;
+static int matrixMode = 0;
+static void
+saveState()
+{
+  //    driver->setTransform(video::ETS_WORLD, AbsoluteTransformation);
+  //======================================================================
+  //rendering the raw opengl code in a custom scene node
+  // save matrices
+  glGetIntegerv(GL_MATRIX_MODE, &matrixMode);
+
+  glMatrixMode(GL_MODELVIEW);
+  glPushMatrix();
+  glLoadIdentity();
+  glMatrixMode(GL_PROJECTION);
+  glPushMatrix();
+  glLoadIdentity();
+  glMatrixMode(GL_TEXTURE);
+  glPushMatrix();
+  glLoadIdentity(); //Texture addressing should start out as direct.
+  depthTestEnabled = glIsEnabled(GL_DEPTH_TEST);
+  glDisable(GL_DEPTH_TEST);
+  stencilTestEnabled = glIsEnabled(GL_STENCIL_TEST);
+  glDisable(GL_STENCIL_TEST);
+  // save attribs
+  glPushAttrib(GL_ALL_ATTRIB_BITS);
+  // call native rendering function
+  //////////////////
+  glEnable(GL_TEXTURE_2D);
+  glDisable(GL_LIGHTING);
+  glDisable(GL_CULL_FACE);
+  glEnable(GL_DEPTH_TEST);
+}
+static void
+restoreState()
+{
+  ////////////////
+  // restore original state
+  glPopAttrib();
+  if (stencilTestEnabled) {
+    glEnable(GL_STENCIL_TEST);
+  }
+  if (depthTestEnabled) {
+    glEnable(GL_DEPTH_TEST);
+  }
+  // restore matrices
+  glMatrixMode(GL_TEXTURE);
+  glPopMatrix();
+  glMatrixMode(GL_PROJECTION);
+  glPopMatrix();
+  glMatrixMode(GL_MODELVIEW);
+  glPopMatrix();
+
+  glMatrixMode(matrixMode);
+}
+
+
 // ===========================================================================
 // Component: Interface with X11
 // TODO: split into a separate file
@@ -616,6 +676,7 @@ void renderDesktopToTexture()
     if (!checkForErrors()) {
       exit(EXIT_FAILURE);
     }
+    glClearColor(0, 1, 0, 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   }
 
@@ -806,8 +867,10 @@ void renderGL(Desktop3DLocation& loc, double timeDiff_)
     getCursorTexture();
   }
 
-  if (renderToTexture && !OGRE3D && !IRRLICHT) {
+  if ((renderToTexture || OGRE3D) && !IRRLICHT) {
+      saveState();
     renderDesktopToTexture();
+    restoreState();
   }
 
   if(renderer->needsSwapBuffers()) {

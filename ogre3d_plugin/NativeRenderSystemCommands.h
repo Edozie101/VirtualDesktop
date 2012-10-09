@@ -52,6 +52,10 @@
 
 #include "../ibex.h"
 
+#define HAVE_LIBJPEG 1
+#include <jpeglib.h>
+#include "../glm/glm.h"
+
 using namespace Ogre;
 
 class NativeRenderSystemCommandsRenderQueueListener : public RenderQueueListener
@@ -72,6 +76,27 @@ protected:
   NativeRender()
 
   {
+    static GLuint _skybox[6];
+    static int init = 1;
+    if(init) {
+        init = 0;
+        float sizeX = 2048;
+          float sizeY = 2048;
+          _skybox[0] = glmLoadTexture("./resources/humus-skybox/negz.jpg", GL_TRUE, GL_FALSE,
+                                      GL_TRUE, GL_FALSE, &sizeX, &sizeY);
+          _skybox[1] = glmLoadTexture("./resources/humus-skybox/posx.jpg", GL_TRUE, GL_FALSE,
+                                      GL_TRUE, GL_FALSE, &sizeX, &sizeY);
+          _skybox[2] = glmLoadTexture("./resources/humus-skybox/posz.jpg", GL_TRUE, GL_FALSE,
+                                      GL_TRUE, GL_FALSE, &sizeX, &sizeY);
+          _skybox[3] = glmLoadTexture("./resources/humus-skybox/negx.jpg", GL_TRUE, GL_FALSE,
+                                      GL_TRUE, GL_FALSE, &sizeX, &sizeY);
+          _skybox[4] = glmLoadTexture("./resources/humus-skybox/posy.jpg", GL_TRUE, GL_FALSE,
+                                      GL_TRUE, GL_FALSE, &sizeX, &sizeY);
+          _skybox[5] = glmLoadTexture("./resources/humus-skybox/negy.jpg", GL_TRUE, GL_FALSE,
+                                      GL_TRUE, GL_FALSE, &sizeX, &sizeY);
+
+          std::cout << _skybox[5] << std::endl;
+    }
 //    glDisable (GL_TEXTURE_2D);
 
     glDisable(GL_LIGHTING);
@@ -80,6 +105,7 @@ protected:
 
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, this->desktopTexture);
+    std::cerr << "texture: " << this->desktopTexture << std::endl;
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -118,13 +144,13 @@ protected:
     glNormal3f(0.0f, 1.0f, 0.0f);
     glColor4f(0.5, 0.5, 0.5, .5);
 
-    glTexCoord2f(0.005f, 1.995f);
+    glTexCoord2f(0.0f, 1.995f);
     glVertex3f(-1.0f, 1.3f, -1.0f);
 
-    glTexCoord2f(0.005f, 0.005f);
+    glTexCoord2f(0.0f, 0.0f);
     glVertex3f(-1.0f, 1.3f, 1.0f);
 
-    glTexCoord2f(1.995f, 0.005f);
+    glTexCoord2f(1.995f, 0.0f);
     glVertex3f(1.0f, 1.3f, 1.0f);
 
     glTexCoord2f(1.995f, 1.995f);
@@ -135,16 +161,16 @@ protected:
     glNormal3f(0.0f, 0.0f, -1.0f);
     glColor4f(0.2, 0.9, 0.2, .5);
 
-    glTexCoord2f(0.995f, 0.005f);
+    glTexCoord2f(1.0f, 0.0f);
     glVertex3f(-1.0f, -1.0f, -1.3f);
 
     glTexCoord2f(2.995f, 2.995f);
     glVertex3f(-1.0f, 1.0f, -1.3f);
 
-    glTexCoord2f(0.005f, 0.995f);
+    glTexCoord2f(0.0f, 1.0f);
     glVertex3f(1.0f, 1.0f, -1.3f);
 
-    glTexCoord2f(0.005f, 0.005f);
+    glTexCoord2f(0.0f, 0.0f);
     glVertex3f(1.0f, -1.0f, -1.3f);
 
     // Right face.  Blue; 25% opaque
@@ -152,16 +178,16 @@ protected:
     glNormal3f(1.0f, 0.0f, 0.0f);
     glColor4f(0.2, 0.2, 0.9, .25);
 
-    glTexCoord2f(0.995f, 0.005f);
+    glTexCoord2f(1.0f, 0.0f);
     glVertex3f(1.0f, -1.0f, -1.0f);
 
-    glTexCoord2f(0.995f, 0.995f);
+    glTexCoord2f(1.0f, 1.0f);
     glVertex3f(1.0f, 1.0f, -1.0f);
 
-    glTexCoord2f(0.005f, 0.995f);
+    glTexCoord2f(0.0f, 1.0f);
     glVertex3f(1.0f, 1.0f, 1.0f);
 
-    glTexCoord2f(0.005f, 0.005f);
+    glTexCoord2f(0.0f, 0.0f);
     glVertex3f(1.0f, -1.0f, 1.0f);
 
     // Front face; offset.  Multi-colored, 50% opaque.
@@ -194,22 +220,22 @@ protected:
 
     glColor4f(0.9, 0.9, 0.2, 0.0);
 
-    glTexCoord2f(0.005f, 0.005f);
+    glTexCoord2f(0.0f, 0.0f);
     glVertex3f(-1.3f, -1.0f, -1.0f);
 
     glColor4f(0.9, 0.9, 0.2, 0.66);
 
-    glTexCoord2f(0.995f, 0.005f);
+    glTexCoord2f(1.0f, 0.0f);
     glVertex3f(-1.3f, -1.0f, 1.0f);
 
     glColor4f(0.9, 0.9, 0.2, 1.0);
 
-    glTexCoord2f(0.995f, 0.995f);
+    glTexCoord2f(1.0f, 1.0f);
     glVertex3f(-1.3f, 1.0f, 1.0f);
 
     glColor4f(0.9, 0.9, 0.2, 0.33);
 
-    glTexCoord2f(0.005f, 0.995f);
+    glTexCoord2f(0.0f, 1.0f);
     glVertex3f(-1.3f, 1.0f, -1.0f);
 
     // All polygons have been drawn.
@@ -276,7 +302,7 @@ public:
 
     if (didInitOpenGL())
       {
-        renderDesktopToTexture();
+//        renderDesktopToTexture();
       }
 
     //////////////////
