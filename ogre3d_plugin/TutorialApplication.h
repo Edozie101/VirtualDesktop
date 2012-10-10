@@ -22,11 +22,25 @@ This source file is part of the
 
 #include "../RendererPlugin.h"
 
+#include <Terrain/OgreTerrain.h>
+#include <Terrain/OgreTerrainGroup.h>
+
 class Ogre3DRendererPlugin : public BaseApplication, public RendererPlugin
 {
 public:
-//    Ogre::ResourceHandle desktopTexture;
+private:
+  Ogre::TerrainGlobalOptions* mTerrainGlobals;
+  Ogre::TerrainGroup* mTerrainGroup;
+  bool mTerrainsImported;
+
+  void defineTerrain(long x, long y);
+  void initBlendMaps(Ogre::Terrain* terrain);
+  void configureTerrainDefaults(Ogre::Light* light);
+  bool frameRenderingQueued(const Ogre::FrameEvent& evt);
+
   GLuint desktopTexture;
+
+public:
 
     Ogre3DRendererPlugin(Display *dpy, unsigned long screen, Window window, XVisualInfo *visualinfo, unsigned long context);
     virtual ~Ogre3DRendererPlugin();

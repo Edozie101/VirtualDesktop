@@ -59,7 +59,7 @@ BaseApplication::~BaseApplication(void)
 //-------------------------------------------------------------------------------------
 bool BaseApplication::configure()
 {
-   mRoot->loadPlugin("/usr/lib/x86_64-linux-gnu/OGRE-1.8.0/RenderSystem_GL");
+//   mRoot->loadPlugin("/usr/lib/x86_64-linux-gnu/OGRE-1.8.0/RenderSystem_GL");
    const Ogre::RenderSystemList &rs = mRoot->getAvailableRenderers();
    if(rs.size()&&rs.at(0)->getName().compare("RenderSystem_GL")){
            Ogre::RenderSystem * r=rs.at(0);
