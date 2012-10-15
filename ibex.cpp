@@ -1363,8 +1363,6 @@ int main(int argc, char ** argv)
       }
     }
 
-    renderer->processEvents();
-
     struct timespec ts_current;
     clock_gettime(CLOCK_MONOTONIC, &ts_current);
 
@@ -1376,6 +1374,7 @@ int main(int argc, char ** argv)
     desktop3DLocation.walk(walkForward, strafeRight, timeDiff);
 
     renderer->move(walkForward, strafeRight, jump, relativeMouseX, relativeMouseY);
+    renderer->processEvents();
 
     renderGL(desktop3DLocation, timeDiff);
 
