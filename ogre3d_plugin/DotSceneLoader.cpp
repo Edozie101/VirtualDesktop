@@ -211,13 +211,15 @@ void DotSceneLoader::processEnvironment(TiXmlElement *XMLNode)
     // Process colourBackground (?)
     //! @todo Set the background colour of all viewports (RenderWindow has to be provided then)
     pElement = XMLNode->FirstChildElement("colourBackground");
-    if(pElement)
+    if(pElement) {
         ;//mSceneMgr->set(parseColour(pElement));
+    }
 
     // Process userDataReference (?)
     pElement = XMLNode->FirstChildElement("userDataReference");
-    if(pElement)
+    if(pElement) {
         processUserDataReference(pElement);
+    }
 }
 
 void DotSceneLoader::processTerrain(TiXmlElement *XMLNode)
@@ -592,13 +594,15 @@ void DotSceneLoader::processEntity(TiXmlElement *XMLNode, SceneNode *pParent)
 
     // Process vertexBuffer (?)
     pElement = XMLNode->FirstChildElement("vertexBuffer");
-    if(pElement)
+    if(pElement) {
         ;//processVertexBuffer(pElement);
+    }
 
     // Process indexBuffer (?)
     pElement = XMLNode->FirstChildElement("indexBuffer");
-    if(pElement)
+    if(pElement) {
         ;//processIndexBuffer(pElement);
+    }
 
     // Create the entity
     Entity *pEntity = 0;

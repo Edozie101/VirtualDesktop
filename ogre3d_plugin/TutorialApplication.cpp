@@ -21,6 +21,8 @@ This source file is part of the
 #include <RenderSystems/GL/OgreGLTexture.h>
 #include <RenderSystems/GL/OgreGLTextureManager.h>
 
+#include "DotSceneLoader.h"
+
 using namespace Ogre;
 
 //-------------------------------------------------------------------------------------
@@ -97,90 +99,62 @@ void Ogre3DRendererPlugin::createDesktopObject() {
   ManualObject *manObj; // we will use this Manual Object as a reference point for the native rendering
   manObj = mSceneMgr->createManualObject("sampleArea");
 
+  Ogre::AxisAlignedBox b(-40, -40, -40, 40, 40, 40);
+  manObj->setBoundingBox(b);
+
   // Attach to child of root node, better for culling (otherwise bounds are the combination of the 2)
   mSceneMgr->getRootSceneNode()->createChildSceneNode()->attachObject(manObj);
 
   String RenderSystemName = mSceneMgr->getDestinationRenderSystem()->getName();
-  mRenderSystemCommandsRenderQueueListener =
-        new OpenGLNativeRenderSystemCommandsRenderQueueListener(
-        manObj, mCamera, mSceneMgr);
+  mRenderSystemCommandsRenderQueueListener = new OpenGLNativeRenderSystemCommandsRenderQueueListener(manObj, mCamera2, mSceneMgr);
 
-    mSceneMgr->addRenderQueueListener(mRenderSystemCommandsRenderQueueListener);
-
-
-
-
-
-
-
-return;
-
-
-
-
-
-
-    mCamera->setPosition(Ogre::Vector3(1683, 50, 2116));
-        mCamera->lookAt(Ogre::Vector3(1963, 50, 1660));
-        mCamera->setNearClipDistance(0.1);
-        mCamera->setFarClipDistance(50000);
-
-        if (mRoot->getRenderSystem()->getCapabilities()->hasCapability(Ogre::RSC_INFINITE_FAR_PLANE))
-        {
-            mCamera->setFarClipDistance(0);   // enable infinite far clip distance if we can
-        }
-
-        Ogre::MaterialManager::getSingleton().setDefaultTextureFiltering(Ogre::TFO_ANISOTROPIC);
-        Ogre::MaterialManager::getSingleton().setDefaultAnisotropy(7);
-
-        Ogre::Vector3 lightdir(0.55, -0.3, 0.75);
-        lightdir.normalise();
-
-        Ogre::Light* light = mSceneMgr->createLight("tstLight");
-        light->setType(Ogre::Light::LT_DIRECTIONAL);
-        light->setDirection(lightdir);
-        light->setDiffuseColour(Ogre::ColourValue::White);
-        light->setSpecularColour(Ogre::ColourValue(0.4, 0.4, 0.4));
-
-        mSceneMgr->setAmbientLight(Ogre::ColourValue(0.2, 0.2, 0.2));
-
-        mTerrainGlobals = OGRE_NEW Ogre::TerrainGlobalOptions();
-
-        mTerrainGroup = OGRE_NEW Ogre::TerrainGroup(mSceneMgr, Ogre::Terrain::ALIGN_X_Z, 513, 12000.0f);
-        mTerrainGroup->setFilenameConvention(Ogre::String("BasicTutorial3Terrain"), Ogre::String("dat"));
-        mTerrainGroup->setOrigin(Ogre::Vector3::ZERO);
-
-        configureTerrainDefaults(light);
-
-        for (long x = 0; x <= 0; ++x)
-            for (long y = 0; y <= 0; ++y)
-                defineTerrain(x, y);
-
-        // sync load since we want everything in place when we start
-        mTerrainGroup->loadAllTerrains(true);
-
-        if (mTerrainsImported)
-        {
-            Ogre::TerrainGroup::TerrainIterator ti = mTerrainGroup->getTerrainIterator();
-            while(ti.hasMoreElements())
-            {
-                Ogre::Terrain* t = ti.getNext()->instance;
-                initBlendMaps(t);
-            }
-        }
-
-        mTerrainGroup->freeTemporaryResources();
+  mSceneMgr->addRenderQueueListener(mRenderSystemCommandsRenderQueueListener);
 
   std::cerr << "***** DONE CONFIGURE and INIT SCENE" << std::endl;
-  }
+}
+
 void Ogre3DRendererPlugin::createScene(void)
 {
-    // create your scene here :)
+  mCamera2 = mSceneMgr->createCamera("PlayerCam2");
+  mCamera2->setCustomProjectionMatrix(true, mCamera->getProjectionMatrix());
+  mCamera2->setCustomViewMatrix(true, mCamera->getViewMatrix());
+
+  mWindow->removeAllViewports();
+  Ogre::Viewport* vp = mWindow->addViewport(mCamera2);
+
+
+
   Ogre::Entity* ogreHead = mSceneMgr->createEntity("Head", "ogrehead.mesh");
   Ogre::SceneNode* headNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("HeadNode");
-  headNode->attachObject(ogreHead);
+//  headNode->attachObject(ogreHead);
+
+
+  // Water
+  // Define a plane mesh that will be used for the ocean surface
+  Ogre::Plane oceanSurface;
+  oceanSurface.normal = Ogre::Vector3::UNIT_Y;
+  oceanSurface.d = 20;
+  Ogre::MeshManager::getSingleton().createPlane("OceanSurface",
+          Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+          oceanSurface,
+          5000, 5000, 50, 50, true, 1, 1, 1, Ogre::Vector3::UNIT_Z);
+
+  Entity *pWaterEntity = mSceneMgr->createEntity( "OceanSurface", "OceanSurface" );
+  mSceneMgr->getRootSceneNode()->createChildSceneNode()->attachObject(pWaterEntity);
+  pWaterEntity->setMaterialName("Ocean2_HLSL_GLSL");
+//  pWaterEntity->setMaterialName("OceanHLSL_GLSL");
+
   Ogre::Light* light = mSceneMgr->createLight( "MainLight" );
   light->setPosition(20, 80, 50);
+  light->setPosition(0, 0, 50);
+
+  Ogre::DotSceneLoader l;
+  l.parseDotScene("first_terrain.scene",  Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, mSceneMgr);
+//  mSceneMgr->showBoundingBoxes(true);
+
+  mSceneMgr->setSkyDome(true, "Examples/CloudySky", 5, 8);
+//  mSceneMgr->setSkyBox(true, "Examples/SpaceSkyBox");
+
 
   createDesktopObject();
 }

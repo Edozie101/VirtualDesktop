@@ -70,6 +70,9 @@
 									<listOptionValue builtIn="false" value="OgreMain"/>
 									<listOptionValue builtIn="false" value="OIS"/>
 									<listOptionValue builtIn="false" value="Irrlicht"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="OgrePaging"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="OgreTerrain"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="tinyxml"/>
 								</option>
 								<option id="gnu.cpp.link.option.paths.1151853828" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="/usr/lib/X11"/>
@@ -103,8 +106,10 @@
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
 		<project id="composite-test.null.88255265" name="composite-test"/>
 	</storageModule>
-	<storageModule moduleId="refreshScope" versionNumber="1">
-		<resource resourceType="PROJECT" workspacePath="/composite-test"/>
+	<storageModule moduleId="refreshScope" versionNumber="2">
+		<configuration configurationName="Default">
+			<resource resourceType="PROJECT" workspacePath="/composite-test"/>
+		</configuration>
 	</storageModule>
 	<storageModule moduleId="scannerConfiguration">
 		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>

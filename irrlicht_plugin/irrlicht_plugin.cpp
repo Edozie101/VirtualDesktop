@@ -640,11 +640,11 @@ irrlicht_step(const Desktop3DLocation& loc)
 
   static u32 then = device->getTimer()->getTime();
   // This is the movemen speed in units per second.
-  static const f32 MOVEMENT_SPEED = 5.f;
+//  static const f32 MOVEMENT_SPEED = 5.f;
 
   // Work out a frame delta time.
   const u32 now = device->getTimer()->getTime();
-  const f32 frameDeltaTime = (f32) (now - then) / 1000.f; // Time in seconds
+//  const f32 frameDeltaTime = (f32) (now - then) / 1000.f; // Time in seconds
   then = now;
 
 //  loc.setWalkSpeed(100);

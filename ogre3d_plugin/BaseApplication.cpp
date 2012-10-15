@@ -42,7 +42,8 @@ BaseApplication::BaseApplication(Display *dpy_, unsigned long screen_, Window wi
     screen(screen_),
     window(window_),
     visualinfo(visualinfo_),
-    context(context_)
+    context(context_),
+    windowId(0)
 {
 }
 
@@ -92,10 +93,8 @@ bool BaseApplication::configure()
 //  params[Ogre::String("externalGLControl")]    = "true";
   params[Ogre::String("externalGLContext")]    = out2.str();
 
-
-  char *name = "OgreApp";
   mWindow = mRoot->initialise(false);//, "TutorialApplication Render Window");
-    mWindow = mRoot->createRenderWindow( name, 1440, 900, false, &params);
+  mWindow = mRoot->createRenderWindow( "Ibex", 1440, 900, false, &params);
 
 //        mWindow = mRoot->createRenderWindow( name, width, height, true);//, &params);
 //    mWindow = mRoot->initialise(true, "ibex");//true, "ibex");
@@ -378,6 +377,7 @@ bool BaseApplication::keyPressed( const OIS::KeyEvent &arg )
             newVal = "Bilinear";
             tfo = Ogre::TFO_BILINEAR;
             aniso = 1;
+            break;
         }
 
         Ogre::MaterialManager::getSingleton().setDefaultTextureFiltering(tfo);
@@ -402,6 +402,7 @@ bool BaseApplication::keyPressed( const OIS::KeyEvent &arg )
         default:
             newVal = "Solid";
             pm = Ogre::PM_SOLID;
+            break;
         }
 
         mCamera->setPolygonMode(pm);
