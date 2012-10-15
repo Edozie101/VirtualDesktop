@@ -60,6 +60,12 @@ BaseApplication::~BaseApplication(void)
 bool BaseApplication::configure()
 {
 //   mRoot->loadPlugin("/usr/lib/x86_64-linux-gnu/OGRE-1.8.0/RenderSystem_GL");
+//  mRoot->loadPlugin("/usr/lib/x86_64-linux-gnu/OGRE-1.8.0/Plugin_OctreeSceneManager");
+//  mRoot->loadPlugin("/usr/lib/x86_64-linux-gnu/OGRE-1.8.0/Plugin_OctreeZone");
+//  mRoot->loadPlugin("/usr/lib/x86_64-linux-gnu/OGRE-1.8.0/Plugin_BSPSceneManager");
+//  mRoot->loadPlugin("/usr/lib/x86_64-linux-gnu/OGRE-1.8.0/Plugin_ParticleFX");
+//  mRoot->loadPlugin("/usr/lib/x86_64-linux-gnu/OGRE-1.8.0/Plugin_PCZSceneManager");
+
    const Ogre::RenderSystemList &rs = mRoot->getAvailableRenderers();
    if(rs.size()&&rs.at(0)->getName().compare("RenderSystem_GL")){
            Ogre::RenderSystem * r=rs.at(0);
@@ -113,7 +119,22 @@ void BaseApplication::createCamera(void)
     mCamera->lookAt(Ogre::Vector3(0,0,-300));
     mCamera->setNearClipDistance(5);
 
+
+
+
+    mCamera->setPosition(Ogre::Vector3(10, 20, 100));
+//    mCamera->setPosition(Ogre::Vector3(100, 50, 500));
+        mCamera->lookAt(Ogre::Vector3(-100, 0, -300));
+        mCamera->setNearClipDistance(0.1);
+        mCamera->setFarClipDistance(50000);
+
+        if (mRoot->getRenderSystem()->getCapabilities()->hasCapability(Ogre::RSC_INFINITE_FAR_PLANE))
+        {
+            mCamera->setFarClipDistance(0);   // enable infinite far clip distance if we can
+        }
+
     mCameraMan = new OgreBites::SdkCameraMan(mCamera);   // create a default camera controller
+    mCameraMan->setStyle(OgreBites::CS_FREELOOK);
 }
 //-------------------------------------------------------------------------------------
 void BaseApplication::createFrameListener(void)
