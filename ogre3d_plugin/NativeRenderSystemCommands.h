@@ -70,9 +70,11 @@ protected:
 
   void NativeRender()
   {
-    glEnable(GL_DEPTH_TEST);
-    glDisable(GL_LIGHTING);
+    const double s = (double)width/(double)height;
 
+    glEnable(GL_DEPTH_TEST);
+    glDisable(GL_CULL_FACE);
+    glDisable(GL_LIGHTING);
     glDisable(GL_BLEND);
 
     glEnable(GL_TEXTURE_2D);
@@ -84,132 +86,29 @@ protected:
     glTranslated(-10, 0, 0);
     glScalef(10.0, 10.0, 10.0);
 
-    static int i = 0;
-    ++i;
-    glRotated(i, 1.0, 0.2, 0.5);
-
-    // I took the following sample code from here: http://www.oreillynet.com/network/2000/06/23/magazine/cube.c
-    // OK, let's start drawing our planer quads.
-
     glBegin(GL_QUADS);
-    // Bottom Face.  Red, 75% opaque, magnified texture
-
-    glNormal3f(0.0f, -1.0f, 0.0f); // Needed for lighting
-
-    glColor4f(0.9, 0.2, 0.2, .75); // Basic polygon color
-
-    glTexCoord2f(0.f, 0.f);
-    glVertex3f(-1.0f, -1.0f, -1.0f);
-
-    glTexCoord2f(1.f, 0.f);
-    glVertex3f(1.0f, -1.0f, -1.0f);
-
-    glTexCoord2f(1.f, 1.f);
-    glVertex3f(1.0f, -1.0f, 1.0f);
-
-    glTexCoord2f(0.f, 1.f);
-    glVertex3f(-1.0f, -1.0f, 1.0f);
-
-    // Top face; offset.  White, 50% opaque.
-
-    glNormal3f(0.0f, 1.0f, 0.0f);
-    glColor4f(0.5, 0.5, 0.5, .5);
-
-    glTexCoord2f(0.0f, 1.995f);
-    glVertex3f(-1.0f, 1.3f, -1.0f);
-
-    glTexCoord2f(0.0f, 0.0f);
-    glVertex3f(-1.0f, 1.3f, 1.0f);
-
-    glTexCoord2f(1.995f, 0.0f);
-    glVertex3f(1.0f, 1.3f, 1.0f);
-
-    glTexCoord2f(1.995f, 1.995f);
-    glVertex3f(1.0f, 1.3f, -1.0f);
-
-    // Far face.  Green, 50% opaque, non-uniform texture cooridinates.
-
-    glNormal3f(0.0f, 0.0f, -1.0f);
-    glColor4f(0.2, 0.9, 0.2, .5);
-
-    glTexCoord2f(1.0f, 0.0f);
-    glVertex3f(-1.0f, -1.0f, -1.3f);
-
-    glTexCoord2f(2.995f, 2.995f);
-    glVertex3f(-1.0f, 1.0f, -1.3f);
-
-    glTexCoord2f(0.0f, 1.0f);
-    glVertex3f(1.0f, 1.0f, -1.3f);
-
-    glTexCoord2f(0.0f, 0.0f);
-    glVertex3f(1.0f, -1.0f, -1.3f);
-
-    // Right face.  Blue; 25% opaque
-
-    glNormal3f(1.0f, 0.0f, 0.0f);
-    glColor4f(0.2, 0.2, 0.9, .25);
-
-    glTexCoord2f(1.0f, 0.0f);
-    glVertex3f(1.0f, -1.0f, -1.0f);
-
-    glTexCoord2f(1.0f, 1.0f);
-    glVertex3f(1.0f, 1.0f, -1.0f);
-
-    glTexCoord2f(0.0f, 1.0f);
-    glVertex3f(1.0f, 1.0f, 1.0f);
-
-    glTexCoord2f(0.0f, 0.0f);
-    glVertex3f(1.0f, -1.0f, 1.0f);
-
     // Front face; offset.  Multi-colored, 50% opaque.
-
     glNormal3f(0.0f, 0.0f, 1.0f);
 
     glColor4f(0.9f, 0.2f, 0.2f, 0.5f);
 
     glTexCoord2f(0.f, 0.f);
-    glVertex3f(-1.0f, -1.0f, 1.3f);
+    glVertex3f(-1.0f*s, -1.0f, 1.3f);
 
     glColor4f(0.2f, 0.9f, 0.2f, 0.5f);
 
     glTexCoord2f(1.f, 0.f);
-    glVertex3f(1.0f, -1.0f, 1.3f);
+    glVertex3f(1.0f*s, -1.0f, 1.3f);
 
     glColor4f(0.2f, 0.2f, 0.9f, 0.5f);
 
     glTexCoord2f(1.f, 1.f);
-    glVertex3f(1.0f, 1.0f, 1.3f);
+    glVertex3f(1.0f*s, 1.0f, 1.3f);
 
     glColor4f(0.1f, 0.1f, 0.1f, 0.5f);
 
     glTexCoord2f(0.f, 1.f);
-    glVertex3f(-1.0f, 1.0f, 1.3f);
-
-    // Left Face; offset.  Yellow, varying levels of opaque.
-
-    glNormal3f(-1.0f, 0.0f, 0.0f);
-
-    glColor4f(0.9, 0.9, 0.2, 0.0);
-
-    glTexCoord2f(0.0f, 0.0f);
-    glVertex3f(-1.3f, -1.0f, -1.0f);
-
-    glColor4f(0.9, 0.9, 0.2, 0.66);
-
-    glTexCoord2f(1.0f, 0.0f);
-    glVertex3f(-1.3f, -1.0f, 1.0f);
-
-    glColor4f(0.9, 0.9, 0.2, 1.0);
-
-    glTexCoord2f(1.0f, 1.0f);
-    glVertex3f(-1.3f, 1.0f, 1.0f);
-
-    glColor4f(0.9, 0.9, 0.2, 0.33);
-
-    glTexCoord2f(0.0f, 1.0f);
-    glVertex3f(-1.3f, 1.0f, -1.0f);
-
-    // All polygons have been drawn.
+    glVertex3f(-1.0f*s, 1.0f, 1.3f);
 
     glEnd();
 

@@ -103,7 +103,9 @@ void Ogre3DRendererPlugin::createDesktopObject() {
   manObj->setBoundingBox(b);
 
   // Attach to child of root node, better for culling (otherwise bounds are the combination of the 2)
-  mSceneMgr->getRootSceneNode()->createChildSceneNode()->attachObject(manObj);
+  Ogre::SceneNode *desktopNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
+  desktopNode->attachObject(manObj);
+  desktopNode->setPosition(40, 15, 0);
 
   String RenderSystemName = mSceneMgr->getDestinationRenderSystem()->getName();
   mRenderSystemCommandsRenderQueueListener = new OpenGLNativeRenderSystemCommandsRenderQueueListener(manObj, mCamera2, mSceneMgr);

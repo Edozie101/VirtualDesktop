@@ -48,7 +48,7 @@ public:
 
     void init() {
       go();
-      mCamera->lookAt(-100, 0, 0);
+//      mCamera->lookAt(-100, 0, 0);
     }
     void setDesktopTexture(GLuint desktopTexture_);
 
