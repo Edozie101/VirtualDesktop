@@ -17,6 +17,7 @@ This source file is part of the
 #include "BaseApplication.h"
 
 #include <OgreRenderSystem.h>
+#include <OgreCamera.h>
 
 #include "../ibex.h"
 
@@ -24,6 +25,7 @@ This source file is part of the
 BaseApplication::BaseApplication(Display *dpy_, unsigned long screen_, Window window_, XVisualInfo *visualinfo_, unsigned long context_)
     : mRoot(0),
     mCamera(0),
+    mCamera2(0),
     mSceneMgr(0),
     mWindow(0),
     mResourcesCfg(Ogre::StringUtil::BLANK),
@@ -200,8 +202,7 @@ void BaseApplication::createViewports(void)
     vp->setBackgroundColour(Ogre::ColourValue(0,0,0));
 
     // Alter the camera aspect ratio to match the viewport
-    mCamera->setAspectRatio(
-        Ogre::Real(vp->getActualWidth()) / Ogre::Real(vp->getActualHeight()));
+    mCamera->setAspectRatio(Ogre::Real(vp->getActualWidth()) / Ogre::Real(vp->getActualHeight()));
 }
 //-------------------------------------------------------------------------------------
 void BaseApplication::setupResources(void)
