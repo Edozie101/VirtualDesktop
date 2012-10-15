@@ -517,7 +517,7 @@ material Ocean2_HLSL_GLSL
 
 			texture_unit
 			{
-				cubic_texture morning.jpg combinedUVW
+				cubic_texture stormy.jpg combinedUVW
 				tex_address_mode clamp
 				tex_coord_set 1
 				filtering linear linear linear
