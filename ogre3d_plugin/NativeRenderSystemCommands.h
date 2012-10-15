@@ -74,6 +74,7 @@ protected:
   {
 //    glDisable (GL_TEXTURE_2D);
 
+    glEnable(GL_DEPTH_TEST);
     glDisable(GL_LIGHTING);
 
     glDisable(GL_BLEND);
@@ -309,6 +310,7 @@ public:
     // this queue - else you will never pass this if.
     if (queueGroupId != RENDER_QUEUE_MAIN)
       return;
+
 
     blah();
 
