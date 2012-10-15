@@ -68,12 +68,8 @@ protected:
   const Camera* mCamera;
   SceneManager* mSceneMgr;
 
-  void
-  NativeRender()
-
+  void NativeRender()
   {
-//    glDisable (GL_TEXTURE_2D);
-
     glEnable(GL_DEPTH_TEST);
     glDisable(GL_LIGHTING);
 
@@ -223,97 +219,26 @@ public:
   GLuint desktopTexture;
   OpenGLNativeRenderSystemCommandsRenderQueueListener(MovableObject* object,
       const Camera* camera, SceneManager* sceneMgr) :
-
       mObject(object),
-
       mCamera(camera),
-
-      mSceneMgr(sceneMgr)
+      mSceneMgr(sceneMgr),
+      desktopTexture(0)
   {
   }
 
-  virtual void
-  renderQueueStarted(uint8 queueGroupId, const String& invocation,
+  virtual void renderQueueStarted(uint8 queueGroupId, const String& invocation,
 
   bool& skipThisInvocation)
   {
   }
 
-  void
-  blah()
-  {
-    // save matrices
-    glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
-    glMatrixMode(GL_PROJECTION);
-    glPushMatrix();
-    glMatrixMode(GL_TEXTURE);
-    glPushMatrix();
-    glLoadIdentity(); //Texture addressing should start out as direct.
-    RenderSystem* renderSystem =
-        mObject->_getManager()->getDestinationRenderSystem();
-    Node* parentNode = mObject->getParentNode();
-    renderSystem->_setWorldMatrix(parentNode->_getFullTransform());
-    renderSystem->_setViewMatrix(mCamera->getViewMatrix());
-    renderSystem->_setProjectionMatrix(mCamera->getProjectionMatrixRS());
-    static Pass* clearPass = NULL;
-    if (!clearPass)
-      {
-        MaterialPtr clearMat = MaterialManager::getSingleton().getByName(
-            "BaseWhite");
-        clearPass = clearMat->getTechnique(0)->getPass(0);
-      }
-    //Set a clear pass to give the renderer a clear renderstate
-    mSceneMgr->_setPass(clearPass, true, false);
-    GLboolean depthTestEnabled = glIsEnabled(GL_DEPTH_TEST);
-    glDisable(GL_DEPTH_TEST);
-    GLboolean stencilTestEnabled = glIsEnabled(GL_STENCIL_TEST);
-    glDisable(GL_STENCIL_TEST);
-    // save attribs
-    glPushAttrib(GL_ALL_ATTRIB_BITS);
-    // call native rendering function
-    //////////////////
-    glEnable(GL_TEXTURE_2D);
-
-    if (didInitOpenGL())
-      {
-//        renderDesktopToTexture();
-      }
-
-    //////////////////
-    // restore original state
-
-    glPopAttrib();
-    if (depthTestEnabled)
-      {
-        glEnable(GL_DEPTH_TEST);
-      }
-    if (stencilTestEnabled)
-      {
-        glEnable(GL_STENCIL_TEST);
-      }
-    // restore matrices
-    glMatrixMode(GL_TEXTURE);
-    glPopMatrix();
-    glMatrixMode(GL_PROJECTION);
-    glPopMatrix();
-    glMatrixMode(GL_MODELVIEW);
-    glPopMatrix();
-  }
-  virtual void
-  renderQueueEnded(uint8 queueGroupId, const String& invocation,
-
-  bool& repeatThisInvocation)
-
+  virtual void renderQueueEnded(uint8 queueGroupId, const String& invocation, bool& repeatThisInvocation)
   {
     // Set wanted render queue here - make sure there are - make sure that something is on
     // this queue - else you will never pass this if.
     if (queueGroupId != RENDER_QUEUE_MAIN)
       return;
 
-
-    blah();
-
     // save matrices
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
@@ -330,153 +255,40 @@ public:
     renderSystem->_setProjectionMatrix(mCamera->getProjectionMatrixRS());
     static Pass* clearPass = NULL;
     if (!clearPass)
-
       {
-
         MaterialPtr clearMat = MaterialManager::getSingleton().getByName(
             "BaseWhite");
-
         clearPass = clearMat->getTechnique(0)->getPass(0);
-
       }
-
     //Set a clear pass to give the renderer a clear renderstate
-
     mSceneMgr->_setPass(clearPass, true, false);
-
     GLboolean depthTestEnabled = glIsEnabled(GL_DEPTH_TEST);
-
     glDisable(GL_DEPTH_TEST);
-
     GLboolean stencilTestEnabled = glIsEnabled(GL_STENCIL_TEST);
-
     glDisable(GL_STENCIL_TEST);
-
     // save attribs
-
     glPushAttrib(GL_ALL_ATTRIB_BITS);
-
     // call native rendering function
-
     //////////////////
-
     NativeRender();
-
     //////////////////
-
     // restore original state
-
     glPopAttrib();
-
-    if (depthTestEnabled)
-
-      {
-
-        glEnable(GL_DEPTH_TEST);
-
-      }
-
-    if (stencilTestEnabled)
-
-      {
-
-        glEnable(GL_STENCIL_TEST);
-
-      }
-
+    if (depthTestEnabled) {
+      glEnable(GL_DEPTH_TEST);
+    }
+    if (stencilTestEnabled) {
+      glEnable(GL_STENCIL_TEST);
+    }
     // restore matrices
-
     glMatrixMode(GL_TEXTURE);
-
     glPopMatrix();
-
     glMatrixMode(GL_PROJECTION);
-
     glPopMatrix();
-
     glMatrixMode(GL_MODELVIEW);
-
     glPopMatrix();
-
   }
 
 };
-//
-//class NativeRenderSystemCommandsApplication : public SkyDomeApplication
-//
-//{
-//
-//public:
-//
-//  NativeRenderSystemCommandsApplication()
-//
-//  {
-//
-//  }
-//
-//protected:
-//
-//  RenderQueueListener * mRenderSystemCommandsRenderQueueListener;
-//
-//  // Just override the mandatory create scene method
-//
-//  void
-//  createScene(void)
-//
-//  {
-//
-//    SkyDomeApplication::createScene();
-//
-//    ManualObject *manObj; // we will use this Manual Object as a reference point for the native rendering
-//
-//    manObj = mSceneMgr->createManualObject("sampleArea");
-//
-//    // Attach to child of root node, better for culling (otherwise bounds are the combination of the 2)
-//
-//    mSceneMgr->getRootSceneNode()->createChildSceneNode()->attachObject(manObj);
-//
-//    String RenderSystemName =
-//        mSceneMgr->getDestinationRenderSystem()->getName();
-//
-//    mRenderSystemCommandsRenderQueueListener = NULL;
-//
-//    if ("OpenGL Rendering Subsystem" == RenderSystemName)
-//
-//    {
-//
-//      mRenderSystemCommandsRenderQueueListener =
-//          new OpenGLNativeRenderSystemCommandsRenderQueueListener(
-//
-//          manObj, mCamera, mSceneMgr);
-//
-//      mSceneMgr->addRenderQueueListener(
-//          mRenderSystemCommandsRenderQueueListener);
-//
-//    }
-//
-//  }
-//
-//  void
-//  destroyScene()
-//
-//  {
-//
-//    if (mRenderSystemCommandsRenderQueueListener)
-//
-//    {
-//
-//      mSceneMgr->removeRenderQueueListener(
-//          mRenderSystemCommandsRenderQueueListener);
-//
-//      delete mRenderSystemCommandsRenderQueueListener;
-//
-//      mRenderSystemCommandsRenderQueueListener = NULL;
-//
-//    }
-//
-//    SkyDomeApplication::destroyScene();
-//
-//  }
-//
-//};
+
 #endif
