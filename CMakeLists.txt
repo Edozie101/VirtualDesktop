@@ -13,7 +13,7 @@ find_package(OIS)
 if( OGRE_FOUND )
   add_definitions( -DENABLE_OGRE3D )
   #set(OGRE_INCLUDE_FLAGS "-I${OGRE_INCLUDE_DIRS}")
-  set(OGRE_PLUGIN_FILES "ogre3d_plugin/BaseApplication.cpp" "ogre3d_plugin/TutorialApplication.cpp")
+  set(OGRE_PLUGIN_FILES "ogre3d_plugin/BaseApplication.cpp" "ogre3d_plugin/TutorialApplication.cpp" "ogre3d_plugin/DotSceneLoader.cpp")
   include_directories( ${OIS_INCLUDE_DIRS}
         ${OGRE_INCLUDE_DIRS}
         ${OGRE_SAMPLES_INCLUDEPATH}
@@ -37,6 +37,17 @@ iphone_orientation_plugin/iphone_orientation_listener.cpp
 glm/glm_util.c glm/glm.c glm/glmimg.c glm/glmimg_png.c glm/glmimg_jpg.c)
 
 add_executable(ibex ${SRC} ${IRRLICHT_PLUGIN_FILES} ${OGRE_PLUGIN_FILES})
-target_link_libraries(ibex GL GLU glut GLEW X11 Xfixes Xdamage Xrender Xcomposite Xxf86vm Xi Xext jpeg rt ${IRRLICHT_LIBRARY} ${OGRE_LIBRARIES} ${OIS_LIBRARIES} ${OGRE_Terrain_LIBRARIES} ${OGRE_RenderSystem_GL_LIBRARIES})
+target_link_libraries(ibex GL GLU glut GLEW X11 Xfixes Xdamage Xrender Xcomposite Xxf86vm Xi Xext jpeg rt ${IRRLICHT_LIBRARY} ${OGRE_LIBRARIES} ${OIS_LIBRARIES} ${OGRE_RenderSystem_GL_LIBRARIES}
+${OGRE_Terrain_LIBRARIES}
+${OGRE_ParticleFX_LIBRARIES}
+${OGRE_BSPSceneManager_LIBRARIES}
+${OGRE_CgProgramManager_LIBRARIES}
+${OGRE_PCZSceneManager_LIBRARIES}
+${OGRE_OctreeZone_LIBRARIES}
+${OGRE_OctreeSceneManager_LIBRARIES}
+tinyxml
+)
+ 
+
 
 install (DIRECTORY resources DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
