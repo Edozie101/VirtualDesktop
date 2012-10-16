@@ -35,6 +35,22 @@ material Material
                 texture ForestFloor.jpg
                 tex_address_mode wrap
                 scale 1.0 1.0
+                tex_coord_set 2
+                colour_op modulate
+            }
+            texture_unit 
+            {
+                texture 200px-Blender3DNoobToPro-Multiple_Stencils_01.jpg
+                tex_address_mode wrap
+                scale 1.0 1.0
+                tex_coord_set 1
+                colour_op add
+            }
+            texture_unit 
+            {
+                texture Dirt.jpg
+                tex_address_mode wrap
+                scale 1.0 1.0
                 tex_coord_set 0
                 colour_op modulate
             }
