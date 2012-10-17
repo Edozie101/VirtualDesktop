@@ -29,7 +29,13 @@ This source file is part of the
 
 class Ogre3DRendererPlugin : public BaseApplication, public RendererPlugin
 {
-public:
+private:
+  void setupRTT();
+  Ogre::TexturePtr rtt_texture;
+  Ogre::RenderTexture *renderTexture;
+  Ogre::TexturePtr rtt_texture2;
+  Ogre::RenderTexture *renderTexture2;
+
 private:
   Ogre::TerrainGlobalOptions* mTerrainGlobals;
   Ogre::TerrainGroup* mTerrainGroup;
@@ -55,7 +61,7 @@ public:
     Window getWindowID() {
       return this->windowId;
     }
-    void render();
+    void render(double timeDiff_);
     void step(const Desktop3DLocation &loc_, double timeDiff_) {
       Ogre::FrameEvent f;
       f.timeSinceLastEvent = timeDiff_;
@@ -70,7 +76,7 @@ public:
           orientation[12],orientation[13],orientation[14],orientation[15]);
       mCamera2->setCustomViewMatrix(true, m.concatenateAffine(mCamera->getViewMatrix()));
 
-      render();
+      render(timeDiff_);
     }
     void move(int forward_, int right_, bool jump_, double relativeMouseX_, double relativeMouseY_)
     {
@@ -125,7 +131,7 @@ public:
 
 protected:
     OpenGLNativeRenderSystemCommandsRenderQueueListener * mRenderSystemCommandsRenderQueueListener;
-    virtual void createScene(void);
+    virtual void createScene();
     void createDesktopObject();
 };
 

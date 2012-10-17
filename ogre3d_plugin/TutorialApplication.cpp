@@ -41,12 +41,19 @@ void Ogre3DRendererPlugin::setDesktopTexture(GLuint desktopTexture_) {
       mRenderSystemCommandsRenderQueueListener->desktopTexture = desktopTexture_;
   }
 }
-void Ogre3DRendererPlugin::render() {
+void Ogre3DRendererPlugin::render(double timeDiff_) {
+//  if(SBS) {
+//    renderTexture->update();
+//    renderTexture2->update();
+//  }
+
 //  mWindow->getViewport(0)->setClearEveryFrame(false,0);
-  bool r = mRoot->renderOneFrame();
+  bool r = mRoot->renderOneFrame();//timeDiff_);
   if(!r) {
     std::cerr << "FAILED TO RENDER" << std::endl;
   }
+
+
 //  material->touch();
 //  material->reload();
 }
@@ -115,7 +122,48 @@ void Ogre3DRendererPlugin::createDesktopObject() {
   std::cerr << "***** DONE CONFIGURE and INIT SCENE" << std::endl;
 }
 
-void Ogre3DRendererPlugin::createScene(void)
+void Ogre3DRendererPlugin::setupRTT() {
+  if(!SBS) return;
+
+  rtt_texture = Ogre::TextureManager::getSingleton().createManual("RttTex", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, Ogre::TEX_TYPE_2D, mWindow->getWidth(), mWindow->getHeight(), 0, Ogre::PF_R8G8B8, Ogre::TU_RENDERTARGET);
+  renderTexture = rtt_texture->getBuffer()->getRenderTarget();
+
+  renderTexture->addViewport(mCamera2);
+  renderTexture->getViewport(0)->setClearEveryFrame(true);
+  renderTexture->getViewport(0)->setBackgroundColour(Ogre::ColourValue::Black);
+  renderTexture->getViewport(0)->setOverlaysEnabled(false);
+
+  rtt_texture2 = Ogre::TextureManager::getSingleton().createManual("RttTex2", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, Ogre::TEX_TYPE_2D, mWindow->getWidth(), mWindow->getHeight(), 0, Ogre::PF_R8G8B8, Ogre::TU_RENDERTARGET);
+  renderTexture2 = rtt_texture2->getBuffer()->getRenderTarget();
+
+  renderTexture2->addViewport(mCamera2);
+  renderTexture2->getViewport(0)->setClearEveryFrame(true);
+  renderTexture2->getViewport(0)->setBackgroundColour(Ogre::ColourValue::Black);
+  renderTexture2->getViewport(0)->setOverlaysEnabled(false);
+
+  Ogre::Rectangle2D *mMiniScreen = new Ogre::Rectangle2D(true);
+  mMiniScreen->setCorners(0.0f, 1.0f, 1.0f, -1.0f);//mMiniScreen->setCorners(0.5f, -0.5f, 1.0f, -1.0f);
+  mMiniScreen->setBoundingBox(Ogre::AxisAlignedBox(-100000.0f * Ogre::Vector3::UNIT_SCALE, 100000.0f * Ogre::Vector3::UNIT_SCALE));
+
+  Ogre::SceneNode* miniScreenNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("MiniScreenNode");
+  miniScreenNode->attachObject(mMiniScreen);
+  Ogre::MaterialPtr material = Ogre::MaterialManager::getSingleton().getByName("BarrelDistort");
+  material->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName("RttTex");
+  mMiniScreen->setMaterial("BarrelDistort");
+
+
+
+  Ogre::Rectangle2D *mMiniScreen2 = new Ogre::Rectangle2D(true);
+  mMiniScreen2->setCorners(-1.0f, 1.0f, 0.0f, -1.0f);
+  mMiniScreen2->setBoundingBox(Ogre::AxisAlignedBox(-100000.0f * Ogre::Vector3::UNIT_SCALE, 100000.0f * Ogre::Vector3::UNIT_SCALE));
+  Ogre::SceneNode* miniScreenNode2 = mSceneMgr->getRootSceneNode()->createChildSceneNode("MiniScreenNode2");
+  miniScreenNode2->attachObject(mMiniScreen2);
+  Ogre::MaterialPtr material2 = Ogre::MaterialManager::getSingleton().getByName("BarrelDistort");
+  material2->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName("RttTex2");
+  mMiniScreen2->setMaterial("BarrelDistort");
+}
+
+void Ogre3DRendererPlugin::createScene()
 {
   mCamera2 = mSceneMgr->createCamera("PlayerCam2");
   mCamera2->setCustomProjectionMatrix(true, mCamera->getProjectionMatrix());
@@ -124,12 +172,9 @@ void Ogre3DRendererPlugin::createScene(void)
   mWindow->removeAllViewports();
   Ogre::Viewport* vp = mWindow->addViewport(mCamera2);
 
-
-
   Ogre::Entity* ogreHead = mSceneMgr->createEntity("Head", "ogrehead.mesh");
   Ogre::SceneNode* headNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("HeadNode");
 //  headNode->attachObject(ogreHead);
-
 
   // Water
   // Define a plane mesh that will be used for the ocean surface
@@ -159,6 +204,8 @@ void Ogre3DRendererPlugin::createScene(void)
 
 
   createDesktopObject();
+
+  setupRTT();
 }
 
 //   void Ogre3DRendererPlugin::destroyScene()
