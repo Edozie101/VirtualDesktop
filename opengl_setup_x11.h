@@ -10,6 +10,7 @@
 #include <X11/extensions/shape.h>
 #include <X11/extensions/XInput2.h>
 #include <X11/extensions/Xfixes.h>
+#include <X11/extensions/Xrandr.h>
 #include <X11/Xlib.h>
 #include <X11/Xregion.h>
 #include <X11/Xresource.h>
@@ -82,6 +83,7 @@ extern int                     screen;
 extern Window                  window;
 extern GLXContext              context;
 extern unsigned int            width, height;
+extern unsigned int            physicalWidth, physicalHeight;
 extern Bool                    doubleBuffered;
 
 extern XVisualInfo *visinfo;

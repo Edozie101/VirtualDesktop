@@ -237,6 +237,7 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
     }
   }
 
+  glViewport(0,0, physicalWidth,physicalHeight);
   if (USE_FBO) {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glClearColor(1, 0, 0, 1);
@@ -304,6 +305,7 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
       gluPerspective(110.0f, 0.81818181, 0.01f, 1000.0f);
       glMatrixMode(GL_MODELVIEW);
     }
+    glViewport(0,0, width, height);
   }
 }
 

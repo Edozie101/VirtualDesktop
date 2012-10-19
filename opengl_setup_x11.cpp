@@ -18,6 +18,7 @@ GLXContext              context;
 XF86VidModeModeInfo     desktopMode; // original desktop mode which we save so we can restore it later
 Bool                    doubleBuffered;
 unsigned int            width, height;
+unsigned int            physicalWidth, physicalHeight;
 
 XVisualInfo *visinfo;
 
@@ -190,6 +191,8 @@ void createWindow(Display *dpy_, Window root_)
         dpyWidth = modes[bestMode]->hdisplay;
         dpyHeight = modes[bestMode]->vdisplay;
         printf("resolution %dx%d\n", dpyWidth, dpyHeight);
+        physicalWidth = dpyWidth;
+        physicalHeight = dpyHeight;
         XFree(modes);
 
         /* set window attributes */

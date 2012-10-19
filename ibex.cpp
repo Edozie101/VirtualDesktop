@@ -830,7 +830,7 @@ void initGL()
   glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 
   // We use resizeGL once to set up our initial perspective
-  resizeGL(width, height);
+  resizeGL(physicalWidth,physicalHeight);//width, height);
 
   if (GLXEW_EXT_texture_from_pixmap) {
     std::cout << "SUPPORT GLXEW_EXT_texture_from_pixmap" << std::endl;
@@ -1169,7 +1169,6 @@ void processXInput2Key(XIDeviceEvent *event, bool pressed, Desktop3DLocation& lo
   }
 }
 
-
 // ===========================================================================
 // Function: main
 // Design:   Should be split into X11, OpenGL and architectural to glue them
@@ -1216,7 +1215,9 @@ int main(int argc, char ** argv)
   XGetWindowAttributes( dpy, root, &attr );
   width = attr.width;
   height = attr.height;
-  std::cerr << "width: " << width << " height: " << height << std::endl;
+  physicalWidth = width;
+  physicalHeight = height;
+  std::cerr << "Virtual width: " << width << " height: " << height << std::endl;
 
   if(OGRE3D) {
 #ifdef ENABLE_OGRE3D
@@ -1242,6 +1243,8 @@ int main(int argc, char ** argv)
     renderer->init();
   }
 
+  std::cerr << "Physical Width x Height: " << physicalWidth << "x" << physicalHeight << std::endl;
+
   glutInit(&argc, argv);
 
   prep_overlay();
@@ -1250,6 +1253,7 @@ int main(int argc, char ** argv)
   }
   prep_stage(window);
 //  XIfEvent(dpy, &event, WaitForNotify, (char*)overlay);
+
 
   setup_iphone_listener();
   std::cerr << "dpy: " << dpy << ", display: " << display << ", " << window << std::endl;
