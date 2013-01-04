@@ -38,6 +38,7 @@
 /* Begin PBXFileReference section */
 		4C2DE2FD168B30CC003BEB56 /* ScreenGrabber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScreenGrabber.h; sourceTree = "<group>"; };
 		4C2DE2FE168B30CC003BEB56 /* ScreenGrabber.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScreenGrabber.m; sourceTree = "<group>"; };
+		4C33AA3316970C3B001A1EFC /* IbexMac.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = IbexMac.entitlements; sourceTree = "<group>"; };
 		4C41231F16936E4F008F5B15 /* IbexMacUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IbexMacUtils.h; sourceTree = "<group>"; };
 		4C41232016936E4F008F5B15 /* IbexMacUtils.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IbexMacUtils.mm; sourceTree = "<group>"; };
 		4C41232316936ED0008F5B15 /* ibex_mac_utils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ibex_mac_utils.h; path = ../ibex_mac_utils.h; sourceTree = "<group>"; };
@@ -143,6 +144,7 @@
 		4CB79870168AB41E00EF5260 /* IbexMac */ = {
 			isa = PBXGroup;
 			children = (
+				4C33AA3316970C3B001A1EFC /* IbexMac.entitlements */,
 				4CB79871168AB41E00EF5260 /* Supporting Files */,
 				4CAC8D5D169347AE00341AA0 /* resources */,
 				4CAC8D43168E5F1900341AA0 /* iphone_orientation_plugin */,
@@ -359,6 +361,8 @@
 		4CB79885168AB41E00EF5260 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = IbexMac/IbexMac.entitlements;
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "IbexMac/IbexMac-Prefix.pch";
@@ -371,6 +375,8 @@
 		4CB79886168AB41E00EF5260 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = IbexMac/IbexMac.entitlements;
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "IbexMac/IbexMac-Prefix.pch";
