@@ -39,5 +39,6 @@ vec2 Distort2(vec2 p)
 
 void main()
 {
-    gl_FragColor = texture2D(texture, clamp(Distort2(texcoord), 0.0, 1.0));
+    // divide by 1.1 to help fill the screen better, should get proper scale passed in
+    gl_FragColor = texture2D(texture, clamp(Distort2(texcoord/1.1), 0.0, 1.0));
 }

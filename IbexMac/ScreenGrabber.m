@@ -111,6 +111,8 @@ CGContextRef ctx = NULL;
                                                     a,
                                                     kCGWindowImageDefault
                                                     );
+    
+    CFRelease(a);
     //                CGImageRef i = CGWindowListCreateImage(CGRectInfinite,
     //                                                       kCGWindowListOptionOnScreenOnly,//kCGWindowListOptionAll,
     //                                                       kCGNullWindowID,kCGWindowImageDefault);

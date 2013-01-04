@@ -34,6 +34,7 @@ extern "C" GLuint loadTexture(const char *path_) {
     CFURLRef url = (__bridge CFURLRef)URL;
     CGImageSourceRef myImageSourceRef = CGImageSourceCreateWithURL(url, NULL);
     CGImageRef myImageRef = CGImageSourceCreateImageAtIndex (myImageSourceRef, 0, NULL);
+    
 
     size_t width = CGImageGetWidth(myImageRef);
     size_t height = CGImageGetHeight(myImageRef);
@@ -50,6 +51,10 @@ extern "C" GLuint loadTexture(const char *path_) {
     CGContextSetBlendMode(myBitmapContext, kCGBlendModeCopy);
     CGContextDrawImage(myBitmapContext, rect, myImageRef);
     CGContextRelease(myBitmapContext);
+    
+    CGColorSpaceRelease(space);
+    CGImageRelease(myImageRef);
+    CFRelease(myImageSourceRef);
     
     glPushClientAttrib(GL_UNPACK_ROW_LENGTH);
     glPushClientAttrib(GL_UNPACK_ALIGNMENT);

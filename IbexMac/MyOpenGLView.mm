@@ -373,6 +373,7 @@ CGPoint cursorPos;
                                                     a,
                                                     kCGWindowImageDefault
                                                     );
+    CFRelease(a);
 
     [self createGLTexture:&desktopTexture fromCGImage:i];
     CGImageRelease(i);
