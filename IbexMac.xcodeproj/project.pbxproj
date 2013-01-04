@@ -103,7 +103,6 @@
 		4CB7985B168AB41E00EF5260 = {
 			isa = PBXGroup;
 			children = (
-				4C76498E16965A67009CF2EC /* Carbon.framework */,
 				4CB79870168AB41E00EF5260 /* IbexMac */,
 				4CB79869168AB41E00EF5260 /* Frameworks */,
 				4CB79867168AB41E00EF5260 /* Products */,
@@ -121,6 +120,7 @@
 		4CB79869168AB41E00EF5260 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				4C76498E16965A67009CF2EC /* Carbon.framework */,
 				4CAC8D5B169341F500341AA0 /* QuartzCore.framework */,
 				4CAC8D591692A00000341AA0 /* CoreVideo.framework */,
 				4CAC8D47168E74FB00341AA0 /* GLUT.framework */,
