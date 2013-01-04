@@ -8,7 +8,13 @@
 
 #import <Cocoa/Cocoa.h>
 
-@interface AppDelegate : NSObject <NSApplicationDelegate>
+extern "C" {
+    typedef int CGSConnectionID;
+    CGError CGSSetConnectionProperty(CGSConnectionID cid, CGSConnectionID targetCID, CFStringRef key, CFTypeRef value);
+    int _CGSDefaultConnection();
+}
+
+@interface AppDelegate : NSObject <NSApplicationDelegate,NSWindowDelegate>
 
 @property (assign) IBOutlet NSWindow *window;
 
