@@ -75,7 +75,7 @@ OSStatus hotKeyHandler(EventHandlerCallRef nextHandler,EventRef theEvent, void *
     EventHotKeyID keyID;
     keyID.signature = 'FOO '; //arbitrary string
     keyID.id = 1;
-    RegisterEventHotKey(keyCode,cmdKey+shiftKey,keyID,GetApplicationEventTarget(),0,&theRef);
+    RegisterEventHotKey(keyCode,/*cmdKey+*/shiftKey,keyID,GetApplicationEventTarget(),0,&theRef);
 }
 - (void) unregisterHotkey {
     // release self one more time...
