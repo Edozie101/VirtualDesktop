@@ -140,20 +140,6 @@ NSTimer *renderTimer;
     
     strcpy(mResourcePath, [[[NSBundle mainBundle] resourcePath]
                                  cStringUsingEncoding:NSUTF8StringEncoding]);
-
-    if(false) {
-//    NSLog(@"awakeFromNib");
-    renderTimer = [NSTimer timerWithTimeInterval:0.001   //a 1ms time interval
-                                           target:self
-                                         selector:@selector(refresh)
-                                         userInfo:nil
-                                          repeats:YES];
-                   
-                   [[NSRunLoop currentRunLoop] addTimer:renderTimer
-                                                forMode:NSDefaultRunLoopMode];
-                   [[NSRunLoop currentRunLoop] addTimer:renderTimer
-                                                forMode:NSEventTrackingRunLoopMode]; //Ensure timer fires during resize
-    }
     
     // Synchronize buffer swaps with vertical refresh rate
     GLint swapInt = 1;
@@ -236,125 +222,6 @@ NSTimer *renderTimer;
     NSLog(@"REFRESH");
     [self setNeedsDisplay:YES];
 }
-static void drawAnObject (GLuint texture, GLuint cursor, const CGPoint cursorPos)
-{
-    glDisable(GL_BLEND);
-    
-    glEnable( GL_TEXTURE_2D );
-    glBindTexture( GL_TEXTURE_2D, texture );
-    
-    glColor4f(1.0f, 1, 1, 1.0);
-    glBegin(GL_TRIANGLES);
-    {
-        glTexCoord2d(0, 0);
-        glVertex3f(  0.0,  0, 0.0);
-        
-        glTexCoord2d(1, 0);
-        glVertex3f( 0.5, 0, 0.0);
-        
-        glTexCoord2d(1, 1);
-        glVertex3f(  0.5, 1 ,0.0);
-        
-        glTexCoord2d(0, 0);
-        glVertex3f(  0.0,  0, 0.0);
-        
-        glTexCoord2d(1, 1);
-        glVertex3f( 0.5, 1, 0.0);
-        
-        glTexCoord2d(0, 1);
-        glVertex3f(  0, 1 ,0.0);
-        
-        
-        
-        glTexCoord2d(0, 0);
-        glVertex3f(  0.5,  0, 0.0);
-        
-        glTexCoord2d(1, 0);
-        glVertex3f( 1, 0, 0.0);
-        
-        glTexCoord2d(1, 1);
-        glVertex3f(  1, 1 ,0.0);
-        
-        glTexCoord2d(0, 0);
-        glVertex3f(  0.5,  0, 0.0);
-        
-        glTexCoord2d(1, 1);
-        glVertex3f( 1, 1, 0.0);
-        
-        glTexCoord2d(0, 1);
-        glVertex3f(  0.5, 1 ,0.0);
-        
-        
-    }
-    glEnd();
-    
-    
-    
-//    glDisable(GL_TEXTURE_2D);
-
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-
-    glBindTexture( GL_TEXTURE_2D, cursor );
-    glColor4f(1, 1, 1, 1.0);
-    glBegin(GL_TRIANGLES);
-    {
-        double x0, x1, y0, y1, z;
-        x0 = 0.+(cursorPos.x/1440.0)/2.0;
-        x1 = 0.+((cursorPos.x+20.0)/1440.0)/2.0;
-        y0 = 0.+(cursorPos.y+0.)/900.0;
-        y1 = 0.+(cursorPos.y-20.)/900.0;
-        z = 0.5;
-        glTexCoord2d(0, 0);
-        glVertex3f(  x0,  y0, z);
-        
-        glTexCoord2d(1, 0);
-        glVertex3f( x1, y0, z);
-        
-        glTexCoord2d(1, -1);
-        glVertex3f(  x1, y1 ,z);
-        
-        glTexCoord2d(0, 0);
-        glVertex3f(  x0,  y0, z);
-        
-        glTexCoord2d(1, -1);
-        glVertex3f( x1, y1, z);
-        
-        glTexCoord2d(0, -1);
-        glVertex3f(  x0, y1,z);
-        
-        
-        
-        
-        
-        
-        x0 = 0.5+(cursorPos.x/1440.0)/2.0;
-        x1 = 0.5+((cursorPos.x+20.0)/1440.0)/2.0;
-        y0 = 0.+(cursorPos.y+0.)/900.0;
-        y1 = 0.+(cursorPos.y-20.)/900.0;
-        z = 0.5;
-        glTexCoord2d(0, 0);
-        glVertex3f(  x0,  y0, z);
-        
-        glTexCoord2d(1, 0);
-        glVertex3f( x1, y0, z);
-        
-        glTexCoord2d(1, -1);
-        glVertex3f(  x1, y1 ,z);
-        
-        glTexCoord2d(0, 0);
-        glVertex3f(  x0,  y0, z);
-        
-        glTexCoord2d(1, -1);
-        glVertex3f( x1, y1, z);
-        
-        glTexCoord2d(0, -1);
-        glVertex3f(  x0, y1,z);
-    }
-    glEnd();
-    
-    glDeleteTextures( 1, &texture );
-}
 
 //GLuint cursor(0);
 CGPoint cursorPos;
@@ -396,43 +263,6 @@ CGPoint cursorPos;
     return desktopTexture;
 }
 
-- (void)drawRect:(NSRect)dirtyRect
-{
-    
-//    if(ibex == nil) {
-//        ibex = new Ibex(0,nil);
-//    }
-//    
-////    NSLog(@"Start");
-//    static NSOpenGLContext* context;
-//    if(context == nil)
-//        context = [self openGLContext];
-//    // Drawing code here.
-//    [context makeCurrentContext];
-//    
-//    glMatrixMode(GL_PROJECTION);
-//    glLoadIdentity();
-//    glOrtho(0, 1, 0, 1, -10, 10);
-//    glMatrixMode(GL_MODELVIEW);
-//    
-//    glEnable(GL_DEPTH_TEST);
-//
-//    glClearColor(0, 0, 0, 0);
-//    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-//    
-//    desktopTexture = [self getScreenshot];
-//    drawAnObject(desktopTexture, cursor, cursorPos);
-//    
-//    ibex->render();
-//    
-//    glFlush();
-//    
-//    [context flushBuffer];
-//    
-//    [self setNeedsDisplay:YES];
-    
-    NSLog(@"Here");
-}
 
 - (CVReturn)getFrameForTime:(const CVTimeStamp*)time
 {
@@ -463,27 +293,9 @@ CGPoint cursorPos;
         ibex = new Ibex(0,nil);
     }
     
-    if(false) {
-        glMatrixMode(GL_PROJECTION);
-        glLoadIdentity();
-        glOrtho(0, 1, 0, 1, -10, 10);
-        glMatrixMode(GL_MODELVIEW);
-        
-        glEnable(GL_DEPTH_TEST);
-        
-        glClearColor(0, 0, 0, 0);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    }
-    
-//    desktopTexture =
-//    if((frame %3) == 0) {
-        [self getScreenshot];
-//    }
+    [self getScreenshot];
     cursorPosX = cursorPos.x;
     cursorPosY = cursorPos.y;
-//    drawAnObject(desktopTexture, cursor, cursorPos);
-//    [context flushBuffer];
-//    return kCVReturnSuccess;
     
     ibex->render(timeDiff);
     
@@ -491,8 +303,6 @@ CGPoint cursorPos;
     
     [context flushBuffer];
 //    checkForErrors();
-    
-//    NSLog(@"getFrameForTime end");
     
     return kCVReturnSuccess;
 }
