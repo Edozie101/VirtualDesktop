@@ -173,9 +173,10 @@ NSTimer *renderTimer;
     // Activate the display link
     CVDisplayLinkStart(displayLink);
 }
-- (void)createGLTexture:(GLuint *)texName fromCGImage:(CGImageRef)img
+- (void)createGLTexture:(GLuint *)texName fromCGImage:(CGImageRef)img andDataCache:(GLubyte*)spriteData
 {
-	GLubyte *spriteData = NULL;
+    bool newTexture = (*texName == 0);
+//	GLubyte *spriteData = NULL;
 	CGContextRef spriteContext;
 	GLuint imgW, imgH, texW, texH;
 	
@@ -188,8 +189,10 @@ NSTimer *renderTimer;
     texW = imgW;
     texH = imgH;
 	
-	// Allocated memory needed for the bitmap context
-	spriteData = (GLubyte *) calloc(texH, texW * 4);
+    if(spriteData == NULL) {
+        // Allocated memory needed for the bitmap context
+        spriteData = (GLubyte *) calloc(texH, texW * 4);
+    }
 	// Uses the bitmatp creation function provided by the Core Graphics framework.
 	spriteContext = CGBitmapContextCreate(spriteData, texW, texH, 8, texW * 4, CGImageGetColorSpace(img), kCGImageAlphaPremultipliedLast);
 	
@@ -203,24 +206,24 @@ NSTimer *renderTimer;
 	CGContextRelease(spriteContext);
 	
     glEnable(GL_TEXTURE_2D);
-	// Use OpenGL ES to generate a name for the texture.
-	glGenTextures(1, texName);
-	// Bind the texture name.
-	glBindTexture(GL_TEXTURE_2D, *texName);
+    if(newTexture) {
+        // Use OpenGL ES to generate a name for the texture.
+        glGenTextures(1, texName);
+        // Bind the texture name.
+        glBindTexture(GL_TEXTURE_2D, *texName);
 	// Specify a 2D texture image, providing the a pointer to the image data in memory
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texW, texH, 0, GL_RGBA, GL_UNSIGNED_BYTE, spriteData);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texW, texH, 0, GL_RGBA, GL_UNSIGNED_BYTE, spriteData);
+    } else {
+        glBindTexture(GL_TEXTURE_2D, *texName);
+        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, texW, texH, GL_RGBA, GL_UNSIGNED_BYTE, spriteData);
+    }
 	// Set the texture parameters to use a minifying filter and a linear filer (weighted average)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	
-	// Enable use of the texture
-//	glEnable(GL_TEXTURE_2D);
-	// Set a blending function to use
-//	glBlendFunc(GL_SRC_ALPHA,GL_ONE);
-	// Enable blending
-//	glEnable(GL_BLEND);
-	
-	free(spriteData);
+
+    // user-allocated, don't touch it
+	// free(spriteData);
 }
 
 - (void) refresh {
@@ -350,18 +353,20 @@ static void drawAnObject (GLuint texture, GLuint cursor, const CGPoint cursorPos
 //GLuint cursor(0);
 CGPoint cursorPos;
 - (GLuint)getScreenshot {
-    if(desktopTexture) {
-        glDeleteTextures( 1, &desktopTexture);
-    }
-    if(cursor) {
-        glDeleteTextures( 1, &cursor );
-    }
+    static GLubyte *desktopData = NULL;
+    static GLubyte *cursorData = NULL;
+//    if(desktopTexture) {
+//        glDeleteTextures( 1, &desktopTexture);
+//    }
+//    if(cursor) {
+//        glDeleteTextures( 1, &cursor );
+//    }
 
     cursorPos = NSEvent.mouseLocation;
     CGPoint hotSpot = NSCursor.currentSystemCursor.hotSpot;
     cursorPos.x -= hotSpot.x;
     cursorPos.y += hotSpot.y;
-    [self createGLTexture:&cursor fromCGImage:[NSCursor.currentSystemCursor.image CGImageForProposedRect:nil context:nil hints:nil]];
+    [self createGLTexture:&cursor fromCGImage:[NSCursor.currentSystemCursor.image CGImageForProposedRect:nil context:nil hints:nil] andDataCache:cursorData];
     
     CFArrayRef a = CGWindowListCreate(
                                       kCGWindowListOptionOnScreenBelowWindow,
@@ -375,7 +380,7 @@ CGPoint cursorPos;
                                                     );
     CFRelease(a);
 
-    [self createGLTexture:&desktopTexture fromCGImage:i];
+    [self createGLTexture:&desktopTexture fromCGImage:i andDataCache:desktopData];
     CGImageRelease(i);
     return desktopTexture;
 }
