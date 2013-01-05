@@ -262,7 +262,7 @@ void prep_framebuffers()
 // ---------------------------------------------------------------------------
 void renderDesktopToTexture()
 {
-    // TODO
+    // on mac already taken care of
 }
 
 
@@ -289,17 +289,6 @@ bool didInitOpenGL() {
 // ---------------------------------------------------------------------------
 void renderGL(Desktop3DLocation& loc, double timeDiff_)
 {
-//  static int frame = 0, time, timebase = 0, count = 0;
-//  frame++;
-//  count++;
-//  count %= 360;
-//  time = glutGet(GLUT_ELAPSED_TIME);
-//  if (time - timebase > 1000) {
-//    fprintf(stderr, "FPS:%4.2f\n", frame * 1000.0 / (time - timebase));
-//    timebase = time;
-//    frame = 0;
-//  }
-
   if (!initedOpenGL) {
     initedOpenGL = true;
 
@@ -321,24 +310,9 @@ void renderGL(Desktop3DLocation& loc, double timeDiff_)
     }
 
       if (USE_FBO) prep_framebuffers();
-      
-          getCursorTexture();
   }
-    
-//  renderer->setDesktopTexture(desktopTexture);
-
 
   renderer->step(loc, timeDiff_);
-
-//  if ((renderToTexture || OGRE3D) && !IRRLICHT) {
-//      saveState();
-//    renderDesktopToTexture();
-//    restoreState();
-//  }
-
-  if(renderer->needsSwapBuffers()) {
-//    glXSwapBuffers(display, window);
-  }
 }
 
 void resizeGL(unsigned int width, unsigned int height)
@@ -383,197 +357,11 @@ void initGL()
   glFlush();
 }
 
-// ---------------------------------------------------------------------------
-// Function: loadMonitorModel
-// Design:   Belongs to OpenGL component
-// Purpose:  Loads the model of the monitor into GLM
-// Updated:  Sep 10, 2012
-// ---------------------------------------------------------------------------
-//void loadMonitorModel()
-//{
-//  if (!pmodel) {  // load the model
-//    pmodel = glmReadOBJ("lcd_monitor.obj");
-//    if (!pmodel) {
-//      std::cout << "\nUsage: objviewV2 <-s> <obj filename>\n";
-//      exit(EXIT_FAILURE);
-//    }
-//    glmUnitize(pmodel);
-//    glmVertexNormals(pmodel, 90.0, GL_TRUE);
-//  }
-//}
 
-
-// ---------------------------------------------------------------------------
-// Function: getCursorTexture
-// Design:   Belongs (mostly) to OpenGL component
-// Purpose:  Converts mouse pointer from image to texture and uploads the
-//           texture into OpenGL
-// Updated:  Sep 10, 2012
-// TODO:     Get XFixesCursorImage elsewhere and pass into this function
-// ---------------------------------------------------------------------------
-void getCursorTexture()
-{
-  if (!cursorTexture)
-    glGenTextures(1, &cursorTexture);
-    
-}
-
-
-// ===========================================================================
-// Component: Input Hardware Control (keyboard, mouse, hydra, tablet, etc)
-// TODO: split into a separate file
-// ===========================================================================
-
-// ---------------------------------------------------------------------------
-// Function: setup_hotkey
-// Design:   Belongs to Input Hardware Control component
-// Purpose:
-// Updated:  Sep 10, 2012
-// ---------------------------------------------------------------------------
-void setup_hotkey(Display *display_)
-{
-//  unsigned int    modifiers       = ControlMask | ShiftMask;
-//  int             keycode         = XKeysymToKeycode(display_, XK_Y);
-//  Window          grab_window     = root;
-//  Bool            owner_events    = False;
-//  int             pointer_mode    = GrabModeAsync;
-//  int             keyboard_mode   = GrabModeAsync;
-//
-//  XGrabKey(display_, keycode, modifiers, grab_window, owner_events,
-//           pointer_mode, keyboard_mode);
-//
-//  XSelectInput(display_, root, KeyPressMask);
-}
-
-
-// ---------------------------------------------------------------------------
-// Function: disallow_input_passthrough
-// Design:   Belongs to ?
-// Purpose:
-// Updated:  Sep 10, 2012
-// ---------------------------------------------------------------------------
-void disallow_input_passthrough(Window w)
-{
-}
-
-
-// ---------------------------------------------------------------------------
-// Function: toggleControl
-// Design:   Belongs to Input Hardware Control component
-// Purpose:  Toggles user action between positional control and desktop work
-// Updated:  Sep 10, 2012
-// ---------------------------------------------------------------------------
-void toggleControl()
-{
-  controlDesktop = !controlDesktop;
-  if (controlDesktop) {
-    // desktop control
-  } else {
-    // ibex control
-  }
-}
-
-
-// ---------------------------------------------------------------------------
-// Function: processRawMotion
-// Design:   Belongs to Input Hardware Control component
-// Purpose:  Modifies desktop orientation/position using mouse as a tracker
-// Updated:  Sep 10, 2012
-// ---------------------------------------------------------------------------
 double relativeMouseX = 0;
 double relativeMouseY = 0;
-//void processRawMotion(XIRawEvent *event, Desktop3DLocation& loc)
-//{
-//  double *raw_valuator = event->raw_values;
-//  double *valuator = event->valuators.values;
-//  double xRotation, yRotation;
-//
-//  for (int i = 0; i < event->valuators.mask_len * 8; i++) {
-//    if (XIMaskIsSet(event->valuators.mask, i)) {
-//      switch (i) {
-//      case 0:
-//        yRotation = loc.getYRotation();
-//        yRotation += (double)(*valuator - *raw_valuator) /
-//                     (double)width * 180.0;
-//        loc.setYRotation(yRotation);
-//        relativeMouseY = (double)(*valuator - *raw_valuator);
-//        break;
-//      case 1:
-//        xRotation = loc.getXRotation();
-//        xRotation += (double)(*valuator - *raw_valuator) /
-//                     (double)width * 180.0;
-//        loc.setXRotation(xRotation);
-//        relativeMouseX = (double)(*valuator - *raw_valuator);
-//        break;
-//      }
-//      valuator++;
-//      raw_valuator++;
-//    }
-//  }
-//}
 
-
-// ---------------------------------------------------------------------------
-// Function: processKey
-// Design:   Belongs to Input Hardware Control component
-// Purpose:  Modifies desktop orientation/position based on key pressed
-//           Also toggles barrel distort and ground layer
-// Updated:  Sep 10, 2012
-// ---------------------------------------------------------------------------
 static bool jump = false;
-void processXInput2Key()//XIDeviceEvent *event, bool pressed, Desktop3DLocation& loc)
-{
-//  static KeyCode B = XKeysymToKeycode(dpy, XK_B); // toggle barrel distort
-//  static KeyCode G = XKeysymToKeycode(dpy, XK_G); // toggle ground
-//
-//  static KeyCode W = XKeysymToKeycode(dpy, XK_W);
-//  static KeyCode S = XKeysymToKeycode(dpy, XK_S);
-//  static KeyCode A = XKeysymToKeycode(dpy, XK_A);
-//  static KeyCode D = XKeysymToKeycode(dpy, XK_D);
-//  static KeyCode Q = XKeysymToKeycode(dpy, XK_Q);
-//  static KeyCode E = XKeysymToKeycode(dpy, XK_E);
-//  static KeyCode R = XKeysymToKeycode(dpy, XK_R);
-//  static KeyCode SPACE = XKeysymToKeycode(dpy, XK_space);
-//
-//  if (!controlDesktop) {
-//    if (pressed) {
-//      if (event->detail == W) {
-//        walkForward = 1;
-//      } else if (event->detail == S) {
-//        walkForward = -1;
-//      } else if (event->detail == A) {
-//        strafeRight = -1;
-//      } else if (event->detail == D) {
-//        strafeRight = 1;
-//      } else if (event->detail == Q) {
-//        strafeRight = -1;
-//      } else if (event->detail == E) {
-//        strafeRight = 1;
-//      } else if (event->detail == B) {
-//          barrelDistort = !barrelDistort;
-//      } else if (event->detail == G) {
-//          showGround = !showGround;
-//      } else if (event->detail == R) {
-//       std::cout << "RESET POSITION!" << std::endl;
-//       // Reset the desktop location to all zero state
-//       loc.resetState();
-//      } else if (event->detail == SPACE) {
-//        jump = true;
-//      }
-//    } else {
-//      if (walkForward ==  1 && event->detail == W)
-//        walkForward = 0;
-//      if (walkForward == -1 && event->detail == S)
-//        walkForward = 0;
-//      if (strafeRight ==  1 && (event->detail == D || event->detail == E))
-//        strafeRight = 0;
-//      if (strafeRight == -1 && (event->detail == A || event->detail == Q))
-//        strafeRight = 0;
-//      if (jump && event->detail == SPACE)
-//        jump = false;
-//    }
-//  }
-}
 
 Ibex::Ibex(int argc, char ** argv) {
     int c;
@@ -632,15 +420,10 @@ Ibex::Ibex(int argc, char ** argv) {
     if(renderer->getWindowID()) {
         window = renderer->getWindowID();
     }
-    //  prep_stage(window);
-    //  XIfEvent(dpy, &event, WaitForNotify, (char*)overlay);
     
     
     setup_iphone_listener();
     std::cerr << "dpy: " << dpy << ", display: " << display << ", " << window << std::endl;
-
-    
-//        clock_gettime(CLOCK_MONOTONIC, &ts_start);
 }
 
 void processRawMotion(double relativeMouseXDelta, double relativeMouseYDelta, Desktop3DLocation& loc)
@@ -662,18 +445,10 @@ void processRawMotion(double relativeMouseXDelta, double relativeMouseYDelta, De
 }
 
 void Ibex::render(double timeDiff) {
-    timeDiff /= 1.0e5;
-//    struct timespec ts_current;
-//    clock_gettime(CLOCK_MONOTONIC, &ts_current);
-    
     if (controlDesktop) {
         walkForward = strafeRight = 0;
     }
-    
-//    double timeDiff = (double)(ts_current.tv_sec - ts_start.tv_sec) + (double)(ts_current.tv_nsec - ts_start.tv_nsec) * 1.0e-09;
-//    walkForward = -1;
     desktop3DLocation.walk(walkForward, strafeRight, timeDiff);
-//    std::cerr << timeDiff/1e3 << " " << 1.0/60.0 << std::endl;
     
     processRawMotion(relativeMouseY, relativeMouseX, desktop3DLocation);
     renderer->move(walkForward, strafeRight, jump, relativeMouseX, relativeMouseY);
@@ -686,148 +461,3 @@ void Ibex::render(double timeDiff) {
     
 //    ts_start = ts_current;
 }
-
-// ===========================================================================
-// Function: main
-// Design:   Should be split into X11, OpenGL and architectural to glue them
-// Purpose:  Initializes and runs the rendering loop for 3D desktop
-// Updated:  Sep 10, 2012
-// TODO:     Event loop should be pulled out of main. In large software
-//           projects main() is to parse input arguments, initialize the code
-//           and pass the control over to the engine.
-// ===========================================================================
-int main_ibex(int argc, char ** argv)
-{
-    Ibex ibex(argc, argv);
-    
-    Bool done = false;
-    
-//  prep_overlay();
-  if(renderer->getWindowID()) {
-    window = renderer->getWindowID();
-  }
-//  prep_stage(window);
-//  XIfEvent(dpy, &event, WaitForNotify, (char*)overlay);
-
-
-  setup_iphone_listener();
-  std::cerr << "dpy: " << dpy << ", display: " << display << ", " << window << std::endl;
-
-  // Set X error handler here since expected errors on some window mappings
-//  XSetErrorHandler(errorHandler);
-//
-//  XFixesHideCursor (dpy, overlay);
-//  setup_hotkey(dpy);
-
-  // loadMonitorModel();
-
-  struct timespec ts_start;
-//  clock_gettime(CLOCK_MONOTONIC, &ts_start);
-
-//  XEvent peekEvent;
-  int pointerX, pointerY;
-  unsigned int pointerMods;
-  // wait for events and eat up cpu. ;-)
-  while (!done) {
-    // handle the events in the queue
-//    while (XPending(dpy) > 0) {
-//      XNextEvent(dpy, &event);
-//      XGenericEventCookie *cookie = &event.xcookie;
-//
-//      if (event.xcookie.extension == xi_opcode &&
-//          event.xcookie.type == GenericEvent) {
-//        XGetEventData(dpy, cookie);
-//        XIDeviceEvent *xi_event = (XIDeviceEvent*)event.xcookie.data;
-//
-//        switch (xi_event->evtype) {
-//        case XI_KeyPress:
-//          if (!controlDesktop) {
-//            processXInput2Key(xi_event, true, desktop3DLocation);
-//          }
-//          break;
-//        case XI_KeyRelease:
-//          if (!controlDesktop) {
-//            processXInput2Key(xi_event, false, desktop3DLocation);
-//          }
-//          break;
-//        case XI_RawMotion:
-//          if (!controlDesktop) {
-//            processRawMotion((XIRawEvent*)event.xcookie.data,
-//                             desktop3DLocation);
-//          }
-//          break;
-//        }
-//
-//        XFreeEventData(dpy, cookie);
-//        continue;
-//      }
-//
-//      if (event.xany.type == xfixes_event_base + XFixesCursorNotify) {
-//        XFixesCursorNotifyEvent *notify_event;
-//        notify_event = (XFixesCursorNotifyEvent *)(&event);
-//
-//        if (notify_event->subtype == XFixesDisplayCursorNotify) {
-//          getCursorTexture();
-//        }
-//        continue;
-//      }
-//
-//      switch (event.type) {
-//        case Expose:
-//        case ConfigureNotify:
-//        case MapNotify:
-//        case DestroyNotify:
-//        case UnmapNotify:
-//          unbindRedirectedWindow(dpy, event.xclient.window);
-//          break;
-//
-//        case ButtonPress:
-//        case ButtonRelease:
-//          pointerX = event.xbutton.x_root;
-//          pointerY = event.xbutton.y_root;
-//          pointerMods = event.xbutton.state;
-//          break;
-//
-//        case KeyPress:
-//        case KeyRelease:
-//          pointerX = event.xkey.x_root;
-//          pointerY = event.xkey.y_root;
-//          pointerMods = event.xbutton.state;
-//          if (event.type == KeyRelease) {
-//            processKey(event.xkey);
-//          }
-//          break;
-//
-//        case MotionNotify:
-//          while (XPending (dpy)) {
-//            XPeekEvent (dpy, &peekEvent);
-//            if (peekEvent.type != MotionNotify)
-//              break;
-//            XNextEvent (dpy, &event);
-//          }
-//
-//          pointerX = event.xmotion.x_root;
-//          pointerY = event.xmotion.y_root;
-//          pointerMods = event.xbutton.state;
-//          break;
-//
-//        case EnterNotify:
-//        case LeaveNotify:
-//          pointerX = event.xcrossing.x_root;
-//          pointerY = event.xcrossing.y_root;
-//          pointerMods = event.xbutton.state;
-//          break;
-//        default:
-//          break;
-//      }
-//    }
-
-      double timeDiff = 0.05;
-      ibex.render(timeDiff);
-  }
-
-//  destroyWindow();
-
-  return 0;
-}
-

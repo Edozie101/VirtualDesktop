@@ -28,29 +28,12 @@ SimpleWorldRendererPlugin::~SimpleWorldRendererPlugin() {
 // ---------------------------------------------------------------------------
 void SimpleWorldRendererPlugin::loadSkybox()
 {
-  float sizeX = 2048;
-  float sizeY = 2048;
-//  _skybox[0] = glmLoadTexture("./resources/humus-skybox/negz.jpg", GL_TRUE, GL_FALSE,
-//                              GL_TRUE, GL_FALSE, &sizeX, &sizeY);
-//  _skybox[1] = glmLoadTexture("./resources/humus-skybox/posx.jpg", GL_TRUE, GL_FALSE,
-//                              GL_TRUE, GL_FALSE, &sizeX, &sizeY);
-//  _skybox[2] = glmLoadTexture("./resources/humus-skybox/posz.jpg", GL_TRUE, GL_FALSE,
-//                              GL_TRUE, GL_FALSE, &sizeX, &sizeY);
-//  _skybox[3] = glmLoadTexture("./resources/humus-skybox/negx.jpg", GL_TRUE, GL_FALSE,
-//                              GL_TRUE, GL_FALSE, &sizeX, &sizeY);
-//  _skybox[4] = glmLoadTexture("./resources/humus-skybox/posy.jpg", GL_TRUE, GL_FALSE,
-//                              GL_TRUE, GL_FALSE, &sizeX, &sizeY);
-//  _skybox[5] = glmLoadTexture("./resources/humus-skybox/negy.jpg", GL_TRUE, GL_FALSE,
-//                              GL_TRUE, GL_FALSE, &sizeX, &sizeY);
-    
     _skybox[0] = loadTexture("/resources/humus-skybox/negz.jpg");
     _skybox[1] = loadTexture("/resources/humus-skybox/posx.jpg");
     _skybox[2] = loadTexture("/resources/humus-skybox/posz.jpg");
     _skybox[3] = loadTexture("/resources/humus-skybox/negx.jpg");
     _skybox[4] = loadTexture("/resources/humus-skybox/posy.jpg");
     _skybox[5] = loadTexture("/resources/humus-skybox/negy.jpg");
-
-//  std::cout << _skybox[5] << std::endl;
 }
 
 
@@ -147,9 +130,7 @@ void SimpleWorldRendererPlugin::init() {
 }
 
 void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDiff_) {
-//    glDisable(GL_CULL_FACE);
-    
-  static const GLuint groundTexture = loadTexture("/resources/humus-skybox/negy.jpg");// = glmLoadTexture("./resources/humus-skybox/negy.jpg", GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE, &sizeX, &sizeY);
+  static const GLuint groundTexture = loadTexture("/resources/humus-skybox/negy.jpg");
     
   for (int i2 = 0; i2 < 2; ++i2) {
       checkForErrors();
@@ -181,7 +162,7 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
         glRotated(loc.getXRotation(), 1, 0, 0);
         glRotated(loc.getYRotation(), 0, 1, 0);
 //        glTranslated(0, -1.5, 0);
-      glTranslated(0, -0.5, 0);
+          glTranslated(0, -0.5, 0);
 
         glPushMatrix();
         {
@@ -248,7 +229,6 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
                     y0 = -ySize+ySize*2*(cursorPosY+0.)/physicalHeight;
                     y1 = -ySize+ySize*2*(cursorPosY-20.)/physicalHeight;
                     
-//                    std::cerr << cursorPosX << " " << cursorPosY << " " << x0 << " " << x1 << " " << physicalWidth << std::endl;
                     z = monitorOriginZ+0.0000001;
                     glTexCoord2d(0, 0);
                     glVertex3f(  x0,  y0, z);
@@ -301,8 +281,7 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
       glOrtho(0, 1, 0, 1, -1, 1);
       glMatrixMode(GL_MODELVIEW);
     }
-
-//      std::cerr << "groundTexture: " << groundTexture << std::endl;;
+      
     if(barrelDistort) {
         render_distorted_frame(true, textures[0]);
         render_distorted_frame(false, textures[1]);
@@ -358,16 +337,13 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
       glMatrixMode(GL_MODELVIEW);
     }
     glViewport(0,0, width, height);
-//      std::cerr << "Render end loop" << std::endl;
-//      checkForErrors();
-//            std::cerr << "Render end loop done" << std::endl;
   }
 }
 
 Window SimpleWorldRendererPlugin::getWindowID() {
-    return 0;//window;
+    return 0;
 }
 
 bool SimpleWorldRendererPlugin::needsSwapBuffers() {
-    return true;//doubleBuffered;
+    return true;
 }
