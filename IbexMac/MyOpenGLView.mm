@@ -173,7 +173,7 @@ NSTimer *renderTimer;
     // Activate the display link
     CVDisplayLinkStart(displayLink);
 }
-- (void)createGLTexture:(GLuint *)texName fromCGImage:(CGImageRef)img andDataCache:(GLubyte**)spriteData
+- (void)createGLTexture:(GLuint *)texName fromCGImage:(CGImageRef)img andDataCache:(GLubyte**)spriteData andClear:(bool)clear
 {
     bool newTexture = (*texName == 0);
 //	GLubyte *spriteData = NULL;
@@ -194,6 +194,7 @@ NSTimer *renderTimer;
         *spriteData = (GLubyte*) calloc(texH, texW * 4);
         NSLog(@"Allocating more memory");
     }
+
 	// Uses the bitmatp creation function provided by the Core Graphics framework.
 	spriteContext = CGBitmapContextCreate(*spriteData, texW, texH, 8, texW * 4, CGImageGetColorSpace(img), kCGImageAlphaPremultipliedLast);
 	
@@ -202,7 +203,11 @@ NSTimer *renderTimer;
 	CGContextScaleCTM(spriteContext, 1., -1.);
 	
 	// After you create the context, you can draw the sprite image to the context.
-	CGContextDrawImage(spriteContext, CGRectMake(0.0, 0.0, imgW, imgH), img);
+    const CGRect r = CGRectMake(0.0, 0.0, imgW, imgH);
+    if(clear) {
+        CGContextClearRect(spriteContext, r);
+    }
+	CGContextDrawImage(spriteContext, r, img);
 	// You don't need the context at this point, so you need to release it to avoid memory leaks.
 	CGContextRelease(spriteContext);
 	
@@ -369,7 +374,10 @@ CGPoint cursorPos;
     CGPoint hotSpot = NSCursor.currentSystemCursor.hotSpot;
     cursorPos.x -= hotSpot.x;
     cursorPos.y += hotSpot.y;
-    [self createGLTexture:&cursor fromCGImage:[NSCursor.currentSystemCursor.image CGImageForProposedRect:nil context:nil hints:nil] andDataCache:&cursorData];
+    CGImageRef cursorImage = [NSCursor.currentSystemCursor.image CGImageForProposedRect:nil context:nil hints:nil];
+    [self createGLTexture:&cursor fromCGImage:cursorImage andDataCache:&cursorData andClear:YES];
+    
+    CGImageRelease(cursorImage);
     
     CFArrayRef a = CGWindowListCreate(
                                       kCGWindowListOptionOnScreenBelowWindow,
@@ -383,7 +391,7 @@ CGPoint cursorPos;
                                                     );
     CFRelease(a);
 
-    [self createGLTexture:&desktopTexture fromCGImage:i andDataCache:&desktopData];
+    [self createGLTexture:&desktopTexture fromCGImage:i andDataCache:&desktopData andClear:NO];
     CGImageRelease(i);
     return desktopTexture;
 }
