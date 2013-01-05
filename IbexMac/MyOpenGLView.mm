@@ -173,7 +173,7 @@ NSTimer *renderTimer;
     // Activate the display link
     CVDisplayLinkStart(displayLink);
 }
-- (void)createGLTexture:(GLuint *)texName fromCGImage:(CGImageRef)img andDataCache:(GLubyte*)spriteData
+- (void)createGLTexture:(GLuint *)texName fromCGImage:(CGImageRef)img andDataCache:(GLubyte**)spriteData
 {
     bool newTexture = (*texName == 0);
 //	GLubyte *spriteData = NULL;
@@ -184,17 +184,18 @@ NSTimer *renderTimer;
 	imgH = CGImageGetHeight(img);
 	
 	// Find smallest possible powers of 2 for our texture dimensions
-	for (texW = 1; texW < imgW; texW *= 2) ;
-	for (texH = 1; texH < imgH; texH *= 2) ;
+//	for (texW = 1; texW < imgW; texW *= 2) ;
+//	for (texH = 1; texH < imgH; texH *= 2) ;
     texW = imgW;
     texH = imgH;
 	
-    if(spriteData == NULL) {
+    if(*spriteData == NULL) {
         // Allocated memory needed for the bitmap context
-        spriteData = (GLubyte *) calloc(texH, texW * 4);
+        *spriteData = (GLubyte*) calloc(texH, texW * 4);
+        NSLog(@"Allocating more memory");
     }
 	// Uses the bitmatp creation function provided by the Core Graphics framework.
-	spriteContext = CGBitmapContextCreate(spriteData, texW, texH, 8, texW * 4, CGImageGetColorSpace(img), kCGImageAlphaPremultipliedLast);
+	spriteContext = CGBitmapContextCreate(*spriteData, texW, texH, 8, texW * 4, CGImageGetColorSpace(img), kCGImageAlphaPremultipliedLast);
 	
 	// Translate and scale the context to draw the image upside-down (conflict in flipped-ness between GL textures and CG contexts)
 	CGContextTranslateCTM(spriteContext, 0., texH);
@@ -212,10 +213,10 @@ NSTimer *renderTimer;
         // Bind the texture name.
         glBindTexture(GL_TEXTURE_2D, *texName);
 	// Specify a 2D texture image, providing the a pointer to the image data in memory
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texW, texH, 0, GL_RGBA, GL_UNSIGNED_BYTE, spriteData);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texW, texH, 0, GL_RGBA, GL_UNSIGNED_BYTE, *spriteData);
     } else {
         glBindTexture(GL_TEXTURE_2D, *texName);
-        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, texW, texH, GL_RGBA, GL_UNSIGNED_BYTE, spriteData);
+        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, texW, texH, GL_RGBA, GL_UNSIGNED_BYTE, *spriteData);
     }
 	// Set the texture parameters to use a minifying filter and a linear filer (weighted average)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -357,16 +358,18 @@ CGPoint cursorPos;
     static GLubyte *cursorData = NULL;
 //    if(desktopTexture) {
 //        glDeleteTextures( 1, &desktopTexture);
+//        desktopTexture = 0;
 //    }
 //    if(cursor) {
 //        glDeleteTextures( 1, &cursor );
+//        cursor = 0;
 //    }
 
     cursorPos = NSEvent.mouseLocation;
     CGPoint hotSpot = NSCursor.currentSystemCursor.hotSpot;
     cursorPos.x -= hotSpot.x;
     cursorPos.y += hotSpot.y;
-    [self createGLTexture:&cursor fromCGImage:[NSCursor.currentSystemCursor.image CGImageForProposedRect:nil context:nil hints:nil] andDataCache:cursorData];
+    [self createGLTexture:&cursor fromCGImage:[NSCursor.currentSystemCursor.image CGImageForProposedRect:nil context:nil hints:nil] andDataCache:&cursorData];
     
     CFArrayRef a = CGWindowListCreate(
                                       kCGWindowListOptionOnScreenBelowWindow,
@@ -380,7 +383,7 @@ CGPoint cursorPos;
                                                     );
     CFRelease(a);
 
-    [self createGLTexture:&desktopTexture fromCGImage:i andDataCache:desktopData];
+    [self createGLTexture:&desktopTexture fromCGImage:i andDataCache:&desktopData];
     CGImageRelease(i);
     return desktopTexture;
 }
@@ -425,8 +428,20 @@ CGPoint cursorPos;
 
 - (CVReturn)getFrameForTime:(const CVTimeStamp*)time
 {
+    static double fpsTime = 0;
+    static int64_t startTime = time->videoTime;
 //    NSLog(@"getFrameForTime start");
-    GLfloat timeDiff = (GLfloat)(time->videoTime) / (GLfloat)(time->videoTimeScale);
+    GLfloat timeDiff = (GLfloat)(time->videoTime-startTime) / (GLfloat)(time->videoTimeScale);
+    startTime = time->videoTime;
+    
+    static int64_t frame = 0;
+    ++frame;
+    fpsTime += timeDiff;
+    if(fpsTime >= 5.0) {
+        NSLog(@"FPS: %4.2f", ((double)frame)/fpsTime);
+        frame = 0;
+        fpsTime = 0;
+    }
     
     //    NSLog(@"Start");
     static NSOpenGLContext* context;
@@ -453,7 +468,9 @@ CGPoint cursorPos;
     }
     
 //    desktopTexture =
-    [self getScreenshot];
+//    if((frame %3) == 0) {
+        [self getScreenshot];
+//    }
     cursorPosX = cursorPos.x;
     cursorPosY = cursorPos.y;
 //    drawAnObject(desktopTexture, cursor, cursorPos);
