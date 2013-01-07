@@ -249,7 +249,7 @@ bool done = 0;
             [self createGLTexture:&desktopTextures[index] fromCGImage:img andDataCache:((index)?&s2:&s) andClear:NO];
 //            glFlush();
             
-            [newContext flushBuffer];            
+//            [newContext flushBuffer];            
             
             CGImageRelease(img);
             
