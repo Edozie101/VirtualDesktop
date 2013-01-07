@@ -10,6 +10,7 @@
 
 #import <QuartzCore/QuartzCore.h>
 
+#import <CoreGraphics/CoreGraphics.h>
 #import <CoreVideo/CoreVideo.h>
 
 #import <CoreVideo/CVDisplayLink.h>
@@ -25,6 +26,8 @@
 #import <Carbon/Carbon.h>
 
 #include "ibex.h"
+
+#import <OpenGL/OpenGL.h>
 
 char mResourcePath[1024];
 
@@ -86,36 +89,30 @@ NSTimer *t;
 - (id)initWithFrame:(NSRect)frameRect pixelFormat:(NSOpenGLPixelFormat *)format {
     self = [super initWithFrame:frameRect pixelFormat:format];
     if (self) {
+//        CGLError err;// = 0;
+////        CGLContextObj ctx = CGLGetCurrentContext();
+//        
+//        NSOpenGLContext* context;
+//        if(context == nil)
+//            context = [self openGLContext];
+//        
+//        // Enable the multi-threading
+//        err =  CGLEnable( /*ctx*/ *((CGLContextObj*)context.CGLContextObj), kCGLCEMPEngine);
+//        
+//        if (err != kCGLNoError )
+//        {
+//            // Multi-threaded execution is possibly not available
+//            // Insert your code to take appropriate action
+//            NSLog(@"Multhreaded OpenGL enabled");
+//        }
+
+        
         [self registerHotkey];
         [self controlDesktopUpdate];
+        
+//        [self performSelectorInBackground:@selector(loopScreenshot) withObject:nil];
     }
     
-    return self;
-}
-
-- (id)initWithFrame:(NSRect)frame
-{
-    self = [super initWithFrame:frame];
-    if (self) {
-        [self registerHotkey];
-    }
-    
-    return self;
-}
-- (id)init
-{
-    self = [super init];
-    if (self) {
-        [self registerHotkey];
-    }
-    return self;
-}
-- (id)initWithCoder:(NSCoder *)coder
-{
-    self = [super initWithCoder:coder];
-    if (self) {
-        [self registerHotkey];
-    }
     return self;
 }
 
@@ -159,15 +156,206 @@ NSTimer *renderTimer;
     // Activate the display link
     CVDisplayLinkStart(displayLink);
 }
+
+static int desktopTextureIndex = 0;
+static GLuint desktopTextures[2] = {NULL, NULL};
+bool done = 0;
+- (void)loopScreenshot {
+//    return;
+    
+    static NSOpenGLContext* newContext = nil;
+    newContext = [[NSOpenGLContext alloc] initWithFormat:self.pixelFormat shareContext:self.openGLContext];
+    
+    static GLubyte *cursorData = NULL;
+    static GLubyte *s = NULL;
+    
+    while(1) {
+            //            NSLog(@"Drawing desktop");
+            [newContext makeCurrentContext];
+            
+            cursorPos = NSEvent.mouseLocation;
+            CGPoint hotSpot = NSCursor.currentSystemCursor.hotSpot;
+            cursorPos.x -= hotSpot.x;
+            cursorPos.y += hotSpot.y;
+            CGImageRef cursorImage = [NSCursor.currentSystemCursor.image CGImageForProposedRect:nil context:nil hints:nil];
+            [self createGLTexture:&cursor fromCGImage:cursorImage andDataCache:&cursorData andClear:YES];
+            
+            CGImageRelease(cursorImage);
+            
+            
+            CFArrayRef a = CGWindowListCreate(
+                                              kCGWindowListOptionOnScreenBelowWindow,
+                                              (CGWindowID)_window.windowNumber
+                                              );
+            
+            CGImageRef img = CGWindowListCreateImageFromArray(
+                                                              CGRectInfinite,
+                                                              a,
+                                                              kCGWindowImageDefault
+                                                              );
+            CFRelease(a);
+            
+            
+            //            [self savePNGImage:img path:@"/Users/hesh/file.png"];
+            [self createGLTexture:&desktopTexture fromCGImage:img andDataCache:&s andClear:NO];
+            //            glFlush();
+            
+            [newContext flushBuffer];
+            
+            CGImageRelease(img);
+            
+            //            NSLog(@"drawing desktop done");
+        }
+}
+
+- (void)savePNGImage:(CGImageRef)imageRef path:(NSString *)path
+{
+    NSURL *fileURL = [NSURL fileURLWithPath:path];
+    CGImageDestinationRef dr = CGImageDestinationCreateWithURL((__bridge CFURLRef)fileURL, kUTTypePNG , 1, NULL);
+    
+    if(dr != nil) {
+    CGImageDestinationAddImage(dr, imageRef, NULL);
+    CGImageDestinationFinalize(dr);
+    
+    CFRelease(dr);
+    } else {
+        NSLog(@"ERROR saving");
+    }
+}
+
+- (void)loopScreenshot_multipleBuffers {
+    static NSOpenGLContext* context = nil;
+    if(context == nil)
+        context = [self openGLContext];
+    
+    static NSOpenGLContext* newContext = nil;
+    newContext = [[NSOpenGLContext alloc] initWithFormat:self.pixelFormat shareContext:self.openGLContext];
+    
+    static GLubyte *cursorData = NULL;
+    static GLubyte *s = NULL;
+    static GLubyte *s2 = NULL;
+    static int index = 0;
+
+    while(1) {
+//        if(!done)
+        {
+//            NSLog(@"Drawing desktop");
+            [newContext makeCurrentContext];
+            
+            cursorPos = NSEvent.mouseLocation;
+            CGPoint hotSpot = NSCursor.currentSystemCursor.hotSpot;
+            cursorPos.x -= hotSpot.x;
+            cursorPos.y += hotSpot.y;
+            CGImageRef cursorImage = [NSCursor.currentSystemCursor.image CGImageForProposedRect:nil context:nil hints:nil];
+            [self createGLTexture:&cursor fromCGImage:cursorImage andDataCache:&cursorData andClear:YES];
+            
+            CGImageRelease(cursorImage);
+            
+            
+            CFArrayRef a = CGWindowListCreate(
+                                              kCGWindowListOptionOnScreenBelowWindow,
+                                              (CGWindowID)_window.windowNumber
+                                              );
+            
+            CGImageRef img = CGWindowListCreateImageFromArray(
+                                                            CGRectInfinite,
+                                                            a,
+                                                            kCGWindowImageDefault
+                                                            );
+            CFRelease(a);
+            
+
+//            [self savePNGImage:img path:@"/Users/hesh/file.png"];
+            
+            [self createGLTexture:&desktopTextures[index] fromCGImage:img andDataCache:((index)?&s2:&s) andClear:NO];
+//            glFlush();
+            
+            [newContext flushBuffer];            
+            
+            CGImageRelease(img);
+            
+            
+            desktopTextureIndex = index;
+            done = 1;
+            index = (index+1)%2;
+//            NSLog(@"drawing desktop done");
+        }
+    }
+}
+- (void)loopScreenshot_single {
+    return;
+    
+    GLubyte *s = NULL;
+    GLubyte **spriteData = &s;
+    
+    bool clear = false;
+    while(1) {
+            CFArrayRef a = CGWindowListCreate(
+                                              kCGWindowListOptionOnScreenBelowWindow,
+                                              (CGWindowID)_window.windowNumber
+                                              );
+            
+            CGImageRef img = CGWindowListCreateImageFromArray(
+                                                              CGRectInfinite,
+                                                              a,
+                                                              kCGWindowImageDefault
+                                                              );
+            CFRelease(a);
+            
+            //	GLubyte *spriteData = NULL;
+            CGContextRef spriteContext;
+            GLuint imgW, imgH, texW, texH;
+            
+            imgW = CGImageGetWidth(img);
+            imgH = CGImageGetHeight(img);
+            
+            // Find smallest possible powers of 2 for our texture dimensions
+            //	for (texW = 1; texW < imgW; texW *= 2) ;
+            //	for (texH = 1; texH < imgH; texH *= 2) ;
+            texW = imgW;
+            texH = imgH;
+            
+            if(*spriteData == NULL) {
+                // Allocated memory needed for the bitmap context
+                *spriteData = (GLubyte*) calloc(texH, texW * 4);
+                NSLog(@"Allocating more memory");
+            }
+            
+            // Uses the bitmatp creation function provided by the Core Graphics framework.
+            spriteContext = CGBitmapContextCreate(*spriteData, texW, texH, 8, texW * 4, CGImageGetColorSpace(img), kCGImageAlphaPremultipliedLast);
+            
+            // Translate and scale the context to draw the image upside-down (conflict in flipped-ness between GL textures and CG contexts)
+            CGContextTranslateCTM(spriteContext, 0., texH);
+            CGContextScaleCTM(spriteContext, 1., -1.);
+            
+            // After you create the context, you can draw the sprite image to the context.
+            const CGRect r = CGRectMake(0.0, 0.0, imgW, imgH);
+            if(clear) {
+                CGContextClearRect(spriteContext, r);
+            }
+            CGContextDrawImage(spriteContext, r, img);
+            // You don't need the context at this point, so you need to release it to avoid memory leaks.
+            CGContextRelease(spriteContext);
+            
+            CGImageRelease(img);
+            
+            free(s);
+            s = 0;
+    }
+}
 - (void)createGLTexture:(GLuint *)texName fromCGImage:(CGImageRef)img andDataCache:(GLubyte**)spriteData andClear:(bool)clear
 {
+//    NSLog(@"++++++++++ %lu, %lu", *texName, (*spriteData));
+    
     bool newTexture = (*texName == 0);
 //	GLubyte *spriteData = NULL;
 	CGContextRef spriteContext;
 	GLuint imgW, imgH, texW, texH;
-	
+
 	imgW = CGImageGetWidth(img);
 	imgH = CGImageGetHeight(img);
+//    imgW = width;
+//	imgH = height;
 	
 	// Find smallest possible powers of 2 for our texture dimensions
 //	for (texW = 1; texW < imgW; texW *= 2) ;
@@ -199,6 +387,7 @@ NSTimer *renderTimer;
 	
     glEnable(GL_TEXTURE_2D);
     if(newTexture) {
+//        NSLog(@"+++++++++++++++++ New Texture");
         // Use OpenGL ES to generate a name for the texture.
         glGenTextures(1, texName);
         // Bind the texture name.
@@ -215,7 +404,8 @@ NSTimer *renderTimer;
 	
 
     // user-allocated, don't touch it
-	// free(spriteData);
+//	free(*spriteData);
+//    *spriteData = 0;
 }
 
 - (void) refresh {
@@ -226,6 +416,21 @@ NSTimer *renderTimer;
 //GLuint cursor(0);
 CGPoint cursorPos;
 - (GLuint)getScreenshot {
+    {
+        cursorPos = NSEvent.mouseLocation;
+        CGPoint hotSpot = NSCursor.currentSystemCursor.hotSpot;
+        cursorPos.x -= hotSpot.x;
+        cursorPos.y += hotSpot.y;
+    }
+    
+    return desktopTexture;
+//
+//    if(done) {
+//        desktopTexture = desktopTextures[desktopTextureIndex];
+//        done = 0;
+//    }
+//    return desktopTexture;
+    
     static GLubyte *desktopData = NULL;
     static GLubyte *cursorData = NULL;
 //    if(desktopTexture) {
@@ -251,7 +456,8 @@ CGPoint cursorPos;
                                       (CGWindowID)_window.windowNumber
                                       );
     
-    CGImageRef i = CGWindowListCreateImageFromArray(
+    CGImageRef i
+    = CGWindowListCreateImageFromArray(
                                                     CGRectInfinite,
                                                     a,
                                                     kCGWindowImageDefault
@@ -262,7 +468,6 @@ CGPoint cursorPos;
     CGImageRelease(i);
     return desktopTexture;
 }
-
 
 - (CVReturn)getFrameForTime:(const CVTimeStamp*)time
 {
@@ -286,7 +491,19 @@ CGPoint cursorPos;
     if(context == nil)
         context = [self openGLContext];
     // Drawing code here.
+    
+    
+//    CGLLockContext(*(CGLContextObj*)context.CGLContextObj);
+    
     [context makeCurrentContext];
+    
+//    glGenTextures(2, desktopTextures);
+    glFlush();
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        [self performSelectorInBackground:@selector(loopScreenshot) withObject:nil];
+    });
+    
     
     // Add your drawing codes here
     if(ibex == nil) {
@@ -303,6 +520,8 @@ CGPoint cursorPos;
     
     [context flushBuffer];
 //    checkForErrors();
+    
+//    CGLUnlockContext(*(CGLContextObj*)context.CGLContextObj);
     
     return kCVReturnSuccess;
 }

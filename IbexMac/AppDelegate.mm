@@ -14,6 +14,7 @@
 
 @implementation AppDelegate
 
+@synthesize pixelFormat;
 
 - (void) awakeFromNib {
     CGRect r;
@@ -45,7 +46,7 @@
         NSOpenGLPFADoubleBuffer, 0,
         NSOpenGLPFAOpenGLProfile, NSOpenGLProfileVersion3_2Core
     };
-    NSOpenGLPixelFormat* pixelFormat = [[NSOpenGLPixelFormat alloc] initWithAttributes:attrs];
+    /*NSOpenGLPixelFormat* */pixelFormat = [[NSOpenGLPixelFormat alloc] initWithAttributes:attrs];
     
     NSRect viewRect = NSMakeRect(0.0, 0.0, mainDisplayRect.size.width, mainDisplayRect.size.height);
     fullScreenView = [[MyOpenGLView alloc] initWithFrame:viewRect pixelFormat: pixelFormat];

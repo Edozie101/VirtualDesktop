@@ -249,6 +249,7 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
                     glVertex3f(  x0, y1,z);
                 }
                 glEnd();
+//                glDisable(GL_BLEND);
                 
                   glBindTexture(GL_TEXTURE_2D, 0);
             } else {

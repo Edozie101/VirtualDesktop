@@ -21,5 +21,6 @@ extern "C" {
 }
 
 @property (assign) IBOutlet NSWindow *window;
+@property (retain,nonatomic) NSOpenGLPixelFormat* pixelFormat;
 
 @end
