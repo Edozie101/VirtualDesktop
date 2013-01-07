@@ -17,8 +17,6 @@
 
 #import <mach/mach_time.h>
 #import <libkern/OSAtomic.h>
-//#import <Opengl/CGLTypes.h>
-//#import <OpenGL/CGLMacro.h>
 
 #import <OpenGL/glext.h>
 #import "MyOpenGLView.h"
@@ -56,7 +54,7 @@ EventHandlerUPP hotKeyFunction;
 }
 OSStatus hotKeyHandler(EventHandlerCallRef nextHandler,EventRef theEvent, void *userData)
 {
-    MyOpenGLView *obj =  (__bridge MyOpenGLView*)userData;//(__bridge MyOpenGLView*)userData;
+    MyOpenGLView *obj =  (__bridge MyOpenGLView*)userData;
     controlDesktop = !controlDesktop;
     
     [obj controlDesktopUpdate];
@@ -89,28 +87,8 @@ NSTimer *t;
 - (id)initWithFrame:(NSRect)frameRect pixelFormat:(NSOpenGLPixelFormat *)format {
     self = [super initWithFrame:frameRect pixelFormat:format];
     if (self) {
-//        CGLError err;// = 0;
-////        CGLContextObj ctx = CGLGetCurrentContext();
-//        
-//        NSOpenGLContext* context;
-//        if(context == nil)
-//            context = [self openGLContext];
-//        
-//        // Enable the multi-threading
-//        err =  CGLEnable( /*ctx*/ *((CGLContextObj*)context.CGLContextObj), kCGLCEMPEngine);
-//        
-//        if (err != kCGLNoError )
-//        {
-//            // Multi-threaded execution is possibly not available
-//            // Insert your code to take appropriate action
-//            NSLog(@"Multhreaded OpenGL enabled");
-//        }
-
-        
         [self registerHotkey];
         [self controlDesktopUpdate];
-        
-//        [self performSelectorInBackground:@selector(loopScreenshot) withObject:nil];
     }
     
     return self;
@@ -200,8 +178,8 @@ bool done = 0;
             [self createGLTexture:&desktopTexture fromCGImage:img andDataCache:&s andClear:NO];
             //            glFlush();
             
-            [newContext flushBuffer];
-            
+//            [newContext flushBuffer];
+        
             CGImageRelease(img);
             
             //            NSLog(@"drawing desktop done");
@@ -283,73 +261,10 @@ bool done = 0;
         }
     }
 }
-- (void)loopScreenshot_single {
-    return;
-    
-    GLubyte *s = NULL;
-    GLubyte **spriteData = &s;
-    
-    bool clear = false;
-    while(1) {
-            CFArrayRef a = CGWindowListCreate(
-                                              kCGWindowListOptionOnScreenBelowWindow,
-                                              (CGWindowID)_window.windowNumber
-                                              );
-            
-            CGImageRef img = CGWindowListCreateImageFromArray(
-                                                              CGRectInfinite,
-                                                              a,
-                                                              kCGWindowImageDefault
-                                                              );
-            CFRelease(a);
-            
-            //	GLubyte *spriteData = NULL;
-            CGContextRef spriteContext;
-            GLuint imgW, imgH, texW, texH;
-            
-            imgW = CGImageGetWidth(img);
-            imgH = CGImageGetHeight(img);
-            
-            // Find smallest possible powers of 2 for our texture dimensions
-            //	for (texW = 1; texW < imgW; texW *= 2) ;
-            //	for (texH = 1; texH < imgH; texH *= 2) ;
-            texW = imgW;
-            texH = imgH;
-            
-            if(*spriteData == NULL) {
-                // Allocated memory needed for the bitmap context
-                *spriteData = (GLubyte*) calloc(texH, texW * 4);
-                NSLog(@"Allocating more memory");
-            }
-            
-            // Uses the bitmatp creation function provided by the Core Graphics framework.
-            spriteContext = CGBitmapContextCreate(*spriteData, texW, texH, 8, texW * 4, CGImageGetColorSpace(img), kCGImageAlphaPremultipliedLast);
-            
-            // Translate and scale the context to draw the image upside-down (conflict in flipped-ness between GL textures and CG contexts)
-            CGContextTranslateCTM(spriteContext, 0., texH);
-            CGContextScaleCTM(spriteContext, 1., -1.);
-            
-            // After you create the context, you can draw the sprite image to the context.
-            const CGRect r = CGRectMake(0.0, 0.0, imgW, imgH);
-            if(clear) {
-                CGContextClearRect(spriteContext, r);
-            }
-            CGContextDrawImage(spriteContext, r, img);
-            // You don't need the context at this point, so you need to release it to avoid memory leaks.
-            CGContextRelease(spriteContext);
-            
-            CGImageRelease(img);
-            
-            free(s);
-            s = 0;
-    }
-}
+
 - (void)createGLTexture:(GLuint *)texName fromCGImage:(CGImageRef)img andDataCache:(GLubyte**)spriteData andClear:(bool)clear
 {
-//    NSLog(@"++++++++++ %lu, %lu", *texName, (*spriteData));
-    
     bool newTexture = (*texName == 0);
-//	GLubyte *spriteData = NULL;
 	CGContextRef spriteContext;
 	GLuint imgW, imgH, texW, texH;
 
@@ -388,7 +303,6 @@ bool done = 0;
 	
     glEnable(GL_TEXTURE_2D);
     if(newTexture) {
-//        NSLog(@"+++++++++++++++++ New Texture");
         // Use OpenGL ES to generate a name for the texture.
         glGenTextures(1, texName);
         // Bind the texture name.
@@ -491,10 +405,6 @@ CGPoint cursorPos;
     static NSOpenGLContext* context;
     if(context == nil)
         context = [self openGLContext];
-    // Drawing code here.
-    
-    
-//    CGLLockContext(*(CGLContextObj*)context.CGLContextObj);
     
     [context makeCurrentContext];
     
@@ -521,8 +431,6 @@ CGPoint cursorPos;
     
     [context flushBuffer];
 //    checkForErrors();
-    
-//    CGLUnlockContext(*(CGLContextObj*)context.CGLContextObj);
     
     return kCVReturnSuccess;
 }
