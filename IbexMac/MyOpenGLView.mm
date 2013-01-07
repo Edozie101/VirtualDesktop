@@ -205,6 +205,7 @@ bool done = 0;
             CGImageRelease(img);
             
             //            NSLog(@"drawing desktop done");
+            [NSThread sleepForTimeInterval:1.0f/60.0f];
         }
 }
 
