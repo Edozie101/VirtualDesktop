@@ -147,14 +147,13 @@ bool done = 0;
     static GLubyte *cursorData = NULL;
     static GLubyte *s = NULL;
     
+    [newContext makeCurrentContext];
     while(1) {
             //            NSLog(@"Drawing desktop");
-            [newContext makeCurrentContext];
-            
-            cursorPos = NSEvent.mouseLocation;
-            CGPoint hotSpot = NSCursor.currentSystemCursor.hotSpot;
-            cursorPos.x -= hotSpot.x;
-            cursorPos.y += hotSpot.y;
+//            cursorPos = NSEvent.mouseLocation;
+//            CGPoint hotSpot = NSCursor.currentSystemCursor.hotSpot;
+//            cursorPos.x -= hotSpot.x;
+//            cursorPos.y += hotSpot.y;
             CGImageRef cursorImage = [NSCursor.currentSystemCursor.image CGImageForProposedRect:nil context:nil hints:nil];
             [self createGLTexture:&cursor fromCGImage:cursorImage andDataCache:&cursorData andClear:YES];
             
@@ -215,16 +214,17 @@ bool done = 0;
     static GLubyte *s2 = NULL;
     static int index = 0;
 
+    [newContext makeCurrentContext];
     while(1) {
 //        if(!done)
         {
 //            NSLog(@"Drawing desktop");
-            [newContext makeCurrentContext];
+//            [newContext makeCurrentContext];
             
-            cursorPos = NSEvent.mouseLocation;
-            CGPoint hotSpot = NSCursor.currentSystemCursor.hotSpot;
-            cursorPos.x -= hotSpot.x;
-            cursorPos.y += hotSpot.y;
+//            cursorPos = NSEvent.mouseLocation;
+//            CGPoint hotSpot = NSCursor.currentSystemCursor.hotSpot;
+//            cursorPos.x -= hotSpot.x;
+//            cursorPos.y += hotSpot.y;
             CGImageRef cursorImage = [NSCursor.currentSystemCursor.image CGImageForProposedRect:nil context:nil hints:nil];
             [self createGLTexture:&cursor fromCGImage:cursorImage andDataCache:&cursorData andClear:YES];
             
