@@ -156,9 +156,10 @@ bool done = 0;
 //            cursorPos.y += hotSpot.y;
             CGImageRef cursorImage = [NSCursor.currentSystemCursor.image CGImageForProposedRect:nil context:nil hints:nil];
             [self createGLTexture:&cursor fromCGImage:cursorImage andDataCache:&cursorData andClear:YES];
-            
-            CGImageRelease(cursorImage);
-            
+        
+        // ARC says don't release it..
+//            CGImageRelease(cursorImage);
+        
             
             CFArrayRef a = CGWindowListCreate(
                                               kCGWindowListOptionOnScreenBelowWindow,
@@ -228,7 +229,8 @@ bool done = 0;
             CGImageRef cursorImage = [NSCursor.currentSystemCursor.image CGImageForProposedRect:nil context:nil hints:nil];
             [self createGLTexture:&cursor fromCGImage:cursorImage andDataCache:&cursorData andClear:YES];
             
-            CGImageRelease(cursorImage);
+            // ARC says don't release it
+//            CGImageRelease(cursorImage);
             
             
             CFArrayRef a = CGWindowListCreate(
@@ -364,7 +366,8 @@ CGPoint cursorPos;
     CGImageRef cursorImage = [NSCursor.currentSystemCursor.image CGImageForProposedRect:nil context:nil hints:nil];
     [self createGLTexture:&cursor fromCGImage:cursorImage andDataCache:&cursorData andClear:YES];
     
-    CGImageRelease(cursorImage);
+    // ARC says don't release it
+//    CGImageRelease(cursorImage);
     
     CFArrayRef a = CGWindowListCreate(
                                       kCGWindowListOptionOnScreenBelowWindow,
