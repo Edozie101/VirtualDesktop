@@ -27,6 +27,8 @@
 
 #import <OpenGL/OpenGL.h>
 
+#include <ApplicationServices/ApplicationServices.h>
+
 char mResourcePath[1024];
 
 @implementation MyOpenGLView
@@ -35,7 +37,22 @@ static Ibex *ibex = nil;
 
 EventHandlerUPP hotKeyFunction;
 
+// hides cursor in the background!
+extern "C" void CGSSetConnectionProperty(int, int, CFStringRef, CFBooleanRef);
+extern "C" int _CGSDefaultConnection();
+- (void)hideCursor {
+    CFStringRef propertyString;
+    
+    // Hack to make background cursor setting work
+    propertyString = CFStringCreateWithCString(NULL, "SetsCursorInBackground", kCFStringEncodingUTF8);
+    CGSSetConnectionProperty(_CGSDefaultConnection(), _CGSDefaultConnection(), propertyString, kCFBooleanTrue);
+    CFRelease(propertyString);
+    // Hide the cursor and wait
+    CGDisplayHideCursor(kCGDirectMainDisplay);
+}
 - (void)controlDesktopUpdate {
+    [self hideCursor];
+    
     CGDisplayHideCursor(kCGDirectMainDisplay);
     if(controlDesktop) {
         SetSystemUIMode (kUIModeNormal, kUIOptionDisableProcessSwitch);
@@ -408,6 +425,9 @@ CGPoint cursorPos;
 
 - (CVReturn)getFrameForTime:(const CVTimeStamp*)time
 {
+//    [self hideCursor];
+    CGDisplayHideCursor(kCGDirectMainDisplay);
+    
     static double fpsTime = 0;
     static int64_t startTime = time->videoTime;
 //    NSLog(@"getFrameForTime start");
