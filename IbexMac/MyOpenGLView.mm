@@ -153,17 +153,25 @@ bool done = 0;
         systemCursor = NSCursor.currentSystemCursor;
     });
     [newContext makeCurrentContext];
+    
     while(1) {
+        systemCursor = NSCursor.currentSystemCursor;
             //            NSLog(@"Drawing desktop");
 //            cursorPos = NSEvent.mouseLocation;
 //            CGPoint hotSpot = NSCursor.currentSystemCursor.hotSpot;
 //            cursorPos.x -= hotSpot.x;
 //            cursorPos.y += hotSpot.y;
-            CGImageRef cursorImage = [systemCursor.image CGImageForProposedRect:nil context:nil hints:nil];
-            [self createGLTexture:&cursor fromCGImage:cursorImage andDataCache:&cursorData andClear:YES];
+        NSImage *cursorImage = systemCursor.image;
+            CGImageRef cursorImageRef = [cursorImage CGImageForProposedRect:nil context:nil hints:nil];
+//            [systemCursor hide];
+            [self createGLTexture:&cursor fromCGImage:cursorImageRef andDataCache:&cursorData andClear:YES];
         
+//        for(id i in cursorImage.representations) {
+//            [cursorImage removeRepresentation:i];
+//        }
+//            [[systemCursor image] recache];
         // ARC says don't release it..
-//            CGImageRelease(cursorImage);
+//            CGImageRelease(cursorImageRef);
         
             
             CFArrayRef a = CGWindowListCreate(
