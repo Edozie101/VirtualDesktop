@@ -147,6 +147,11 @@ bool done = 0;
     static GLubyte *cursorData = NULL;
     static GLubyte *s = NULL;
     
+    static NSCursor *systemCursor;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        systemCursor = NSCursor.currentSystemCursor;
+    });
     [newContext makeCurrentContext];
     while(1) {
             //            NSLog(@"Drawing desktop");
@@ -154,7 +159,7 @@ bool done = 0;
 //            CGPoint hotSpot = NSCursor.currentSystemCursor.hotSpot;
 //            cursorPos.x -= hotSpot.x;
 //            cursorPos.y += hotSpot.y;
-            CGImageRef cursorImage = [NSCursor.currentSystemCursor.image CGImageForProposedRect:nil context:nil hints:nil];
+            CGImageRef cursorImage = [systemCursor.image CGImageForProposedRect:nil context:nil hints:nil];
             [self createGLTexture:&cursor fromCGImage:cursorImage andDataCache:&cursorData andClear:YES];
         
         // ARC says don't release it..
@@ -334,8 +339,14 @@ bool done = 0;
 CGPoint cursorPos;
 - (GLuint)getScreenshot {
     {
+        static NSCursor *cursor;
+        static dispatch_once_t onceToken;
+        dispatch_once(&onceToken, ^{
+            cursor = [NSCursor currentSystemCursor];
+        });
+        
         cursorPos = NSEvent.mouseLocation;
-        CGPoint hotSpot = NSCursor.currentSystemCursor.hotSpot;
+        CGPoint hotSpot = cursor.hotSpot;
         cursorPos.x -= hotSpot.x;
         cursorPos.y += hotSpot.y;
     }
