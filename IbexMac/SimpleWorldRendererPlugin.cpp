@@ -133,7 +133,7 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
   static const GLuint groundTexture = loadTexture("/resources/humus-skybox/negy.jpg");
     
   for (int i2 = 0; i2 < 2; ++i2) {
-      checkForErrors();
+//      checkForErrors();
     if (USE_FBO) {
       glBindFramebuffer(GL_FRAMEBUFFER, fbos[i2]);
       if (!checkForErrors()) {

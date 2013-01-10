@@ -172,6 +172,7 @@ bool done = 0;
     [newContext makeCurrentContext];
     
     while(1) {
+        [newContext makeCurrentContext];
         systemCursor = NSCursor.currentSystemCursor;
             //            NSLog(@"Drawing desktop");
 //            cursorPos = NSEvent.mouseLocation;
@@ -211,9 +212,11 @@ bool done = 0;
 //            [newContext flushBuffer];
         
             CGImageRelease(img);
+        
+        glFlush();
             
             //            NSLog(@"drawing desktop done");
-            [NSThread sleepForTimeInterval:1.0f/60.0f];
+            [NSThread sleepForTimeInterval:1.0f/90.0f];
         }
 }
 
@@ -454,6 +457,7 @@ CGPoint cursorPos;
     glFlush();
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
+        glFlush();
         [self performSelectorInBackground:@selector(loopScreenshot) withObject:nil];
     });
     
