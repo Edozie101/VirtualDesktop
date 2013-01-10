@@ -109,8 +109,6 @@
 		4CB7985B168AB41E00EF5260 = {
 			isa = PBXGroup;
 			children = (
-				4C006062169D38A000B88329 /* CoreFoundation.framework */,
-				4C00605F169D385100B88329 /* ApplicationServices.framework */,
 				4CB79870168AB41E00EF5260 /* IbexMac */,
 				4CB79869168AB41E00EF5260 /* Frameworks */,
 				4CB79867168AB41E00EF5260 /* Products */,
@@ -128,6 +126,8 @@
 		4CB79869168AB41E00EF5260 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				4C006062169D38A000B88329 /* CoreFoundation.framework */,
+				4C00605F169D385100B88329 /* ApplicationServices.framework */,
 				4C76498E16965A67009CF2EC /* Carbon.framework */,
 				4CAC8D5B169341F500341AA0 /* QuartzCore.framework */,
 				4CAC8D591692A00000341AA0 /* CoreVideo.framework */,
@@ -369,6 +369,7 @@
 		4CB79885168AB41E00EF5260 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = IbexMac/IbexMac.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -382,6 +383,7 @@
 		4CB79886168AB41E00EF5260 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = IbexMac/IbexMac.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
