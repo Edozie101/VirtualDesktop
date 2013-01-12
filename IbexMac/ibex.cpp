@@ -448,16 +448,16 @@ void Ibex::render(double timeDiff) {
     if (controlDesktop) {
         walkForward = strafeRight = 0;
     }
+    processRawMotion(relativeMouseY, relativeMouseX, desktop3DLocation);
+    relativeMouseX = 0;
+    relativeMouseY = 0;
+    
     desktop3DLocation.walk(walkForward, strafeRight, timeDiff);
     
-    processRawMotion(relativeMouseY, relativeMouseX, desktop3DLocation);
     renderer->move(walkForward, strafeRight, jump, relativeMouseX, relativeMouseY);
     renderer->processEvents();
     
     renderGL(desktop3DLocation, timeDiff);
-    
-    relativeMouseX = 0;
-    relativeMouseY = 0;
     
 //    ts_start = ts_current;
 }

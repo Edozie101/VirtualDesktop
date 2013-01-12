@@ -37,6 +37,8 @@ static Ibex *ibex = nil;
 
 EventHandlerUPP hotKeyFunction;
 
+NSCondition *cocoaCondition;
+
 // hides cursor in the background!
 extern "C" void CGSSetConnectionProperty(int, int, CFStringRef, CFBooleanRef);
 extern "C" int _CGSDefaultConnection();
@@ -104,6 +106,8 @@ NSTimer *t;
 - (id)initWithFrame:(NSRect)frameRect pixelFormat:(NSOpenGLPixelFormat *)format {
     self = [super initWithFrame:frameRect pixelFormat:format];
     if (self) {
+        cocoaCondition = [[NSCondition alloc] init];
+        
         [self registerHotkey];
         [self controlDesktopUpdate];
     }
@@ -172,6 +176,7 @@ bool done = 0;
     [newContext makeCurrentContext];
     
     while(1) {
+        done = 0;
         [newContext makeCurrentContext];
         systemCursor = NSCursor.currentSystemCursor;
             //            NSLog(@"Drawing desktop");
@@ -206,17 +211,23 @@ bool done = 0;
             
             
             //            [self savePNGImage:img path:@"/Users/hesh/file.png"];
-            [self createGLTexture:&desktopTexture fromCGImage:img andDataCache:&s andClear:NO];
+            [self createGLTextureNoAlpha:&desktopTexture fromCGImage:img andDataCache:&s andClear:NO];
             //            glFlush();
+        
+                    glFlush();
             
 //            [newContext flushBuffer];
         
             CGImageRelease(img);
         
-        glFlush();
-            
+//        [newContext flushBuffer];
+        
             //            NSLog(@"drawing desktop done");
-            [NSThread sleepForTimeInterval:1.0f/90.0f];
+//            [NSThread sleepForTimeInterval:1.0f/90.0f];
+//            while(!done);
+        [cocoaCondition lock];
+        [cocoaCondition wait];
+        [cocoaCondition unlock];
         }
 }
 
@@ -297,6 +308,67 @@ bool done = 0;
     }
 }
 
+- (void)createGLTextureNoAlpha:(GLuint *)texName fromCGImage:(CGImageRef)img andDataCache:(GLubyte**)spriteData andClear:(bool)clear
+{
+    bool newTexture = (*texName == 0);
+	CGContextRef spriteContext;
+	GLuint imgW, imgH, texW, texH;
+    
+	imgW = CGImageGetWidth(img);
+	imgH = CGImageGetHeight(img);
+    //    imgW = width;
+    //	imgH = height;
+	
+	// Find smallest possible powers of 2 for our texture dimensions
+    //	for (texW = 1; texW < imgW; texW *= 2) ;
+    //	for (texH = 1; texH < imgH; texH *= 2) ;
+    texW = imgW;
+    texH = imgH;
+	
+    if(*spriteData == NULL) {
+        // Allocated memory needed for the bitmap context
+        *spriteData = (GLubyte*) calloc(texH, texW * 4);
+        NSLog(@"Allocating more memory");
+    }
+    
+	// Uses the bitmatp creation function provided by the Core Graphics framework.
+	spriteContext = CGBitmapContextCreate(*spriteData, texW, texH, 8, texW * 4, CGImageGetColorSpace(img), kCGImageAlphaNoneSkipLast);
+	
+	// Translate and scale the context to draw the image upside-down (conflict in flipped-ness between GL textures and CG contexts)
+	CGContextTranslateCTM(spriteContext, 0., texH);
+	CGContextScaleCTM(spriteContext, 1., -1.);
+	
+	// After you create the context, you can draw the sprite image to the context.
+    const CGRect r = CGRectMake(0.0, 0.0, imgW, imgH);
+    if(clear) {
+        CGContextClearRect(spriteContext, r);
+    }
+	CGContextDrawImage(spriteContext, r, img);
+	// You don't need the context at this point, so you need to release it to avoid memory leaks.
+	CGContextRelease(spriteContext);
+	
+    glEnable(GL_TEXTURE_2D);
+    if(newTexture) {
+        // Use OpenGL ES to generate a name for the texture.
+        glGenTextures(1, texName);
+        // Bind the texture name.
+        glBindTexture(GL_TEXTURE_2D, *texName);
+        // Specify a 2D texture image, providing the a pointer to the image data in memory
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texW, texH, 0, GL_RGBA, GL_UNSIGNED_BYTE, *spriteData);
+    } else {
+        glBindTexture(GL_TEXTURE_2D, *texName);
+        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, texW, texH, GL_RGBA, GL_UNSIGNED_BYTE, *spriteData);
+    }
+	// Set the texture parameters to use a minifying filter and a linear filer (weighted average)
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	
+    
+    // user-allocated, don't touch it
+    //	free(*spriteData);
+    //    *spriteData = 0;
+}
+
 - (void)createGLTexture:(GLuint *)texName fromCGImage:(CGImageRef)img andDataCache:(GLubyte**)spriteData andClear:(bool)clear
 {
     bool newTexture = (*texName == 0);
@@ -367,11 +439,16 @@ bool done = 0;
 CGPoint cursorPos;
 - (GLuint)getScreenshot {
     {
+//        done = 1;
+//        [cocoaCondition lock];
+//        [cocoaCondition signal];
+//        [cocoaCondition unlock];
+        
         static NSCursor *cursor;
-        static dispatch_once_t onceToken;
-        dispatch_once(&onceToken, ^{
+//        static dispatch_once_t onceToken;
+//        dispatch_once(&onceToken, ^{
             cursor = [NSCursor currentSystemCursor];
-        });
+//        });
         
         cursorPos = NSEvent.mouseLocation;
         CGPoint hotSpot = cursor.hotSpot;
@@ -421,13 +498,15 @@ CGPoint cursorPos;
                                                     );
     CFRelease(a);
 
-    [self createGLTexture:&desktopTexture fromCGImage:i andDataCache:&desktopData andClear:NO];
+    [self createGLTextureNoAlpha:&desktopTexture fromCGImage:i andDataCache:&desktopData andClear:NO];
     CGImageRelease(i);
     return desktopTexture;
 }
 
 - (CVReturn)getFrameForTime:(const CVTimeStamp*)time
 {
+    //    timeToDoWork++;
+    
 //    [self hideCursor];
     CGDisplayHideCursor(kCGDirectMainDisplay);
     
@@ -476,6 +555,12 @@ CGPoint cursorPos;
 //    glFlush();
     
     [context flushBuffer];
+    done = 1;
+    
+    [cocoaCondition lock];
+    [cocoaCondition signal];
+    [cocoaCondition unlock];
+    
 //    checkForErrors();
     
     return kCVReturnSuccess;
@@ -529,11 +614,8 @@ CGPoint cursorPos;
 }
 
 - (void)mouseMoved:(NSEvent*)theEvent {
-    double x = theEvent.deltaX;
-    double y = theEvent.deltaY;
-    
-    relativeMouseX += x;
-    relativeMouseY += y;
+    relativeMouseX += theEvent.deltaX;
+    relativeMouseY += theEvent.deltaY;
     
 //    NSLog(@"%f, %f", relativeMouseX, relativeMouseY);
 }
