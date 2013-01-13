@@ -596,6 +596,9 @@ CGPoint cursorPos;
         case kVK_ANSI_G:
             showGround = !showGround;
             break;
+        case kVK_ANSI_R:
+            resetPosition = 1;
+            break;
         case kVK_ANSI_W:
             walkForward = 0;
             break;

@@ -80,6 +80,7 @@ GLfloat top, bottom;
 bool controlDesktop  = 1;
 
 // external variables
+bool resetPosition          = 0;
 bool showGround             = 0;
 bool barrelDistort          = 1;
 bool ortho                  = 1;
@@ -453,6 +454,11 @@ void Ibex::render(double timeDiff) {
     relativeMouseY = 0;
     
     desktop3DLocation.walk(walkForward, strafeRight, timeDiff);
+    
+    if(resetPosition) {
+        resetPosition = 0;
+        desktop3DLocation.resetState();
+    }
     
     renderer->move(walkForward, strafeRight, jump, relativeMouseX, relativeMouseY);
     renderer->processEvents();

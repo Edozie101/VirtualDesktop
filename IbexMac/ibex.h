@@ -34,6 +34,7 @@ extern GLfloat cursorPosY;
 extern GLuint fbos[2];
 extern GLuint textures[2];
 
+extern bool resetPosition;
 extern bool showGround;
 extern bool barrelDistort;
 extern bool ortho;
