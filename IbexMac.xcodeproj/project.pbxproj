@@ -21,6 +21,7 @@
 		4CAC8D5A1692A00000341AA0 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CAC8D591692A00000341AA0 /* CoreVideo.framework */; };
 		4CAC8D5C169341F500341AA0 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CAC8D5B169341F500341AA0 /* QuartzCore.framework */; };
 		4CAC8D5E169347AE00341AA0 /* resources in Resources */ = {isa = PBXBuildFile; fileRef = 4CAC8D5D169347AE00341AA0 /* resources */; };
+		4CACE17216A236710085DA5E /* ServerController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CACE17116A236710085DA5E /* ServerController.m */; };
 		4CB7986B168AB41E00EF5260 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CB7986A168AB41E00EF5260 /* Cocoa.framework */; };
 		4CB79875168AB41E00EF5260 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4CB79873168AB41E00EF5260 /* InfoPlist.strings */; };
 		4CB79877168AB41E00EF5260 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CB79876168AB41E00EF5260 /* main.m */; };
@@ -59,6 +60,8 @@
 		4CAC8D591692A00000341AA0 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		4CAC8D5B169341F500341AA0 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		4CAC8D5D169347AE00341AA0 /* resources */ = {isa = PBXFileReference; lastKnownFileType = folder; path = resources; sourceTree = "<group>"; };
+		4CACE17016A236710085DA5E /* ServerController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServerController.h; sourceTree = "<group>"; };
+		4CACE17116A236710085DA5E /* ServerController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ServerController.m; sourceTree = "<group>"; };
 		4CB79866168AB41E00EF5260 /* IbexMac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IbexMac.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4CB7986A168AB41E00EF5260 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		4CB7986D168AB41E00EF5260 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -182,6 +185,8 @@
 				4CAC8D571690A2C100341AA0 /* utils.cpp */,
 				4CFB0B49168E5DFA0025AF0F /* ibex.cpp */,
 				4CFB0B4A168E5DFA0025AF0F /* ibex.h */,
+				4CACE17016A236710085DA5E /* ServerController.h */,
+				4CACE17116A236710085DA5E /* ServerController.m */,
 			);
 			path = IbexMac;
 			sourceTree = "<group>";
@@ -280,6 +285,7 @@
 				4CAC8D581690A2C100341AA0 /* utils.cpp in Sources */,
 				4CFB0B4B168E5DFA0025AF0F /* ibex.cpp in Sources */,
 				4C4C3C0A1694689400D2285F /* MyWindow.mm in Sources */,
+				4CACE17216A236710085DA5E /* ServerController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

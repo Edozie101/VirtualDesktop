@@ -350,6 +350,7 @@ bool done = 0;
     glEnable(GL_TEXTURE_2D);
     glPixelStorei(GL_UNPACK_ROW_LENGTH, (GLint)texW);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    glPixelStorei(GL_PACK_ALIGNMENT, 1);
     if(newTexture) {
         // Use OpenGL ES to generate a name for the texture.
         glGenTextures(1, texName);
@@ -413,6 +414,7 @@ bool done = 0;
     glEnable(GL_TEXTURE_2D);
     glPixelStorei(GL_UNPACK_ROW_LENGTH, (GLint)texW);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    glPixelStorei(GL_PACK_ALIGNMENT, 1);
     if(newTexture) {
         // Use OpenGL ES to generate a name for the texture.
         glGenTextures(1, texName);
