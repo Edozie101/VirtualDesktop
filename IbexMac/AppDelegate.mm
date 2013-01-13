@@ -12,6 +12,8 @@
 
 #import "ibex.h"
 
+#import "ServerController.h"
+
 @implementation AppDelegate
 
 @synthesize pixelFormat;
@@ -33,6 +35,9 @@
     [_window setStyleMask:NSBorderlessWindowMask];
     [_window setLevel:NSScreenSaverWindowLevel];
     [_window setFrame:NSScreen.mainScreen.frame display:YES];
+    
+    serverController = [[ServerController alloc] init];
+    [serverController startService];
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification

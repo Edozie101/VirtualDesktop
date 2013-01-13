@@ -9,6 +9,7 @@
 #import <Cocoa/Cocoa.h>
 
 @class MyOpenGLView;
+@class ServerController;
 
 extern "C" {
     typedef int CGSConnectionID;
@@ -18,6 +19,7 @@ extern "C" {
 
 @interface AppDelegate : NSObject <NSApplicationDelegate,NSWindowDelegate> {
     MyOpenGLView *fullScreenView;
+    ServerController *serverController;
 }
 
 @property (assign) IBOutlet NSWindow *window;

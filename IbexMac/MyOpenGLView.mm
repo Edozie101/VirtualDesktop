@@ -348,6 +348,8 @@ bool done = 0;
 	CGContextRelease(spriteContext);
 	
     glEnable(GL_TEXTURE_2D);
+    glPixelStorei(GL_UNPACK_ROW_LENGTH, (GLint)texW);
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     if(newTexture) {
         // Use OpenGL ES to generate a name for the texture.
         glGenTextures(1, texName);
@@ -379,7 +381,7 @@ bool done = 0;
 	imgH = CGImageGetHeight(img);
 //    imgW = width;
 //	imgH = height;
-	
+    
 	// Find smallest possible powers of 2 for our texture dimensions
 //	for (texW = 1; texW < imgW; texW *= 2) ;
 //	for (texH = 1; texH < imgH; texH *= 2) ;
@@ -409,6 +411,8 @@ bool done = 0;
 	CGContextRelease(spriteContext);
 	
     glEnable(GL_TEXTURE_2D);
+    glPixelStorei(GL_UNPACK_ROW_LENGTH, (GLint)texW);
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     if(newTexture) {
         // Use OpenGL ES to generate a name for the texture.
         glGenTextures(1, texName);
