@@ -40,12 +40,12 @@
 /* Begin PBXFileReference section */
 		4C00605F169D385100B88329 /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = System/Library/Frameworks/ApplicationServices.framework; sourceTree = SDKROOT; };
 		4C006062169D38A000B88329 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
+		4C13B71316A9E8C80064AE60 /* ibex_mac_utils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ibex_mac_utils.h; sourceTree = "<group>"; };
 		4C2DE2FD168B30CC003BEB56 /* ScreenGrabber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScreenGrabber.h; sourceTree = "<group>"; };
 		4C2DE2FE168B30CC003BEB56 /* ScreenGrabber.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScreenGrabber.m; sourceTree = "<group>"; };
 		4C33AA3316970C3B001A1EFC /* IbexMac.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = IbexMac.entitlements; sourceTree = "<group>"; };
 		4C41231F16936E4F008F5B15 /* IbexMacUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IbexMacUtils.h; sourceTree = "<group>"; };
 		4C41232016936E4F008F5B15 /* IbexMacUtils.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IbexMacUtils.mm; sourceTree = "<group>"; };
-		4C41232316936ED0008F5B15 /* ibex_mac_utils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ibex_mac_utils.h; path = ../ibex_mac_utils.h; sourceTree = "<group>"; };
 		4C4C3C081694689400D2285F /* MyWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyWindow.h; sourceTree = "<group>"; };
 		4C4C3C091694689400D2285F /* MyWindow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MyWindow.mm; sourceTree = "<group>"; };
 		4C76498E16965A67009CF2EC /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
@@ -168,7 +168,7 @@
 				4CB7987F168AB41E00EF5260 /* MainMenu.xib */,
 				4C2DE2FD168B30CC003BEB56 /* ScreenGrabber.h */,
 				4C2DE2FE168B30CC003BEB56 /* ScreenGrabber.m */,
-				4C41232316936ED0008F5B15 /* ibex_mac_utils.h */,
+				4C13B71316A9E8C80064AE60 /* ibex_mac_utils.h */,
 				4C41231F16936E4F008F5B15 /* IbexMacUtils.h */,
 				4C41232016936E4F008F5B15 /* IbexMacUtils.mm */,
 				4CAC8D551690A26F00341AA0 /* glew.c */,
