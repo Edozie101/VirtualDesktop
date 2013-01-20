@@ -1,0 +1,427 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		4C006060169D385100B88329 /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C00605F169D385100B88329 /* ApplicationServices.framework */; };
+		4C006063169D38A000B88329 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C006062169D38A000B88329 /* CoreFoundation.framework */; };
+		4C2DE2FF168B30CC003BEB56 /* ScreenGrabber.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C2DE2FE168B30CC003BEB56 /* ScreenGrabber.m */; };
+		4C41232116936E4F008F5B15 /* IbexMacUtils.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4C41232016936E4F008F5B15 /* IbexMacUtils.mm */; };
+		4C4C3C0A1694689400D2285F /* MyWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4C4C3C091694689400D2285F /* MyWindow.mm */; };
+		4C76498F16965A67009CF2EC /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C76498E16965A67009CF2EC /* Carbon.framework */; };
+		4C8758431697E5200022583D /* ibex.iconset in Resources */ = {isa = PBXBuildFile; fileRef = 4C8758421697E5200022583D /* ibex.iconset */; };
+		4CAC8D48168E74FB00341AA0 /* GLUT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CAC8D47168E74FB00341AA0 /* GLUT.framework */; };
+		4CAC8D541690A26500341AA0 /* iphone_orientation_listener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CAC8D531690A26500341AA0 /* iphone_orientation_listener.cpp */; };
+		4CAC8D561690A26F00341AA0 /* glew.c in Sources */ = {isa = PBXBuildFile; fileRef = 4CAC8D551690A26F00341AA0 /* glew.c */; };
+		4CAC8D581690A2C100341AA0 /* utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CAC8D571690A2C100341AA0 /* utils.cpp */; };
+		4CAC8D5A1692A00000341AA0 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CAC8D591692A00000341AA0 /* CoreVideo.framework */; };
+		4CAC8D5C169341F500341AA0 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CAC8D5B169341F500341AA0 /* QuartzCore.framework */; };
+		4CAC8D5E169347AE00341AA0 /* resources in Resources */ = {isa = PBXBuildFile; fileRef = 4CAC8D5D169347AE00341AA0 /* resources */; };
+		4CACE17216A236710085DA5E /* ServerController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CACE17116A236710085DA5E /* ServerController.m */; };
+		4CB7986B168AB41E00EF5260 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CB7986A168AB41E00EF5260 /* Cocoa.framework */; };
+		4CB79875168AB41E00EF5260 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4CB79873168AB41E00EF5260 /* InfoPlist.strings */; };
+		4CB79877168AB41E00EF5260 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CB79876168AB41E00EF5260 /* main.m */; };
+		4CB7987B168AB41E00EF5260 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 4CB79879168AB41E00EF5260 /* Credits.rtf */; };
+		4CB7987E168AB41E00EF5260 /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4CB7987D168AB41E00EF5260 /* AppDelegate.mm */; };
+		4CB79881168AB41E00EF5260 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4CB7987F168AB41E00EF5260 /* MainMenu.xib */; };
+		4CF354B9168D0D5000EAA2FE /* MyOpenGLView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4CF354B8168D0D5000EAA2FE /* MyOpenGLView.mm */; };
+		4CF354BC168D0E1600EAA2FE /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CF354BB168D0E1600EAA2FE /* OpenGL.framework */; };
+		4CFB0B3E168E5D6A0025AF0F /* SimpleWorldRendererPlugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFB0B3C168E5D6A0025AF0F /* SimpleWorldRendererPlugin.cpp */; };
+		4CFB0B43168E5D840025AF0F /* distortions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFB0B40168E5D840025AF0F /* distortions.cpp */; };
+		4CFB0B44168E5D840025AF0F /* opengl_helpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFB0B41168E5D840025AF0F /* opengl_helpers.cpp */; };
+		4CFB0B48168E5D960025AF0F /* RendererPlugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFB0B45168E5D960025AF0F /* RendererPlugin.cpp */; };
+		4CFB0B4B168E5DFA0025AF0F /* ibex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFB0B49168E5DFA0025AF0F /* ibex.cpp */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		4C00605F169D385100B88329 /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = System/Library/Frameworks/ApplicationServices.framework; sourceTree = SDKROOT; };
+		4C006062169D38A000B88329 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
+		4C13B71316A9E8C80064AE60 /* ibex_mac_utils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ibex_mac_utils.h; sourceTree = "<group>"; };
+		4C2DE2FD168B30CC003BEB56 /* ScreenGrabber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScreenGrabber.h; sourceTree = "<group>"; };
+		4C2DE2FE168B30CC003BEB56 /* ScreenGrabber.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScreenGrabber.m; sourceTree = "<group>"; };
+		4C33AA3316970C3B001A1EFC /* IbexMac.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = IbexMac.entitlements; sourceTree = "<group>"; };
+		4C41231F16936E4F008F5B15 /* IbexMacUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IbexMacUtils.h; sourceTree = "<group>"; };
+		4C41232016936E4F008F5B15 /* IbexMacUtils.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IbexMacUtils.mm; sourceTree = "<group>"; };
+		4C4C3C081694689400D2285F /* MyWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyWindow.h; sourceTree = "<group>"; };
+		4C4C3C091694689400D2285F /* MyWindow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MyWindow.mm; sourceTree = "<group>"; };
+		4C76498E16965A67009CF2EC /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
+		4C8758421697E5200022583D /* ibex.iconset */ = {isa = PBXFileReference; lastKnownFileType = folder.iconset; path = ibex.iconset; sourceTree = "<group>"; };
+		4CAC8D43168E5F1900341AA0 /* iphone_orientation_plugin */ = {isa = PBXFileReference; lastKnownFileType = folder; path = iphone_orientation_plugin; sourceTree = "<group>"; };
+		4CAC8D46168E5F2F00341AA0 /* distortions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = distortions.h; sourceTree = "<group>"; };
+		4CAC8D47168E74FB00341AA0 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = System/Library/Frameworks/GLUT.framework; sourceTree = SDKROOT; };
+		4CAC8D511690A1C100341AA0 /* GL */ = {isa = PBXFileReference; lastKnownFileType = folder; path = GL; sourceTree = "<group>"; };
+		4CAC8D531690A26500341AA0 /* iphone_orientation_listener.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = iphone_orientation_listener.cpp; path = iphone_orientation_plugin/iphone_orientation_listener.cpp; sourceTree = "<group>"; };
+		4CAC8D551690A26F00341AA0 /* glew.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = glew.c; path = GL/glew.c; sourceTree = "<group>"; };
+		4CAC8D571690A2C100341AA0 /* utils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = utils.cpp; sourceTree = "<group>"; };
+		4CAC8D591692A00000341AA0 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
+		4CAC8D5B169341F500341AA0 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		4CAC8D5D169347AE00341AA0 /* resources */ = {isa = PBXFileReference; lastKnownFileType = folder; path = resources; sourceTree = "<group>"; };
+		4CACE17016A236710085DA5E /* ServerController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServerController.h; sourceTree = "<group>"; };
+		4CACE17116A236710085DA5E /* ServerController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ServerController.m; sourceTree = "<group>"; };
+		4CB79866168AB41E00EF5260 /* IbexMac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IbexMac.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4CB7986A168AB41E00EF5260 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		4CB7986D168AB41E00EF5260 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		4CB7986E168AB41E00EF5260 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		4CB7986F168AB41E00EF5260 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		4CB79872168AB41E00EF5260 /* IbexMac-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "IbexMac-Info.plist"; sourceTree = "<group>"; };
+		4CB79874168AB41E00EF5260 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		4CB79876168AB41E00EF5260 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		4CB79878168AB41E00EF5260 /* IbexMac-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "IbexMac-Prefix.pch"; sourceTree = "<group>"; };
+		4CB7987A168AB41E00EF5260 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
+		4CB7987C168AB41E00EF5260 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		4CB7987D168AB41E00EF5260 /* AppDelegate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AppDelegate.mm; sourceTree = "<group>"; };
+		4CB79880168AB41E00EF5260 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		4CF354B7168D0D5000EAA2FE /* MyOpenGLView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyOpenGLView.h; sourceTree = "<group>"; };
+		4CF354B8168D0D5000EAA2FE /* MyOpenGLView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MyOpenGLView.mm; sourceTree = "<group>"; };
+		4CF354BB168D0E1600EAA2FE /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
+		4CFB0B3C168E5D6A0025AF0F /* SimpleWorldRendererPlugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleWorldRendererPlugin.cpp; sourceTree = "<group>"; };
+		4CFB0B3D168E5D6A0025AF0F /* SimpleWorldRendererPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleWorldRendererPlugin.h; sourceTree = "<group>"; };
+		4CFB0B40168E5D840025AF0F /* distortions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = distortions.cpp; sourceTree = "<group>"; };
+		4CFB0B41168E5D840025AF0F /* opengl_helpers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = opengl_helpers.cpp; sourceTree = "<group>"; };
+		4CFB0B42168E5D840025AF0F /* opengl_helpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = opengl_helpers.h; sourceTree = "<group>"; };
+		4CFB0B45168E5D960025AF0F /* RendererPlugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RendererPlugin.cpp; sourceTree = "<group>"; };
+		4CFB0B46168E5D960025AF0F /* RendererPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RendererPlugin.h; sourceTree = "<group>"; };
+		4CFB0B47168E5D960025AF0F /* utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = utils.h; sourceTree = "<group>"; };
+		4CFB0B49168E5DFA0025AF0F /* ibex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ibex.cpp; sourceTree = "<group>"; };
+		4CFB0B4A168E5DFA0025AF0F /* ibex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ibex.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		4CB79863168AB41E00EF5260 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4C006063169D38A000B88329 /* CoreFoundation.framework in Frameworks */,
+				4C006060169D385100B88329 /* ApplicationServices.framework in Frameworks */,
+				4C76498F16965A67009CF2EC /* Carbon.framework in Frameworks */,
+				4CAC8D5C169341F500341AA0 /* QuartzCore.framework in Frameworks */,
+				4CAC8D5A1692A00000341AA0 /* CoreVideo.framework in Frameworks */,
+				4CAC8D48168E74FB00341AA0 /* GLUT.framework in Frameworks */,
+				4CF354BC168D0E1600EAA2FE /* OpenGL.framework in Frameworks */,
+				4CB7986B168AB41E00EF5260 /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		4CB7985B168AB41E00EF5260 = {
+			isa = PBXGroup;
+			children = (
+				4CB79870168AB41E00EF5260 /* IbexMac */,
+				4CB79869168AB41E00EF5260 /* Frameworks */,
+				4CB79867168AB41E00EF5260 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		4CB79867168AB41E00EF5260 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				4CB79866168AB41E00EF5260 /* IbexMac.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		4CB79869168AB41E00EF5260 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				4C006062169D38A000B88329 /* CoreFoundation.framework */,
+				4C00605F169D385100B88329 /* ApplicationServices.framework */,
+				4C76498E16965A67009CF2EC /* Carbon.framework */,
+				4CAC8D5B169341F500341AA0 /* QuartzCore.framework */,
+				4CAC8D591692A00000341AA0 /* CoreVideo.framework */,
+				4CAC8D47168E74FB00341AA0 /* GLUT.framework */,
+				4CF354BB168D0E1600EAA2FE /* OpenGL.framework */,
+				4CB7986A168AB41E00EF5260 /* Cocoa.framework */,
+				4CB7986C168AB41E00EF5260 /* Other Frameworks */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		4CB7986C168AB41E00EF5260 /* Other Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				4CB7986D168AB41E00EF5260 /* AppKit.framework */,
+				4CB7986E168AB41E00EF5260 /* CoreData.framework */,
+				4CB7986F168AB41E00EF5260 /* Foundation.framework */,
+			);
+			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		4CB79870168AB41E00EF5260 /* IbexMac */ = {
+			isa = PBXGroup;
+			children = (
+				4CB79871168AB41E00EF5260 /* Supporting Files */,
+				4CAC8D5D169347AE00341AA0 /* resources */,
+				4CAC8D43168E5F1900341AA0 /* iphone_orientation_plugin */,
+				4CAC8D511690A1C100341AA0 /* GL */,
+				4CB7987C168AB41E00EF5260 /* AppDelegate.h */,
+				4CB7987D168AB41E00EF5260 /* AppDelegate.mm */,
+				4C4C3C081694689400D2285F /* MyWindow.h */,
+				4C4C3C091694689400D2285F /* MyWindow.mm */,
+				4CF354B7168D0D5000EAA2FE /* MyOpenGLView.h */,
+				4CF354B8168D0D5000EAA2FE /* MyOpenGLView.mm */,
+				4CB7987F168AB41E00EF5260 /* MainMenu.xib */,
+				4C2DE2FD168B30CC003BEB56 /* ScreenGrabber.h */,
+				4C2DE2FE168B30CC003BEB56 /* ScreenGrabber.m */,
+				4C13B71316A9E8C80064AE60 /* ibex_mac_utils.h */,
+				4C41231F16936E4F008F5B15 /* IbexMacUtils.h */,
+				4C41232016936E4F008F5B15 /* IbexMacUtils.mm */,
+				4CAC8D551690A26F00341AA0 /* glew.c */,
+				4CAC8D531690A26500341AA0 /* iphone_orientation_listener.cpp */,
+				4CFB0B3D168E5D6A0025AF0F /* SimpleWorldRendererPlugin.h */,
+				4CFB0B3C168E5D6A0025AF0F /* SimpleWorldRendererPlugin.cpp */,
+				4CAC8D46168E5F2F00341AA0 /* distortions.h */,
+				4CFB0B40168E5D840025AF0F /* distortions.cpp */,
+				4CFB0B41168E5D840025AF0F /* opengl_helpers.cpp */,
+				4CFB0B42168E5D840025AF0F /* opengl_helpers.h */,
+				4CFB0B45168E5D960025AF0F /* RendererPlugin.cpp */,
+				4CFB0B46168E5D960025AF0F /* RendererPlugin.h */,
+				4CFB0B47168E5D960025AF0F /* utils.h */,
+				4CAC8D571690A2C100341AA0 /* utils.cpp */,
+				4CFB0B49168E5DFA0025AF0F /* ibex.cpp */,
+				4CFB0B4A168E5DFA0025AF0F /* ibex.h */,
+				4CACE17016A236710085DA5E /* ServerController.h */,
+				4CACE17116A236710085DA5E /* ServerController.m */,
+			);
+			path = IbexMac;
+			sourceTree = "<group>";
+		};
+		4CB79871168AB41E00EF5260 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				4C8758421697E5200022583D /* ibex.iconset */,
+				4C33AA3316970C3B001A1EFC /* IbexMac.entitlements */,
+				4CB79872168AB41E00EF5260 /* IbexMac-Info.plist */,
+				4CB79873168AB41E00EF5260 /* InfoPlist.strings */,
+				4CB79876168AB41E00EF5260 /* main.m */,
+				4CB79878168AB41E00EF5260 /* IbexMac-Prefix.pch */,
+				4CB79879168AB41E00EF5260 /* Credits.rtf */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		4CB79865168AB41E00EF5260 /* IbexMac */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4CB79884168AB41E00EF5260 /* Build configuration list for PBXNativeTarget "IbexMac" */;
+			buildPhases = (
+				4CB79862168AB41E00EF5260 /* Sources */,
+				4CB79863168AB41E00EF5260 /* Frameworks */,
+				4CB79864168AB41E00EF5260 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = IbexMac;
+			productName = IbexMac;
+			productReference = 4CB79866168AB41E00EF5260 /* IbexMac.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		4CB7985D168AB41E00EF5260 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0450;
+				ORGANIZATIONNAME = "Hesham Wahba";
+			};
+			buildConfigurationList = 4CB79860168AB41E00EF5260 /* Build configuration list for PBXProject "IbexMac" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 4CB7985B168AB41E00EF5260;
+			productRefGroup = 4CB79867168AB41E00EF5260 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				4CB79865168AB41E00EF5260 /* IbexMac */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		4CB79864168AB41E00EF5260 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4CB79875168AB41E00EF5260 /* InfoPlist.strings in Resources */,
+				4CB7987B168AB41E00EF5260 /* Credits.rtf in Resources */,
+				4CB79881168AB41E00EF5260 /* MainMenu.xib in Resources */,
+				4CAC8D5E169347AE00341AA0 /* resources in Resources */,
+				4C8758431697E5200022583D /* ibex.iconset in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		4CB79862168AB41E00EF5260 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4CB79877168AB41E00EF5260 /* main.m in Sources */,
+				4CB7987E168AB41E00EF5260 /* AppDelegate.mm in Sources */,
+				4C2DE2FF168B30CC003BEB56 /* ScreenGrabber.m in Sources */,
+				4CF354B9168D0D5000EAA2FE /* MyOpenGLView.mm in Sources */,
+				4CFB0B3E168E5D6A0025AF0F /* SimpleWorldRendererPlugin.cpp in Sources */,
+				4CFB0B43168E5D840025AF0F /* distortions.cpp in Sources */,
+				4CFB0B44168E5D840025AF0F /* opengl_helpers.cpp in Sources */,
+				4CFB0B48168E5D960025AF0F /* RendererPlugin.cpp in Sources */,
+				4CAC8D541690A26500341AA0 /* iphone_orientation_listener.cpp in Sources */,
+				4CAC8D561690A26F00341AA0 /* glew.c in Sources */,
+				4C41232116936E4F008F5B15 /* IbexMacUtils.mm in Sources */,
+				4CAC8D581690A2C100341AA0 /* utils.cpp in Sources */,
+				4CFB0B4B168E5DFA0025AF0F /* ibex.cpp in Sources */,
+				4C4C3C0A1694689400D2285F /* MyWindow.mm in Sources */,
+				4CACE17216A236710085DA5E /* ServerController.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		4CB79873168AB41E00EF5260 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				4CB79874168AB41E00EF5260 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		4CB79879168AB41E00EF5260 /* Credits.rtf */ = {
+			isa = PBXVariantGroup;
+			children = (
+				4CB7987A168AB41E00EF5260 /* en */,
+			);
+			name = Credits.rtf;
+			sourceTree = "<group>";
+		};
+		4CB7987F168AB41E00EF5260 /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				4CB79880168AB41E00EF5260 /* en */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		4CB79882168AB41E00EF5260 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		4CB79883168AB41E00EF5260 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		4CB79885168AB41E00EF5260 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = IbexMac/IbexMac.entitlements;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "IbexMac/IbexMac-Prefix.pch";
+				INFOPLIST_FILE = "IbexMac/IbexMac-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		4CB79886168AB41E00EF5260 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = IbexMac/IbexMac.entitlements;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "IbexMac/IbexMac-Prefix.pch";
+				INFOPLIST_FILE = "IbexMac/IbexMac-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		4CB79860168AB41E00EF5260 /* Build configuration list for PBXProject "IbexMac" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4CB79882168AB41E00EF5260 /* Debug */,
+				4CB79883168AB41E00EF5260 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4CB79884168AB41E00EF5260 /* Build configuration list for PBXNativeTarget "IbexMac" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4CB79885168AB41E00EF5260 /* Debug */,
+				4CB79886168AB41E00EF5260 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 4CB7985D168AB41E00EF5260 /* Project object */;
+}
