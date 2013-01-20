@@ -1,4 +1,4 @@
-Ibex - 3D Virtual Reality Desktop/Compositing Manager for X11 and Linux
+Ibex - 3D Virtual Reality Desktop/Compositing Manager for X11/Linux and Mac OS
 
 About
 -----
@@ -9,6 +9,10 @@ so that you can be flying on a plane, for example, but still be flanked by
 multiple large high resolution monitors and still be effective rather than be
 limited by a tiny laptop screen.
 
+Home Page and Downloads
+-----------------------
+http://hwahba.com/ibex
+
 Launch
 ------
 Default simple renderer: ./ibex
@@ -18,13 +22,13 @@ Disable Side-by-Side rendering: -m (for mono)
 
 Controls
 --------
-Toggle Control Desktop/Move Around World: CTRL+SHIFT+Y
+Toggle Control Desktop/Move Around World: CTRL+SHIFT+Y, Shift+F1 (Mac)
 Look: Move Mouse
 Move Forward: W
 Move Backwards: S
 Walk Sideways Left (Strafe Left): A/Q
 Walk Sideways Right (Strafe Right): D/E 
-Jump: SPACE (irrlicht renderer only)
+Jump: SPACE (Irrlicht renderer only)
 
 Toggle Barrel Lens Distort: B
 Toggle Ground Layer: G
