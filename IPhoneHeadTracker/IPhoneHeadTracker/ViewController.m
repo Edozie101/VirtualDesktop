@@ -21,12 +21,17 @@
 
 @implementation ViewController
 
+@synthesize browser;
+@synthesize services;
+
 struct sockaddr_in addr4;
 
 static CMAttitude *refAttitude;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    [self browseServices];
     
     NSLog(@"MOTION STARTED");
     
@@ -42,6 +47,8 @@ static CMAttitude *refAttitude;
         [self startMotion];
     });
     broadcast = false;
+    
+    [self.view addSubview:navigationView];
 }
 
 - (IBAction)toggleBroadcast:(id)sender {
@@ -148,6 +155,121 @@ static int i = 0;
 {
     [textField resignFirstResponder];
     return YES;
+}
+
+
+
+
+
+
+
+
+
+
+
+//---browse for services---
+-(void) browseServices {
+    services = [NSMutableArray new];
+    self.browser = [NSNetServiceBrowser new];
+    self.browser.delegate = self;
+    [self.browser searchForServicesOfType:@"_ibex._udp." inDomain:@""];
+}
+
+//---services found---
+-(void)netServiceBrowser:(NSNetServiceBrowser *)aBrowser didFindService:(NSNetService *)aService moreComing:(BOOL)more {
+    NSLog(@"Found service: %@", aService);
+    [services addObject:aService];
+    [self resolveIPAddress:aService];
+}
+
+//---services removed from the network---
+-(void)netServiceBrowser:(NSNetServiceBrowser *)aBrowser didRemoveService:(NSNetService *)aService moreComing:(BOOL)more {
+    [services removeObject:aService];
+    [aService hostName];
+}
+
+//---resolve the IP address of a service---
+-(void) resolveIPAddress:(NSNetService *)service {
+    NSNetService *remoteService = service;
+    remoteService.delegate = self;
+    [remoteService resolveWithTimeout:0];
+}
+
+//---managed to resolve---
+-(void)netServiceDidResolveAddress:(NSNetService *)service {
+    NSString *name = nil;
+    NSData *address_ = nil;
+    struct sockaddr_in *socketAddress = nil;
+    NSString *ipString = nil;
+    int port;
+    
+    for(int i=0;i < [[service addresses] count]; i++ )
+    {
+        name = [service name];
+        address_ = [[service addresses] objectAtIndex: i];
+        socketAddress = (struct sockaddr_in *) [address_ bytes];
+        ipString = [NSString stringWithFormat: @"%s", inet_ntoa(socketAddress->sin_addr)];
+        port = socketAddress->sin_port;
+        NSLog(@"Resolved: %@-->%@:%hu\n", [service hostName], ipString, port);
+        address.text = [NSString stringWithFormat:@"%@:%hu", ipString, port];
+  }
+}
+
+//---did not managed to resolve---
+-(void)netService:(NSNetService *)service didNotResolve:(NSDictionary *)errorDict {
+}
+
+
+
+
+
+
+
+
+
+
+
+
+// called when a gesture recognizer attempts to transition out of UIGestureRecognizerStatePossible. returning NO causes it to transition to UIGestureRecognizerStateFailed
+- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer {
+    return YES;
+}
+
+// called when the recognition of one of gestureRecognizer or otherGestureRecognizer would be blocked by the other
+// return YES to allow both to recognize simultaneously. the default implementation returns NO (by default no two gestures can be recognized simultaneously)
+//
+// note: returning YES is guaranteed to allow simultaneous recognition. returning NO is not guaranteed to prevent simultaneous recognition, as the other gesture's delegate may return YES
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
+    return YES;
+}
+
+// called before touchesBegan:withEvent: is called on the gesture recognizer for a new touch. return NO to prevent the gesture recognizer from seeing this touch
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
+    return YES;
+}
+
+- (IBAction)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
+    UITouch *t = (UITouch*)[touches anyObject];
+    CGPoint p0 = [t previousLocationInView:navigationView];
+    CGPoint p1 = [t locationInView:navigationView];
+    
+    NSLog(@"Touched (%f,%f)", p1.x-p0.x, p1.y-p0.y);
+}
+
+- (IBAction)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
+    UITouch *t = (UITouch*)[touches anyObject];
+    CGPoint p0 = [t previousLocationInView:navigationView];
+    CGPoint p1 = [t locationInView:navigationView];
+    
+    NSLog(@"Moved (%f,%f)", p1.x-p0.x, p1.y-p0.y);
+}
+
+- (IBAction)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
+    UITouch *t = (UITouch*)[touches anyObject];
+    CGPoint p0 = [t previousLocationInView:navigationView];
+    CGPoint p1 = [t locationInView:navigationView];
+    
+    NSLog(@"Ended (%f,%f)", p1.x-p0.x, p1.y-p0.y);
 }
 
 @end

@@ -12,7 +12,7 @@
 
 @class CMMotionManager;
 
-@interface ViewController : UIViewController<UITextFieldDelegate> {
+@interface ViewController : UIViewController<UITextFieldDelegate,UIGestureRecognizerDelegate> {
     bool broadcast;
     
     CMMotionManager *m;
@@ -21,6 +21,19 @@
     IBOutlet UITextField *address;
     IBOutlet UILabel *orientation;
     IBOutlet UIButton *startStopBroadcastButton;
+    
+    IBOutlet UIView *orientationView;
+    IBOutlet UIView *navigationView;
+    UITapGestureRecognizer *tapGesture;
 }
+
+
+@property (readwrite, retain) NSNetServiceBrowser *browser;
+@property (readwrite, retain) NSMutableArray *services;
+
+-(IBAction) btnConnect:(id)sender;
+-(IBAction) btnSend:(id)sender;
+-(IBAction) doneEditing;
+
 
 @end
