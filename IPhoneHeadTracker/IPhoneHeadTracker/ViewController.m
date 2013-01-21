@@ -48,7 +48,8 @@ static CMAttitude *refAttitude;
     });
     broadcast = false;
     
-    [self.view addSubview:navigationView];
+//    [self.view addSubview:navigationView];
+    [self.view addSubview:orientationView];
 }
 
 - (IBAction)toggleBroadcast:(id)sender {
