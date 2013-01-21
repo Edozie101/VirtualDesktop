@@ -9,6 +9,34 @@
 /* Begin PBXBuildFile section */
 		4C006060169D385100B88329 /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C00605F169D385100B88329 /* ApplicationServices.framework */; };
 		4C006063169D38A000B88329 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C006062169D38A000B88329 /* CoreFoundation.framework */; };
+		4C0D589616AD656A007BC9CD /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CB79876168AB41E00EF5260 /* main.m */; };
+		4C0D589716AD656A007BC9CD /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4CB7987D168AB41E00EF5260 /* AppDelegate.mm */; };
+		4C0D589816AD656A007BC9CD /* ScreenGrabber.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C2DE2FE168B30CC003BEB56 /* ScreenGrabber.m */; };
+		4C0D589916AD656A007BC9CD /* MyOpenGLView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4CF354B8168D0D5000EAA2FE /* MyOpenGLView.mm */; };
+		4C0D589A16AD656A007BC9CD /* SimpleWorldRendererPlugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFB0B3C168E5D6A0025AF0F /* SimpleWorldRendererPlugin.cpp */; };
+		4C0D589B16AD656A007BC9CD /* distortions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFB0B40168E5D840025AF0F /* distortions.cpp */; };
+		4C0D589C16AD656A007BC9CD /* opengl_helpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFB0B41168E5D840025AF0F /* opengl_helpers.cpp */; };
+		4C0D589D16AD656A007BC9CD /* RendererPlugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFB0B45168E5D960025AF0F /* RendererPlugin.cpp */; };
+		4C0D589E16AD656A007BC9CD /* iphone_orientation_listener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CAC8D531690A26500341AA0 /* iphone_orientation_listener.cpp */; };
+		4C0D589F16AD656A007BC9CD /* glew.c in Sources */ = {isa = PBXBuildFile; fileRef = 4CAC8D551690A26F00341AA0 /* glew.c */; };
+		4C0D58A016AD656A007BC9CD /* IbexMacUtils.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4C41232016936E4F008F5B15 /* IbexMacUtils.mm */; };
+		4C0D58A116AD656A007BC9CD /* utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CAC8D571690A2C100341AA0 /* utils.cpp */; };
+		4C0D58A216AD656A007BC9CD /* ibex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFB0B49168E5DFA0025AF0F /* ibex.cpp */; };
+		4C0D58A316AD656A007BC9CD /* MyWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4C4C3C091694689400D2285F /* MyWindow.mm */; };
+		4C0D58A416AD656A007BC9CD /* ServerController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CACE17116A236710085DA5E /* ServerController.m */; };
+		4C0D58A616AD656A007BC9CD /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C006062169D38A000B88329 /* CoreFoundation.framework */; };
+		4C0D58A716AD656A007BC9CD /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C00605F169D385100B88329 /* ApplicationServices.framework */; };
+		4C0D58A816AD656A007BC9CD /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C76498E16965A67009CF2EC /* Carbon.framework */; };
+		4C0D58A916AD656A007BC9CD /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CAC8D5B169341F500341AA0 /* QuartzCore.framework */; };
+		4C0D58AA16AD656A007BC9CD /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CAC8D591692A00000341AA0 /* CoreVideo.framework */; };
+		4C0D58AB16AD656A007BC9CD /* GLUT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CAC8D47168E74FB00341AA0 /* GLUT.framework */; };
+		4C0D58AC16AD656A007BC9CD /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CF354BB168D0E1600EAA2FE /* OpenGL.framework */; };
+		4C0D58AD16AD656A007BC9CD /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CB7986A168AB41E00EF5260 /* Cocoa.framework */; };
+		4C0D58AF16AD656A007BC9CD /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4CB79873168AB41E00EF5260 /* InfoPlist.strings */; };
+		4C0D58B016AD656A007BC9CD /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 4CB79879168AB41E00EF5260 /* Credits.rtf */; };
+		4C0D58B116AD656A007BC9CD /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4CB7987F168AB41E00EF5260 /* MainMenu.xib */; };
+		4C0D58B216AD656A007BC9CD /* resources in Resources */ = {isa = PBXBuildFile; fileRef = 4CAC8D5D169347AE00341AA0 /* resources */; };
+		4C0D58B316AD656A007BC9CD /* ibex.iconset in Resources */ = {isa = PBXBuildFile; fileRef = 4C8758421697E5200022583D /* ibex.iconset */; };
 		4C2DE2FF168B30CC003BEB56 /* ScreenGrabber.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C2DE2FE168B30CC003BEB56 /* ScreenGrabber.m */; };
 		4C41232116936E4F008F5B15 /* IbexMacUtils.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4C41232016936E4F008F5B15 /* IbexMacUtils.mm */; };
 		4C4C3C0A1694689400D2285F /* MyWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4C4C3C091694689400D2285F /* MyWindow.mm */; };
@@ -40,6 +68,7 @@
 /* Begin PBXFileReference section */
 		4C00605F169D385100B88329 /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = System/Library/Frameworks/ApplicationServices.framework; sourceTree = SDKROOT; };
 		4C006062169D38A000B88329 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
+		4C0D58B716AD656A007BC9CD /* IbexMac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IbexMac.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C13B71316A9E8C80064AE60 /* ibex_mac_utils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ibex_mac_utils.h; sourceTree = "<group>"; };
 		4C2DE2FD168B30CC003BEB56 /* ScreenGrabber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScreenGrabber.h; sourceTree = "<group>"; };
 		4C2DE2FE168B30CC003BEB56 /* ScreenGrabber.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScreenGrabber.m; sourceTree = "<group>"; };
@@ -91,6 +120,21 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		4C0D58A516AD656A007BC9CD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4C0D58A616AD656A007BC9CD /* CoreFoundation.framework in Frameworks */,
+				4C0D58A716AD656A007BC9CD /* ApplicationServices.framework in Frameworks */,
+				4C0D58A816AD656A007BC9CD /* Carbon.framework in Frameworks */,
+				4C0D58A916AD656A007BC9CD /* QuartzCore.framework in Frameworks */,
+				4C0D58AA16AD656A007BC9CD /* CoreVideo.framework in Frameworks */,
+				4C0D58AB16AD656A007BC9CD /* GLUT.framework in Frameworks */,
+				4C0D58AC16AD656A007BC9CD /* OpenGL.framework in Frameworks */,
+				4C0D58AD16AD656A007BC9CD /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4CB79863168AB41E00EF5260 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -122,6 +166,7 @@
 			isa = PBXGroup;
 			children = (
 				4CB79866168AB41E00EF5260 /* IbexMac.app */,
+				4C0D58B716AD656A007BC9CD /* IbexMac.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -208,6 +253,23 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		4C0D589416AD656A007BC9CD /* IbexMacRelease */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4C0D58B416AD656A007BC9CD /* Build configuration list for PBXNativeTarget "IbexMacRelease" */;
+			buildPhases = (
+				4C0D589516AD656A007BC9CD /* Sources */,
+				4C0D58A516AD656A007BC9CD /* Frameworks */,
+				4C0D58AE16AD656A007BC9CD /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = IbexMacRelease;
+			productName = IbexMac;
+			productReference = 4C0D58B716AD656A007BC9CD /* IbexMac.app */;
+			productType = "com.apple.product-type.application";
+		};
 		4CB79865168AB41E00EF5260 /* IbexMac */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 4CB79884168AB41E00EF5260 /* Build configuration list for PBXNativeTarget "IbexMac" */;
@@ -247,11 +309,24 @@
 			projectRoot = "";
 			targets = (
 				4CB79865168AB41E00EF5260 /* IbexMac */,
+				4C0D589416AD656A007BC9CD /* IbexMacRelease */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		4C0D58AE16AD656A007BC9CD /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4C0D58AF16AD656A007BC9CD /* InfoPlist.strings in Resources */,
+				4C0D58B016AD656A007BC9CD /* Credits.rtf in Resources */,
+				4C0D58B116AD656A007BC9CD /* MainMenu.xib in Resources */,
+				4C0D58B216AD656A007BC9CD /* resources in Resources */,
+				4C0D58B316AD656A007BC9CD /* ibex.iconset in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4CB79864168AB41E00EF5260 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -267,6 +342,28 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		4C0D589516AD656A007BC9CD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4C0D589616AD656A007BC9CD /* main.m in Sources */,
+				4C0D589716AD656A007BC9CD /* AppDelegate.mm in Sources */,
+				4C0D589816AD656A007BC9CD /* ScreenGrabber.m in Sources */,
+				4C0D589916AD656A007BC9CD /* MyOpenGLView.mm in Sources */,
+				4C0D589A16AD656A007BC9CD /* SimpleWorldRendererPlugin.cpp in Sources */,
+				4C0D589B16AD656A007BC9CD /* distortions.cpp in Sources */,
+				4C0D589C16AD656A007BC9CD /* opengl_helpers.cpp in Sources */,
+				4C0D589D16AD656A007BC9CD /* RendererPlugin.cpp in Sources */,
+				4C0D589E16AD656A007BC9CD /* iphone_orientation_listener.cpp in Sources */,
+				4C0D589F16AD656A007BC9CD /* glew.c in Sources */,
+				4C0D58A016AD656A007BC9CD /* IbexMacUtils.mm in Sources */,
+				4C0D58A116AD656A007BC9CD /* utils.cpp in Sources */,
+				4C0D58A216AD656A007BC9CD /* ibex.cpp in Sources */,
+				4C0D58A316AD656A007BC9CD /* MyWindow.mm in Sources */,
+				4C0D58A416AD656A007BC9CD /* ServerController.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4CB79862168AB41E00EF5260 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -319,6 +416,34 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		4C0D58B516AD656A007BC9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = IbexMac/IbexMac.entitlements;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "IbexMac/IbexMac-Prefix.pch";
+				INFOPLIST_FILE = "IbexMac/IbexMac-Info.plist";
+				PRODUCT_NAME = IbexMac;
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		4C0D58B616AD656A007BC9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = IbexMac/IbexMac.entitlements;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "IbexMac/IbexMac-Prefix.pch";
+				INFOPLIST_FILE = "IbexMac/IbexMac-Info.plist";
+				PRODUCT_NAME = IbexMac;
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
 		4CB79882168AB41E00EF5260 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -376,7 +501,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = IbexMac/IbexMac.entitlements;
-				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "IbexMac/IbexMac-Prefix.pch";
@@ -390,7 +514,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = IbexMac/IbexMac.entitlements;
-				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "IbexMac/IbexMac-Prefix.pch";
@@ -403,6 +526,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		4C0D58B416AD656A007BC9CD /* Build configuration list for PBXNativeTarget "IbexMacRelease" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4C0D58B516AD656A007BC9CD /* Debug */,
+				4C0D58B616AD656A007BC9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		4CB79860168AB41E00EF5260 /* Build configuration list for PBXProject "IbexMac" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
