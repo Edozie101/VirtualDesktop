@@ -6,6 +6,7 @@
 
 #include <condition_variable>
 #include <iostream>
+#include <string>
 #include <thread>
 #include <mutex>
 
@@ -257,6 +258,16 @@ static void RenderSceneCB()
 	double timeDiff = (time - timeprev)/1000.0;
 	timeprev = time;
 
+	//static double timebase = glutGet(GLUT_ELAPSED_TIME);
+	//static double frame = 0;
+	//++frame;
+	//static char fpsString[64];
+	//if (time - timebase >= 5000.0) {
+	//	sprintf(fpsString,"FPS:%4.2f", frame*5000.0/(time-timebase));
+	//	timebase = time;
+	//	frame = 0;
+	//}
+
 	glutWarpPointer(500, 500);
 
 	// Add your drawing codes here
@@ -332,6 +343,8 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
     wglShareLists(loaderContext, mainContext); // Order matters
 
 	std::thread screenshotThread(loopScreenshot);
+
+	SetWindowLong(hwnd, GWL_EXSTYLE, WS_EX_LAYERED);
 
     glutMainLoop();
 
