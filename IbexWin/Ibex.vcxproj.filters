@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\SOIL">
+      <UniqueIdentifier>{b2ba8346-e863-495a-aa19-936c88d5a7a7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="distortions.h">
@@ -123,16 +126,16 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SOIL\image_DXT.c">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\SOIL</Filter>
     </ClCompile>
     <ClCompile Include="SOIL\image_helper.c">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\SOIL</Filter>
     </ClCompile>
     <ClCompile Include="SOIL\SOIL.c">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\SOIL</Filter>
     </ClCompile>
     <ClCompile Include="SOIL\stb_image_aug.c">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\SOIL</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

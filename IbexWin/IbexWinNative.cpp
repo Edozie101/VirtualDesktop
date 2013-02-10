@@ -4,6 +4,11 @@
 #include "stdafx.h"
 #include "IbexWinNative.h"
 
+#include <condition_variable>
+#include <iostream>
+#include <thread>
+#include <mutex>
+
 #define MAX_LOADSTRING 100
 
 // Global Variables:
@@ -58,6 +63,7 @@ typedef unsigned long GLXContext;
 #include "ibex.h"
 
 GLuint VBO;
+std::condition_variable screenshotCondition;
 
 void Keyboard(unsigned char key, int x, int y)
 {
@@ -201,9 +207,9 @@ int CaptureAnImage(HWND hWnd)
     // Gets the "bits" from the bitmap and copies them into a buffer 
     // which is pointed to by lpbitmap.
     GetDIBits(hdcWindow, hbmScreen, 0,
-        (UINT)bmpScreen.bmHeight,
-        lpbitmap,
-        (BITMAPINFO *)&bi, DIB_RGB_COLORS);
+				(UINT)bmpScreen.bmHeight,
+				lpbitmap,
+				(BITMAPINFO *)&bi, DIB_RGB_COLORS);
 
 		glBindTexture(GL_TEXTURE_2D, desktopTexture);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, bmpScreen.bmWidth, bmpScreen.bmHeight, 0,
@@ -226,10 +232,21 @@ done:
 	return 0;
 }
 
-
 void getScreenshot() {
 	HWND hwnd = GetDesktopWindow();
 	CaptureAnImage(hwnd);
+}
+
+HGLRC loaderContext;
+HDC hdc;
+void loopScreenshot() {
+	std::mutex screenshotMutex;
+	std::unique_lock<std::mutex> screenshotLock(screenshotMutex);
+	wglMakeCurrent(hdc, loaderContext);
+	while(1) {
+		screenshotCondition.wait(screenshotLock);
+		getScreenshot();
+	}
 }
 
 Ibex *ibex = 0;
@@ -248,7 +265,6 @@ static void RenderSceneCB()
         ibex = new Ibex(0,0);
     }
     
-	getScreenshot();
     cursorPosX = 50;//cursorPos.x;
     cursorPosY = 50;//cursorPos.y;
     
@@ -256,6 +272,8 @@ static void RenderSceneCB()
 
 	glutSwapBuffers();
 	glutPostRedisplay();
+
+	screenshotCondition.notify_all();
 }
 
 
@@ -303,7 +321,17 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
       return 1;
     }
 
+	HWND hwnd = GetActiveWindow();
+	hdc = GetDC(hwnd);
+	HGLRC mainContext = wglGetCurrentContext();
+    loaderContext = wglCreateContext(hdc);
+    wglShareLists(loaderContext, mainContext); // Order matters
+
+	std::thread screenshotThread(loopScreenshot);
+
     glutMainLoop();
+
+	screenshotThread.join();
 
 	return 0;
 }
