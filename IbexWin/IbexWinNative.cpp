@@ -265,9 +265,13 @@ static void RenderSceneCB()
         ibex = new Ibex(0,0);
     }
     
-    cursorPosX = 50;//cursorPos.x;
-    cursorPosY = 50;//cursorPos.y;
-    
+	POINT p;
+	if (GetCursorPos(&p))
+	{
+		cursorPosX = p.x;
+		cursorPosY = p.y;
+	}
+
     ibex->render(timeDiff);
 
 	glutSwapBuffers();
