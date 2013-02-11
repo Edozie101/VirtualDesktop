@@ -1,4 +1,4 @@
-Ibex - 3D Virtual Reality Desktop/Compositing Manager for X11/Linux and Mac OS
+Ibex - 3D Virtual Reality Desktop/Compositing Manager for X11/Linux, Windows and Mac OS
 
 About
 -----
@@ -22,7 +22,7 @@ Disable Side-by-Side rendering: -m (for mono)
 
 Controls
 --------
-Toggle Control Desktop/Move Around World: CTRL+SHIFT+Y, Shift+F1 (Mac)
+Toggle Control Desktop/Move Around World: CTRL+SHIFT+Y, Shift+F1 (Mac), CTRL+SHIFT+G (Win)
 Look: Move Mouse
 Move Forward: W
 Move Backwards: S
@@ -42,6 +42,9 @@ around from there.
 Requirements:
 Mac:
 XCode 4.5, OSX 10.8 (Mountain Lion) - Build and run from XCode
+
+Windows:
+Visual Studio 2013 - Build and run from Visual Studio
 
 Linux:
 Setting up my Ubuntu 12.10 install:
@@ -64,4 +67,4 @@ make install
 
 Author: Hesham Wahba (http://hwahba.com)
 
-Copyright Hesham Wahba 2012
+Copyright Hesham Wahba 2012,2013

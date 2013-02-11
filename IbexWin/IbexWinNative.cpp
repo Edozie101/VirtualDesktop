@@ -71,9 +71,6 @@ void Keyboard(unsigned char key, int x, int y)
 {
   switch (key)
   {
-  case 27:             // ESCAPE key
-	  exit (0);
-	  break;
   case 'w':
 	  walkForward = 1;
 	  break;
@@ -94,9 +91,6 @@ void KeyboardUp(unsigned char key, int x, int y)
 {
   switch (key)
   {
-  case 27:             // ESCAPE key
-	  exit (0);
-	  break;
   case 'b':
     barrelDistort = !barrelDistort;
     break;
