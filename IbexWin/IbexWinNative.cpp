@@ -63,7 +63,8 @@ typedef unsigned long GLXContext;
 
 #include "ibex.h"
 
-GLuint VBO;
+bool modifiedDesktop(false);
+GLuint VBO(0);
 std::condition_variable screenshotCondition;
 
 void Keyboard(unsigned char key, int x, int y)
@@ -123,8 +124,10 @@ void KeyboardUp(unsigned char key, int x, int y)
 }
 
 void MouseMoved(int x, int y) {
-    relativeMouseX = x-500;
-    relativeMouseY = y-500;
+	if(!controlDesktop) {
+		relativeMouseX = x-500;
+		relativeMouseY = y-500;
+	}
     
 //    NSLog(@"%f, %f", relativeMouseX, relativeMouseY);
 }
@@ -268,7 +271,18 @@ static void RenderSceneCB()
 	//	frame = 0;
 	//}
 
-	glutWarpPointer(500, 500);
+	if(modifiedDesktop) {
+		modifiedDesktop = false;
+		if(controlDesktop) {
+			glutSetCursor(GLUT_CURSOR_INHERIT);
+		} else {
+			glutSetCursor(GLUT_CURSOR_NONE);
+		}
+	}
+
+	if(!controlDesktop) {
+		glutWarpPointer(500, 500);
+	}
 
 	// Add your drawing codes here
     if(ibex == 0) {
@@ -302,6 +316,32 @@ static void InitializeGlutCallbacks()
 	glutPassiveMotionFunc (MouseMoved);
 }
 
+HWND hwnd;
+DWORD WINAPI mainThreadId;
+void globalHotkeyListener() {
+	//AttachThreadInput(mainThreadId,GetCurrentThreadId(),true);
+
+	RegisterHotKey(NULL, 1, MOD_CONTROL | MOD_SHIFT | MOD_NOREPEAT, 'g');
+	RegisterHotKey(NULL, 2, MOD_CONTROL | MOD_SHIFT | MOD_NOREPEAT, 'G');
+
+	MSG msg = {0};
+    while (GetMessage(&msg, NULL, 0, 0))
+    {
+        //TranslateMessage(&msg);
+        //DispatchMessage(&msg);
+		if(msg.message == WM_HOTKEY) {
+			controlDesktop = !controlDesktop;
+			modifiedDesktop = true;
+			if(controlDesktop) {
+			} else {
+				SetForegroundWindow (hwnd);
+				SetActiveWindow(hwnd);
+				SetFocus(hwnd);
+			}
+		}
+    }
+	return;
+}
 int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
                      _In_ LPTSTR    lpCmdLine,
@@ -309,10 +349,11 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 {
 	width = 1280;
 	height = 800;
-	physicalWidth = width;
-	physicalHeight = height;
+	physicalWidth = (false) ? 1920 : width;
+	physicalHeight = (false) ? 1080 : height;
 
 	controlDesktop = 0;
+	modifiedDesktop = true;
 
 	size_t len = 0;
 	wchar_t cwd[1024];
@@ -336,19 +377,22 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
       return 1;
     }
 
-	HWND hwnd = GetActiveWindow();
+	hwnd = GetActiveWindow();
 	hdc = GetDC(hwnd);
 	HGLRC mainContext = wglGetCurrentContext();
     loaderContext = wglCreateContext(hdc);
     wglShareLists(loaderContext, mainContext); // Order matters
+	mainThreadId = GetCurrentThreadId();
 
 	std::thread screenshotThread(loopScreenshot);
+	std::thread hotkeyThread(globalHotkeyListener);
 
 	SetWindowLong(hwnd, GWL_EXSTYLE, WS_EX_LAYERED);
 
     glutMainLoop();
 
 	screenshotThread.join();
+	hotkeyThread.join();
 
 	return 0;
 }
