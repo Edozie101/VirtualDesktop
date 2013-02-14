@@ -133,6 +133,8 @@ GLfloat physicalHeight = 900.0;
 
 GLfloat width = 1440.0;
 GLfloat height = 900.0;
+GLfloat windowWidth = 1280;
+GLfloat windowHeight = 800;
 
 
 
@@ -328,6 +330,9 @@ void renderGL(Desktop3DLocation& loc, double timeDiff_)
 
 void resizeGL(unsigned int width, unsigned int height)
 {
+	windowWidth = width;
+	windowHeight = height;
+
     /* prevent divide-by-zero */
     if (height == 0)
         height = 1;
@@ -356,7 +361,7 @@ void initGL()
   glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 
   // We use resizeGL once to set up our initial perspective
-  resizeGL(physicalWidth,physicalHeight);//width, height);
+  resizeGL(windowWidth, windowHeight);//physicalWidth,physicalHeight);//width, height);
 
 
     top = 1.0f;

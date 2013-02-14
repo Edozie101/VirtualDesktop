@@ -288,7 +288,7 @@ static void RenderSceneCB()
 	if (GetCursorPos(&p))
 	{
 		cursorPosX = p.x;
-		cursorPosY = p.y;
+		cursorPosY = physicalHeight-p.y;
 	}
 
     ibex->render(timeDiff);
@@ -299,6 +299,9 @@ static void RenderSceneCB()
 	screenshotCondition.notify_all();
 }
 
+void ReshapeFunc(int width, int height) {
+	resizeGL(width, height);
+}
 
 static void InitializeGlutCallbacks()
 {
@@ -308,6 +311,7 @@ static void InitializeGlutCallbacks()
 	glutKeyboardFunc (Keyboard);
 	glutKeyboardUpFunc (KeyboardUp);
 	glutPassiveMotionFunc (MouseMoved);
+	glutReshapeFunc(ReshapeFunc);
 }
 
 HWND hwnd;
@@ -343,8 +347,10 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 {
 	width = 1280;
 	height = 800;
-	physicalWidth = (false) ? 1920 : width;
-	physicalHeight = (false) ? 1080 : height;
+	physicalWidth = 1920;//(false) ? 1920 : width;
+	physicalHeight = 1080;//(false) ? 1080 : height;
+	windowWidth = 1280;
+	windowHeight = 800;
 
 	controlDesktop = 0;
 	modifiedDesktop = true;

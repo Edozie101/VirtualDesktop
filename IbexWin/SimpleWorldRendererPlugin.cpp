@@ -269,7 +269,7 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
     }
   }
 
-  glViewport(0,0, physicalWidth,physicalHeight);
+  glViewport(0,0, windowWidth, windowHeight);
   if (USE_FBO) {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glClearColor(0, 0, 0, 1);

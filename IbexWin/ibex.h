@@ -23,7 +23,9 @@ extern int display;
 extern int window;
 
 extern GLfloat physicalWidth,physicalHeight;
+extern GLfloat windowWidth, windowHeight;
 extern GLfloat width,height;
+
 
 extern GLfloat top, bottom;
 extern GLuint desktopTexture;
@@ -138,7 +140,7 @@ bool didInitOpenGL();
 void renderSkybox();
 void renderDesktopToTexture();
 
-
+void resizeGL(unsigned int width, unsigned int height);
 
 class Ibex {
 public:
