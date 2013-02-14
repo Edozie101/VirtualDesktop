@@ -122,8 +122,46 @@ void MouseMoved(int x, int y) {
 		relativeMouseX = x-500;
 		relativeMouseY = y-500;
 	}
-    
 //    NSLog(@"%f, %f", relativeMouseX, relativeMouseY);
+}
+
+static inline void getMouseCursor(HDC hdcScreen)
+{
+	CURSORINFO cursorinfo = { 0 };
+	cursorinfo.cbSize = sizeof(cursorinfo);
+	if(GetCursorInfo(&cursorinfo))  {
+		ICONINFO ii = {0};
+		if(GetIconInfo(cursorinfo.hCursor, &ii)) {
+			BITMAP bitmap = {0};
+			GetObject(ii.hbmColor, sizeof(bitmap), &bitmap);
+
+			int w = ((bitmap.bmWidth * bitmap.bmBitsPixel) + 31) / 8;
+			static BYTE* bits = new BYTE[w * bitmap.bmHeight];
+			memset(bits, 0, sizeof(bits));
+
+			BITMAPINFO bmi;
+			memset(&bmi, 0, sizeof(BITMAPINFO)); 
+			bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+			bmi.bmiHeader.biWidth =  bitmap.bmWidth;
+			bmi.bmiHeader.biHeight =  bitmap.bmHeight;
+			bmi.bmiHeader.biBitCount = 32;
+			bmi.bmiHeader.biPlanes = 1;
+			bmi.bmiHeader.biCompression = BI_RGB;
+			int rv = ::GetDIBits(hdcScreen, ii.hbmColor, 0, bitmap.bmHeight, bits, (BITMAPINFO *)&bmi, DIB_RGB_COLORS);
+
+			if(cursor == 0) {
+				glGenTextures(1, &cursor);
+			}
+			glBindTexture(GL_TEXTURE_2D, cursor);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, bitmap.bmWidth, bitmap.bmHeight, 0,
+				GL_BGRA, GL_UNSIGNED_BYTE, bits);
+			glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+			glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
+			glBindTexture(GL_TEXTURE_2D, 0);
+
+			//delete []bits;
+		}
+	}
 }
 
 int CaptureAnImage(HWND hWnd)
@@ -199,8 +237,9 @@ int CaptureAnImage(HWND hWnd)
     // Starting with 32-bit Windows, GlobalAlloc and LocalAlloc are implemented as wrapper functions that 
     // call HeapAlloc using a handle to the process's default heap. Therefore, GlobalAlloc and LocalAlloc 
     // have greater overhead than HeapAlloc.
-    HANDLE hDIB = GlobalAlloc(GHND,dwBmpSize); 
-    char *lpbitmap = (char *)GlobalLock(hDIB);    
+    //HANDLE hDIB = GlobalAlloc(GHND,dwBmpSize); 
+    //char *lpbitmap = (char *)GlobalLock(hDIB);    
+	static char *lpbitmap = new char[dwBmpSize];
 
     // Gets the "bits" from the bitmap and copies them into a buffer 
     // which is pointed to by lpbitmap.
@@ -216,10 +255,14 @@ int CaptureAnImage(HWND hWnd)
 		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
 		glBindTexture(GL_TEXTURE_2D, 0);
 
+	// free []lpbitmap;
+
     //Unlock and Free the DIB from the heap
-    GlobalUnlock(hDIB);    
-    GlobalFree(hDIB);
-       
+    //GlobalUnlock(hDIB);    
+    //GlobalFree(hDIB);
+
+	getMouseCursor(hdcScreen);
+
     //Clean up
 done:
     DeleteObject(hbmScreen);

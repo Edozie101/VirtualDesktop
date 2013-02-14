@@ -223,13 +223,19 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
                 glBindTexture( GL_TEXTURE_2D, cursor );
                 glBegin(GL_TRIANGLE_STRIP);
                 {
+					const double cursorSize = 32.0; // was 20.0, not sure which is best on each OS
                     double x0, x1, y0, y1, z;
                     x0 = -0.5+(cursorPosX/physicalWidth);
-                    x1 = -0.5+((cursorPosX+20.0)/physicalWidth);
+                    x1 = -0.5+((cursorPosX+cursorSize)/physicalWidth);
                     y0 = -ySize+ySize*2*(cursorPosY+0.)/physicalHeight;
-                    y1 = -ySize+ySize*2*(cursorPosY-20.)/physicalHeight;
+                    y1 = -ySize+ySize*2*(cursorPosY-cursorSize)/physicalHeight;
                     
-                    z = monitorOriginZ+0.0000001;
+#ifdef WIN32
+                    z = monitorOriginZ+0.00001;
+#else
+					z = monitorOriginZ+0.0000001;
+#endif
+
                     glTexCoord2d(0, 0);
                     glVertex3f(  x0,  y0, z);
                     
