@@ -265,7 +265,9 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
                 
                 glBindTexture(GL_TEXTURE_2D, 0);
 
-				glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+				if(mouseBlendAlternate) { // restore mode
+					glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+				}
             } else {
                 renderDesktopToTexture();
             }
