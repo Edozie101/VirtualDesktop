@@ -107,6 +107,7 @@ GLuint depthBuffer;
 
 GLuint desktopFBO;
 GLuint desktopTexture(0);
+bool mouseBlendAlternate(false);
 GLuint cursor(0);
 
 GLfloat cursorPosX(0);

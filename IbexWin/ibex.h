@@ -29,6 +29,7 @@ extern GLfloat width,height;
 
 extern GLfloat top, bottom;
 extern GLuint desktopTexture;
+extern bool mouseBlendAlternate;
 extern GLuint cursor;
 
 extern GLfloat cursorPosX;

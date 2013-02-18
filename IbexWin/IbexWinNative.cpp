@@ -133,33 +133,71 @@ static inline void getMouseCursor(HDC hdcScreen)
 		ICONINFO ii = {0};
 		if(GetIconInfo(cursorinfo.hCursor, &ii)) {
 			BITMAP bitmap = {0};
-			GetObject(ii.hbmColor, sizeof(bitmap), &bitmap);
+			if(ii.hbmColor != 0) {
+				mouseBlendAlternate = false;
+				GetObject(ii.hbmColor, sizeof(bitmap), &bitmap);
 
-			int w = ((bitmap.bmWidth * bitmap.bmBitsPixel) + 31) / 8;
-			static BYTE* bits = new BYTE[w * bitmap.bmHeight];
-			memset(bits, 0, sizeof(bits));
+				int w = ((bitmap.bmWidth * bitmap.bmBitsPixel) + 31) / 8;
+				static BYTE* bits = new BYTE[w * bitmap.bmHeight];
+				static int size = w * bitmap.bmHeight;
+				memset(bits, 0, size);//sizeof(bits));
 
-			BITMAPINFO bmi;
-			memset(&bmi, 0, sizeof(BITMAPINFO)); 
-			bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-			bmi.bmiHeader.biWidth =  bitmap.bmWidth;
-			bmi.bmiHeader.biHeight =  bitmap.bmHeight;
-			bmi.bmiHeader.biBitCount = 32;
-			bmi.bmiHeader.biPlanes = 1;
-			bmi.bmiHeader.biCompression = BI_RGB;
-			int rv = ::GetDIBits(hdcScreen, ii.hbmColor, 0, bitmap.bmHeight, bits, (BITMAPINFO *)&bmi, DIB_RGB_COLORS);
+				BITMAPINFO bmi;
+				memset(&bmi, 0, sizeof(BITMAPINFO)); 
+				bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+				bmi.bmiHeader.biWidth =  bitmap.bmWidth;
+				bmi.bmiHeader.biHeight =  bitmap.bmHeight;
+				bmi.bmiHeader.biBitCount = 32;
+				bmi.bmiHeader.biPlanes = 1;
+				bmi.bmiHeader.biCompression = BI_RGB;
+				int rv = ::GetDIBits(hdcScreen, ii.hbmColor, 0, bitmap.bmHeight, bits, (BITMAPINFO *)&bmi, DIB_RGB_COLORS);
 
-			if(cursor == 0) {
-				glGenTextures(1, &cursor);
+				if(cursor == 0) {
+					glGenTextures(1, &cursor);
+				}
+				glBindTexture(GL_TEXTURE_2D, cursor);
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, bitmap.bmWidth, bitmap.bmHeight, 0,
+					GL_BGRA, GL_UNSIGNED_BYTE, bits);
+				glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+				glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+				glBindTexture(GL_TEXTURE_2D, 0);
+
+				//delete []bits;
+			} else if(ii.hbmMask != 0) {
+				mouseBlendAlternate = true;
+				GetObject(ii.hbmMask, sizeof(bitmap), &bitmap);
+
+				int w = ((bitmap.bmWidth * /*bitmap.bmBitsPixel*/ 32) + 31) / 8;
+				static BYTE *bits = new BYTE[w * bitmap.bmHeight];
+				static int size = w * bitmap.bmHeight;
+				memset(bits, 0, size);//sizeof(bits));
+
+				BITMAPV5HEADER bmi;
+				memset(&bmi, 0, sizeof(BITMAPV5HEADER)); 
+				bmi.bV5Size = sizeof(BITMAPV5HEADER);
+				bmi.bV5Width =  bitmap.bmWidth;
+				bmi.bV5Height =  bitmap.bmHeight;
+				bmi.bV5BitCount = 32;
+				bmi.bV5Planes = 1;
+				bmi.bV5Compression = BI_BITFIELDS; //BI_RGB;
+				bmi.bV5RedMask   =  0x00FF0000;
+				bmi.bV5GreenMask =  0x0000FF00;
+				bmi.bV5BlueMask  =  0x000000FF;
+				bmi.bV5AlphaMask =  0xFF000000;
+				int rv = ::GetDIBits(hdcScreen, ii.hbmMask, 0, bitmap.bmHeight/2, bits, (BITMAPINFO *)&bmi, DIB_RGB_COLORS);
+
+				if(cursor == 0) {
+					glGenTextures(1, &cursor);
+				}
+				glBindTexture(GL_TEXTURE_2D, cursor);
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, bitmap.bmWidth, bitmap.bmHeight/2, 0,
+					GL_BGRA, GL_UNSIGNED_BYTE, bits);
+				glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+				glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+				glBindTexture(GL_TEXTURE_2D, 0);
+
+				//delete []bits;
 			}
-			glBindTexture(GL_TEXTURE_2D, cursor);
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, bitmap.bmWidth, bitmap.bmHeight, 0,
-				GL_BGRA, GL_UNSIGNED_BYTE, bits);
-			glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
-			glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
-			glBindTexture(GL_TEXTURE_2D, 0);
-
-			//delete []bits;
 		}
 	}
 }
@@ -248,12 +286,21 @@ int CaptureAnImage(HWND hWnd)
 				lpbitmap,
 				(BITMAPINFO *)&bi, DIB_RGB_COLORS);
 
+	if(desktopTexture) {
+		static bool used = false;
 		glBindTexture(GL_TEXTURE_2D, desktopTexture);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, bmpScreen.bmWidth, bmpScreen.bmHeight, 0,
+		if(used) {
+			glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, bmpScreen.bmWidth, bmpScreen.bmHeight, GL_BGRA, GL_UNSIGNED_BYTE, lpbitmap);
+		} else {
+			used = true;
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, bmpScreen.bmWidth, bmpScreen.bmHeight, 0,
                GL_BGRA, GL_UNSIGNED_BYTE, lpbitmap);
+		}
 		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
 		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+
 		glBindTexture(GL_TEXTURE_2D, 0);
+	}
 
 	// free []lpbitmap;
 
@@ -286,6 +333,22 @@ void loopScreenshot() {
 	wglMakeCurrent(hdc, loaderContext);
 	while(1) {
 		screenshotCondition.wait(screenshotLock);
+
+		static double timeprev = glutGet(GLUT_ELAPSED_TIME);
+	double time = glutGet(GLUT_ELAPSED_TIME);
+	double timeDiff = (time - timeprev)/1000.0;
+	timeprev = time;
+
+	static double timebase = glutGet(GLUT_ELAPSED_TIME);
+	static double frame = 0;
+	++frame;
+	static char fpsString[64];
+	if (time - timebase >= 5000.0) {
+		sprintf(fpsString,"FPS:%4.2f", frame*5000.0/(time-timebase));
+		timebase = time;
+		frame = 0;
+	}
+
 		getScreenshot();
 	}
 }

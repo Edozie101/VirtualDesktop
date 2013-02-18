@@ -218,8 +218,14 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
                 
                 
                 glEnable(GL_BLEND);
-                glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-                
+
+				if(mouseBlendAlternate) {
+					glBlendFunc(GL_ZERO, GL_ONE_MINUS_SRC_COLOR);
+				} else {
+					glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+				}
+				
+
                 glBindTexture( GL_TEXTURE_2D, cursor );
                 glBegin(GL_TRIANGLE_STRIP);
                 {
@@ -257,7 +263,9 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
                 glEnd();
 //                glDisable(GL_BLEND);
                 
-                  glBindTexture(GL_TEXTURE_2D, 0);
+                glBindTexture(GL_TEXTURE_2D, 0);
+
+				glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
             } else {
                 renderDesktopToTexture();
             }
