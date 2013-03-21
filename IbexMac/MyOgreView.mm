@@ -470,6 +470,8 @@ static CGPoint cursorPos;
         ibex = new Ibex(0,nil);
         ibex->render(0);
         
+        currentContext = [NSOpenGLContext currentContext];
+        
         CGLContextObj* contextObj = (CGLContextObj*)currentContext.CGLContextObj;
         CGLPixelFormatObj pixelFormatObj = CGLGetPixelFormat(*contextObj);
         pixelFormat = [[NSOpenGLPixelFormat alloc] initWithCGLPixelFormatObj:(void*)&pixelFormatObj];
