@@ -8,13 +8,11 @@
 #ifndef OPENGL_HELPERS_H_
 #define OPENGL_HELPERS_H_
 
-#include <iostream>
-
 // --- OpenGL ----------------------------------------------------------------
 
 #ifndef GLX_GLXEXT_PROTOTYPES
-
 #define GLX_GLXEXT_PROTOTYPES
+#endif
 
 #ifdef __APPLE__
 
@@ -37,7 +35,8 @@
 
 #endif
 
-#endif
+#include <iostream>
+
 
 bool gluInvertMatrix(const double m[16], double invOut[16]);
 double distort2ShaderScaleFactor(double ax, double ay);

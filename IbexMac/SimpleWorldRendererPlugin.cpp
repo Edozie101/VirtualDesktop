@@ -5,6 +5,8 @@
  *      Author: Hesham Wahba
  */
 
+#include <btBulletDynamicsCommon.h>
+
 #include <iostream>
 
 #include "distortions.h"
@@ -161,8 +163,8 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
         glMultMatrixd(orientation);
         glRotated(loc.getXRotation(), 1, 0, 0);
         glRotated(loc.getYRotation(), 0, 1, 0);
-//        glTranslated(0, -1.5, 0);
-          glTranslated(0, -0.5, 0);
+        glTranslated(0, -1.5, 0);
+//          glTranslated(0, -0.5, 0);
 
         glPushMatrix();
         {

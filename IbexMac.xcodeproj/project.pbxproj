@@ -37,9 +37,104 @@
 		4C0D58B116AD656A007BC9CD /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4CB7987F168AB41E00EF5260 /* MainMenu.xib */; };
 		4C0D58B216AD656A007BC9CD /* resources in Resources */ = {isa = PBXBuildFile; fileRef = 4CAC8D5D169347AE00341AA0 /* resources */; };
 		4C0D58B316AD656A007BC9CD /* ibex.iconset in Resources */ = {isa = PBXBuildFile; fileRef = 4C8758421697E5200022583D /* ibex.iconset */; };
+		4C1DD38C16F4F91F00302EFA /* Plugin_ParticleFX.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C6411AD16F4C30200132076 /* Plugin_ParticleFX.dylib */; };
+		4C1DD38D16F4F92500302EFA /* Plugin_ParticleFX.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6411AD16F4C30200132076 /* Plugin_ParticleFX.dylib */; };
+		4C1DD38E16F4F93E00302EFA /* Plugin_PCZSceneManager.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C6411B016F4C30200132076 /* Plugin_PCZSceneManager.dylib */; };
+		4C1DD38F16F4F94100302EFA /* Plugin_PCZSceneManager.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6411B016F4C30200132076 /* Plugin_PCZSceneManager.dylib */; };
+		4C1DD39016F4F95300302EFA /* Plugin_OctreeSceneManager.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6411B116F4C30200132076 /* Plugin_OctreeSceneManager.dylib */; };
+		4C1DD39116F4F96000302EFA /* Plugin_OctreeSceneManager.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C6411B116F4C30200132076 /* Plugin_OctreeSceneManager.dylib */; };
 		4C2DE2FF168B30CC003BEB56 /* ScreenGrabber.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C2DE2FE168B30CC003BEB56 /* ScreenGrabber.m */; };
 		4C41232116936E4F008F5B15 /* IbexMacUtils.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4C41232016936E4F008F5B15 /* IbexMacUtils.mm */; };
+		4C46D7C816F2B93D00B5DD9E /* libsixense_utils_x64.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C46D7C616F2B93D00B5DD9E /* libsixense_utils_x64.dylib */; };
+		4C46D7C916F2B93D00B5DD9E /* libsixense_x64.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C46D7C716F2B93D00B5DD9E /* libsixense_x64.dylib */; };
+		4C46D7CC16F2BB2900B5DD9E /* sixense_controller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C46D7CB16F2BB2900B5DD9E /* sixense_controller.cpp */; };
+		4C46D7CD16F2BB2900B5DD9E /* sixense_controller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C46D7CB16F2BB2900B5DD9E /* sixense_controller.cpp */; };
 		4C4C3C0A1694689400D2285F /* MyWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4C4C3C091694689400D2285F /* MyWindow.mm */; };
+		4C61AC3916F9272000F98776 /* MyOgreView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4C61AC3816F9272000F98776 /* MyOgreView.mm */; };
+		4C6411A316F4C23100132076 /* Ogre.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6411A216F4C23100132076 /* Ogre.framework */; };
+		4C6411A716F4C2D700132076 /* libsixense_utils_x64.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C46D7C616F2B93D00B5DD9E /* libsixense_utils_x64.dylib */; };
+		4C6411A816F4C2D700132076 /* libsixense_x64.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C46D7C716F2B93D00B5DD9E /* libsixense_x64.dylib */; };
+		4C6B99D416F4C17E00C5C725 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CB79876168AB41E00EF5260 /* main.m */; };
+		4C6B99D516F4C17E00C5C725 /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4CB7987D168AB41E00EF5260 /* AppDelegate.mm */; };
+		4C6B99D616F4C17E00C5C725 /* ScreenGrabber.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C2DE2FE168B30CC003BEB56 /* ScreenGrabber.m */; };
+		4C6B99D716F4C17E00C5C725 /* MyOpenGLView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4CF354B8168D0D5000EAA2FE /* MyOpenGLView.mm */; };
+		4C6B99D816F4C17E00C5C725 /* SimpleWorldRendererPlugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFB0B3C168E5D6A0025AF0F /* SimpleWorldRendererPlugin.cpp */; };
+		4C6B99D916F4C17E00C5C725 /* distortions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFB0B40168E5D840025AF0F /* distortions.cpp */; };
+		4C6B99DA16F4C17E00C5C725 /* opengl_helpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFB0B41168E5D840025AF0F /* opengl_helpers.cpp */; };
+		4C6B99DB16F4C17E00C5C725 /* RendererPlugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFB0B45168E5D960025AF0F /* RendererPlugin.cpp */; };
+		4C6B99DC16F4C17E00C5C725 /* iphone_orientation_listener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CAC8D531690A26500341AA0 /* iphone_orientation_listener.cpp */; };
+		4C6B99DD16F4C17E00C5C725 /* glew.c in Sources */ = {isa = PBXBuildFile; fileRef = 4CAC8D551690A26F00341AA0 /* glew.c */; };
+		4C6B99DE16F4C17E00C5C725 /* IbexMacUtils.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4C41232016936E4F008F5B15 /* IbexMacUtils.mm */; };
+		4C6B99DF16F4C17E00C5C725 /* utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CAC8D571690A2C100341AA0 /* utils.cpp */; };
+		4C6B99E016F4C17E00C5C725 /* ibex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFB0B49168E5DFA0025AF0F /* ibex.cpp */; };
+		4C6B99E116F4C17E00C5C725 /* MyWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4C4C3C091694689400D2285F /* MyWindow.mm */; };
+		4C6B99E216F4C17E00C5C725 /* ServerController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CACE17116A236710085DA5E /* ServerController.m */; };
+		4C6B99E316F4C17E00C5C725 /* sixense_controller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C46D7CB16F2BB2900B5DD9E /* sixense_controller.cpp */; };
+		4C6B99E516F4C17E00C5C725 /* BulletCollision.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6D8CBF16F401B100C4638B /* BulletCollision.framework */; };
+		4C6B99E616F4C17E00C5C725 /* BulletDynamics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6D8CC016F401B100C4638B /* BulletDynamics.framework */; };
+		4C6B99E716F4C17E00C5C725 /* BulletMultiThreaded.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6D8CC116F401B100C4638B /* BulletMultiThreaded.framework */; };
+		4C6B99E816F4C17E00C5C725 /* BulletSoftBody.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6D8CC216F401B100C4638B /* BulletSoftBody.framework */; };
+		4C6B99E916F4C17E00C5C725 /* BulletSoftBodySolvers_OpenCL_Mini.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6D8CC316F401B100C4638B /* BulletSoftBodySolvers_OpenCL_Mini.framework */; };
+		4C6B99EA16F4C17E00C5C725 /* LinearMath.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6D8CC416F401B100C4638B /* LinearMath.framework */; };
+		4C6B99EB16F4C17E00C5C725 /* MiniCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6D8CC516F401B100C4638B /* MiniCL.framework */; };
+		4C6B99EE16F4C17E00C5C725 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C006062169D38A000B88329 /* CoreFoundation.framework */; };
+		4C6B99EF16F4C17E00C5C725 /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C00605F169D385100B88329 /* ApplicationServices.framework */; };
+		4C6B99F016F4C17E00C5C725 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C76498E16965A67009CF2EC /* Carbon.framework */; };
+		4C6B99F116F4C17E00C5C725 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CAC8D5B169341F500341AA0 /* QuartzCore.framework */; };
+		4C6B99F216F4C17E00C5C725 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CAC8D591692A00000341AA0 /* CoreVideo.framework */; };
+		4C6B99F316F4C17E00C5C725 /* GLUT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CAC8D47168E74FB00341AA0 /* GLUT.framework */; };
+		4C6B99F416F4C17E00C5C725 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CF354BB168D0E1600EAA2FE /* OpenGL.framework */; };
+		4C6B99F516F4C17E00C5C725 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CB7986A168AB41E00EF5260 /* Cocoa.framework */; };
+		4C6B99F716F4C17E00C5C725 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4CB79873168AB41E00EF5260 /* InfoPlist.strings */; };
+		4C6B99F816F4C17E00C5C725 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 4CB79879168AB41E00EF5260 /* Credits.rtf */; };
+		4C6B99F916F4C17E00C5C725 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4CB7987F168AB41E00EF5260 /* MainMenu.xib */; };
+		4C6B99FA16F4C17E00C5C725 /* resources in Resources */ = {isa = PBXBuildFile; fileRef = 4CAC8D5D169347AE00341AA0 /* resources */; };
+		4C6B99FB16F4C17E00C5C725 /* ibex.iconset in Resources */ = {isa = PBXBuildFile; fileRef = 4C8758421697E5200022583D /* ibex.iconset */; };
+		4C6D8CC616F401B100C4638B /* BulletCollision.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6D8CBF16F401B100C4638B /* BulletCollision.framework */; };
+		4C6D8CC716F401B100C4638B /* BulletDynamics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6D8CC016F401B100C4638B /* BulletDynamics.framework */; };
+		4C6D8CC816F401B100C4638B /* BulletMultiThreaded.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6D8CC116F401B100C4638B /* BulletMultiThreaded.framework */; };
+		4C6D8CC916F401B100C4638B /* BulletSoftBody.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6D8CC216F401B100C4638B /* BulletSoftBody.framework */; };
+		4C6D8CCA16F401B100C4638B /* BulletSoftBodySolvers_OpenCL_Mini.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6D8CC316F401B100C4638B /* BulletSoftBodySolvers_OpenCL_Mini.framework */; };
+		4C6D8CCB16F401B100C4638B /* LinearMath.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6D8CC416F401B100C4638B /* LinearMath.framework */; };
+		4C6D8CCC16F401B100C4638B /* MiniCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6D8CC516F401B100C4638B /* MiniCL.framework */; };
+		4C6F780516F4C4C00089101F /* libsixense_utils_x64.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C46D7C616F2B93D00B5DD9E /* libsixense_utils_x64.dylib */; };
+		4C6F780616F4C4C30089101F /* libsixense_x64.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C46D7C716F2B93D00B5DD9E /* libsixense_x64.dylib */; };
+		4C6F780716F4C4C70089101F /* RenderSystem_GL.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6411A916F4C30200132076 /* RenderSystem_GL.dylib */; };
+		4C6F780816F4C4D40089101F /* RenderSystem_GL.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C6411A916F4C30200132076 /* RenderSystem_GL.dylib */; };
+		4C6F780B16F4C5000089101F /* Ogre.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C6411A216F4C23100132076 /* Ogre.framework */; };
+		4C6F780C16F4C5070089101F /* BulletCollision.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C6D8CBF16F401B100C4638B /* BulletCollision.framework */; };
+		4C6F780D16F4C5070089101F /* BulletDynamics.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C6D8CC016F401B100C4638B /* BulletDynamics.framework */; };
+		4C6F780E16F4C5070089101F /* BulletMultiThreaded.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C6D8CC116F401B100C4638B /* BulletMultiThreaded.framework */; };
+		4C6F780F16F4C5070089101F /* BulletSoftBody.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C6D8CC216F401B100C4638B /* BulletSoftBody.framework */; };
+		4C6F781016F4C5070089101F /* BulletSoftBodySolvers_OpenCL_Mini.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C6D8CC316F401B100C4638B /* BulletSoftBodySolvers_OpenCL_Mini.framework */; };
+		4C6F781116F4C5070089101F /* LinearMath.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C6D8CC416F401B100C4638B /* LinearMath.framework */; };
+		4C6F781216F4C5070089101F /* MiniCL.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C6D8CC516F401B100C4638B /* MiniCL.framework */; };
+		4C6F781E16F4D6150089101F /* BaseApplication.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C6F781416F4D6150089101F /* BaseApplication.cpp */; };
+		4C6F782416F4D6150089101F /* DotSceneLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C6F781716F4D6150089101F /* DotSceneLoader.cpp */; };
+		4C6F782716F4D6150089101F /* TutorialApplication.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C6F781A16F4D6150089101F /* TutorialApplication.cpp */; };
+		4C6F782916F4D9650089101F /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6F782816F4D9650089101F /* IOKit.framework */; };
+		4C6F782B16F4D97B0089101F /* AGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6F782A16F4D97B0089101F /* AGL.framework */; };
+		4C6F783416F4DF0B0089101F /* tinystr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C6F782E16F4DF0B0089101F /* tinystr.cpp */; };
+		4C6F783516F4DF0B0089101F /* tinystr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C6F782E16F4DF0B0089101F /* tinystr.cpp */; };
+		4C6F783616F4DF0B0089101F /* tinystr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C6F782E16F4DF0B0089101F /* tinystr.cpp */; };
+		4C6F783716F4DF0B0089101F /* tinyxml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C6F783016F4DF0B0089101F /* tinyxml.cpp */; };
+		4C6F783816F4DF0B0089101F /* tinyxml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C6F783016F4DF0B0089101F /* tinyxml.cpp */; };
+		4C6F783916F4DF0B0089101F /* tinyxml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C6F783016F4DF0B0089101F /* tinyxml.cpp */; };
+		4C6F783A16F4DF0B0089101F /* tinyxmlerror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C6F783216F4DF0B0089101F /* tinyxmlerror.cpp */; };
+		4C6F783B16F4DF0B0089101F /* tinyxmlerror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C6F783216F4DF0B0089101F /* tinyxmlerror.cpp */; };
+		4C6F783C16F4DF0B0089101F /* tinyxmlerror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C6F783216F4DF0B0089101F /* tinyxmlerror.cpp */; };
+		4C6F783D16F4DF0B0089101F /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C6F783316F4DF0B0089101F /* tinyxmlparser.cpp */; };
+		4C6F783E16F4DF0B0089101F /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C6F783316F4DF0B0089101F /* tinyxmlparser.cpp */; };
+		4C6F783F16F4DF0B0089101F /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C6F783316F4DF0B0089101F /* tinyxmlparser.cpp */; };
+		4C6F784116F4EED80089101F /* libOIS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6F784016F4EED80089101F /* libOIS.a */; };
+		4C6F784916F4EFD40089101F /* Plugin_CgProgramManager.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C6411AE16F4C30200132076 /* Plugin_CgProgramManager.dylib */; };
+		4C6F784A16F4EFD70089101F /* Plugin_BSPSceneManager.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C6411B316F4C30200132076 /* Plugin_BSPSceneManager.dylib */; };
+		4C6F784B16F4EFDF0089101F /* Plugin_OctreeZone.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C6411AA16F4C30200132076 /* Plugin_OctreeZone.dylib */; };
+		4C6F784D16F4F0840089101F /* libOgreTerrain.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6411AB16F4C30200132076 /* libOgreTerrain.dylib */; };
+		4C6F784F16F4F0B20089101F /* libOgreTerrain.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C6411AB16F4C30200132076 /* libOgreTerrain.dylib */; };
+		4C6F785016F4F1230089101F /* libOgreProperty.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C6411AC16F4C30200132076 /* libOgreProperty.dylib */; };
+		4C6F785116F4F1280089101F /* libOgrePaging.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C6411B216F4C30200132076 /* libOgrePaging.dylib */; };
+		4C6F785216F4F12B0089101F /* libOgreRTShaderSystem.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C6411AF16F4C30200132076 /* libOgreRTShaderSystem.dylib */; };
 		4C76498F16965A67009CF2EC /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C76498E16965A67009CF2EC /* Carbon.framework */; };
 		4C8758431697E5200022583D /* ibex.iconset in Resources */ = {isa = PBXBuildFile; fileRef = 4C8758421697E5200022583D /* ibex.iconset */; };
 		4CAC8D48168E74FB00341AA0 /* GLUT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CAC8D47168E74FB00341AA0 /* GLUT.framework */; };
@@ -65,6 +160,57 @@
 		4CFB0B4B168E5DFA0025AF0F /* ibex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFB0B49168E5DFA0025AF0F /* ibex.cpp */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		4C6411A616F4C2AC00132076 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 12;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				4C6F780816F4C4D40089101F /* RenderSystem_GL.dylib in CopyFiles */,
+				4C6F784916F4EFD40089101F /* Plugin_CgProgramManager.dylib in CopyFiles */,
+				4C6F784B16F4EFDF0089101F /* Plugin_OctreeZone.dylib in CopyFiles */,
+				4C1DD39116F4F96000302EFA /* Plugin_OctreeSceneManager.dylib in CopyFiles */,
+				4C1DD38E16F4F93E00302EFA /* Plugin_PCZSceneManager.dylib in CopyFiles */,
+				4C1DD38C16F4F91F00302EFA /* Plugin_ParticleFX.dylib in CopyFiles */,
+				4C6F784A16F4EFD70089101F /* Plugin_BSPSceneManager.dylib in CopyFiles */,
+				4C6411A716F4C2D700132076 /* libsixense_utils_x64.dylib in CopyFiles */,
+				4C6411A816F4C2D700132076 /* libsixense_x64.dylib in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4C6411BF16F4C30D00132076 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 12;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				4C6F780B16F4C5000089101F /* Ogre.framework in CopyFiles */,
+				4C6F780C16F4C5070089101F /* BulletCollision.framework in CopyFiles */,
+				4C6F780D16F4C5070089101F /* BulletDynamics.framework in CopyFiles */,
+				4C6F780E16F4C5070089101F /* BulletMultiThreaded.framework in CopyFiles */,
+				4C6F780F16F4C5070089101F /* BulletSoftBody.framework in CopyFiles */,
+				4C6F781016F4C5070089101F /* BulletSoftBodySolvers_OpenCL_Mini.framework in CopyFiles */,
+				4C6F781116F4C5070089101F /* LinearMath.framework in CopyFiles */,
+				4C6F781216F4C5070089101F /* MiniCL.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4C6F784E16F4F09D0089101F /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 12;
+			dstPath = ../Components;
+			dstSubfolderSpec = 13;
+			files = (
+				4C6F784F16F4F0B20089101F /* libOgreTerrain.dylib in CopyFiles */,
+				4C6F785016F4F1230089101F /* libOgreProperty.dylib in CopyFiles */,
+				4C6F785116F4F1280089101F /* libOgrePaging.dylib in CopyFiles */,
+				4C6F785216F4F12B0089101F /* libOgreRTShaderSystem.dylib in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		4C00605F169D385100B88329 /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = System/Library/Frameworks/ApplicationServices.framework; sourceTree = SDKROOT; };
 		4C006062169D38A000B88329 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
@@ -75,8 +221,68 @@
 		4C33AA3316970C3B001A1EFC /* IbexMac.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = IbexMac.entitlements; sourceTree = "<group>"; };
 		4C41231F16936E4F008F5B15 /* IbexMacUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IbexMacUtils.h; sourceTree = "<group>"; };
 		4C41232016936E4F008F5B15 /* IbexMacUtils.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IbexMacUtils.mm; sourceTree = "<group>"; };
+		4C46D7AF16F2ACC900B5DD9E /* sixense_simple3d.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sixense_simple3d.cpp; sourceTree = "<group>"; };
+		4C46D7B316F2AED900B5DD9E /* sixense_math.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = sixense_math.cpp; path = ../sixense_math.cpp; sourceTree = "<group>"; };
+		4C46D7B416F2AED900B5DD9E /* sixense_math.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = sixense_math.hpp; path = ../sixense_math.hpp; sourceTree = "<group>"; };
+		4C46D7B616F2AED900B5DD9E /* button_states.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = button_states.hpp; sourceTree = "<group>"; };
+		4C46D7B816F2AED900B5DD9E /* controller_manager.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = controller_manager.hpp; sourceTree = "<group>"; };
+		4C46D7B916F2AED900B5DD9E /* derivatives.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = derivatives.hpp; sourceTree = "<group>"; };
+		4C46D7BA16F2AED900B5DD9E /* event_triggers.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = event_triggers.hpp; sourceTree = "<group>"; };
+		4C46D7BB16F2AED900B5DD9E /* export.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = export.hpp; sourceTree = "<group>"; };
+		4C46D7BC16F2AED900B5DD9E /* fps.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = fps.hpp; sourceTree = "<group>"; };
+		4C46D7BD16F2AED900B5DD9E /* interfaces.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = interfaces.hpp; sourceTree = "<group>"; };
+		4C46D7BE16F2AED900B5DD9E /* keyboard_and_mouse_win32.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = keyboard_and_mouse_win32.hpp; sourceTree = "<group>"; };
+		4C46D7BF16F2AED900B5DD9E /* laser_pointer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = laser_pointer.hpp; sourceTree = "<group>"; };
+		4C46D7C016F2AED900B5DD9E /* mouse_pointer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = mouse_pointer.hpp; sourceTree = "<group>"; };
+		4C46D7C116F2AED900B5DD9E /* sixense_utils_string.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = sixense_utils_string.hpp; sourceTree = "<group>"; };
+		4C46D7C216F2AED900B5DD9E /* time.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = time.hpp; sourceTree = "<group>"; };
+		4C46D7C316F2AED900B5DD9E /* sixense.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sixense.h; sourceTree = "<group>"; };
+		4C46D7C616F2B93D00B5DD9E /* libsixense_utils_x64.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsixense_utils_x64.dylib; path = ../../../../../usr/local/lib/libsixense_utils_x64.dylib; sourceTree = "<group>"; };
+		4C46D7C716F2B93D00B5DD9E /* libsixense_x64.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsixense_x64.dylib; path = ../../../../../usr/local/lib/libsixense_x64.dylib; sourceTree = "<group>"; };
+		4C46D7CA16F2BB2900B5DD9E /* sixense_controller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sixense_controller.h; sourceTree = "<group>"; };
+		4C46D7CB16F2BB2900B5DD9E /* sixense_controller.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sixense_controller.cpp; sourceTree = "<group>"; };
 		4C4C3C081694689400D2285F /* MyWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyWindow.h; sourceTree = "<group>"; };
 		4C4C3C091694689400D2285F /* MyWindow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MyWindow.mm; sourceTree = "<group>"; };
+		4C61AC3716F9272000F98776 /* MyOgreView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyOgreView.h; sourceTree = "<group>"; };
+		4C61AC3816F9272000F98776 /* MyOgreView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MyOgreView.mm; sourceTree = "<group>"; };
+		4C6411A216F4C23100132076 /* Ogre.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Ogre.framework; path = ../../OgreSDK/lib/release/Ogre.framework; sourceTree = "<group>"; };
+		4C6411A916F4C30200132076 /* RenderSystem_GL.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = RenderSystem_GL.dylib; sourceTree = "<group>"; };
+		4C6411AA16F4C30200132076 /* Plugin_OctreeZone.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = Plugin_OctreeZone.dylib; sourceTree = "<group>"; };
+		4C6411AB16F4C30200132076 /* libOgreTerrain.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libOgreTerrain.dylib; sourceTree = "<group>"; };
+		4C6411AC16F4C30200132076 /* libOgreProperty.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libOgreProperty.dylib; sourceTree = "<group>"; };
+		4C6411AD16F4C30200132076 /* Plugin_ParticleFX.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = Plugin_ParticleFX.dylib; sourceTree = "<group>"; };
+		4C6411AE16F4C30200132076 /* Plugin_CgProgramManager.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = Plugin_CgProgramManager.dylib; sourceTree = "<group>"; };
+		4C6411AF16F4C30200132076 /* libOgreRTShaderSystem.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libOgreRTShaderSystem.dylib; sourceTree = "<group>"; };
+		4C6411B016F4C30200132076 /* Plugin_PCZSceneManager.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = Plugin_PCZSceneManager.dylib; sourceTree = "<group>"; };
+		4C6411B116F4C30200132076 /* Plugin_OctreeSceneManager.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = Plugin_OctreeSceneManager.dylib; sourceTree = "<group>"; };
+		4C6411B216F4C30200132076 /* libOgrePaging.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libOgrePaging.dylib; sourceTree = "<group>"; };
+		4C6411B316F4C30200132076 /* Plugin_BSPSceneManager.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = Plugin_BSPSceneManager.dylib; sourceTree = "<group>"; };
+		4C6B99FF16F4C17E00C5C725 /* IbexMacOgre.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IbexMacOgre.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4C6B9A0016F4C17E00C5C725 /* IbexMacOgre-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "IbexMacOgre-Info.plist"; path = "/Users/hesh/Documents/ibex/ibex/IbexMacOgre-Info.plist"; sourceTree = "<absolute>"; };
+		4C6D8CBF16F401B100C4638B /* BulletCollision.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BulletCollision.framework; path = ../../../../../Library/Frameworks/BulletCollision.framework; sourceTree = "<group>"; };
+		4C6D8CC016F401B100C4638B /* BulletDynamics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BulletDynamics.framework; path = ../../../../../Library/Frameworks/BulletDynamics.framework; sourceTree = "<group>"; };
+		4C6D8CC116F401B100C4638B /* BulletMultiThreaded.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BulletMultiThreaded.framework; path = ../../../../../Library/Frameworks/BulletMultiThreaded.framework; sourceTree = "<group>"; };
+		4C6D8CC216F401B100C4638B /* BulletSoftBody.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BulletSoftBody.framework; path = ../../../../../Library/Frameworks/BulletSoftBody.framework; sourceTree = "<group>"; };
+		4C6D8CC316F401B100C4638B /* BulletSoftBodySolvers_OpenCL_Mini.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BulletSoftBodySolvers_OpenCL_Mini.framework; path = ../../../../../Library/Frameworks/BulletSoftBodySolvers_OpenCL_Mini.framework; sourceTree = "<group>"; };
+		4C6D8CC416F401B100C4638B /* LinearMath.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LinearMath.framework; path = ../../../../../Library/Frameworks/LinearMath.framework; sourceTree = "<group>"; };
+		4C6D8CC516F401B100C4638B /* MiniCL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MiniCL.framework; path = ../../../../../Library/Frameworks/MiniCL.framework; sourceTree = "<group>"; };
+		4C6F781416F4D6150089101F /* BaseApplication.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BaseApplication.cpp; sourceTree = "<group>"; };
+		4C6F781516F4D6150089101F /* BaseApplication.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseApplication.h; sourceTree = "<group>"; };
+		4C6F781616F4D6150089101F /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		4C6F781716F4D6150089101F /* DotSceneLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DotSceneLoader.cpp; sourceTree = "<group>"; };
+		4C6F781816F4D6150089101F /* DotSceneLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DotSceneLoader.h; sourceTree = "<group>"; };
+		4C6F781916F4D6150089101F /* NativeRenderSystemCommands.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NativeRenderSystemCommands.h; sourceTree = "<group>"; };
+		4C6F781A16F4D6150089101F /* TutorialApplication.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TutorialApplication.cpp; sourceTree = "<group>"; };
+		4C6F781B16F4D6150089101F /* TutorialApplication.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TutorialApplication.h; sourceTree = "<group>"; };
+		4C6F782816F4D9650089101F /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
+		4C6F782A16F4D97B0089101F /* AGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AGL.framework; path = System/Library/Frameworks/AGL.framework; sourceTree = SDKROOT; };
+		4C6F782E16F4DF0B0089101F /* tinystr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tinystr.cpp; sourceTree = "<group>"; };
+		4C6F782F16F4DF0B0089101F /* tinystr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tinystr.h; sourceTree = "<group>"; };
+		4C6F783016F4DF0B0089101F /* tinyxml.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tinyxml.cpp; sourceTree = "<group>"; };
+		4C6F783116F4DF0B0089101F /* tinyxml.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tinyxml.h; sourceTree = "<group>"; };
+		4C6F783216F4DF0B0089101F /* tinyxmlerror.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tinyxmlerror.cpp; sourceTree = "<group>"; };
+		4C6F783316F4DF0B0089101F /* tinyxmlparser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tinyxmlparser.cpp; sourceTree = "<group>"; };
+		4C6F784016F4EED80089101F /* libOIS.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libOIS.a; path = ../../OgreSDK/lib/release/libOIS.a; sourceTree = "<group>"; };
 		4C76498E16965A67009CF2EC /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 		4C8758421697E5200022583D /* ibex.iconset */ = {isa = PBXFileReference; lastKnownFileType = folder.iconset; path = ibex.iconset; sourceTree = "<group>"; };
 		4CAC8D43168E5F1900341AA0 /* iphone_orientation_plugin */ = {isa = PBXFileReference; lastKnownFileType = folder; path = iphone_orientation_plugin; sourceTree = "<group>"; };
@@ -135,10 +341,52 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4C6B99E416F4C17E00C5C725 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4C6F782B16F4D97B0089101F /* AGL.framework in Frameworks */,
+				4C6B99F216F4C17E00C5C725 /* CoreVideo.framework in Frameworks */,
+				4C6F782916F4D9650089101F /* IOKit.framework in Frameworks */,
+				4C6F784116F4EED80089101F /* libOIS.a in Frameworks */,
+				4C6411A316F4C23100132076 /* Ogre.framework in Frameworks */,
+				4C6B99E516F4C17E00C5C725 /* BulletCollision.framework in Frameworks */,
+				4C6B99E616F4C17E00C5C725 /* BulletDynamics.framework in Frameworks */,
+				4C6B99E716F4C17E00C5C725 /* BulletMultiThreaded.framework in Frameworks */,
+				4C6B99E816F4C17E00C5C725 /* BulletSoftBody.framework in Frameworks */,
+				4C6B99E916F4C17E00C5C725 /* BulletSoftBodySolvers_OpenCL_Mini.framework in Frameworks */,
+				4C6B99EA16F4C17E00C5C725 /* LinearMath.framework in Frameworks */,
+				4C6B99EB16F4C17E00C5C725 /* MiniCL.framework in Frameworks */,
+				4C6B99EE16F4C17E00C5C725 /* CoreFoundation.framework in Frameworks */,
+				4C6B99EF16F4C17E00C5C725 /* ApplicationServices.framework in Frameworks */,
+				4C6B99F016F4C17E00C5C725 /* Carbon.framework in Frameworks */,
+				4C6B99F116F4C17E00C5C725 /* QuartzCore.framework in Frameworks */,
+				4C6F780516F4C4C00089101F /* libsixense_utils_x64.dylib in Frameworks */,
+				4C6F780616F4C4C30089101F /* libsixense_x64.dylib in Frameworks */,
+				4C6F780716F4C4C70089101F /* RenderSystem_GL.dylib in Frameworks */,
+				4C1DD38D16F4F92500302EFA /* Plugin_ParticleFX.dylib in Frameworks */,
+				4C1DD38F16F4F94100302EFA /* Plugin_PCZSceneManager.dylib in Frameworks */,
+				4C1DD39016F4F95300302EFA /* Plugin_OctreeSceneManager.dylib in Frameworks */,
+				4C6F784D16F4F0840089101F /* libOgreTerrain.dylib in Frameworks */,
+				4C6B99F316F4C17E00C5C725 /* GLUT.framework in Frameworks */,
+				4C6B99F416F4C17E00C5C725 /* OpenGL.framework in Frameworks */,
+				4C6B99F516F4C17E00C5C725 /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4CB79863168AB41E00EF5260 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4C6D8CC616F401B100C4638B /* BulletCollision.framework in Frameworks */,
+				4C6D8CC716F401B100C4638B /* BulletDynamics.framework in Frameworks */,
+				4C6D8CC816F401B100C4638B /* BulletMultiThreaded.framework in Frameworks */,
+				4C6D8CC916F401B100C4638B /* BulletSoftBody.framework in Frameworks */,
+				4C6D8CCA16F401B100C4638B /* BulletSoftBodySolvers_OpenCL_Mini.framework in Frameworks */,
+				4C6D8CCB16F401B100C4638B /* LinearMath.framework in Frameworks */,
+				4C6D8CCC16F401B100C4638B /* MiniCL.framework in Frameworks */,
+				4C46D7C816F2B93D00B5DD9E /* libsixense_utils_x64.dylib in Frameworks */,
+				4C46D7C916F2B93D00B5DD9E /* libsixense_x64.dylib in Frameworks */,
 				4C006063169D38A000B88329 /* CoreFoundation.framework in Frameworks */,
 				4C006060169D385100B88329 /* ApplicationServices.framework in Frameworks */,
 				4C76498F16965A67009CF2EC /* Carbon.framework in Frameworks */,
@@ -153,12 +401,103 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4C46D7B216F2AEBA00B5DD9E /* sixsense_headers */ = {
+			isa = PBXGroup;
+			children = (
+				4C46D7B516F2AED900B5DD9E /* sixense_utils */,
+				4C46D7C316F2AED900B5DD9E /* sixense.h */,
+			);
+			name = sixsense_headers;
+			sourceTree = "<group>";
+		};
+		4C46D7B516F2AED900B5DD9E /* sixense_utils */ = {
+			isa = PBXGroup;
+			children = (
+				4C46D7B616F2AED900B5DD9E /* button_states.hpp */,
+				4C46D7B716F2AED900B5DD9E /* controller_manager */,
+				4C46D7B916F2AED900B5DD9E /* derivatives.hpp */,
+				4C46D7BA16F2AED900B5DD9E /* event_triggers.hpp */,
+				4C46D7BB16F2AED900B5DD9E /* export.hpp */,
+				4C46D7BC16F2AED900B5DD9E /* fps.hpp */,
+				4C46D7BD16F2AED900B5DD9E /* interfaces.hpp */,
+				4C46D7BE16F2AED900B5DD9E /* keyboard_and_mouse_win32.hpp */,
+				4C46D7BF16F2AED900B5DD9E /* laser_pointer.hpp */,
+				4C46D7C016F2AED900B5DD9E /* mouse_pointer.hpp */,
+				4C46D7C116F2AED900B5DD9E /* sixense_utils_string.hpp */,
+				4C46D7B316F2AED900B5DD9E /* sixense_math.cpp */,
+				4C46D7B416F2AED900B5DD9E /* sixense_math.hpp */,
+				4C46D7C216F2AED900B5DD9E /* time.hpp */,
+			);
+			path = sixense_utils;
+			sourceTree = "<group>";
+		};
+		4C46D7B716F2AED900B5DD9E /* controller_manager */ = {
+			isa = PBXGroup;
+			children = (
+				4C46D7B816F2AED900B5DD9E /* controller_manager.hpp */,
+			);
+			path = controller_manager;
+			sourceTree = "<group>";
+		};
+		4C6F781316F4D6150089101F /* ogre3d_plugin */ = {
+			isa = PBXGroup;
+			children = (
+				4C6F781416F4D6150089101F /* BaseApplication.cpp */,
+				4C6F781516F4D6150089101F /* BaseApplication.h */,
+				4C6F781616F4D6150089101F /* CMakeLists.txt */,
+				4C6F781716F4D6150089101F /* DotSceneLoader.cpp */,
+				4C6F781816F4D6150089101F /* DotSceneLoader.h */,
+				4C6F781916F4D6150089101F /* NativeRenderSystemCommands.h */,
+				4C6F781A16F4D6150089101F /* TutorialApplication.cpp */,
+				4C6F781B16F4D6150089101F /* TutorialApplication.h */,
+			);
+			path = ogre3d_plugin;
+			sourceTree = "<group>";
+		};
+		4C6F782D16F4DEA60089101F /* tinyxml */ = {
+			isa = PBXGroup;
+			children = (
+				4C6F782E16F4DF0B0089101F /* tinystr.cpp */,
+				4C6F782F16F4DF0B0089101F /* tinystr.h */,
+				4C6F783016F4DF0B0089101F /* tinyxml.cpp */,
+				4C6F783116F4DF0B0089101F /* tinyxml.h */,
+				4C6F783216F4DF0B0089101F /* tinyxmlerror.cpp */,
+				4C6F783316F4DF0B0089101F /* tinyxmlparser.cpp */,
+			);
+			name = tinyxml;
+			sourceTree = "<group>";
+		};
 		4CB7985B168AB41E00EF5260 = {
 			isa = PBXGroup;
 			children = (
+				4C6F784016F4EED80089101F /* libOIS.a */,
+				4C6F782A16F4D97B0089101F /* AGL.framework */,
+				4C6F782816F4D9650089101F /* IOKit.framework */,
+				4C6411A916F4C30200132076 /* RenderSystem_GL.dylib */,
+				4C6411AA16F4C30200132076 /* Plugin_OctreeZone.dylib */,
+				4C6411AB16F4C30200132076 /* libOgreTerrain.dylib */,
+				4C6411AC16F4C30200132076 /* libOgreProperty.dylib */,
+				4C6411AD16F4C30200132076 /* Plugin_ParticleFX.dylib */,
+				4C6411AE16F4C30200132076 /* Plugin_CgProgramManager.dylib */,
+				4C6411AF16F4C30200132076 /* libOgreRTShaderSystem.dylib */,
+				4C6411B016F4C30200132076 /* Plugin_PCZSceneManager.dylib */,
+				4C6411B116F4C30200132076 /* Plugin_OctreeSceneManager.dylib */,
+				4C6411B216F4C30200132076 /* libOgrePaging.dylib */,
+				4C6411B316F4C30200132076 /* Plugin_BSPSceneManager.dylib */,
+				4C6411A216F4C23100132076 /* Ogre.framework */,
+				4C6D8CBF16F401B100C4638B /* BulletCollision.framework */,
+				4C6D8CC016F401B100C4638B /* BulletDynamics.framework */,
+				4C6D8CC116F401B100C4638B /* BulletMultiThreaded.framework */,
+				4C6D8CC216F401B100C4638B /* BulletSoftBody.framework */,
+				4C6D8CC316F401B100C4638B /* BulletSoftBodySolvers_OpenCL_Mini.framework */,
+				4C6D8CC416F401B100C4638B /* LinearMath.framework */,
+				4C6D8CC516F401B100C4638B /* MiniCL.framework */,
+				4C46D7C616F2B93D00B5DD9E /* libsixense_utils_x64.dylib */,
+				4C46D7C716F2B93D00B5DD9E /* libsixense_x64.dylib */,
 				4CB79870168AB41E00EF5260 /* IbexMac */,
 				4CB79869168AB41E00EF5260 /* Frameworks */,
 				4CB79867168AB41E00EF5260 /* Products */,
+				4C6B9A0016F4C17E00C5C725 /* IbexMacOgre-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -167,6 +506,7 @@
 			children = (
 				4CB79866168AB41E00EF5260 /* IbexMac.app */,
 				4C0D58B716AD656A007BC9CD /* IbexMac.app */,
+				4C6B99FF16F4C17E00C5C725 /* IbexMacOgre.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -200,6 +540,8 @@
 		4CB79870168AB41E00EF5260 /* IbexMac */ = {
 			isa = PBXGroup;
 			children = (
+				4C6F782D16F4DEA60089101F /* tinyxml */,
+				4C46D7B216F2AEBA00B5DD9E /* sixsense_headers */,
 				4CB79871168AB41E00EF5260 /* Supporting Files */,
 				4CAC8D5D169347AE00341AA0 /* resources */,
 				4CAC8D43168E5F1900341AA0 /* iphone_orientation_plugin */,
@@ -208,8 +550,13 @@
 				4CB7987D168AB41E00EF5260 /* AppDelegate.mm */,
 				4C4C3C081694689400D2285F /* MyWindow.h */,
 				4C4C3C091694689400D2285F /* MyWindow.mm */,
+				4C46D7CA16F2BB2900B5DD9E /* sixense_controller.h */,
+				4C46D7CB16F2BB2900B5DD9E /* sixense_controller.cpp */,
+				4C6F781316F4D6150089101F /* ogre3d_plugin */,
 				4CF354B7168D0D5000EAA2FE /* MyOpenGLView.h */,
 				4CF354B8168D0D5000EAA2FE /* MyOpenGLView.mm */,
+				4C61AC3716F9272000F98776 /* MyOgreView.h */,
+				4C61AC3816F9272000F98776 /* MyOgreView.mm */,
 				4CB7987F168AB41E00EF5260 /* MainMenu.xib */,
 				4C2DE2FD168B30CC003BEB56 /* ScreenGrabber.h */,
 				4C2DE2FE168B30CC003BEB56 /* ScreenGrabber.m */,
@@ -232,6 +579,7 @@
 				4CFB0B4A168E5DFA0025AF0F /* ibex.h */,
 				4CACE17016A236710085DA5E /* ServerController.h */,
 				4CACE17116A236710085DA5E /* ServerController.m */,
+				4C46D7AF16F2ACC900B5DD9E /* sixense_simple3d.cpp */,
 			);
 			path = IbexMac;
 			sourceTree = "<group>";
@@ -268,6 +616,26 @@
 			name = IbexMacRelease;
 			productName = IbexMac;
 			productReference = 4C0D58B716AD656A007BC9CD /* IbexMac.app */;
+			productType = "com.apple.product-type.application";
+		};
+		4C6B99D216F4C17E00C5C725 /* IbexMacOgre3D */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4C6B99FC16F4C17E00C5C725 /* Build configuration list for PBXNativeTarget "IbexMacOgre3D" */;
+			buildPhases = (
+				4C6B99D316F4C17E00C5C725 /* Sources */,
+				4C6B99E416F4C17E00C5C725 /* Frameworks */,
+				4C6B99F616F4C17E00C5C725 /* Resources */,
+				4C6411A616F4C2AC00132076 /* CopyFiles */,
+				4C6411BF16F4C30D00132076 /* CopyFiles */,
+				4C6F784E16F4F09D0089101F /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = IbexMacOgre3D;
+			productName = IbexMac;
+			productReference = 4C6B99FF16F4C17E00C5C725 /* IbexMacOgre.app */;
 			productType = "com.apple.product-type.application";
 		};
 		4CB79865168AB41E00EF5260 /* IbexMac */ = {
@@ -310,6 +678,7 @@
 			targets = (
 				4CB79865168AB41E00EF5260 /* IbexMac */,
 				4C0D589416AD656A007BC9CD /* IbexMacRelease */,
+				4C6B99D216F4C17E00C5C725 /* IbexMacOgre3D */,
 			);
 		};
 /* End PBXProject section */
@@ -324,6 +693,18 @@
 				4C0D58B116AD656A007BC9CD /* MainMenu.xib in Resources */,
 				4C0D58B216AD656A007BC9CD /* resources in Resources */,
 				4C0D58B316AD656A007BC9CD /* ibex.iconset in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4C6B99F616F4C17E00C5C725 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4C6B99F716F4C17E00C5C725 /* InfoPlist.strings in Resources */,
+				4C6B99F816F4C17E00C5C725 /* Credits.rtf in Resources */,
+				4C6B99F916F4C17E00C5C725 /* MainMenu.xib in Resources */,
+				4C6B99FA16F4C17E00C5C725 /* resources in Resources */,
+				4C6B99FB16F4C17E00C5C725 /* ibex.iconset in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -361,6 +742,42 @@
 				4C0D58A216AD656A007BC9CD /* ibex.cpp in Sources */,
 				4C0D58A316AD656A007BC9CD /* MyWindow.mm in Sources */,
 				4C0D58A416AD656A007BC9CD /* ServerController.m in Sources */,
+				4C46D7CD16F2BB2900B5DD9E /* sixense_controller.cpp in Sources */,
+				4C6F783516F4DF0B0089101F /* tinystr.cpp in Sources */,
+				4C6F783816F4DF0B0089101F /* tinyxml.cpp in Sources */,
+				4C6F783B16F4DF0B0089101F /* tinyxmlerror.cpp in Sources */,
+				4C6F783E16F4DF0B0089101F /* tinyxmlparser.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4C6B99D316F4C17E00C5C725 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4C6B99D416F4C17E00C5C725 /* main.m in Sources */,
+				4C6B99D516F4C17E00C5C725 /* AppDelegate.mm in Sources */,
+				4C6B99D616F4C17E00C5C725 /* ScreenGrabber.m in Sources */,
+				4C6B99D716F4C17E00C5C725 /* MyOpenGLView.mm in Sources */,
+				4C6B99D816F4C17E00C5C725 /* SimpleWorldRendererPlugin.cpp in Sources */,
+				4C6B99D916F4C17E00C5C725 /* distortions.cpp in Sources */,
+				4C6B99DA16F4C17E00C5C725 /* opengl_helpers.cpp in Sources */,
+				4C6B99DB16F4C17E00C5C725 /* RendererPlugin.cpp in Sources */,
+				4C6B99DC16F4C17E00C5C725 /* iphone_orientation_listener.cpp in Sources */,
+				4C6B99DD16F4C17E00C5C725 /* glew.c in Sources */,
+				4C6B99DE16F4C17E00C5C725 /* IbexMacUtils.mm in Sources */,
+				4C6B99DF16F4C17E00C5C725 /* utils.cpp in Sources */,
+				4C6B99E016F4C17E00C5C725 /* ibex.cpp in Sources */,
+				4C6B99E116F4C17E00C5C725 /* MyWindow.mm in Sources */,
+				4C6B99E216F4C17E00C5C725 /* ServerController.m in Sources */,
+				4C6B99E316F4C17E00C5C725 /* sixense_controller.cpp in Sources */,
+				4C6F781E16F4D6150089101F /* BaseApplication.cpp in Sources */,
+				4C6F782416F4D6150089101F /* DotSceneLoader.cpp in Sources */,
+				4C6F782716F4D6150089101F /* TutorialApplication.cpp in Sources */,
+				4C6F783616F4DF0B0089101F /* tinystr.cpp in Sources */,
+				4C6F783916F4DF0B0089101F /* tinyxml.cpp in Sources */,
+				4C6F783C16F4DF0B0089101F /* tinyxmlerror.cpp in Sources */,
+				4C6F783F16F4DF0B0089101F /* tinyxmlparser.cpp in Sources */,
+				4C61AC3916F9272000F98776 /* MyOgreView.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -383,6 +800,11 @@
 				4CFB0B4B168E5DFA0025AF0F /* ibex.cpp in Sources */,
 				4C4C3C0A1694689400D2285F /* MyWindow.mm in Sources */,
 				4CACE17216A236710085DA5E /* ServerController.m in Sources */,
+				4C46D7CC16F2BB2900B5DD9E /* sixense_controller.cpp in Sources */,
+				4C6F783416F4DF0B0089101F /* tinystr.cpp in Sources */,
+				4C6F783716F4DF0B0089101F /* tinyxml.cpp in Sources */,
+				4C6F783A16F4DF0B0089101F /* tinyxmlerror.cpp in Sources */,
+				4C6F783D16F4DF0B0089101F /* tinyxmlparser.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -444,6 +866,76 @@
 			};
 			name = Release;
 		};
+		4C6B99FD16F4C17E00C5C725 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++98";
+				CLANG_CXX_LIBRARY = "libstdc++";
+				CODE_SIGN_ENTITLEMENTS = IbexMac/IbexMac.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					/Library/Frameworks,
+					"\"$(SRCROOT)/../../OgreSDK/lib/release\"",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "IbexMac/IbexMac-Prefix.pch";
+				HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/IbexMac",
+					"$(PROJECT_DIR)/../../bullet-2.81-rev2613/src",
+					"$(PROJECT_DIR)/../../OgreSDK/include/OGRE",
+					"$(PROJECT_DIR)/../../OgreSDK/include/OIS",
+					"$(PROJECT_DIR)/../../OgreSDK/boost",
+					/usr/local/include,
+					"$(PROJECT_DIR)/../../OgreSDK/boost",
+				);
+				INFOPLIST_FILE = "IbexMacOgre-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+					"\"$(SRCROOT)/../../OgreSDK/lib/release\"",
+				);
+				OTHER_CFLAGS = "-DENABLE_OGRE3D=1";
+				PRODUCT_NAME = IbexMacOgre;
+				USER_HEADER_SEARCH_PATHS = "";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		4C6B99FE16F4C17E00C5C725 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++98";
+				CLANG_CXX_LIBRARY = "libstdc++";
+				CODE_SIGN_ENTITLEMENTS = IbexMac/IbexMac.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					/Library/Frameworks,
+					"\"$(SRCROOT)/../../OgreSDK/lib/release\"",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "IbexMac/IbexMac-Prefix.pch";
+				HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/IbexMac",
+					"$(PROJECT_DIR)/../../bullet-2.81-rev2613/src",
+					"$(PROJECT_DIR)/../../OgreSDK/include/OGRE",
+					"$(PROJECT_DIR)/../../OgreSDK/include/OIS",
+					"$(PROJECT_DIR)/../../OgreSDK/boost",
+					/usr/local/include,
+					"$(PROJECT_DIR)/../../OgreSDK/boost",
+				);
+				INFOPLIST_FILE = "IbexMacOgre-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+					"\"$(SRCROOT)/../../OgreSDK/lib/release\"",
+				);
+				OTHER_CFLAGS = "-DENABLE_OGRE3D=1";
+				PRODUCT_NAME = IbexMacOgre;
+				USER_HEADER_SEARCH_PATHS = "";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
 		4CB79882168AB41E00EF5260 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -468,6 +960,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
@@ -492,6 +985,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				SDKROOT = macosx;
 			};
@@ -502,10 +996,16 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = IbexMac/IbexMac.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = /Library/Frameworks;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "IbexMac/IbexMac-Prefix.pch";
+				HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/IbexMac",
+					"$(PROJECT_DIR)/../../bullet-2.81-rev2613/src",
+				);
 				INFOPLIST_FILE = "IbexMac/IbexMac-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				USER_HEADER_SEARCH_PATHS = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -515,10 +1015,16 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = IbexMac/IbexMac.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = /Library/Frameworks;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "IbexMac/IbexMac-Prefix.pch";
+				HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/IbexMac",
+					"$(PROJECT_DIR)/../../bullet-2.81-rev2613/src",
+				);
 				INFOPLIST_FILE = "IbexMac/IbexMac-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				USER_HEADER_SEARCH_PATHS = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -531,6 +1037,15 @@
 			buildConfigurations = (
 				4C0D58B516AD656A007BC9CD /* Debug */,
 				4C0D58B616AD656A007BC9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4C6B99FC16F4C17E00C5C725 /* Build configuration list for PBXNativeTarget "IbexMacOgre3D" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4C6B99FD16F4C17E00C5C725 /* Debug */,
+				4C6B99FE16F4C17E00C5C725 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

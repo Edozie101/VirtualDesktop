@@ -10,10 +10,15 @@
 
 extern char mResourcePath[1024];
 
+@class NSOpenGLContext;
+
 @interface MyOpenGLView : NSOpenGLView {
     CVDisplayLinkRef displayLink; //display link for managing rendering thread
 }
 
+@property (retain,nonatomic) NSOpenGLContext* myContext;
+
+- (GLuint)getScreenshot;
 - (CVReturn)getFrameForTime:(const CVTimeStamp*)outputTime;
 
 @end

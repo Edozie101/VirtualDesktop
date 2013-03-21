@@ -79,7 +79,7 @@ void* setup_socket(void *inputData)
   double buf2[512];
 //  for (i=0; i<NPACK; i++) {
   while(1) {
-	  const int count = recvfrom(s, buf2, BUFLEN, 0, (sockaddr*)&si_other, &slen);
+	  const ssize_t count = recvfrom(s, buf2, BUFLEN, 0, (sockaddr*)&si_other, &slen);
     if (count ==-1)
       diep("recvfrom()");
 //    printf("Received packet from %s:%d\nCount: %d\n\n", inet_ntoa(si_other.sin_addr), ntohs(si_other.sin_port), count);//, buf[0]);
@@ -106,7 +106,7 @@ static double matrix_returned[16] = {
 const double *get_orientation() {
         int i2 = 0;
         pthread_mutex_lock(&mymutex);
-        for(int i = 0; i < 16; ++i) {
+        for(int i = 0; i < 12/*16*/; ++i) {
                 if((i%4)!=3) {
                         matrix_returned[i] = matrix[i2++];
 //                      std::cerr << matrix_returned[i];
@@ -129,7 +129,7 @@ static float matrix_returned_f[16] = {
 const float *get_orientation_f() {
         int i2 = 0;
         pthread_mutex_lock(&mymutex);
-        for(int i = 0; i < 16; ++i) {
+        for(int i = 0; i < 12/*16*/; ++i) {
                 if((i%4)!=3) {
                         matrix_returned_f[i] = matrix[i2++];
 //                      std::cerr << matrix_returned[i];

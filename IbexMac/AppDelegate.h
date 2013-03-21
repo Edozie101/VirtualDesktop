@@ -18,11 +18,13 @@ extern "C" {
 }
 
 @interface AppDelegate : NSObject <NSApplicationDelegate,NSWindowDelegate> {
-    MyOpenGLView *fullScreenView;
+//    MyOpenGLView *fullScreenView;
+    NSView *fullScreenView;
     ServerController *serverController;
 }
 
 @property (assign) IBOutlet NSWindow *window;
+@property (retain,nonatomic) NSWindow *retainedWindow;
 @property (retain,nonatomic) NSOpenGLPixelFormat* pixelFormat;
 
 @end

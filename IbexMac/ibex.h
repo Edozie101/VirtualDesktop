@@ -15,11 +15,13 @@
 #include <time.h>
 
 typedef unsigned int Display;
+typedef unsigned int XVisualInfo;
 typedef bool Bool;
 
 extern int dpy;
 extern int display;
-extern int window;
+extern unsigned long window;
+extern unsigned long context;
 
 extern GLfloat physicalWidth,physicalHeight;
 extern GLfloat width,height;

@@ -56,7 +56,7 @@
 
 #include "RendererPlugin.h"
 
-//#define ENABLE_OGRE3D 0
+//#define ENABLE_OGRE3D 1
 //#define ENABLE_IRRLICHT 1
 
 #ifdef ENABLE_OGRE3D
@@ -71,8 +71,9 @@
 
 #include "ibex.h"
 
-RendererPlugin *renderer;
+#include "sixense_controller.h"
 
+RendererPlugin *renderer;
 
 GLfloat top, bottom;
 
@@ -86,7 +87,11 @@ bool barrelDistort          = 1;
 bool ortho                  = 1;
 bool renderToTexture        = 1;
 bool USE_FBO                = 1;
+#ifdef ENABLE_OGRE3D
+bool OGRE3D                 = 1;
+#else
 bool OGRE3D                 = 0;
+#endif
 bool IRRLICHT               = 0;
 bool SBS                    = 1;
 
@@ -102,8 +107,6 @@ GLuint cursor(0);
 GLfloat cursorPosX(0);
 GLfloat cursorPosY(0);
 
-
-
 GLuint cursorTexture(0);
 
 static int xi_opcode;
@@ -114,7 +117,8 @@ double strafeRight = 0;
 
 int dpy = 0;
 int display = 0;
-int window = 0;
+unsigned long window = 0;
+unsigned long context = 0;
 
 GLfloat physicalWidth = 1440.0;
 GLfloat physicalHeight = 900.0;
@@ -303,14 +307,16 @@ void renderGL(Desktop3DLocation& loc, double timeDiff_)
         exit(1);
       }
 //    }
+      
+      if(!OGRE3D) {
+          bool success = init_distortion_shader();
+          if (!success) {
+              std::cerr << "Failed to init distortion shader!" << std::endl;
+              exit(1);
+          }
 
-    bool success = init_distortion_shader();
-    if (!success) {
-      std::cerr << "Failed to init distortion shader!" << std::endl;
-      exit(1);
-    }
-
-      if (USE_FBO) prep_framebuffers();
+          if (USE_FBO) prep_framebuffers();
+      }
   }
 
   renderer->step(loc, timeDiff_);
@@ -391,13 +397,23 @@ Ibex::Ibex(int argc, char ** argv) {
     
     std::cerr << "Virtual width: " << width << " height: " << height << std::endl;
     
-    initGL();
+    if(!OGRE3D)
+        initGL();
+    
+    setup_iphone_listener();
     
     if(OGRE3D) {
 #ifdef ENABLE_OGRE3D
-        createWindow(dpy, root);
-        renderer = new Ogre3DRendererPlugin(dpy, screen, window, visinfo, (unsigned long)context);
+//        unsigned long root = 0;
+        unsigned long screen = 0;
+        unsigned int visinfo = 0;
+        unsigned int dpy2 = 0;
+//        createWindow(dpy, root);
+        renderer = new Ogre3DRendererPlugin(&dpy2, screen, window, &visinfo, (unsigned long)context);
         renderer->init();
+        renderer->processEvents();
+        return;
+        
 #endif
     } else if(IRRLICHT) {
 #ifdef ENABLE_IRRLICHT
@@ -422,8 +438,6 @@ Ibex::Ibex(int argc, char ** argv) {
         window = renderer->getWindowID();
     }
     
-    
-    setup_iphone_listener();
     std::cerr << "dpy: " << dpy << ", display: " << display << ", " << window << std::endl;
 }
 
@@ -449,21 +463,27 @@ void Ibex::render(double timeDiff) {
     if (controlDesktop) {
         walkForward = strafeRight = 0;
     }
-    processRawMotion(relativeMouseY, relativeMouseX, desktop3DLocation);
+    double rx = relativeMouseX;
+    double ry = relativeMouseY;
     relativeMouseX = 0;
     relativeMouseY = 0;
     
-    desktop3DLocation.walk(walkForward, strafeRight, timeDiff);
+    if(!OGRE3D) {
+        processRawMotion(ry, rx, desktop3DLocation);
+        desktop3DLocation.walk(walkForward+sixenseWalkForward, strafeRight+sixenseStrafeRight, timeDiff);
+    }
     
     if(resetPosition) {
         resetPosition = 0;
         desktop3DLocation.resetState();
     }
     
-    renderer->move(walkForward, strafeRight, jump, relativeMouseX, relativeMouseY);
+    renderer->setDesktopTexture(desktopTexture);
+    if(OGRE3D) {
+        renderer->move(walkForward+sixenseWalkForward, strafeRight+sixenseStrafeRight, jump, ry, rx);
+    }
     renderer->processEvents();
     
     renderGL(desktop3DLocation, timeDiff);
-    
 //    ts_start = ts_current;
 }

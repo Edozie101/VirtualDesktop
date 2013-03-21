@@ -9,8 +9,8 @@
 #define UTILS_H_
 
 #ifndef GLX_GLXEXT_PROTOTYPES
-
 #define GLX_GLXEXT_PROTOTYPES
+#endif
 
 #ifdef __APPLE__
 
@@ -33,7 +33,6 @@
 
 #endif
 
-#endif
 
 
 void *file_contents(const char *filename, GLint *length);
