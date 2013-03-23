@@ -114,6 +114,11 @@ bool BaseApplication::configure()
 
 //    Ogre::OSXCocoaWindow* videoOutputCocoa = static_cast<Ogre::OSXCocoaWindow*>(mWindow);
 //    NSOpenGLContext* mGLContext = videoOutputCocoa->nsopenGLContext();
+//    GLRenderSystem *rs = static_cast<GLRenderSystem*>(Root::getSingleton().getRenderSystem());
+//    OSXCocoaContext *mainContext = (OSXCocoaContext*)rs->_getMainContext();
+//    void *shareContext = mainContext == 0 ? 0 : mainContext->getContext();
+//    void *mGLPixelFormat = mainContext == 0 ? 0 : mainContext->getPixelFormat();
+////    mGLContext = [[NSOpenGLContext alloc] initWithFormat:mGLPixelFormat shareContext:shareContext];
     
     std::cerr << "Ogre Window ID: " << windowId << ", input windowId: " << out.str() << std::endl;
     return true;

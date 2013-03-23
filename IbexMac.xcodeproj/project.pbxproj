@@ -99,7 +99,6 @@
 		4C6D8CCC16F401B100C4638B /* MiniCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6D8CC516F401B100C4638B /* MiniCL.framework */; };
 		4C6F780516F4C4C00089101F /* libsixense_utils_x64.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C46D7C616F2B93D00B5DD9E /* libsixense_utils_x64.dylib */; };
 		4C6F780616F4C4C30089101F /* libsixense_x64.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C46D7C716F2B93D00B5DD9E /* libsixense_x64.dylib */; };
-		4C6F780716F4C4C70089101F /* RenderSystem_GL.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6411A916F4C30200132076 /* RenderSystem_GL.dylib */; };
 		4C6F780816F4C4D40089101F /* RenderSystem_GL.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C6411A916F4C30200132076 /* RenderSystem_GL.dylib */; };
 		4C6F780B16F4C5000089101F /* Ogre.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C6411A216F4C23100132076 /* Ogre.framework */; };
 		4C6F780C16F4C5070089101F /* BulletCollision.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C6D8CBF16F401B100C4638B /* BulletCollision.framework */; };
@@ -151,6 +150,7 @@
 		4CB7987B168AB41E00EF5260 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 4CB79879168AB41E00EF5260 /* Credits.rtf */; };
 		4CB7987E168AB41E00EF5260 /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4CB7987D168AB41E00EF5260 /* AppDelegate.mm */; };
 		4CB79881168AB41E00EF5260 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4CB7987F168AB41E00EF5260 /* MainMenu.xib */; };
+		4CB8423016FD7FD7009B3DDE /* RenderSystem_GL.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6411A916F4C30200132076 /* RenderSystem_GL.dylib */; };
 		4CF354B9168D0D5000EAA2FE /* MyOpenGLView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4CF354B8168D0D5000EAA2FE /* MyOpenGLView.mm */; };
 		4CF354BC168D0E1600EAA2FE /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CF354BB168D0E1600EAA2FE /* OpenGL.framework */; };
 		4CFB0B3E168E5D6A0025AF0F /* SimpleWorldRendererPlugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFB0B3C168E5D6A0025AF0F /* SimpleWorldRendererPlugin.cpp */; };
@@ -345,11 +345,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4C6F782B16F4D97B0089101F /* AGL.framework in Frameworks */,
-				4C6B99F216F4C17E00C5C725 /* CoreVideo.framework in Frameworks */,
-				4C6F782916F4D9650089101F /* IOKit.framework in Frameworks */,
 				4C6F784116F4EED80089101F /* libOIS.a in Frameworks */,
 				4C6411A316F4C23100132076 /* Ogre.framework in Frameworks */,
+				4CB8423016FD7FD7009B3DDE /* RenderSystem_GL.dylib in Frameworks */,
+				4C1DD38D16F4F92500302EFA /* Plugin_ParticleFX.dylib in Frameworks */,
+				4C1DD38F16F4F94100302EFA /* Plugin_PCZSceneManager.dylib in Frameworks */,
+				4C1DD39016F4F95300302EFA /* Plugin_OctreeSceneManager.dylib in Frameworks */,
+				4C6F784D16F4F0840089101F /* libOgreTerrain.dylib in Frameworks */,
 				4C6B99E516F4C17E00C5C725 /* BulletCollision.framework in Frameworks */,
 				4C6B99E616F4C17E00C5C725 /* BulletDynamics.framework in Frameworks */,
 				4C6B99E716F4C17E00C5C725 /* BulletMultiThreaded.framework in Frameworks */,
@@ -357,19 +359,17 @@
 				4C6B99E916F4C17E00C5C725 /* BulletSoftBodySolvers_OpenCL_Mini.framework in Frameworks */,
 				4C6B99EA16F4C17E00C5C725 /* LinearMath.framework in Frameworks */,
 				4C6B99EB16F4C17E00C5C725 /* MiniCL.framework in Frameworks */,
+				4C6F780516F4C4C00089101F /* libsixense_utils_x64.dylib in Frameworks */,
+				4C6F780616F4C4C30089101F /* libsixense_x64.dylib in Frameworks */,
+				4C6B99F316F4C17E00C5C725 /* GLUT.framework in Frameworks */,
+				4C6F782B16F4D97B0089101F /* AGL.framework in Frameworks */,
+				4C6B99F216F4C17E00C5C725 /* CoreVideo.framework in Frameworks */,
+				4C6F782916F4D9650089101F /* IOKit.framework in Frameworks */,
+				4C6B99F416F4C17E00C5C725 /* OpenGL.framework in Frameworks */,
 				4C6B99EE16F4C17E00C5C725 /* CoreFoundation.framework in Frameworks */,
 				4C6B99EF16F4C17E00C5C725 /* ApplicationServices.framework in Frameworks */,
 				4C6B99F016F4C17E00C5C725 /* Carbon.framework in Frameworks */,
 				4C6B99F116F4C17E00C5C725 /* QuartzCore.framework in Frameworks */,
-				4C6F780516F4C4C00089101F /* libsixense_utils_x64.dylib in Frameworks */,
-				4C6F780616F4C4C30089101F /* libsixense_x64.dylib in Frameworks */,
-				4C6F780716F4C4C70089101F /* RenderSystem_GL.dylib in Frameworks */,
-				4C1DD38D16F4F92500302EFA /* Plugin_ParticleFX.dylib in Frameworks */,
-				4C1DD38F16F4F94100302EFA /* Plugin_PCZSceneManager.dylib in Frameworks */,
-				4C1DD39016F4F95300302EFA /* Plugin_OctreeSceneManager.dylib in Frameworks */,
-				4C6F784D16F4F0840089101F /* libOgreTerrain.dylib in Frameworks */,
-				4C6B99F316F4C17E00C5C725 /* GLUT.framework in Frameworks */,
-				4C6B99F416F4C17E00C5C725 /* OpenGL.framework in Frameworks */,
 				4C6B99F516F4C17E00C5C725 /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -881,18 +881,20 @@
 				GCC_PREFIX_HEADER = "IbexMac/IbexMac-Prefix.pch";
 				HEADER_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/IbexMac",
+					"$(PROJECT_DIR)/../../OgreSDK/include/OGRE/RenderSystems/GL",
+					"$(PROJECT_DIR)/../../OgreSDK/include/OGRE/OSX",
 					"$(PROJECT_DIR)/../../bullet-2.81-rev2613/src",
 					"$(PROJECT_DIR)/../../OgreSDK/include/OGRE",
 					"$(PROJECT_DIR)/../../OgreSDK/include/OIS",
 					"$(PROJECT_DIR)/../../OgreSDK/boost",
 					/usr/local/include,
-					"$(PROJECT_DIR)/../../OgreSDK/boost",
 				);
 				INFOPLIST_FILE = "IbexMacOgre-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
 					"\"$(SRCROOT)/../../OgreSDK/lib/release\"",
+					"\"$(SRCROOT)\"/../../OgreSDK/lib",
 				);
 				OTHER_CFLAGS = "-DENABLE_OGRE3D=1";
 				PRODUCT_NAME = IbexMacOgre;
@@ -916,18 +918,20 @@
 				GCC_PREFIX_HEADER = "IbexMac/IbexMac-Prefix.pch";
 				HEADER_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/IbexMac",
+					"$(PROJECT_DIR)/../../OgreSDK/include/OGRE/RenderSystems/GL",
+					"$(PROJECT_DIR)/../../OgreSDK/include/OGRE/OSX",
 					"$(PROJECT_DIR)/../../bullet-2.81-rev2613/src",
 					"$(PROJECT_DIR)/../../OgreSDK/include/OGRE",
 					"$(PROJECT_DIR)/../../OgreSDK/include/OIS",
 					"$(PROJECT_DIR)/../../OgreSDK/boost",
 					/usr/local/include,
-					"$(PROJECT_DIR)/../../OgreSDK/boost",
 				);
 				INFOPLIST_FILE = "IbexMacOgre-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
 					"\"$(SRCROOT)/../../OgreSDK/lib/release\"",
+					"\"$(SRCROOT)\"/../../OgreSDK/lib",
 				);
 				OTHER_CFLAGS = "-DENABLE_OGRE3D=1";
 				PRODUCT_NAME = IbexMacOgre;
@@ -1004,6 +1008,7 @@
 					"$(PROJECT_DIR)/../../bullet-2.81-rev2613/src",
 				);
 				INFOPLIST_FILE = "IbexMac/IbexMac-Info.plist";
+				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = "";
 				WRAPPER_EXTENSION = app;
@@ -1023,6 +1028,7 @@
 					"$(PROJECT_DIR)/../../bullet-2.81-rev2613/src",
 				);
 				INFOPLIST_FILE = "IbexMac/IbexMac-Info.plist";
+				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = "";
 				WRAPPER_EXTENSION = app;

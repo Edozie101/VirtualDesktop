@@ -151,5 +151,6 @@ public:
     void render(double timeDiff);
 };
 
+void startDesktopCapture(void *c, void *p);
 
 #endif /* IBEX_H_ */

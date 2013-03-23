@@ -135,7 +135,7 @@ int setup_buffers() {
     checkForErrors();
   glGenVertexArraysAPPLE(1,&vao1);
     
-    std::cerr << "gen vao1: __glewGenVertexArrays: " << __glewGenVertexArrays << std::endl;
+//    std::cerr << "gen vao1: __glewGenVertexArrays: " << __glewGenVertexArrays << std::endl;
     checkForErrors();
     std::cerr << "gen vao1 done" << std::endl;
     

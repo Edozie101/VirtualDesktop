@@ -34,6 +34,11 @@
 
 #import "MyOpenGLView.h"
 
+#include <OgreRoot.h>
+#include <OgreRenderSystem.h>
+#include <OgreGLRenderSystem.h>
+#include <OSX/OgreOSXCocoaContext.h>
+
 #include <iostream>
 
 @implementation MyOgreView
@@ -372,9 +377,9 @@ static CVReturn MyDisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTime
 
 static NSOpenGLContext *currentContext = nil;
 static NSOpenGLPixelFormat *pixelFormat = nil;
+static NSOpenGLContext* newContext = nil;
 static bool done = 0;
 - (void)loopScreenshot {
-    static NSOpenGLContext* newContext = nil;
     newContext = [[NSOpenGLContext alloc] initWithFormat:pixelFormat shareContext:currentContext];
     
     static GLubyte *cursorData = NULL;
@@ -407,7 +412,6 @@ static bool done = 0;
                                                           kCGWindowImageDefault
                                                           );
         CFRelease(a);
-        
         
         [self createGLTextureNoAlpha:&desktopTexture fromCGImage:img andDataCache:&s andClear:NO];
         
@@ -462,24 +466,43 @@ static CGPoint cursorPos;
     }
 }
 
+MyOgreView *myOgreView = nil;
+void startDesktopCapture(void *c, void *p) {
+//    Ogre::GLRenderSystem *rs = static_cast<Ogre::GLRenderSystem*>(Ogre::Root::getSingleton().getRenderSystem());
+    Ogre::GLRenderSystem *rs = (Ogre::GLRenderSystem*)(Ogre::Root::getSingleton().getRenderSystem());
+    Ogre::OSXCocoaContext *mainContext = (Ogre::OSXCocoaContext*)rs->_getMainContext();
+    NSOpenGLContext *shareContext = mainContext == 0 ? 0 : mainContext->getContext();
+    NSOpenGLPixelFormat *mGLPixelFormat = mainContext == 0 ? 0 : mainContext->getPixelFormat();
+    currentContext = shareContext;
+    pixelFormat = mGLPixelFormat;
+    
+//    currentContext = [NSOpenGLContext currentContext];
+    
+//    CGLContextObj* contextObj = (CGLContextObj*)currentContext.CGLContextObj;
+//    CGLPixelFormatObj pixelFormatObj = CGLGetPixelFormat(*contextObj);
+//    pixelFormat = [[NSOpenGLPixelFormat alloc] initWithCGLPixelFormatObj:(void*)&pixelFormatObj];
+    
+    [myOgreView performSelectorInBackground:@selector(loopScreenshot) withObject:nil];
+//    [myOgreView loopScreenshot];
+}
+
 - (CVReturn)getFrameForTime:(const CVTimeStamp*)time
 {
     if(ibex == nil) {
+        myOgreView = self;
+        
         currentContext = [NSOpenGLContext currentContext];
         
         ibex = new Ibex(0,nil);
         ibex->render(0);
         
-        currentContext = [NSOpenGLContext currentContext];
-        
-        CGLContextObj* contextObj = (CGLContextObj*)currentContext.CGLContextObj;
-        CGLPixelFormatObj pixelFormatObj = CGLGetPixelFormat(*contextObj);
-        pixelFormat = [[NSOpenGLPixelFormat alloc] initWithCGLPixelFormatObj:(void*)&pixelFormatObj];
-        
-        static dispatch_once_t onceToken;
-        dispatch_once(&onceToken, ^{
-            [self performSelectorInBackground:@selector(loopScreenshot) withObject:nil];
-        });
+//        currentContext = [NSOpenGLContext currentContext];
+//        
+//        CGLContextObj* contextObj = (CGLContextObj*)currentContext.CGLContextObj;
+//        CGLPixelFormatObj pixelFormatObj = CGLGetPixelFormat(*contextObj);
+//        pixelFormat = [[NSOpenGLPixelFormat alloc] initWithCGLPixelFormatObj:(void*)&pixelFormatObj];
+//
+//        [self performSelectorInBackground:@selector(loopScreenshot) withObject:nil];
     }
     
     CGDisplayHideCursor(kCGDirectMainDisplay);
