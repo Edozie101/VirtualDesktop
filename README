@@ -9,6 +9,9 @@ so that you can be flying on a plane, for example, but still be flanked by
 multiple large high resolution monitors and still be effective rather than be
 limited by a tiny laptop screen.
 
+It currently supports the Rift on Windows and when the SDK is updated it will support it
+on all platforms.
+
 Home Page and Downloads
 -----------------------
 http://hwahba.com/ibex
@@ -29,6 +32,7 @@ Move Backwards: S
 Walk Sideways Left (Strafe Left): A/Q
 Walk Sideways Right (Strafe Right): D/E 
 Jump: SPACE (Irrlicht renderer only)
+Adjust IPD for Rift stereo viewing: -/+ keys
 
 Toggle Barrel Lens Distort: B
 Toggle Ground Layer: G
@@ -44,7 +48,7 @@ Mac:
 XCode 4.5, OSX 10.8 (Mountain Lion) - Build and run from XCode
 
 Windows:
-Visual Studio 2013 - Build and run from Visual Studio
+Visual Studio 2013 - Build and run from Visual Studio, Rift SDK must be at same level as ibex folder and named: OculusSDK
 
 Linux:
 Setting up my Ubuntu 12.10 install:
@@ -55,7 +59,6 @@ sudo apt-get install libirrlicht-dev
 
 * Blender
 * Blender2Ogre to convert models to Ogre meshes: https://code.google.com/p/blender2ogre/
-
  
 To run:
 cd ~/workspace
