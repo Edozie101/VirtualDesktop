@@ -90,8 +90,9 @@ GLuint ScaleInUniform;
 GLuint HmdWarpParamUniform;
 
 char RiftMonitorName[33];
-GLfloat EyeDistance;
-GLfloat DistortionK[4];
+GLfloat EyeDistance = 0.0640000030;
+GLfloat DistortionK[4] = {1.00000000, 0.219999999, 0.239999995, 0.000000000};
+
 static GLuint make_program(GLuint vertex_shader, GLuint fragment_shader)
 {
     GLint program_ok;
