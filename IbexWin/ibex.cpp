@@ -113,8 +113,6 @@ GLuint cursor(0);
 GLfloat cursorPosX(0);
 GLfloat cursorPosY(0);
 
-
-
 GLuint cursorTexture(0);
 
 static int xi_opcode;
@@ -134,8 +132,13 @@ GLfloat physicalHeight = 900.0;
 
 GLfloat width = 1440.0;
 GLfloat height = 900.0;
+GLfloat textureWidth = 1440.0*2;
+GLfloat textureHeight = 900.0*2;
 GLfloat windowWidth = 1280;
 GLfloat windowHeight = 800;
+
+double IOD = 0.1715; // at scale 0.8 // 0.136; at scale 1.0
+//double IOD = 0.136; // at scale 1.0
 
 
 
@@ -239,7 +242,7 @@ void prep_framebuffers()
     glBindTexture(GL_TEXTURE_2D, textures[i]);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0,
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, textureWidth, textureHeight, 0,
                  GL_RGBA, GL_UNSIGNED_BYTE, 0);
     glFramebufferTexture2D (GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
                             GL_TEXTURE_2D, textures[i], 0);
@@ -247,7 +250,7 @@ void prep_framebuffers()
     glBindRenderbuffer(GL_RENDERBUFFER, depthBuffer);
     if (i == 0) {
       glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24,
-                            width, height);
+                            textureWidth, textureHeight);
     }
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
                               GL_RENDERBUFFER, depthBuffer);
@@ -257,7 +260,7 @@ void prep_framebuffers()
     }
 
     std::cout << "Generating FBO #" << i << std::endl;
-    std::cout << "FBO: " << width << "x" << height << std::endl;
+    std::cout << "FBO: " << textureWidth << "x" << textureHeight << std::endl;
 
     if (!checkForErrors() ||
         glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {

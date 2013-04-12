@@ -63,6 +63,17 @@ typedef unsigned long GLXContext;
 
 #include "ibex.h"
 
+#include "distortions.h"
+#include "OVR.h"
+using namespace OVR;
+
+Ptr<DeviceManager>	pManager;
+Ptr<HMDDevice>		pHMD;
+Ptr<SensorDevice>	pSensor;
+SensorFusion		FusionResult;
+HMDInfo			Info;
+bool			InfoLoaded;
+
 bool modifiedDesktop(false);
 GLuint VBO(0);
 std::condition_variable screenshotCondition;
@@ -84,6 +95,14 @@ void Keyboard(unsigned char key, int x, int y)
   case 'd':
   case 'e':
 	  strafeRight = 1;
+	  break;
+  case '=':
+  case '+':
+	  IOD += 0.0005;
+	  break;
+  case '-':
+  case '_':
+	  IOD -= 0.0005;
 	  break;
   }
 }
@@ -334,20 +353,20 @@ void loopScreenshot() {
 	while(1) {
 		screenshotCondition.wait(screenshotLock);
 
-		static double timeprev = glutGet(GLUT_ELAPSED_TIME);
-	double time = glutGet(GLUT_ELAPSED_TIME);
-	double timeDiff = (time - timeprev)/1000.0;
-	timeprev = time;
+		//static double timeprev = glutGet(GLUT_ELAPSED_TIME);
+		//double time = glutGet(GLUT_ELAPSED_TIME);
+		//double timeDiff = (time - timeprev)/1000.0;
+		//timeprev = time;
 
-	static double timebase = glutGet(GLUT_ELAPSED_TIME);
-	static double frame = 0;
-	++frame;
-	static char fpsString[64];
-	if (time - timebase >= 5000.0) {
-		sprintf(fpsString,"FPS:%4.2f", frame*5000.0/(time-timebase));
-		timebase = time;
-		frame = 0;
-	}
+		//static double timebase = glutGet(GLUT_ELAPSED_TIME);
+		//static double frame = 0;
+		//++frame;
+		//static char fpsString[64];
+		//if (time - timebase >= 5000.0) {
+		//	sprintf(fpsString,"FPS:%4.2f", frame*5000.0/(time-timebase));
+		//	timebase = time;
+		//	frame = 0;
+		//}
 
 		getScreenshot();
 	}
@@ -446,15 +465,84 @@ void globalHotkeyListener() {
     }
 	return;
 }
+
+static int riftX = 0;
+static int riftY = 0;
+void initRift() {
+	System::Init();
+
+	pManager = *DeviceManager::Create();
+
+	pHMD = *pManager->EnumerateDevices<HMDDevice>().CreateDevice();
+
+	if (pHMD)
+    {
+        InfoLoaded = pHMD->GetDeviceInfo(&Info);
+
+		strncpy(Info.DisplayDeviceName, RiftMonitorName, 32);
+
+		EyeDistance = Info.InterpupillaryDistance;
+		DistortionK[0] = Info.DistortionK[0];
+		DistortionK[1] = Info.DistortionK[1];
+		DistortionK[2] = Info.DistortionK[2];
+		DistortionK[3] = Info.DistortionK[3];
+
+		pSensor = *pHMD->GetSensor();
+	}
+	else
+	{
+		pSensor = *pManager->EnumerateDevices<SensorDevice>().CreateDevice();
+	}
+
+	if (pSensor)
+	{
+	   FusionResult.AttachToSensor(pSensor);
+
+	   if(InfoLoaded) {
+		   riftX = Info.DesktopX;
+		   riftY = Info.DesktopY;
+	   }
+	}
+}
+void cleanUpRift() {
+	pSensor.Clear();
+	pManager.Clear();
+
+	System::Destroy();
+}
+
+// Get the horizontal and vertical screen sizes in pixel
+void GetDesktopResolution(int& horizontal, int& vertical)
+{
+   RECT desktop;
+   // Get a handle to the desktop window
+   const HWND hDesktop = GetDesktopWindow();
+   // Get the size of screen to the variable desktop
+   GetWindowRect(hDesktop, &desktop);
+   // The top left corner will have coordinates (0,0)
+   // and the bottom right corner will have coordinates
+   // (horizontal, vertical)
+   horizontal = desktop.right-desktop.left;
+   vertical = desktop.bottom-desktop.top;
+}
+
 int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
                      _In_ LPTSTR    lpCmdLine,
                      _In_ int       nCmdShow)
 {
+	int horizontal = 0;
+	int vertical = 0;
+	GetDesktopResolution(horizontal, vertical);
+
+	initRift();
+
 	width = 1280;
 	height = 800;
-	physicalWidth = 1920;//(false) ? 1920 : width;
-	physicalHeight = 1080;//(false) ? 1080 : height;
+	physicalWidth = horizontal;//1280;//1920;//(false) ? 1920 : width;
+	physicalHeight = vertical;//800;//1080;//(false) ? 1080 : height;
+	textureWidth = width*2.0;
+	textureHeight = width*2.0;
 	windowWidth = 1280;
 	windowHeight = 800;
 
@@ -469,9 +557,10 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	int argc = 0;
 	char **argv = 0;
     glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA);
+	glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA|GLUT_FULL_SCREEN);
     glutInitWindowSize(width, height);
     glutInitWindowPosition(0, 0);
+	glutInitWindowPosition(riftX, riftY);
     glutCreateWindow("Ibex");
 
     InitializeGlutCallbacks();
@@ -499,6 +588,8 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 
 	screenshotThread.join();
 	hotkeyThread.join();
+
+	cleanUpRift();
 
 	return 0;
 }

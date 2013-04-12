@@ -82,6 +82,16 @@ GLuint a_position;
 GLuint a_texCoord;
 GLuint offsetUniform;
 GLuint textureUniform;
+
+GLuint ScreenCenterUniform;
+GLuint LensCenterUniform;
+GLuint ScaleUniform;
+GLuint ScaleInUniform;
+GLuint HmdWarpParamUniform;
+
+char RiftMonitorName[33];
+GLfloat EyeDistance;
+GLfloat DistortionK[4];
 static GLuint make_program(GLuint vertex_shader, GLuint fragment_shader)
 {
     GLint program_ok;
@@ -102,19 +112,32 @@ static GLuint make_program(GLuint vertex_shader, GLuint fragment_shader)
     a_position = glGetAttribLocation(program, "a_position");
     a_texCoord = glGetAttribLocation(program, "a_texCoord");
 
-    offsetUniform = glGetUniformLocation(program, "offsetUniform");
+	offsetUniform = glGetUniformLocation(program, "offsetUniform");
 
     textureUniform = glGetUniformLocation(program, "texture");
+
+LensCenterUniform = glGetUniformLocation(program, "LensCenter");
+ScreenCenterUniform = glGetUniformLocation(program, "ScreenCenter");
+ScaleUniform = glGetUniformLocation(program, "Scale");
+ScaleInUniform = glGetUniformLocation(program, "ScaleIn");
+HmdWarpParamUniform = glGetUniformLocation(program, "HmdWarpParam");
 
     return program;
 }
 
 static const GLfloat dataArray[] =
 {
-    -0.5, -1, 0, 1, -1, -1, 1,
-    0.5, -1, 0, 1, 1, -1, 1,
-    -0.5,  1, 0, 1, -1, 1, 1,
-    0.5,  1, 0, 1, 1, 1, 1
+    -1, -1, 0, 1, 0, 0, 1,
+    0, -1, 0, 1, 0.5, 0, 1,
+    -1,  1, 0, 1, 0, 1, 1,
+    0,  1, 0, 1, 0.5, 1, 1
+};
+static const GLfloat dataArray2[] =
+{
+    0, -1, 0, 1, 0.5, 0, 1,
+    1, -1, 0, 1, 1, 0, 1,
+    0,  1, 0, 1, 0.5, 1, 1,
+    1,  1, 0, 1, 1, 1, 1
 };
 
 static const GLushort indices[] =
@@ -123,9 +146,12 @@ static const GLushort indices[] =
     1,2,3
 };
 
-GLuint vao1;
-GLuint _vertexBuffer;
-GLuint _indexBuffer;
+static GLuint vao1;
+static GLuint _vertexBuffer;
+static GLuint _indexBuffer;
+static GLuint vao2;
+static GLuint _vertexBuffer2;
+static GLuint _indexBuffer2;
 int setup_buffers() {
     if(!GL_ARB_vertex_array_object)
     {
@@ -135,6 +161,7 @@ int setup_buffers() {
     
     checkForErrors();
   glGenVertexArrays(1,&vao1);
+  glGenVertexArrays(1,&vao2);
     
     std::cerr << "gen vao1: __glewGenVertexArrays: " << __glewGenVertexArrays << std::endl;
     checkForErrors();
@@ -152,6 +179,26 @@ int setup_buffers() {
 
   glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBuffer);
+  glEnableVertexAttribArray(a_position);
+  glVertexAttribPointer(a_position, 4, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*7, 0);
+  glEnableVertexAttribArray(a_texCoord);
+  glVertexAttribPointer(a_texCoord, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*7, (GLvoid*) (sizeof(GLfloat) * 4));
+
+
+
+
+  glBindVertexArray(vao2);
+
+  glGenBuffers(1, &_vertexBuffer2);
+  glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer2);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(dataArray2), dataArray2, GL_STATIC_DRAW);
+
+  glGenBuffers(1, &_indexBuffer2);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBuffer2);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+  glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer2);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBuffer2);
   glEnableVertexAttribArray(a_position);
   glVertexAttribPointer(a_position, 4, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*7, 0);
   glEnableVertexAttribArray(a_texCoord);
@@ -175,7 +222,10 @@ void render_distorted_frame(const bool left, const GLuint textureId)
     
 //            std::cerr << "render_distorted_frame1, vao1: " << vao1 << std::endl;
 
-    glBindVertexArray(vao1);
+	if(left)
+		glBindVertexArray(vao1);
+	else
+		glBindVertexArray(vao2);
 //    checkForErrors();
     
 //            std::cerr << "render_distorted_frame2" << std::endl;
@@ -191,6 +241,41 @@ void render_distorted_frame(const bool left, const GLuint textureId)
     glUniform1f(offsetUniform, (left)?-0.5:0.5);
     glUniform1i(textureUniform, 0);
 //    checkForErrors();
+
+//glUniform2fv(ScreenCenterUniform, 1,screenCenter);
+//glUniform2fv(LensCenterUniform, 1,eyeDistance);
+//glUniform2fv(ScaleUniform, 1, scale);
+//glUniform2fv(ScaleInUniform, 1,scaleIn);
+//glUniform4fv(HmdWarpParamUniform, 1, DistortionK);
+
+
+        
+    GLfloat scaleFactor = 0.8;//5.0/4.0;//1.0f;
+	GLfloat DistortionXCenterOffset;
+    if (left) {
+        DistortionXCenterOffset = 0.25f;
+    }
+    else {
+        DistortionXCenterOffset = -0.25f;
+    }
+	GLfloat x = (left) ? 0 : 0.5;
+	GLfloat y = 0;
+	GLfloat w = 0.5;
+	GLfloat h = 1;
+	GLfloat as = 640.0/800.0;//w/h;
+	glUniform2f(LensCenterUniform, x + (w + DistortionXCenterOffset * 0.5f)*0.5f, y + h*0.5f);
+    glUniform2f(ScreenCenterUniform, x + w*0.5f, y + h*0.5f);
+    glUniform2f(ScaleUniform, (w/2.0f) * scaleFactor, (h/2.0f) * scaleFactor * as);;
+    glUniform2f(ScaleInUniform, (2.0f/w), (2.0f/h) / as);
+
+	//GLfloat K0 = 1.0f;
+ //   GLfloat K1 = 0.22f;
+ //   GLfloat K2 = 0.24f;
+ //   GLfloat K3 = 0.0f;
+	//glUniform4f(HmdWarpParamUniform, K0, K1, K2, K3);
+    glUniform4fv(HmdWarpParamUniform, 1, DistortionK);
+	
+
 
     glDrawElements(GL_TRIANGLES, sizeof(indices)/sizeof(indices[0]), GL_UNSIGNED_SHORT, 0);
 //    checkForErrors();
