@@ -21,9 +21,10 @@ using namespace OVR;
 extern Ptr<DeviceManager>	pManager;
 extern Ptr<HMDDevice>		pHMD;
 extern Ptr<SensorDevice>	pSensor;
-extern SensorFusion		FusionResult;
-extern HMDInfo			Info;
-extern bool			InfoLoaded;
+extern SensorFusion			FusionResult;
+extern HMDInfo				Info;
+extern bool					InfoLoaded;
+extern bool					riftConnected;
 
 typedef unsigned int Display;
 typedef bool Bool;

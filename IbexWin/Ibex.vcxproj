@@ -53,7 +53,7 @@
     </Link>
     <PostBuildEvent>
       <Command>xcopy /y $(ProjectDir)*.dll $(OutDir)
-xcopy /y $(ProjectDir)resources $(OutDir)</Command>
+xcopy /iys $(ProjectDir)resources $(OutDir)resources</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

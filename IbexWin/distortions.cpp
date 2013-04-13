@@ -263,7 +263,7 @@ void render_distorted_frame(const bool left, const GLuint textureId)
 	GLfloat y = 0;
 	GLfloat w = 0.5;
 	GLfloat h = 1;
-	GLfloat as = 640.0/800.0;//w/h;
+	GLfloat as = width/2.0/height;//w/h;
 	glUniform2f(LensCenterUniform, x + (w + DistortionXCenterOffset * 0.5f)*0.5f, y + h*0.5f);
     glUniform2f(ScreenCenterUniform, x + w*0.5f, y + h*0.5f);
     glUniform2f(ScaleUniform, (w/2.0f) * scaleFactor, (h/2.0f) * scaleFactor * as);;

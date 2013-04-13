@@ -71,8 +71,9 @@ Ptr<DeviceManager>	pManager;
 Ptr<HMDDevice>		pHMD;
 Ptr<SensorDevice>	pSensor;
 SensorFusion		FusionResult;
-HMDInfo			Info;
-bool			InfoLoaded;
+HMDInfo				Info;
+bool				InfoLoaded = false;
+bool				riftConnected = false;
 
 bool modifiedDesktop(false);
 GLuint VBO(0);
@@ -111,26 +112,35 @@ void KeyboardUp(unsigned char key, int x, int y)
   switch (key)
   {
   case 'b':
+  case 'B':
     barrelDistort = !barrelDistort;
     break;
   case 'g':
+  case 'G':
 	  showGround = !showGround;
 	  break;
   case 'r':
+  case 'R':
 	  resetPosition = 1;
 	  break;
   case 'w':
+  case 'W':
 	  walkForward = 0;
 	  break;
   case 'a':
   case 'q':
+  case 'A':
+  case 'Q':
 	  strafeRight = 0;
 	  break;
   case 's':
+	  case 'S':
 	  walkForward = 0;
 	  break;
   case 'd':
   case 'e':
+  case 'D':
+  case 'E':
 	  strafeRight = 0;
 	  break;
   }
@@ -446,6 +456,9 @@ void globalHotkeyListener() {
 
 	RegisterHotKey(NULL, 1, MOD_CONTROL | MOD_SHIFT | MOD_NOREPEAT, 'g');
 	RegisterHotKey(NULL, 2, MOD_CONTROL | MOD_SHIFT | MOD_NOREPEAT, 'G');
+	//RegisterHotKey(NULL, 2, MOD_CONTROL | MOD_SHIFT | MOD_NOREPEAT, 'f');
+	//RegisterHotKey(NULL, 2, MOD_CONTROL | MOD_SHIFT | MOD_NOREPEAT, 'F');
+	RegisterHotKey(NULL, 2, MOD_CONTROL | MOD_SHIFT | MOD_NOREPEAT, VK_F2);
 
 	MSG msg = {0};
     while (GetMessage(&msg, NULL, 0, 0))
@@ -468,6 +481,8 @@ void globalHotkeyListener() {
 
 static int riftX = 0;
 static int riftY = 0;
+static int riftResolutionX = 0;
+static int riftResolutionY = 0;
 void initRift() {
 	System::Init();
 
@@ -499,8 +514,13 @@ void initRift() {
 	   FusionResult.AttachToSensor(pSensor);
 
 	   if(InfoLoaded) {
+		   riftConnected = true;
+
 		   riftX = Info.DesktopX;
 		   riftY = Info.DesktopY;
+
+		   riftResolutionX = Info.HResolution;
+		   riftResolutionY = Info.VResolution;
 	   }
 	}
 }
@@ -531,20 +551,24 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
                      _In_ LPTSTR    lpCmdLine,
                      _In_ int       nCmdShow)
 {
-	int horizontal = 0;
-	int vertical = 0;
-	GetDesktopResolution(horizontal, vertical);
+	int mainScreenHorizontal = 0;
+	int mainScreenVertical = 0;
+	GetDesktopResolution(mainScreenHorizontal, mainScreenVertical);
 
 	initRift();
 
 	width = 1280;
 	height = 800;
-	physicalWidth = horizontal;//1280;//1920;//(false) ? 1920 : width;
-	physicalHeight = vertical;//800;//1080;//(false) ? 1080 : height;
-	textureWidth = width*2.0;
-	textureHeight = width*2.0;
 	windowWidth = 1280;
 	windowHeight = 800;
+	if(riftConnected) {
+		width = riftResolutionX;
+		height = riftResolutionY;
+	}
+	physicalWidth = mainScreenHorizontal;//1280;//1920;//(false) ? 1920 : width;
+	physicalHeight = mainScreenVertical;//800;//1080;//(false) ? 1080 : height;
+	textureWidth = width*2.0;
+	textureHeight = width*2.0;
 
 	controlDesktop = 0;
 	modifiedDesktop = true;
