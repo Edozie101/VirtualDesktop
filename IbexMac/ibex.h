@@ -10,9 +10,24 @@
 
 //#include "opengl_setup_x11.h"
 
-#include "math.h"
+#define _USE_MATH_DEFINES
+#include <math.h>
 
 #include <time.h>
+
+#ifdef _WIN32
+#include "OVR.h"
+using namespace OVR;
+
+extern Ptr<DeviceManager>	pManager;
+extern Ptr<HMDDevice>		pHMD;
+extern Ptr<SensorDevice>	pSensor;
+extern SensorFusion			FusionResult;
+extern HMDInfo				Info;
+#endif
+
+extern bool					InfoLoaded;
+extern bool					riftConnected;
 
 typedef unsigned int Display;
 typedef unsigned int XVisualInfo;
@@ -24,10 +39,15 @@ extern unsigned long window;
 extern unsigned long context;
 
 extern GLfloat physicalWidth,physicalHeight;
+extern GLfloat windowWidth, windowHeight;
 extern GLfloat width,height;
+extern GLfloat textureWidth,textureHeight;
+
+extern double IOD;
 
 extern GLfloat top, bottom;
 extern GLuint desktopTexture;
+extern bool mouseBlendAlternate;
 extern GLuint cursor;
 
 extern GLfloat cursorPosX;
@@ -64,7 +84,7 @@ class Desktop3DLocation
 public:
   // Prevent unforeseen copying
   explicit Desktop3DLocation()
-    : WALK_SPEED(1.0),
+    : WALK_SPEED(0.2),//1),
       m_xRotation(0.0), m_yRotation(0.0), m_zRotation(0.0),
       m_xPosition(0.0), m_yPosition(0.0), m_zPosition(0.0) {};
   // Class not intended for inheritence
@@ -145,7 +165,10 @@ class Ibex {
 public:
     // Instance of the class that tracks position/orientation of desktop
     Desktop3DLocation desktop3DLocation;
+
+#ifndef _WIN32
     struct timespec ts_start;
+#endif
     
     Ibex(int argc, char ** argv);
     void render(double timeDiff);
