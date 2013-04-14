@@ -159,7 +159,7 @@ bool didInitOpenGL();
 void renderSkybox();
 void renderDesktopToTexture();
 
-
+void resizeGL(unsigned int width, unsigned int height);
 
 class Ibex {
 public:
