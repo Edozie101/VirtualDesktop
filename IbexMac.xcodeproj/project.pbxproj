@@ -9,6 +9,15 @@
 /* Begin PBXBuildFile section */
 		4C006060169D385100B88329 /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C00605F169D385100B88329 /* ApplicationServices.framework */; };
 		4C006063169D38A000B88329 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C006062169D38A000B88329 /* CoreFoundation.framework */; };
+		4C0B3223171A3F4E0098F1CE /* BulletCollision.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6D8CBF16F401B100C4638B /* BulletCollision.framework */; };
+		4C0B3224171A3F4E0098F1CE /* BulletDynamics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6D8CC016F401B100C4638B /* BulletDynamics.framework */; };
+		4C0B3225171A3F4E0098F1CE /* BulletMultiThreaded.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6D8CC116F401B100C4638B /* BulletMultiThreaded.framework */; };
+		4C0B3226171A3F4E0098F1CE /* BulletSoftBody.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6D8CC216F401B100C4638B /* BulletSoftBody.framework */; };
+		4C0B3227171A3F4E0098F1CE /* BulletSoftBodySolvers_OpenCL_Mini.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6D8CC316F401B100C4638B /* BulletSoftBodySolvers_OpenCL_Mini.framework */; };
+		4C0B3228171A3F4E0098F1CE /* LinearMath.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6D8CC416F401B100C4638B /* LinearMath.framework */; };
+		4C0B3229171A3F4E0098F1CE /* MiniCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6D8CC516F401B100C4638B /* MiniCL.framework */; };
+		4C0B322A171A3F4E0098F1CE /* libsixense_utils_x64.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C46D7C616F2B93D00B5DD9E /* libsixense_utils_x64.dylib */; };
+		4C0B322B171A3F4E0098F1CE /* libsixense_x64.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C46D7C716F2B93D00B5DD9E /* libsixense_x64.dylib */; };
 		4C0D589616AD656A007BC9CD /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CB79876168AB41E00EF5260 /* main.m */; };
 		4C0D589716AD656A007BC9CD /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4CB7987D168AB41E00EF5260 /* AppDelegate.mm */; };
 		4C0D589816AD656A007BC9CD /* ScreenGrabber.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C2DE2FE168B30CC003BEB56 /* ScreenGrabber.m */; };
@@ -330,6 +339,15 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4C0B3223171A3F4E0098F1CE /* BulletCollision.framework in Frameworks */,
+				4C0B3224171A3F4E0098F1CE /* BulletDynamics.framework in Frameworks */,
+				4C0B3225171A3F4E0098F1CE /* BulletMultiThreaded.framework in Frameworks */,
+				4C0B3226171A3F4E0098F1CE /* BulletSoftBody.framework in Frameworks */,
+				4C0B3227171A3F4E0098F1CE /* BulletSoftBodySolvers_OpenCL_Mini.framework in Frameworks */,
+				4C0B3228171A3F4E0098F1CE /* LinearMath.framework in Frameworks */,
+				4C0B3229171A3F4E0098F1CE /* MiniCL.framework in Frameworks */,
+				4C0B322A171A3F4E0098F1CE /* libsixense_utils_x64.dylib in Frameworks */,
+				4C0B322B171A3F4E0098F1CE /* libsixense_x64.dylib in Frameworks */,
 				4C0D58A616AD656A007BC9CD /* CoreFoundation.framework in Frameworks */,
 				4C0D58A716AD656A007BC9CD /* ApplicationServices.framework in Frameworks */,
 				4C0D58A816AD656A007BC9CD /* Carbon.framework in Frameworks */,
@@ -844,8 +862,13 @@
 				CODE_SIGN_ENTITLEMENTS = IbexMac/IbexMac.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = /Library/Frameworks;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "IbexMac/IbexMac-Prefix.pch";
+				HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/IbexMac",
+					"$(PROJECT_DIR)/../../bullet-2.81-rev2613/src",
+				);
 				INFOPLIST_FILE = "IbexMac/IbexMac-Info.plist";
 				PRODUCT_NAME = IbexMac;
 				WRAPPER_EXTENSION = app;
@@ -858,8 +881,13 @@
 				CODE_SIGN_ENTITLEMENTS = IbexMac/IbexMac.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = /Library/Frameworks;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "IbexMac/IbexMac-Prefix.pch";
+				HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/IbexMac",
+					"$(PROJECT_DIR)/../../bullet-2.81-rev2613/src",
+				);
 				INFOPLIST_FILE = "IbexMac/IbexMac-Info.plist";
 				PRODUCT_NAME = IbexMac;
 				WRAPPER_EXTENSION = app;
