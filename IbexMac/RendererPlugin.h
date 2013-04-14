@@ -23,6 +23,18 @@ typedef unsigned long Window;
 typedef unsigned long GLXContext;
 
 #else
+#ifdef _WIN32
+
+#include "GL/glew.h"
+#include <GL/gl.h>
+#include <GL/glu.h>
+//#include <GL/glext.h>
+#include <GL/glut.h>
+
+typedef unsigned long Window;
+typedef unsigned long GLXContext;
+
+#else
 
 #include <GL/glew.h>
 #include <GL/glxew.h>
@@ -33,6 +45,7 @@ typedef unsigned long GLXContext;
 #include <GL/glut.h>
 #include <GL/glu.h>
 
+#endif
 #endif
 
 #include "ibex.h"

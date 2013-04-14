@@ -9,7 +9,9 @@
 // --- Standard library ------------------------------------------------------
 #include <stdlib.h>
 #include <ctype.h>
+#ifndef _WIN32
 #include <unistd.h>
+#endif
 #include <time.h>
 #include <cstdio>
 #include <cmath>
@@ -31,6 +33,15 @@
 #include <GLUT/glut.h>
 
 #else
+#ifdef _WIN32
+
+#include "GL/glew.h"
+#include <GL/gl.h>
+#include <GL/glu.h>
+//#include <GL/glext.h>
+#include <GL/glut.h>
+
+#else
 
 #include <GL/glew.h>
 #include <GL/glxew.h>
@@ -41,6 +52,7 @@
 #include <GL/glut.h>
 #include <GL/glu.h>
 
+#endif
 #endif
 
 // --- X11 -------------------------------------------------------------------
@@ -102,6 +114,11 @@ GLuint depthBuffer;
 
 GLuint desktopFBO;
 GLuint desktopTexture(0);
+#ifdef _WIN32
+bool mouseBlendAlternate(false);
+#else
+bool mouseBlendAlternate(false);
+#endif
 GLuint cursor(0);
 
 GLfloat cursorPosX(0);
@@ -127,6 +144,13 @@ GLfloat physicalHeight = 900.0;
 
 GLfloat width = 1440.0;
 GLfloat height = 900.0;
+GLfloat textureWidth = 1440.0*2;
+GLfloat textureHeight = 900.0*2;
+GLfloat windowWidth = 1280;
+GLfloat windowHeight = 800;
+
+double IOD = 0.1715; // at scale 0.8 // 0.136; at scale 1.0
+//double IOD = 0.136; // at scale 1.0
 
 
 
@@ -230,7 +254,7 @@ void prep_framebuffers()
     glBindTexture(GL_TEXTURE_2D, textures[i]);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0,
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, textureWidth, textureHeight, 0,
                  GL_RGBA, GL_UNSIGNED_BYTE, 0);
     glFramebufferTexture2D (GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
                             GL_TEXTURE_2D, textures[i], 0);
@@ -238,7 +262,7 @@ void prep_framebuffers()
     glBindRenderbuffer(GL_RENDERBUFFER, depthBuffer);
     if (i == 0) {
       glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24,
-                            width, height);
+                            textureWidth, textureHeight);
     }
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
                               GL_RENDERBUFFER, depthBuffer);
@@ -248,7 +272,7 @@ void prep_framebuffers()
     }
 
     std::cout << "Generating FBO #" << i << std::endl;
-    std::cout << "FBO: " << width << "x" << height << std::endl;
+    std::cout << "FBO: " << textureWidth << "x" << textureHeight << std::endl;
 
     if (!checkForErrors() ||
         glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
@@ -324,6 +348,9 @@ void renderGL(Desktop3DLocation& loc, double timeDiff_)
 
 void resizeGL(unsigned int width, unsigned int height)
 {
+	windowWidth = width;
+	windowHeight = height;
+
     /* prevent divide-by-zero */
     if (height == 0)
         height = 1;
@@ -352,7 +379,7 @@ void initGL()
   glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 
   // We use resizeGL once to set up our initial perspective
-  resizeGL(physicalWidth,physicalHeight);//width, height);
+  resizeGL(windowWidth, windowHeight);//physicalWidth,physicalHeight);//width, height);
 
 
     top = 1.0f;
@@ -364,7 +391,6 @@ void initGL()
   glFlush();
 }
 
-
 double relativeMouseX = 0;
 double relativeMouseY = 0;
 
@@ -372,6 +398,7 @@ static bool jump = false;
 
 Ibex::Ibex(int argc, char ** argv) {
     int c;
+#ifndef _WIN32
     while (argc > 0 && (c = getopt(argc, argv, "oihm")) != -1)
         switch (c) {
             case 'o':
@@ -392,6 +419,7 @@ Ibex::Ibex(int argc, char ** argv) {
                     fprintf(stderr, "Unknown option character `\\x%x'.\n", optopt);
                 return;// 1;
         }
+#endif
     
     //  prep_root();
     

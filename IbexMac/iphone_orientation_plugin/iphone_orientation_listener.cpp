@@ -1,10 +1,19 @@
+#ifdef _WIN32
+
+#include <winsock.h>
+
+#else
+
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <ifaddrs.h>
-#include <stdio.h>
-#include <sys/types.h>
 #include <sys/socket.h>
 #include <unistd.h>
+
+#endif
+
+#include <stdio.h>
+#include <sys/types.h>
 #include <string.h>
 #include <iostream>
 

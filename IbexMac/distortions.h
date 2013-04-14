@@ -19,6 +19,15 @@
 #include <GLUT/glut.h>
 
 #else
+#ifdef _WIN32
+
+#include "GL/glew.h"
+#include <GL/gl.h>
+#include <GL/glu.h>
+//#include <GL/glext.h>
+#include <GL/glut.h>
+
+#else
 
 #include <GL/glew.h>
 #include <GL/glxew.h>
@@ -30,6 +39,11 @@
 #include <GL/glu.h>
 
 #endif
+#endif
+
+extern char RiftMonitorName[33];
+extern GLfloat EyeDistance;
+extern GLfloat DistortionK[4];
 
 int init_distortion_shader();
 void render_distorted_frame(const bool left, const GLuint textureId);

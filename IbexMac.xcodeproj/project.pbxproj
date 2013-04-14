@@ -9,6 +9,15 @@
 /* Begin PBXBuildFile section */
 		4C006060169D385100B88329 /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C00605F169D385100B88329 /* ApplicationServices.framework */; };
 		4C006063169D38A000B88329 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C006062169D38A000B88329 /* CoreFoundation.framework */; };
+		4C0B3223171A3F4E0098F1CE /* BulletCollision.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6D8CBF16F401B100C4638B /* BulletCollision.framework */; };
+		4C0B3224171A3F4E0098F1CE /* BulletDynamics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6D8CC016F401B100C4638B /* BulletDynamics.framework */; };
+		4C0B3225171A3F4E0098F1CE /* BulletMultiThreaded.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6D8CC116F401B100C4638B /* BulletMultiThreaded.framework */; };
+		4C0B3226171A3F4E0098F1CE /* BulletSoftBody.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6D8CC216F401B100C4638B /* BulletSoftBody.framework */; };
+		4C0B3227171A3F4E0098F1CE /* BulletSoftBodySolvers_OpenCL_Mini.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6D8CC316F401B100C4638B /* BulletSoftBodySolvers_OpenCL_Mini.framework */; };
+		4C0B3228171A3F4E0098F1CE /* LinearMath.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6D8CC416F401B100C4638B /* LinearMath.framework */; };
+		4C0B3229171A3F4E0098F1CE /* MiniCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6D8CC516F401B100C4638B /* MiniCL.framework */; };
+		4C0B322A171A3F4E0098F1CE /* libsixense_utils_x64.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C46D7C616F2B93D00B5DD9E /* libsixense_utils_x64.dylib */; };
+		4C0B322B171A3F4E0098F1CE /* libsixense_x64.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C46D7C716F2B93D00B5DD9E /* libsixense_x64.dylib */; };
 		4C0D589616AD656A007BC9CD /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CB79876168AB41E00EF5260 /* main.m */; };
 		4C0D589716AD656A007BC9CD /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4CB7987D168AB41E00EF5260 /* AppDelegate.mm */; };
 		4C0D589816AD656A007BC9CD /* ScreenGrabber.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C2DE2FE168B30CC003BEB56 /* ScreenGrabber.m */; };
@@ -237,8 +246,8 @@
 		4C46D7C116F2AED900B5DD9E /* sixense_utils_string.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = sixense_utils_string.hpp; sourceTree = "<group>"; };
 		4C46D7C216F2AED900B5DD9E /* time.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = time.hpp; sourceTree = "<group>"; };
 		4C46D7C316F2AED900B5DD9E /* sixense.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sixense.h; sourceTree = "<group>"; };
-		4C46D7C616F2B93D00B5DD9E /* libsixense_utils_x64.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsixense_utils_x64.dylib; path = ../../../../../usr/local/lib/libsixense_utils_x64.dylib; sourceTree = "<group>"; };
-		4C46D7C716F2B93D00B5DD9E /* libsixense_x64.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsixense_x64.dylib; path = ../../../../../usr/local/lib/libsixense_x64.dylib; sourceTree = "<group>"; };
+		4C46D7C616F2B93D00B5DD9E /* libsixense_utils_x64.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsixense_utils_x64.dylib; path = /usr/local/lib/libsixense_utils_x64.dylib; sourceTree = "<absolute>"; };
+		4C46D7C716F2B93D00B5DD9E /* libsixense_x64.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsixense_x64.dylib; path = /usr/local/lib/libsixense_x64.dylib; sourceTree = "<absolute>"; };
 		4C46D7CA16F2BB2900B5DD9E /* sixense_controller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sixense_controller.h; sourceTree = "<group>"; };
 		4C46D7CB16F2BB2900B5DD9E /* sixense_controller.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sixense_controller.cpp; sourceTree = "<group>"; };
 		4C4C3C081694689400D2285F /* MyWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyWindow.h; sourceTree = "<group>"; };
@@ -259,13 +268,13 @@
 		4C6411B316F4C30200132076 /* Plugin_BSPSceneManager.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = Plugin_BSPSceneManager.dylib; sourceTree = "<group>"; };
 		4C6B99FF16F4C17E00C5C725 /* IbexMacOgre.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IbexMacOgre.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C6B9A0016F4C17E00C5C725 /* IbexMacOgre-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "IbexMacOgre-Info.plist"; path = "/Users/hesh/Documents/ibex/ibex/IbexMacOgre-Info.plist"; sourceTree = "<absolute>"; };
-		4C6D8CBF16F401B100C4638B /* BulletCollision.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BulletCollision.framework; path = ../../../../../Library/Frameworks/BulletCollision.framework; sourceTree = "<group>"; };
-		4C6D8CC016F401B100C4638B /* BulletDynamics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BulletDynamics.framework; path = ../../../../../Library/Frameworks/BulletDynamics.framework; sourceTree = "<group>"; };
-		4C6D8CC116F401B100C4638B /* BulletMultiThreaded.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BulletMultiThreaded.framework; path = ../../../../../Library/Frameworks/BulletMultiThreaded.framework; sourceTree = "<group>"; };
-		4C6D8CC216F401B100C4638B /* BulletSoftBody.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BulletSoftBody.framework; path = ../../../../../Library/Frameworks/BulletSoftBody.framework; sourceTree = "<group>"; };
-		4C6D8CC316F401B100C4638B /* BulletSoftBodySolvers_OpenCL_Mini.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BulletSoftBodySolvers_OpenCL_Mini.framework; path = ../../../../../Library/Frameworks/BulletSoftBodySolvers_OpenCL_Mini.framework; sourceTree = "<group>"; };
-		4C6D8CC416F401B100C4638B /* LinearMath.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LinearMath.framework; path = ../../../../../Library/Frameworks/LinearMath.framework; sourceTree = "<group>"; };
-		4C6D8CC516F401B100C4638B /* MiniCL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MiniCL.framework; path = ../../../../../Library/Frameworks/MiniCL.framework; sourceTree = "<group>"; };
+		4C6D8CBF16F401B100C4638B /* BulletCollision.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BulletCollision.framework; path = /Library/Frameworks/BulletCollision.framework; sourceTree = "<absolute>"; };
+		4C6D8CC016F401B100C4638B /* BulletDynamics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BulletDynamics.framework; path = /Library/Frameworks/BulletDynamics.framework; sourceTree = "<absolute>"; };
+		4C6D8CC116F401B100C4638B /* BulletMultiThreaded.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BulletMultiThreaded.framework; path = /Library/Frameworks/BulletMultiThreaded.framework; sourceTree = "<absolute>"; };
+		4C6D8CC216F401B100C4638B /* BulletSoftBody.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BulletSoftBody.framework; path = /Library/Frameworks/BulletSoftBody.framework; sourceTree = "<absolute>"; };
+		4C6D8CC316F401B100C4638B /* BulletSoftBodySolvers_OpenCL_Mini.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BulletSoftBodySolvers_OpenCL_Mini.framework; path = /Library/Frameworks/BulletSoftBodySolvers_OpenCL_Mini.framework; sourceTree = "<absolute>"; };
+		4C6D8CC416F401B100C4638B /* LinearMath.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LinearMath.framework; path = /Library/Frameworks/LinearMath.framework; sourceTree = "<absolute>"; };
+		4C6D8CC516F401B100C4638B /* MiniCL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MiniCL.framework; path = /Library/Frameworks/MiniCL.framework; sourceTree = "<absolute>"; };
 		4C6F781416F4D6150089101F /* BaseApplication.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BaseApplication.cpp; sourceTree = "<group>"; };
 		4C6F781516F4D6150089101F /* BaseApplication.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseApplication.h; sourceTree = "<group>"; };
 		4C6F781616F4D6150089101F /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
@@ -330,6 +339,15 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4C0B3223171A3F4E0098F1CE /* BulletCollision.framework in Frameworks */,
+				4C0B3224171A3F4E0098F1CE /* BulletDynamics.framework in Frameworks */,
+				4C0B3225171A3F4E0098F1CE /* BulletMultiThreaded.framework in Frameworks */,
+				4C0B3226171A3F4E0098F1CE /* BulletSoftBody.framework in Frameworks */,
+				4C0B3227171A3F4E0098F1CE /* BulletSoftBodySolvers_OpenCL_Mini.framework in Frameworks */,
+				4C0B3228171A3F4E0098F1CE /* LinearMath.framework in Frameworks */,
+				4C0B3229171A3F4E0098F1CE /* MiniCL.framework in Frameworks */,
+				4C0B322A171A3F4E0098F1CE /* libsixense_utils_x64.dylib in Frameworks */,
+				4C0B322B171A3F4E0098F1CE /* libsixense_x64.dylib in Frameworks */,
 				4C0D58A616AD656A007BC9CD /* CoreFoundation.framework in Frameworks */,
 				4C0D58A716AD656A007BC9CD /* ApplicationServices.framework in Frameworks */,
 				4C0D58A816AD656A007BC9CD /* Carbon.framework in Frameworks */,
@@ -470,6 +488,26 @@
 		4CB7985B168AB41E00EF5260 = {
 			isa = PBXGroup;
 			children = (
+				4CB79870168AB41E00EF5260 /* IbexMac */,
+				4CB79869168AB41E00EF5260 /* Frameworks */,
+				4CB79867168AB41E00EF5260 /* Products */,
+				4C6B9A0016F4C17E00C5C725 /* IbexMacOgre-Info.plist */,
+			);
+			sourceTree = "<group>";
+		};
+		4CB79867168AB41E00EF5260 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				4CB79866168AB41E00EF5260 /* IbexMac.app */,
+				4C0D58B716AD656A007BC9CD /* IbexMac.app */,
+				4C6B99FF16F4C17E00C5C725 /* IbexMacOgre.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		4CB79869168AB41E00EF5260 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
 				4C6F784016F4EED80089101F /* libOIS.a */,
 				4C6F782A16F4D97B0089101F /* AGL.framework */,
 				4C6F782816F4D9650089101F /* IOKit.framework */,
@@ -494,26 +532,6 @@
 				4C6D8CC516F401B100C4638B /* MiniCL.framework */,
 				4C46D7C616F2B93D00B5DD9E /* libsixense_utils_x64.dylib */,
 				4C46D7C716F2B93D00B5DD9E /* libsixense_x64.dylib */,
-				4CB79870168AB41E00EF5260 /* IbexMac */,
-				4CB79869168AB41E00EF5260 /* Frameworks */,
-				4CB79867168AB41E00EF5260 /* Products */,
-				4C6B9A0016F4C17E00C5C725 /* IbexMacOgre-Info.plist */,
-			);
-			sourceTree = "<group>";
-		};
-		4CB79867168AB41E00EF5260 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				4CB79866168AB41E00EF5260 /* IbexMac.app */,
-				4C0D58B716AD656A007BC9CD /* IbexMac.app */,
-				4C6B99FF16F4C17E00C5C725 /* IbexMacOgre.app */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		4CB79869168AB41E00EF5260 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
 				4C006062169D38A000B88329 /* CoreFoundation.framework */,
 				4C00605F169D385100B88329 /* ApplicationServices.framework */,
 				4C76498E16965A67009CF2EC /* Carbon.framework */,
@@ -546,13 +564,13 @@
 				4CAC8D5D169347AE00341AA0 /* resources */,
 				4CAC8D43168E5F1900341AA0 /* iphone_orientation_plugin */,
 				4CAC8D511690A1C100341AA0 /* GL */,
+				4C6F781316F4D6150089101F /* ogre3d_plugin */,
 				4CB7987C168AB41E00EF5260 /* AppDelegate.h */,
 				4CB7987D168AB41E00EF5260 /* AppDelegate.mm */,
 				4C4C3C081694689400D2285F /* MyWindow.h */,
 				4C4C3C091694689400D2285F /* MyWindow.mm */,
 				4C46D7CA16F2BB2900B5DD9E /* sixense_controller.h */,
 				4C46D7CB16F2BB2900B5DD9E /* sixense_controller.cpp */,
-				4C6F781316F4D6150089101F /* ogre3d_plugin */,
 				4CF354B7168D0D5000EAA2FE /* MyOpenGLView.h */,
 				4CF354B8168D0D5000EAA2FE /* MyOpenGLView.mm */,
 				4C61AC3716F9272000F98776 /* MyOgreView.h */,
@@ -844,8 +862,13 @@
 				CODE_SIGN_ENTITLEMENTS = IbexMac/IbexMac.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = /Library/Frameworks;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "IbexMac/IbexMac-Prefix.pch";
+				HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/IbexMac",
+					"$(PROJECT_DIR)/../../bullet-2.81-rev2613/src",
+				);
 				INFOPLIST_FILE = "IbexMac/IbexMac-Info.plist";
 				PRODUCT_NAME = IbexMac;
 				WRAPPER_EXTENSION = app;
@@ -858,8 +881,13 @@
 				CODE_SIGN_ENTITLEMENTS = IbexMac/IbexMac.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = /Library/Frameworks;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "IbexMac/IbexMac-Prefix.pch";
+				HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/IbexMac",
+					"$(PROJECT_DIR)/../../bullet-2.81-rev2613/src",
+				);
 				INFOPLIST_FILE = "IbexMac/IbexMac-Info.plist";
 				PRODUCT_NAME = IbexMac;
 				WRAPPER_EXTENSION = app;

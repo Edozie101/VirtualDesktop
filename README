@@ -25,7 +25,7 @@ Disable Side-by-Side rendering: -m (for mono)
 
 Controls
 --------
-Toggle Control Desktop/Move Around World: CTRL+SHIFT+Y, Shift+F1 (Mac), CTRL+SHIFT+G (Win)
+Toggle Control Desktop/Move Around World: CTRL+SHIFT+Y, Shift+F1 or CTRL+SHIFT+G (Mac), CTRL+SHIFT+G (Win)
 Look: Move Mouse
 Move Forward: W
 Move Backwards: S
@@ -45,7 +45,8 @@ around from there.
 --
 Requirements:
 Mac:
-XCode 4.5, OSX 10.8 (Mountain Lion) - Build and run from XCode
+XCode 4.5, OSX 10.8 (Mountain Lion) - Build and run from XCode, check the project dependencies
+to find out where the bullet3d physics library and sixense SDK need to go to build properly
 
 Windows:
 Visual Studio 2013 - Build and run from Visual Studio, Rift SDK must be at same level as ibex folder and named: OculusSDK
