@@ -17,11 +17,59 @@
 #import "ibex.h"
 
 #import "ServerController.h"
+#import <IOKit/graphics/IOGraphicsLib.h>
+
+@interface NSScreen (DisplayName)
+- (NSString *)displayName;
+@end
+
+@implementation NSScreen (DisplayName)
+- (NSString *)displayName {
+    NSString *screenName = nil;
+    
+    io_service_t framebuffer = CGDisplayIOServicePort([[[self deviceDescription] objectForKey:@"NSScreenNumber"] unsignedIntValue]);
+    NSDictionary *deviceInfo = (__bridge NSDictionary *)IODisplayCreateInfoDictionary(framebuffer, kIODisplayOnlyPreferredName);
+    NSDictionary *localizedNames = [deviceInfo objectForKey:[NSString stringWithUTF8String:kDisplayProductName]];
+    
+    if ([localizedNames count] > 0) {
+        screenName = [localizedNames objectForKey:[[localizedNames allKeys] objectAtIndex:0]];
+    }
+    else {
+        screenName = @"Unknown";
+    }
+    
+    return screenName;
+}
+@end
 
 @implementation AppDelegate
 
 @synthesize pixelFormat;
 
+- (NSRect) getRiftDisplay {
+    NSArray *screenArray = [NSScreen screens];
+    for(NSScreen *screen in screenArray) {
+        NSDictionary *screenDescription = [screen deviceDescription];
+        NSLog(@"Device ID: %@", screenDescription);
+        NSLog(@"Device Name: %@", [screen displayName]);
+        if([[screen displayName] rangeOfString:@"Rift"].location != NSNotFound) {
+            return screen.frame;
+        }
+    }
+    return CGRectNull;
+}
+- (NSScreen*) getRiftScreen {
+    NSArray *screenArray = [NSScreen screens];
+    for(NSScreen *screen in screenArray) {
+        NSDictionary *screenDescription = [screen deviceDescription];
+        NSLog(@"Device ID: %@", screenDescription);
+        NSLog(@"Device Name: %@", [screen displayName]);
+        if([[screen displayName] rangeOfString:@"Rift"].location != NSNotFound) {
+            return screen;
+        }
+    }
+    return nil;
+}
 - (void) awakeFromNib {
     CGRect r;
     r.origin = CGPointMake(0,0);
@@ -30,8 +78,8 @@
     physicalWidth = r.size.width;
     physicalHeight = r.size.height;
     
-    width = r.size.width;
-    height = r.size.height;
+    width = physicalWidth;
+    height = physicalHeight;
     
     [_window setFrame:r display:YES];
     NSLog(@"%@", NSStringFromRect(r));
@@ -73,6 +121,11 @@
     [_window setAcceptsMouseMovedEvents:YES];
     [_window setMovableByWindowBackground:YES];
     [_window setExcludedFromWindowsMenu:YES];
+    
+    const CGRect rift = [self getRiftDisplay];
+    if(!CGRectIsNull(rift)) {
+        [_window setFrame:rift display:YES];
+    }
 }
 
 @end
