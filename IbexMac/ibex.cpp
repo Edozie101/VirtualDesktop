@@ -114,7 +114,11 @@ GLuint depthBuffer;
 
 GLuint desktopFBO;
 GLuint desktopTexture(0);
+#ifdef _WIN32
 bool mouseBlendAlternate(false);
+#else
+bool mouseBlendAlternate(false);
+#endif
 GLuint cursor(0);
 
 GLfloat cursorPosX(0);
@@ -386,7 +390,6 @@ void initGL()
 
   glFlush();
 }
-
 
 double relativeMouseX = 0;
 double relativeMouseY = 0;

@@ -76,8 +76,10 @@ extern "C" int _CGSDefaultConnection();
 static OSStatus hotKeyHandler(EventHandlerCallRef nextHandler,EventRef theEvent, void *userData)
 {
     MyOpenGLView *obj =  (__bridge MyOpenGLView*)userData;
+    if(!controlDesktop) {
+        CGDisplayMoveCursorToPoint(kCGDirectMainDisplay, CGPointMake(cursorPosX, physicalHeight-cursorPosY));
+    }
     controlDesktop = !controlDesktop;
-    
     [obj controlDesktopUpdate];
     
     return noErr;
@@ -98,6 +100,12 @@ static OSStatus hotKeyHandler(EventHandlerCallRef nextHandler,EventRef theEvent,
     keyID.signature = 'FOO '; //arbitrary string
     keyID.id = 1;
     RegisterEventHotKey(keyCode,/*cmdKey+*/shiftKey,keyID,GetApplicationEventTarget(),0,&theRef);
+    
+    keyCode = kVK_ANSI_G;//kVK_ANSI_R; //F19
+    theRef = NULL;
+    keyID.signature = 'FOO '; //arbitrary string
+    keyID.id = 1;
+    RegisterEventHotKey(keyCode, controlKey|shiftKey, keyID,GetApplicationEventTarget(), 0, &theRef);
 }
 - (void) unregisterHotkey {
     // release self one more time...
@@ -471,8 +479,10 @@ static CGPoint cursorPos;
     });
     
     [self getScreenshot];
-    cursorPosX = cursorPos.x;
-    cursorPosY = cursorPos.y;
+    if(controlDesktop) {
+        cursorPosX = cursorPos.x;
+        cursorPosY = cursorPos.y;
+    }
     
     if(ibex == nil) {
         ibex = new Ibex(0,nil);
