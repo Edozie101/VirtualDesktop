@@ -1,4 +1,4 @@
-Ibex - 3D Virtual Reality Desktop/Compositing Manager for X11/Linux, Windows and Mac OS
+**Ibex** 3D Virtual Reality Desktop/Compositing Manager for X11/Linux, Windows and Mac OS
 
 # About
 Ibex is a simple 3D Virtual Reality (VR) world that will allow you to have a number of virtual monitors that contain your current actual desktop.  The idea is for you to have a pretty virtual world to work in regardless of where you are
@@ -8,7 +8,7 @@ It currently supports the Rift on Windows and when the SDK is updated it will su
 
 # Home Page and Downloads
 
-http://hwahba.com/ibex
+Home page and binaries [http://hwahba.com/ibex](http://hwahba.com/ibex)
 
 ### Launch
 Default simple renderer: ./ibex  
