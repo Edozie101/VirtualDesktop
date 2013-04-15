@@ -242,14 +242,6 @@ void render_distorted_frame(const bool left, const GLuint textureId)
     glUniform1f(offsetUniform, (left)?-0.5:0.5);
     glUniform1i(textureUniform, 0);
 //    checkForErrors();
-
-//glUniform2fv(ScreenCenterUniform, 1,screenCenter);
-//glUniform2fv(LensCenterUniform, 1,eyeDistance);
-//glUniform2fv(ScaleUniform, 1, scale);
-//glUniform2fv(ScaleInUniform, 1,scaleIn);
-//glUniform4fv(HmdWarpParamUniform, 1, DistortionK);
-
-
         
     GLfloat scaleFactor = 0.8;//5.0/4.0;//1.0f;
 	GLfloat DistortionXCenterOffset;
@@ -263,17 +255,12 @@ void render_distorted_frame(const bool left, const GLuint textureId)
 	GLfloat y = 0;
 	GLfloat w = 0.5;
 	GLfloat h = 1;
-	GLfloat as = width/2.0/height;//w/h;
+	GLfloat as = width/2.0/height;
 	glUniform2f(LensCenterUniform, x + (w + DistortionXCenterOffset * 0.5f)*0.5f, y + h*0.5f);
     glUniform2f(ScreenCenterUniform, x + w*0.5f, y + h*0.5f);
     glUniform2f(ScaleUniform, (w/2.0f) * scaleFactor, (h/2.0f) * scaleFactor * as);;
     glUniform2f(ScaleInUniform, (2.0f/w), (2.0f/h) / as);
 
-	//GLfloat K0 = 1.0f;
- //   GLfloat K1 = 0.22f;
- //   GLfloat K2 = 0.24f;
- //   GLfloat K3 = 0.0f;
-	//glUniform4f(HmdWarpParamUniform, K0, K1, K2, K3);
     glUniform4fv(HmdWarpParamUniform, 1, DistortionK);
 	
 
