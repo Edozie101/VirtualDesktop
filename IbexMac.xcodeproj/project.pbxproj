@@ -18,6 +18,8 @@
 		4C0B3229171A3F4E0098F1CE /* MiniCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6D8CC516F401B100C4638B /* MiniCL.framework */; };
 		4C0B322A171A3F4E0098F1CE /* libsixense_utils_x64.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C46D7C616F2B93D00B5DD9E /* libsixense_utils_x64.dylib */; };
 		4C0B322B171A3F4E0098F1CE /* libsixense_x64.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C46D7C716F2B93D00B5DD9E /* libsixense_x64.dylib */; };
+		4C0BAB93171B5600001CDC55 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6F782816F4D9650089101F /* IOKit.framework */; };
+		4C0BAB94171B5606001CDC55 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6F782816F4D9650089101F /* IOKit.framework */; };
 		4C0D589616AD656A007BC9CD /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CB79876168AB41E00EF5260 /* main.m */; };
 		4C0D589716AD656A007BC9CD /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4CB7987D168AB41E00EF5260 /* AppDelegate.mm */; };
 		4C0D589816AD656A007BC9CD /* ScreenGrabber.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C2DE2FE168B30CC003BEB56 /* ScreenGrabber.m */; };
@@ -339,6 +341,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4C0BAB94171B5606001CDC55 /* IOKit.framework in Frameworks */,
 				4C0B3223171A3F4E0098F1CE /* BulletCollision.framework in Frameworks */,
 				4C0B3224171A3F4E0098F1CE /* BulletDynamics.framework in Frameworks */,
 				4C0B3225171A3F4E0098F1CE /* BulletMultiThreaded.framework in Frameworks */,
@@ -363,6 +366,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4C6F782916F4D9650089101F /* IOKit.framework in Frameworks */,
 				4C6F784116F4EED80089101F /* libOIS.a in Frameworks */,
 				4C6411A316F4C23100132076 /* Ogre.framework in Frameworks */,
 				4CB8423016FD7FD7009B3DDE /* RenderSystem_GL.dylib in Frameworks */,
@@ -382,7 +386,6 @@
 				4C6B99F316F4C17E00C5C725 /* GLUT.framework in Frameworks */,
 				4C6F782B16F4D97B0089101F /* AGL.framework in Frameworks */,
 				4C6B99F216F4C17E00C5C725 /* CoreVideo.framework in Frameworks */,
-				4C6F782916F4D9650089101F /* IOKit.framework in Frameworks */,
 				4C6B99F416F4C17E00C5C725 /* OpenGL.framework in Frameworks */,
 				4C6B99EE16F4C17E00C5C725 /* CoreFoundation.framework in Frameworks */,
 				4C6B99EF16F4C17E00C5C725 /* ApplicationServices.framework in Frameworks */,
@@ -396,6 +399,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4C0BAB93171B5600001CDC55 /* IOKit.framework in Frameworks */,
 				4C6D8CC616F401B100C4638B /* BulletCollision.framework in Frameworks */,
 				4C6D8CC716F401B100C4638B /* BulletDynamics.framework in Frameworks */,
 				4C6D8CC816F401B100C4638B /* BulletMultiThreaded.framework in Frameworks */,

@@ -179,11 +179,15 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
 #else
         gluInvertMatrix(get_orientation(), orientation);    
 #endif
+    if (USE_FBO) {
+        glBindFramebuffer(GL_FRAMEBUFFER, fbos[0]);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    }
   for (int i2 = 0; i2 < 2; ++i2) {
 //      checkForErrors();
     if (USE_FBO) {
       //glBindFramebuffer(GL_FRAMEBUFFER, fbos[i2]);
-		glBindFramebuffer(GL_FRAMEBUFFER, fbos[0]);
+		//glBindFramebuffer(GL_FRAMEBUFFER, fbos[0]);
       if (!checkForErrors()) {
         std::cerr << "GL ISSUE" << std::endl;
         exit(EXIT_FAILURE);
@@ -194,7 +198,7 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
         break;
     }
 
-	glEnable (GL_SCISSOR_TEST);
+	//glEnable (GL_SCISSOR_TEST);
 	if(i2 == 0) {
 		glViewport(0,0, textureWidth/2.0, textureHeight);
 	} else {
@@ -213,8 +217,8 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glDisable(GL_SCISSOR_TEST);
+    //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	//glDisable(GL_SCISSOR_TEST);
 
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, 0);

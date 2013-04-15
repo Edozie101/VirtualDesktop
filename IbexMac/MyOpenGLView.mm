@@ -206,7 +206,7 @@ static bool done = 0;
                                           );
         
         CGImageRef img = CGWindowListCreateImageFromArray(
-                                                          CGRectInfinite,
+                                                          CGRectMake(0,0,physicalWidth,physicalHeight),//CGRectInfinite,
                                                           a,
                                                           kCGWindowImageDefault
                                                           );
