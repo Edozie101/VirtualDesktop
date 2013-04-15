@@ -17,7 +17,7 @@ varying vec2 texcoord;
 vec2 HmdWarp(vec2 texIn) 
 { 
    vec2  theta  = (texIn - LensCenter) * ScaleIn;
-   float rSq    = length(theta);
+   float rSq = dot(theta,theta);
    vec2  theta1 = theta * (HmdWarpParam.x + HmdWarpParam.y * rSq + HmdWarpParam.z * rSq * rSq + HmdWarpParam.w * rSq * rSq * rSq);
    
    return LensCenter + Scale * theta1;
