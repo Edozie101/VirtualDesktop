@@ -556,6 +556,7 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	GetDesktopResolution(mainScreenHorizontal, mainScreenVertical);
 
 	initRift();
+	FusionResult.Reset();
 
 	width = 1280;
 	height = 800;
