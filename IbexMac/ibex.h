@@ -28,6 +28,7 @@ extern HMDInfo				Info;
 
 extern bool					InfoLoaded;
 extern bool					riftConnected;
+extern bool                 lensParametersChanged;
 
 typedef unsigned int Display;
 typedef unsigned int XVisualInfo;

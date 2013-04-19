@@ -25,7 +25,7 @@
 
 #include "ibex.h"
 
-#import <OpenGL/OpenGL.h>
+//#import <OpenGL/OpenGL.h>
 
 #include <ApplicationServices/ApplicationServices.h>
 
@@ -523,6 +523,14 @@ static CGPoint cursorPos;
             strafeRight = 1;
             break;
         case kVK_Space:
+            break;
+        case kVK_ANSI_Minus:
+            IOD -= 0.0005;
+            lensParametersChanged = true;
+            break;
+        case kVK_ANSI_Equal:
+            IOD += 0.0005;
+            lensParametersChanged = true;
             break;
     }
 }

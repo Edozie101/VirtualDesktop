@@ -23,6 +23,7 @@
 #include "ibex_mac_utils.h"
 #endif
 
+bool lensParametersChanged = true;
 static GLuint lensFBO;
 static GLuint lensTexture;
 
@@ -421,7 +422,6 @@ void render_distortion_lens(const bool left, const GLuint textureId)
     glUseProgram(0);
 }
 
-static bool lensParametersChanged = true;
 void render_distortion_lenses() {
     if(!lensParametersChanged) return;
     lensParametersChanged = false;
