@@ -144,10 +144,10 @@ GLfloat physicalHeight = 900.0;
 
 GLfloat width = 1440.0;
 GLfloat height = 900.0;
-GLfloat textureWidth = 1440.0*2;
-GLfloat textureHeight = 900.0*2;
-GLfloat windowWidth = 1280;
-GLfloat windowHeight = 800;
+GLfloat textureWidth = 1280*1.4;//1440.0*2;
+GLfloat textureHeight = 800*1.4;//900.0*2;
+GLfloat windowWidth = 1440;//1280;
+GLfloat windowHeight = 900;//800;
 
 double IOD = 0.1715; // at scale 0.8 // 0.136; at scale 1.0
 //double IOD = 0.136; // at scale 1.0
@@ -336,6 +336,11 @@ void renderGL(Desktop3DLocation& loc, double timeDiff_)
           bool success = init_distortion_shader();
           if (!success) {
               std::cerr << "Failed to init distortion shader!" << std::endl;
+              exit(1);
+          }
+          success = init_distortion_shader_cache();
+          if (!success) {
+              std::cerr << "Failed to init distortion shader cache!" << std::endl;
               exit(1);
           }
 

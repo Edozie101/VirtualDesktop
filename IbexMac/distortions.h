@@ -48,4 +48,7 @@ extern GLfloat DistortionK[4];
 int init_distortion_shader();
 void render_distorted_frame(const bool left, const GLuint textureId);
 
+int init_distortion_shader_cache();
+void render_distortion_lenses();
+
 #endif /* DISTORTIONS_H_ */

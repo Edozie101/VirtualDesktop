@@ -23,6 +23,9 @@
 #include "ibex_mac_utils.h"
 #endif
 
+static GLuint lensFBO;
+static GLuint lensTexture;
+
 typedef struct {
     GLuint vertex_shader, fragment_shader, program;
 
@@ -39,6 +42,7 @@ typedef struct {
 } glsl_shader;
 
 static glsl_shader distortion_shader;
+static glsl_shader distortion_shader_cache;
 
 static void show_info_log(
     GLuint object,
@@ -84,8 +88,8 @@ static GLuint make_shader(GLenum type, const char *filename)
 GLuint program;
 GLuint a_position;
 GLuint a_texCoord;
-GLuint offsetUniform;
 GLuint textureUniform;
+GLuint lensTextureUniform;
 
 GLuint ScreenCenterUniform;
 GLuint LensCenterUniform;
@@ -100,12 +104,12 @@ GLfloat DistortionK[4] = {1.00000000, 0.219999999, 0.239999995, 0.000000000};
 static GLuint make_program(GLuint vertex_shader, GLuint fragment_shader)
 {
     GLint program_ok;
-
+    
     program = glCreateProgram();
     glAttachShader(program, vertex_shader);
     glAttachShader(program, fragment_shader);
     glLinkProgram(program);
-
+    
     glGetProgramiv(program, GL_LINK_STATUS, &program_ok);
     if (!program_ok) {
         fprintf(stderr, "Failed to link shader program:\n");
@@ -113,20 +117,44 @@ static GLuint make_program(GLuint vertex_shader, GLuint fragment_shader)
         glDeleteProgram(program);
         return 0;
     }
-
+    
     a_position = glGetAttribLocation(program, "a_position");
     a_texCoord = glGetAttribLocation(program, "a_texCoord");
-
-    offsetUniform = glGetUniformLocation(program, "offsetUniform");
-
+    
     textureUniform = glGetUniformLocation(program, "texture");
+    glUniform1i(textureUniform, 0);
+    lensTextureUniform = glGetUniformLocation(program, "lensTexture");
+    glUniform1i(lensTextureUniform, 1);
+    
+    return program;
+}
 
-LensCenterUniform = glGetUniformLocation(program, "LensCenter");
-ScreenCenterUniform = glGetUniformLocation(program, "ScreenCenter");
-ScaleUniform = glGetUniformLocation(program, "Scale");
-ScaleInUniform = glGetUniformLocation(program, "ScaleIn");
-HmdWarpParamUniform = glGetUniformLocation(program, "HmdWarpParam");
-
+static GLuint make_program_lens(GLuint vertex_shader, GLuint fragment_shader)
+{
+    GLint program_ok;
+    
+    program = glCreateProgram();
+    glAttachShader(program, vertex_shader);
+    glAttachShader(program, fragment_shader);
+    glLinkProgram(program);
+    
+    glGetProgramiv(program, GL_LINK_STATUS, &program_ok);
+    if (!program_ok) {
+        fprintf(stderr, "Failed to link shader program:\n");
+        show_info_log(program, glGetProgramiv, glGetProgramInfoLog);
+        glDeleteProgram(program);
+        return 0;
+    }
+    
+    a_position = glGetAttribLocation(program, "a_position");
+    a_texCoord = glGetAttribLocation(program, "a_texCoord");
+    
+    LensCenterUniform = glGetUniformLocation(program, "LensCenter");
+    ScreenCenterUniform = glGetUniformLocation(program, "ScreenCenter");
+    ScaleUniform = glGetUniformLocation(program, "Scale");
+    ScaleInUniform = glGetUniformLocation(program, "ScaleIn");
+    HmdWarpParamUniform = glGetUniformLocation(program, "HmdWarpParam");
+    
     return program;
 }
 
@@ -219,80 +247,31 @@ int setup_buffers() {
 
 void render_distorted_frame(const bool left, const GLuint textureId)
 {
-//    std::cerr << "render_distorted_frame start" << std::endl;
-//    checkForErrors();
-//        std::cerr << "render_distorted_frame0" << std::endl;
     glUseProgram(distortion_shader.program);
-//    checkForErrors();
-    
-//            std::cerr << "render_distorted_frame1, vao1: " << vao1 << std::endl;
 
 	if(left)
 		glBindVertexArrayAPPLE(vao1);
 	else
 		glBindVertexArrayAPPLE(vao2);
-//    checkForErrors();
-    
-//            std::cerr << "render_distorted_frame2" << std::endl;
 
-//    glActiveTexture(GL_TEXTURE0);
-    
-//    checkForErrors();
-//    std::cerr << "render_distorted_frame22" << std::endl;
-    glBindTexture(GL_TEXTURE_2D, textureId);
-    
-//    checkForErrors();
-//    std::cerr << "render_distorted_frame3" << std::endl;
-    glUniform1f(offsetUniform, (left)?-0.5:0.5);
+    glActiveTexture(GL_TEXTURE0);
     glUniform1i(textureUniform, 0);
-//    checkForErrors();
-
-//glUniform2fv(ScreenCenterUniform, 1,screenCenter);
-//glUniform2fv(LensCenterUniform, 1,eyeDistance);
-//glUniform2fv(ScaleUniform, 1, scale);
-//glUniform2fv(ScaleInUniform, 1,scaleIn);
-//glUniform4fv(HmdWarpParamUniform, 1, DistortionK);
-
-
-        
-    GLfloat scaleFactor = 0.8;//5.0/4.0;//1.0f;
-	GLfloat DistortionXCenterOffset;
-    if (left) {
-        DistortionXCenterOffset = 0.25f;
-    }
-    else {
-        DistortionXCenterOffset = -0.25f;
-    }
-	GLfloat x = (left) ? 0 : 0.5;
-	GLfloat y = 0;
-	GLfloat w = 0.5;
-	GLfloat h = 1;
-	GLfloat as = width/2.0/height;//w/h;
-	glUniform2f(LensCenterUniform, x + (w + DistortionXCenterOffset * 0.5f)*0.5f, y + h*0.5f);
-    glUniform2f(ScreenCenterUniform, x + w*0.5f, y + h*0.5f);
-    glUniform2f(ScaleUniform, (w/2.0f) * scaleFactor, (h/2.0f) * scaleFactor * as);;
-    glUniform2f(ScaleInUniform, (2.0f/w), (2.0f/h) / as);
-
-	//GLfloat K0 = 1.0f;
- //   GLfloat K1 = 0.22f;
- //   GLfloat K2 = 0.24f;
- //   GLfloat K3 = 0.0f;
-	//glUniform4f(HmdWarpParamUniform, K0, K1, K2, K3);
-    glUniform4fv(HmdWarpParamUniform, 1, DistortionK);
-	
-
+    glBindTexture(GL_TEXTURE_2D, textureId);
+    glActiveTexture(GL_TEXTURE1);
+    glUniform1i(lensTextureUniform, 1);
+    glBindTexture(GL_TEXTURE_2D, lensTexture);
+//    
+//    glUniform1i(textureUniform, 0);
 
     glDrawElements(GL_TRIANGLES, sizeof(indices)/sizeof(indices[0]), GL_UNSIGNED_SHORT, 0);
-//    checkForErrors();
-
+    
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, 0);
     glBindVertexArrayAPPLE(0);
 
     glUseProgram(0);
-    
-//    std::cerr << "render_distorted_frame cleanup" << std::endl;
-//    checkForErrors();
-//    std::cerr << "render_distorted_frame done" << std::endl;
 }
 
 int init_distortion_shader()
@@ -330,7 +309,130 @@ int init_distortion_shader()
               return 0;
           }
         }
-        std::cerr << "initi_distortion_shader: success" << std::endl;
+        std::cerr << "init_distortion_shader: success" << std::endl;
 
         return 1;
+}
+
+//--------------
+bool setup_lens_fbo() {
+    glGenFramebuffers(1, &lensFBO);
+    glGenTextures(1, &lensTexture);
+    
+    glBindFramebuffer(GL_FRAMEBUFFER, lensFBO);
+    glBindTexture(GL_TEXTURE_2D, lensTexture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RG16F, width, height,0,//textureWidth, textureHeight, 0,
+                 GL_RG, GL_FLOAT, 0);
+    glFramebufferTexture2D (GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                            GL_TEXTURE_2D, lensTexture, 0);
+    if (!checkForErrors()) {
+        std::cerr << "Stage 1 - Problem generating lens FBO" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+    
+    std::cout << "Generating lens FBO" << std::endl;
+    std::cout << "FBO: " << textureWidth << "x" << textureHeight << std::endl;
+    
+    if (!checkForErrors() ||
+        glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+        std::cerr << "Stage 2 - Problem generating lens FBO " << std::endl;
+        exit(EXIT_FAILURE);
+    }
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    
+    return 1;
+}
+
+int init_distortion_shader_cache()
+{
+    char path[2048];
+    strcpy(path, mResourcePath);
+    strcat(path, "/resources/shaders/distortions.v.glsl");
+    distortion_shader_cache.vertex_shader = make_shader(
+                                                  GL_VERTEX_SHADER,
+                                                  path
+                                                  );
+    if (distortion_shader_cache.vertex_shader == 0)
+        return 0;
+    
+    strcpy(path, mResourcePath);
+    strcat(path, "/resources/shaders/distortions_cache.f.glsl");
+    distortion_shader_cache.fragment_shader = make_shader(
+                                                    GL_FRAGMENT_SHADER,
+                                                    path
+                                                    );
+    if (distortion_shader_cache.fragment_shader == 0)
+        return 0;
+    
+    distortion_shader_cache.program = make_program_lens(
+                                             distortion_shader_cache.vertex_shader,
+                                             distortion_shader_cache.fragment_shader
+                                             );
+    if (distortion_shader_cache.program == 0)
+        return 0;
+    
+    if(!IRRLICHT && !OGRE3D) {
+        bool success = setup_lens_fbo();
+        if(!success) {
+            std::cerr << "init_distortion_shader: failure" << std::endl;
+            return 0;
+        }
+    }
+    std::cerr << "init_distortion_cache_shader: success" << std::endl;
+    
+    return 1;
+}
+
+void render_distortion_lens(const bool left, const GLuint textureId)
+{
+    glUseProgram(distortion_shader_cache.program);
+    
+	if(left)
+		glBindVertexArrayAPPLE(vao1);
+	else
+		glBindVertexArrayAPPLE(vao2);
+    
+    GLfloat scaleFactor = 0.8;//5.0/4.0;//1.0f;
+	GLfloat DistortionXCenterOffset;
+    if (left) {
+        DistortionXCenterOffset = 0.25f;
+    }
+    else {
+        DistortionXCenterOffset = -0.25f;
+    }
+	GLfloat x = (left) ? 0 : 0.5;
+	GLfloat y = 0;
+	GLfloat w = 0.5;
+	GLfloat h = 1;
+	GLfloat as = width/2.0/height;
+	glUniform2f(LensCenterUniform, x + (w + DistortionXCenterOffset * 0.5f)*0.5f, y + h*0.5f);
+    glUniform2f(ScreenCenterUniform, x + w*0.5f, y + h*0.5f);
+    glUniform2f(ScaleUniform, (w/2.0f) * scaleFactor, (h/2.0f) * scaleFactor * as);;
+    glUniform2f(ScaleInUniform, (2.0f/w), (2.0f/h) / as);
+    glUniform4fv(HmdWarpParamUniform, 1, DistortionK);
+	
+    glDrawElements(GL_TRIANGLES, sizeof(indices)/sizeof(indices[0]), GL_UNSIGNED_SHORT, 0);
+    
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glBindVertexArrayAPPLE(0);
+    
+    glUseProgram(0);
+}
+
+static bool lensParametersChanged = true;
+void render_distortion_lenses() {
+    if(!lensParametersChanged) return;
+    lensParametersChanged = false;
+    
+    glBindFramebuffer(GL_FRAMEBUFFER, lensFBO);
+    glClearColor(0,0,0,0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    
+    render_distortion_lens(true, lensTexture);
+    render_distortion_lens(false, lensTexture);
+ 
+    glClearColor(0,0,0,1);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }

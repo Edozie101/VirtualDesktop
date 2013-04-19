@@ -124,6 +124,14 @@
     
     const CGRect rift = [self getRiftDisplay];
     if(!CGRectIsNull(rift)) {
+        width = rift.size.width;
+        height = rift.size.height;
+        
+        windowWidth = width;
+        windowHeight = height;
+        textureWidth = width*2;
+        textureHeight = height*2;
+        
         [_window setFrame:rift display:YES];
     }
 }

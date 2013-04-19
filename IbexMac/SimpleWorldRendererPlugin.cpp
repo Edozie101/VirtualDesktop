@@ -349,12 +349,12 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
     }
   }
 
-  glViewport(0,0, windowWidth, windowHeight);
+    glViewport(0,0, windowWidth, windowHeight);
   if (USE_FBO) {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glClearColor(0, 0, 0, 1);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glColor4f(1, 1, 1, 1);
+//    glClearColor(0, 0, 0, 1);
+//    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+//    glColor4f(1, 1, 1, 1);
 
     if (ortho) {
       glMatrixMode(GL_PROJECTION);
@@ -365,6 +365,8 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
     }
       
     if(barrelDistort) {
+        render_distortion_lenses();
+        
         render_distorted_frame(true, textures[0]);
         render_distorted_frame(false, textures[0]);//1]);
     } else {
