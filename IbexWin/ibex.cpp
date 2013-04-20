@@ -9,7 +9,9 @@
 // --- Standard library ------------------------------------------------------
 #include <stdlib.h>
 #include <ctype.h>
-//#include <unistd.h>
+#ifndef _WIN32
+#include <unistd.h>
+#endif
 #include <time.h>
 #include <cstdio>
 #include <cmath>
@@ -83,7 +85,6 @@
 
 RendererPlugin *renderer;
 
-
 GLfloat top, bottom;
 
 // TODO: get rid of global variables
@@ -107,7 +108,11 @@ GLuint depthBuffer;
 
 GLuint desktopFBO;
 GLuint desktopTexture(0);
+#ifdef _WIN32
 bool mouseBlendAlternate(false);
+#else
+bool mouseBlendAlternate(false);
+#endif
 GLuint cursor(0);
 
 GLfloat cursorPosX(0);
@@ -132,10 +137,10 @@ GLfloat physicalHeight = 900.0;
 
 GLfloat width = 1440.0;
 GLfloat height = 900.0;
-GLfloat textureWidth = 1440.0*2;
-GLfloat textureHeight = 900.0*2;
-GLfloat windowWidth = 1280;
-GLfloat windowHeight = 800;
+GLfloat textureWidth = 1280*1.4;//1440.0*2;
+GLfloat textureHeight = 800*1.4;//900.0*2;
+GLfloat windowWidth = 1440;//1280;
+GLfloat windowHeight = 900;//800;
 
 double IOD = 0.1715; // at scale 0.8 // 0.136; at scale 1.0
 //double IOD = 0.136; // at scale 1.0
@@ -319,14 +324,21 @@ void renderGL(Desktop3DLocation& loc, double timeDiff_)
         exit(1);
       }
 //    }
+      
+      if(!OGRE3D) {
+          bool success = init_distortion_shader();
+          if (!success) {
+              std::cerr << "Failed to init distortion shader!" << std::endl;
+              exit(1);
+          }
+          success = init_distortion_shader_cache();
+          if (!success) {
+              std::cerr << "Failed to init distortion shader cache!" << std::endl;
+              exit(1);
+          }
 
-    bool success = init_distortion_shader();
-    if (!success) {
-      std::cerr << "Failed to init distortion shader!" << std::endl;
-      exit(1);
-    }
-
-      if (USE_FBO) prep_framebuffers();
+          if (USE_FBO) prep_framebuffers();
+      }
   }
 
   renderer->step(loc, timeDiff_);
@@ -377,7 +389,6 @@ void initGL()
   glFlush();
 }
 
-
 double relativeMouseX = 0;
 double relativeMouseY = 0;
 
@@ -412,13 +423,23 @@ Ibex::Ibex(int argc, char ** argv) {
     
     std::cerr << "Virtual width: " << width << " height: " << height << std::endl;
     
-    initGL();
+    if(!OGRE3D)
+        initGL();
+    
+    setup_iphone_listener();
     
     if(OGRE3D) {
 #ifdef ENABLE_OGRE3D
-        createWindow(dpy, root);
-        renderer = new Ogre3DRendererPlugin(dpy, screen, window, visinfo, (unsigned long)context);
+//        unsigned long root = 0;
+        unsigned long screen = 0;
+        unsigned int visinfo = 0;
+        unsigned int dpy2 = 0;
+//        createWindow(dpy, root);
+        renderer = new Ogre3DRendererPlugin(&dpy2, screen, window, &visinfo, (unsigned long)context);
         renderer->init();
+        renderer->processEvents();
+        return;
+        
 #endif
     } else if(IRRLICHT) {
 #ifdef ENABLE_IRRLICHT
@@ -443,8 +464,6 @@ Ibex::Ibex(int argc, char ** argv) {
         window = renderer->getWindowID();
     }
     
-    
-    setup_iphone_listener();
     std::cerr << "dpy: " << dpy << ", display: " << display << ", " << window << std::endl;
 }
 
@@ -485,6 +504,5 @@ void Ibex::render(double timeDiff) {
     renderer->processEvents();
     
     renderGL(desktop3DLocation, timeDiff);
-    
 //    ts_start = ts_current;
 }

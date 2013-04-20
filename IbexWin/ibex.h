@@ -15,6 +15,7 @@
 
 #include <time.h>
 
+#ifdef _WIN32
 #include "OVR.h"
 using namespace OVR;
 
@@ -23,8 +24,11 @@ extern Ptr<HMDDevice>		pHMD;
 extern Ptr<SensorDevice>	pSensor;
 extern SensorFusion			FusionResult;
 extern HMDInfo				Info;
+#endif
+
 extern bool					InfoLoaded;
 extern bool					riftConnected;
+extern bool                 lensParametersChanged;
 
 typedef unsigned int Display;
 typedef bool Bool;
@@ -79,7 +83,7 @@ class Desktop3DLocation
 public:
   // Prevent unforeseen copying
   explicit Desktop3DLocation()
-    : WALK_SPEED(0.2),//05),
+    : WALK_SPEED(0.2),//1),
       m_xRotation(0.0), m_yRotation(0.0), m_zRotation(0.0),
       m_xPosition(0.0), m_yPosition(0.0), m_zPosition(0.0) {};
   // Class not intended for inheritence

@@ -107,10 +107,12 @@ void Keyboard(unsigned char key, int x, int y)
   case '=':
   case '+':
 	  IOD += 0.0005;
+	  lensParametersChanged = true;
 	  break;
   case '-':
   case '_':
 	  IOD -= 0.0005;
+	  lensParametersChanged = true;
 	  break;
   }
 }
@@ -369,23 +371,22 @@ void loopScreenshot() {
 	wglMakeCurrent(hdc, loaderContext);
 	while(1) {
 		screenshotCondition.wait(screenshotLock);
-
-		//static double timeprev = glutGet(GLUT_ELAPSED_TIME);
-		//double time = glutGet(GLUT_ELAPSED_TIME);
-		//double timeDiff = (time - timeprev)/1000.0;
-		//timeprev = time;
-
-		//static double timebase = glutGet(GLUT_ELAPSED_TIME);
-		//static double frame = 0;
-		//++frame;
-		//static char fpsString[64];
-		//if (time - timebase >= 5000.0) {
-		//	sprintf(fpsString,"FPS:%4.2f", frame*5000.0/(time-timebase));
-		//	timebase = time;
-		//	frame = 0;
-		//}
-
 		getScreenshot();
+
+		static double timeprev = glutGet(GLUT_ELAPSED_TIME);
+		const double time = glutGet(GLUT_ELAPSED_TIME);
+		timeprev = time;
+
+		static double timebase = glutGet(GLUT_ELAPSED_TIME);
+		static double frame = 0;
+		++frame;
+		static char fpsString[64];
+		if (time - timebase >= 5000.0) {
+			sprintf(fpsString,"FPS:%4.2f", frame*5000.0/(time-timebase));
+			std::cerr << "Capture " << fpsString << std::endl;
+			timebase = time;
+			frame = 0;
+		}
 	}
 }
 
@@ -397,15 +398,18 @@ static void RenderSceneCB()
 	double timeDiff = (time - timeprev)/1000.0;
 	timeprev = time;
 
-	//static double timebase = glutGet(GLUT_ELAPSED_TIME);
-	//static double frame = 0;
-	//++frame;
-	//static char fpsString[64];
-	//if (time - timebase >= 5000.0) {
-	//	sprintf(fpsString,"FPS:%4.2f", frame*5000.0/(time-timebase));
-	//	timebase = time;
-	//	frame = 0;
-	//}
+#ifdef _DEBUG
+	static double timebase = glutGet(GLUT_ELAPSED_TIME);
+	static double frame = 0;
+	++frame;
+	static char fpsString[64];
+	if (time - timebase >= 5000.0) {
+		sprintf(fpsString,"FPS:%4.2f", frame*5000.0/(time-timebase));
+		std::cerr << fpsString << std::endl;
+		timebase = time;
+		frame = 0;
+	}
+#endif
 
 	if(modifiedDesktop) {
 		modifiedDesktop = false;
@@ -591,13 +595,16 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	windowWidth = 1280;
 	windowHeight = 800;
 	if(riftConnected) {
-		width = riftResolutionX;
-		height = riftResolutionY;
+        width = riftResolutionX;
+        height = riftResolutionY;
+        
+        windowWidth = width;
+        windowHeight = height;
 	}
 	physicalWidth = mainScreenHorizontal;//1280;//1920;//(false) ? 1920 : width;
 	physicalHeight = mainScreenVertical;//800;//1080;//(false) ? 1080 : height;
-	textureWidth = width*2.0;
-	textureHeight = width*2.0;
+	textureWidth = width*1.4;
+	textureHeight = width*1.4;
 
 	controlDesktop = 0;
 	modifiedDesktop = true;
