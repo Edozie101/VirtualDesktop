@@ -284,7 +284,7 @@ int CaptureAnImage(HWND hWnd)
                rcClient.right-rcClient.left, rcClient.bottom-rcClient.top, 
                hdcWindow, 
                0,0,
-               SRCCOPY))
+               SRCCOPY | CAPTUREBLT))
     {
         MessageBox(hWnd, L"BitBlt has failed", L"Failed", MB_OK);
         goto done;
