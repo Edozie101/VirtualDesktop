@@ -4,11 +4,17 @@
 #include "stdafx.h"
 #include "IbexWinNative.h"
 
+// add if you will call: dwmapi.lib
+// #include <Dwmapi.h>
+
 #include <condition_variable>
 #include <iostream>
 #include <string>
 #include <thread>
 #include <mutex>
+
+#include "guicon.h"
+#include <crtdbg.h>
 
 #define MAX_LOADSTRING 100
 
@@ -41,6 +47,7 @@ typedef unsigned long GLXContext;
 #include <GL/freeglut.h>
 
 #include "ibex_win_utils.h"
+#include "opengl_helpers.h"
 
 typedef unsigned long Window;
 typedef unsigned long GLXContext;
@@ -427,6 +434,7 @@ static void RenderSceneCB()
 	}
 
     ibex->render(timeDiff);
+	checkForErrors();
 
 	glutSwapBuffers();
 	glutPostRedisplay();
@@ -546,11 +554,31 @@ void GetDesktopResolution(int& horizontal, int& vertical)
    vertical = desktop.bottom-desktop.top;
 }
 
+// add if you will call: dwmapi.lib
+//BOOL IsAeroActive()
+//{
+//    // Check if Aero is enabled;
+//	BOOL enabled = FALSE;
+//    if (DwmIsCompositionEnabled(&enabled) == S_OK)
+//    {
+//        return enabled;
+//    }
+//    else
+//    {
+//        return false;
+//    }
+//}
+
+
 int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
                      _In_ LPTSTR    lpCmdLine,
                      _In_ int       nCmdShow)
 {
+	#ifdef _DEBUG
+	RedirectIOToConsole();
+	#endif
+
 	int mainScreenHorizontal = 0;
 	int mainScreenVertical = 0;
 	GetDesktopResolution(mainScreenHorizontal, mainScreenVertical);
@@ -597,6 +625,7 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
       return 1;
     }
 
+
 	hwnd = GetActiveWindow();
 	hdc = GetDC(hwnd);
 	HGLRC mainContext = wglGetCurrentContext();
@@ -607,7 +636,27 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	std::thread screenshotThread(loopScreenshot);
 	std::thread hotkeyThread(globalHotkeyListener);
 
-	SetWindowLong(hwnd, GWL_EXSTYLE, WS_EX_LAYERED);
+	// add if you will call: dwmapi.lib
+	//if(IsAeroActive()) 
+	//{
+		//SetWindowLong(hwnd, GWL_EXSTYLE, GetWindowLong(hwnd, GWL_EXSTYLE) | WS_EX_LAYERED);
+		//SetLayeredWindowAttributes(hwnd, 0, 255, LWA_ALPHA);
+
+		//	HDC hdcBuffer = CreateCompatibleDC(hdc);
+		//	POINT ptZero = {0, 0};
+		//POINT ptDrawPos = {0, 0};
+		//RECT rctCyauWnd;
+		//GetWindowRect(hwnd, &rctCyauWnd);
+		//SIZE szCyauWnd={rctCyauWnd.right - rctCyauWnd.left, rctCyauWnd.bottom - rctCyauWnd.top};
+		//BLENDFUNCTION blendPixelFunction = { AC_SRC_OVER, 0, 100, AC_SRC_ALPHA};
+		//	UpdateLayeredWindow(hwnd,
+		//    hdc, &ptZero,
+		//    &szCyauWnd,
+		//    hdcBuffer, &ptZero,
+		//    0, //RGB(255, 255, 255),
+		//    &blendPixelFunction,
+		//    ULW_ALPHA);
+	//}
 
     glutMainLoop();
 
