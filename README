@@ -49,7 +49,7 @@ XCode 4.5, OSX 10.8 (Mountain Lion) - Build and run from XCode, check the projec
 to find out where the bullet3d physics library and sixense SDK need to go to build properly
 
 Windows:
-Visual Studio 2013 - Build and run from Visual Studio, Rift SDK must be at same level as ibex folder and named: OculusSDK
+Visual Studio 2012 - Build and run from Visual Studio, Rift SDK must be at same level as ibex folder and named: OculusSDK
 
 Linux:
 Setting up my Ubuntu 12.10 install:
