@@ -171,12 +171,13 @@ double *getRiftOrientation() {
 #endif
 
 void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDiff_) {
-  static const GLuint groundTexture = loadTexture("/resources/humus-skybox/negy.jpg");
-
-        double orientation[16];
 #ifdef _WIN32
+		static const GLuint groundTexture = loadTexture("\\resources\\humus-skybox\\negy.jpg");
+		double *orientation;
         orientation = getRiftOrientation();
 #else
+		static const GLuint groundTexture = loadTexture("/resources/humus-skybox/negy.jpg");
+		double orientation[16];
         gluInvertMatrix(get_orientation(), orientation);    
 #endif
     if (USE_FBO) {
@@ -352,9 +353,9 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
     glViewport(0,0, windowWidth, windowHeight);
   if (USE_FBO) {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-//    glClearColor(0, 0, 0, 1);
-//    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-//    glColor4f(1, 1, 1, 1);
+    glClearColor(0, 0, 0, 1);
+    glClear(/*GL_COLOR_BUFFER_BIT | */GL_DEPTH_BUFFER_BIT);
+    glColor4f(1, 1, 1, 1);
 
     if (ortho) {
       glMatrixMode(GL_PROJECTION);

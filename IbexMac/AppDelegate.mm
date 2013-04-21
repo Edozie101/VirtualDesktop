@@ -129,8 +129,8 @@
         
         windowWidth = width;
         windowHeight = height;
-        textureWidth = width*2;
-        textureHeight = height*2;
+        textureWidth = width*1.4;
+        textureHeight = height*1.4;
         
         [_window setFrame:rift display:YES];
     }
