@@ -120,6 +120,7 @@ bool mouseBlendAlternate(false);
 bool mouseBlendAlternate(false);
 #endif
 GLuint cursor(0);
+int cursorSize = 32;
 
 GLfloat cursorPosX(0);
 GLfloat cursorPosY(0);

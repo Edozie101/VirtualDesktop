@@ -335,7 +335,7 @@ static bool done = 0;
 	// You don't need the context at this point, so you need to release it to avoid memory leaks.
 	CGContextRelease(spriteContext);
 	
-    glEnable(GL_TEXTURE_2D);
+//    glEnable(GL_TEXTURE_2D);
     glPixelStorei(GL_UNPACK_ROW_LENGTH, (GLint)texW);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     glPixelStorei(GL_PACK_ALIGNMENT, 1);
@@ -345,7 +345,7 @@ static bool done = 0;
         // Bind the texture name.
         glBindTexture(GL_TEXTURE_2D, *texName);
         // Specify a 2D texture image, providing the a pointer to the image data in memory
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texW, texH, 0, GL_RGBA, GL_UNSIGNED_BYTE, *spriteData);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, texW, texH, 0, GL_RGBA, GL_UNSIGNED_BYTE, *spriteData);
     } else {
         glBindTexture(GL_TEXTURE_2D, *texName);
         glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, texW, texH, GL_RGBA, GL_UNSIGNED_BYTE, *spriteData);
@@ -360,6 +360,7 @@ static bool done = 0;
     //    *spriteData = 0;
 }
 
+
 - (void)createGLTexture:(GLuint *)texName fromCGImage:(CGImageRef)img andDataCache:(GLubyte**)spriteData andClear:(bool)clear
 {
     bool newTexture = (*texName == 0);
@@ -370,6 +371,8 @@ static bool done = 0;
 	imgH = CGImageGetHeight(img);
     texW = imgW;
     texH = imgH;
+    
+    cursorSize = imgH;
 	
     if(*spriteData == NULL) {
         // Allocated memory needed for the bitmap context
@@ -393,7 +396,7 @@ static bool done = 0;
 	// You don't need the context at this point, so you need to release it to avoid memory leaks.
 	CGContextRelease(spriteContext);
 	
-    glEnable(GL_TEXTURE_2D);
+//    glEnable(GL_TEXTURE_2D);
     glPixelStorei(GL_UNPACK_ROW_LENGTH, (GLint)texW);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     glPixelStorei(GL_PACK_ALIGNMENT, 1);
@@ -471,7 +474,7 @@ static CGPoint cursorPos;
     [glContext makeCurrentContext];
     
 //    glGenTextures(2, desktopTextures);
-    glFlush();
+//    glFlush();
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         glFlush();

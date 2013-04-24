@@ -308,7 +308,7 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
 				glBindTexture( GL_TEXTURE_2D, cursor );
 				glBegin(GL_TRIANGLE_STRIP);
 				{
-					const double cursorSize = 32.0; // was 20.0, not sure which is best on each OS
+//					const double cursorSize = 32.0; // was 20.0, not sure which is best on each OS
 					double x0, x1, y0, y1, z;
 					x0 = -0.5+(cursorPosX/physicalWidth);
 					x1 = -0.5+((cursorPosX+cursorSize)/physicalWidth);
@@ -380,9 +380,8 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
 		if(lensParametersChanged) {
 			render_distortion_lenses();
 		}
-        
-        render_distorted_frame(true, textures[0]);
-        render_distorted_frame(false, textures[0]);//1]);
+
+        render_both_frames(textures[0]);
     } else {
       for (int i = 0; i < 2; ++i) {
         if (ortho) {
