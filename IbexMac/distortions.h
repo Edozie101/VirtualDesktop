@@ -10,10 +10,6 @@
 
 #include "opengl_helpers.h"
 
-extern char RiftMonitorName[33];
-extern GLfloat EyeDistance;
-extern GLfloat DistortionK[4];
-
 int init_distortion_shader();
 void render_both_frames(const GLuint textureId);
 void render_distorted_frame(const bool left, const GLuint textureId);

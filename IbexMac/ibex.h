@@ -15,8 +15,7 @@
 
 #include <time.h>
 
-#ifdef _WIN32
-#include "OVR.h"
+#include <OVR.h>
 using namespace OVR;
 
 extern Ptr<DeviceManager>	pManager;
@@ -24,11 +23,14 @@ extern Ptr<HMDDevice>		pHMD;
 extern Ptr<SensorDevice>	pSensor;
 extern SensorFusion			FusionResult;
 extern HMDInfo				Info;
-#endif
 
 extern bool					InfoLoaded;
 extern bool					riftConnected;
 extern bool                 lensParametersChanged;
+
+extern char RiftMonitorName[33];
+extern float EyeDistance;
+extern float DistortionK[4];
 
 typedef unsigned int Display;
 typedef unsigned int XVisualInfo;
@@ -39,6 +41,7 @@ extern int display;
 extern unsigned long window;
 extern unsigned long context;
 
+extern bool done;
 extern GLfloat physicalWidth,physicalHeight;
 extern GLfloat windowWidth, windowHeight;
 extern GLfloat width,height;

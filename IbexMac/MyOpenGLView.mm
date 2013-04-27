@@ -7,6 +7,7 @@
 //
 
 //#include "opengl_helpers.h"
+#include <iostream>
 
 #import <QuartzCore/QuartzCore.h>
 
@@ -29,6 +30,8 @@
 
 #include <ApplicationServices/ApplicationServices.h>
 
+#import "ScreenshotView.h"
+
 #include "sixense_controller.h"
 
 char mResourcePath[1024];
@@ -39,7 +42,7 @@ static Ibex *ibex = nil;
 
 static EventHandlerUPP hotKeyFunction;
 
-static NSCondition *cocoaCondition;
+NSCondition *cocoaCondition;
 
 // hides cursor in the background!
 extern "C" void CGSSetConnectionProperty(int, int, CFStringRef, CFBooleanRef);
@@ -173,58 +176,6 @@ NSTimer *renderTimer;
     CVDisplayLinkStart(displayLink);
 }
 
-static int desktopTextureIndex = 0;
-static GLuint desktopTextures[2] = {NULL, NULL};
-static bool done = 0;
-- (void)loopScreenshot {
-    static NSOpenGLContext* newContext = nil;
-    newContext = [[NSOpenGLContext alloc] initWithFormat:self.pixelFormat shareContext:self.openGLContext];
-    
-    static GLubyte *cursorData = NULL;
-    static GLubyte *s = NULL;
-    
-    static NSCursor *systemCursor;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        systemCursor = NSCursor.currentSystemCursor;
-    });
-    [newContext makeCurrentContext];
-    
-    while(1) {
-        done = 0;
-        [newContext makeCurrentContext];
-        systemCursor = [NSCursor currentSystemCursor];
-        if(systemCursor != nil) {
-            NSImage *cursorImage = systemCursor.image;
-            CGImageRef cursorImageRef = [cursorImage CGImageForProposedRect:nil context:nil hints:nil];
-            [self createGLTexture:&cursor fromCGImage:cursorImageRef andDataCache:&cursorData andClear:YES];
-        }
-    
-        CFArrayRef a = CGWindowListCreate(
-                                          kCGWindowListOptionOnScreenBelowWindow,
-                                          (CGWindowID)_window.windowNumber
-                                          );
-        
-        CGImageRef img = CGWindowListCreateImageFromArray(
-                                                          CGRectMake(0,0,physicalWidth,physicalHeight),//CGRectInfinite,
-                                                          a,
-                                                          kCGWindowImageDefault
-                                                          );
-        CFRelease(a);
-        
-        
-        [self createGLTextureNoAlpha:&desktopTexture fromCGImage:img andDataCache:&s andClear:NO];
-    
-        glFlush();
-    
-        CGImageRelease(img);
-        
-        [cocoaCondition lock];
-        [cocoaCondition wait];
-        [cocoaCondition unlock];
-    }
-}
-
 - (void)savePNGImage:(CGImageRef)imageRef path:(NSString *)path
 {
     NSURL *fileURL = [NSURL fileURLWithPath:path];
@@ -236,10 +187,15 @@ static bool done = 0;
     
     CFRelease(dr);
     } else {
+        NSLog(@"File path: %@", fileURL);
         NSLog(@"ERROR saving");
+        return;
     }
+//    exit(0);
 }
 
+static int desktopTextureIndex = 0;
+static GLuint desktopTextures[2] = {NULL, NULL};
 - (void)loopScreenshot_multipleBuffers {
     static NSOpenGLContext* context = nil;
     if(context == nil)
@@ -286,8 +242,8 @@ static bool done = 0;
 
 //            [self savePNGImage:img path:@"/Users/hesh/file.png"];
             
-            [self createGLTexture:&desktopTextures[index] fromCGImage:img andDataCache:((index)?&s2:&s) andClear:NO];
-//            glFlush();
+            [self createGLTextureNoAlpha:&desktopTextures[index] fromCGImage:img andDataCache:((index)?&s2:&s) andClear:NO];
+            glFlush();
             
 //            [newContext flushBuffer];            
             
@@ -345,7 +301,7 @@ static bool done = 0;
         // Bind the texture name.
         glBindTexture(GL_TEXTURE_2D, *texName);
         // Specify a 2D texture image, providing the a pointer to the image data in memory
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, texW, texH, 0, GL_RGBA, GL_UNSIGNED_BYTE, *spriteData);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, texW, texH, 0, GL_RGBA, GL_UNSIGNED_BYTE, *spriteData);
     } else {
         glBindTexture(GL_TEXTURE_2D, *texName);
         glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, texW, texH, GL_RGBA, GL_UNSIGNED_BYTE, *spriteData);
@@ -353,7 +309,6 @@ static bool done = 0;
 	// Set the texture parameters to use a minifying filter and a linear filer (weighted average)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	
     
     // user-allocated, don't touch it
     //	free(*spriteData);
@@ -406,7 +361,7 @@ static bool done = 0;
         // Bind the texture name.
         glBindTexture(GL_TEXTURE_2D, *texName);
 	// Specify a 2D texture image, providing the a pointer to the image data in memory
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texW, texH, 0, GL_RGBA, GL_UNSIGNED_BYTE, *spriteData);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, texW, texH, 0, GL_RGBA, GL_UNSIGNED_BYTE, *spriteData);
     } else {
         glBindTexture(GL_TEXTURE_2D, *texName);
         glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, texW, texH, GL_RGBA, GL_UNSIGNED_BYTE, *spriteData);
@@ -429,7 +384,7 @@ static bool done = 0;
 static CGPoint cursorPos;
 - (GLuint)getScreenshot {
     {
-        static NSCursor *cursor;
+        /*static */NSCursor *cursor;
         cursor = [NSCursor currentSystemCursor];
         
         cursorPos = NSEvent.mouseLocation;
@@ -478,7 +433,12 @@ static CGPoint cursorPos;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         glFlush();
-        [self performSelectorInBackground:@selector(loopScreenshot) withObject:nil];
+        @autoreleasepool {
+            //[self performSelectorInBackground:@selector(loopScreenshot) withObject:nil];
+            _screenshotView.pixelFormat = self.pixelFormat;
+            _screenshotView.share = self.openGLContext;
+            [_screenshotView performSelectorInBackground:@selector(loopScreenshot) withObject:nil];
+        }
     });
     
     [self getScreenshot];

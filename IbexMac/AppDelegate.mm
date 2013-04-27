@@ -9,6 +9,8 @@
 #import "AppDelegate.h"
 
 #import "MyOpenGLView.h"
+#import "ScreenshotView.h"
+#import "MyWindow.h"
 
 #ifdef ENABLE_OGRE3D
 #import "MyOgreView.h"
@@ -18,6 +20,81 @@
 
 #import "ServerController.h"
 #import <IOKit/graphics/IOGraphicsLib.h>
+
+#include "OVR.h"
+using namespace OVR;
+
+Ptr<DeviceManager>	pManager;
+Ptr<HMDDevice>		pHMD;
+Ptr<SensorDevice>	pSensor;
+SensorFusion		FusionResult;
+HMDInfo				Info;
+bool				InfoLoaded = false;
+bool				riftConnected = false;
+
+bool modifiedDesktop(false);
+
+static int riftX = 0;
+static int riftY = 0;
+static int riftResolutionX = 0;
+static int riftResolutionY = 0;
+void initRift() {
+    OVR::System::Init(OVR::Log::ConfigureDefaultLog(OVR::LogMask_All));
+    
+	pManager = *DeviceManager::Create();
+    
+	pHMD = *pManager->EnumerateDevices<HMDDevice>().CreateDevice();
+    
+	if (pHMD)
+    {
+        InfoLoaded = pHMD->GetDeviceInfo(&Info);
+        
+//		strncpy(Info.DisplayDeviceName, RiftMonitorName, 32);
+        
+		EyeDistance = Info.InterpupillaryDistance;
+		DistortionK[0] = Info.DistortionK[0];
+		DistortionK[1] = Info.DistortionK[1];
+		DistortionK[2] = Info.DistortionK[2];
+		DistortionK[3] = Info.DistortionK[3];
+        
+		pSensor = *pHMD->GetSensor();
+        
+        // This will initialize HMDInfo with information about configured IPD,
+        // screen size and other variables needed for correct projection.
+        // We pass HMD DisplayDeviceName into the renderer to select the
+        // correct monitor in full-screen mode.
+        if(InfoLoaded)
+        {
+            //RenderParams.MonitorName = hmd.DisplayDeviceName;
+//            SConfig.SetHMDInfo(Info);
+        }
+	}
+	else
+	{
+		pSensor = *pManager->EnumerateDevices<SensorDevice>().CreateDevice();
+	}
+    
+	if (pSensor)
+	{
+        FusionResult.AttachToSensor(pSensor);
+        
+        if(InfoLoaded) {
+            riftConnected = true;
+            
+            riftX = Info.DesktopX;
+            riftY = Info.DesktopY;
+            
+            riftResolutionX = Info.HResolution;
+            riftResolutionY = Info.VResolution;
+        }
+	}
+}
+void cleanUpRift() {
+	pSensor.Clear();
+	pManager.Clear();
+    
+	System::Destroy();
+}
 
 @interface NSScreen (DisplayName)
 - (NSString *)displayName;
@@ -80,23 +157,45 @@
     
     width = physicalWidth;
     height = physicalHeight;
+    windowWidth = width;
+    windowHeight = height;
     
-    [_window setFrame:r display:YES];
-    NSLog(@"%@", NSStringFromRect(r));
-    
-    [_window setStyleMask:NSBorderlessWindowMask];
-    [_window setLevel:NSScreenSaverWindowLevel];
-    [_window setFrame:NSScreen.mainScreen.frame display:YES];
+    CGRect rift = [self getRiftDisplay];
+    if(!CGRectIsNull(rift)) {
+        width = rift.size.width;
+        height = rift.size.height;
+        
+        windowWidth = width;
+        windowHeight = height;
+        textureWidth = width*1.4;
+        textureHeight = height*1.4;
+    } else {
+        rift = r;
+    }
     
     serverController = [[ServerController alloc] init];
     [serverController startService];
 }
 
+NSWindow* myWindow;
+NSWindow *mainWindow;
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
     strcpy(mResourcePath, [[[NSBundle mainBundle] resourcePath] cStringUsingEncoding:NSUTF8StringEncoding]);
     
     CGRect mainDisplayRect = NSScreen.mainScreen.frame;
+    
+    [_window setFrame:mainDisplayRect display:YES];
+    ScreenshotView *screenshotView = [[ScreenshotView alloc] initWithFrame:mainDisplayRect];
+    [_window setContentView:screenshotView];
+    [_window setExcludedFromWindowsMenu:YES];
+    [_window setMovableByWindowBackground:YES];
+    [_window setExcludedFromWindowsMenu:YES];
+    [_window setStyleMask:NSBorderlessWindowMask];
+    [_window setBackgroundColor:NSColor.blueColor];
+    [_window setLevel:NSScreenSaverWindowLevel];
+    [_window setFrame:CGRectMake(0,0,0,0) display:YES];
+    [_window makeKeyAndOrderFront:self];
     
     CGDisplayHideCursor(kCGDirectMainDisplay);
     
@@ -107,33 +206,29 @@
     };
     /*NSOpenGLPixelFormat* */pixelFormat = [[NSOpenGLPixelFormat alloc] initWithAttributes:attrs];
     
-    NSRect viewRect = NSMakeRect(0.0, 0.0, mainDisplayRect.size.width, mainDisplayRect.size.height);
+    NSRect viewRect = NSMakeRect(0.0, 0.0, windowWidth,windowHeight);
+    
+    NSScreen *screen = [self getRiftScreen];
+    mainWindow = [[MyWindow alloc] initWithContentRect:viewRect styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO screen:screen];
+    [mainWindow setLevel:NSScreenSaverWindowLevel];
+    [mainWindow setExcludedFromWindowsMenu:YES];
 #ifdef ENABLE_OGRE3D
     fullScreenView = [[MyOgreView alloc] initWithFrame:viewRect];
 #else
     fullScreenView = [[MyOpenGLView alloc] initWithFrame:viewRect pixelFormat: pixelFormat];
+    fullScreenView.screenshotView = screenshotView;
 #endif
     
-    [_window setContentView: fullScreenView];
-    [_window makeKeyAndOrderFront:self];
-    [_window makeFirstResponder:fullScreenView];
+    [mainWindow setContentView: fullScreenView];
+    [mainWindow makeFirstResponder:fullScreenView];
     
-    [_window setAcceptsMouseMovedEvents:YES];
-    [_window setMovableByWindowBackground:YES];
-    [_window setExcludedFromWindowsMenu:YES];
-    
-    const CGRect rift = [self getRiftDisplay];
-    if(!CGRectIsNull(rift)) {
-        width = rift.size.width;
-        height = rift.size.height;
-        
-        windowWidth = width;
-        windowHeight = height;
-        textureWidth = width*1.4;
-        textureHeight = height*1.4;
-        
-        [_window setFrame:rift display:YES];
-    }
+    initRift();
+
+    [mainWindow setAcceptsMouseMovedEvents:YES];
+    [mainWindow setMovableByWindowBackground:YES];
+    [mainWindow setExcludedFromWindowsMenu:YES];
+    [mainWindow makeMainWindow];
+    [mainWindow makeKeyAndOrderFront:self];
 }
 
 @end

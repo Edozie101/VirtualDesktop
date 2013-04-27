@@ -99,11 +99,13 @@ GLuint ScaleInUniform;
 GLuint HmdWarpParamUniform;
 
 char RiftMonitorName[33];
-GLfloat EyeDistance = 0.0640000030;
-GLfloat DistortionK[4] = {1.00000000, 0.219999999, 0.239999995, 0.000000000};
+float EyeDistance = 0.0640000030;
+float DistortionK[4] = {1.00000000, 0.219999999, 0.239999995, 0.000000000};
 
 static GLuint make_program(GLuint vertex_shader, GLuint fragment_shader)
 {
+    checkForErrors();
+    std::cerr << "make_program" << std::endl;
     GLint program_ok;
     
     program = glCreateProgram();
@@ -112,11 +114,14 @@ static GLuint make_program(GLuint vertex_shader, GLuint fragment_shader)
     glLinkProgram(program);
     
     glGetProgramiv(program, GL_LINK_STATUS, &program_ok);
+    checkForErrors();
     if (!program_ok) {
         fprintf(stderr, "Failed to link shader program:\n");
         show_info_log(program, glGetProgramiv, glGetProgramInfoLog);
         glDeleteProgram(program);
         return 0;
+    } else {
+        std::cerr << "Linked program" << std::endl;
     }
     
     a_position = glGetAttribLocation(program, "a_position");
@@ -126,6 +131,9 @@ static GLuint make_program(GLuint vertex_shader, GLuint fragment_shader)
     glUniform1i(textureUniform, 0);
     lensTextureUniform = glGetUniformLocation(program, "lensTexture");
     glUniform1i(lensTextureUniform, 1);
+    
+    checkForErrors();
+    std::cerr << "make_program end" << std::endl;
     
     return program;
 }
@@ -202,7 +210,7 @@ int setup_buffers() {
         std::cerr << "CAN'T GEN VAO!" << std::endl;
         exit(1);
     }
-    
+    std::cerr << "setup_buffers" << std::endl;
     checkForErrors();
   glGenVertexArraysAPPLE(1,&vao1);
   glGenVertexArraysAPPLE(1,&vao2);
@@ -314,8 +322,6 @@ void render_distorted_frame(const bool left, const GLuint textureId)
     glActiveTexture(GL_TEXTURE1);
     glUniform1i(lensTextureUniform, 1);
     glBindTexture(GL_TEXTURE_2D, lensTexture);
-//    
-//    glUniform1i(textureUniform, 0);
 
     glDrawElements(GL_TRIANGLES, sizeof(indices)/sizeof(indices[0]), GL_UNSIGNED_SHORT, 0);
     

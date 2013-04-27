@@ -22,10 +22,9 @@
 
 #include "SimpleWorldRendererPlugin.h"
 
-#ifdef _WIN32
 #include "OVR.h"
 using namespace OVR;
-#endif
+
 SimpleWorldRendererPlugin::SimpleWorldRendererPlugin() {
 }
 SimpleWorldRendererPlugin::~SimpleWorldRendererPlugin() {
@@ -149,7 +148,6 @@ void SimpleWorldRendererPlugin::init() {
   loadSkybox();
 }
 
-#ifdef _WIN32
 double orientationRift[16];
 double *getRiftOrientation() {
 	
@@ -168,35 +166,33 @@ double *getRiftOrientation() {
 		}
 		return orientationRift;
 }
-#endif
 
 void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDiff_) {
     if (USE_FBO) {
 		//glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	    //glClearColor(0, 0, 0, 1);
-        glColor4f(1, 1, 1, 1);
-	    glClear(/*GL_COLOR_BUFFER_BIT | */GL_DEPTH_BUFFER_BIT);
+//        glColor4f(1, 1, 1, 1);
+	    glClear(/*GL_COLOR_BUFFER_BIT |*/ GL_DEPTH_BUFFER_BIT);
 	    //glColor4f(1, 1, 1, 1);
 
         glBindFramebuffer(GL_FRAMEBUFFER, fbos[0]);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		if (!checkForErrors()) {
-			std::cerr << "GL ISSUE" << std::endl;
-			exit(EXIT_FAILURE);
+			std::cerr << "GL ISSUE -- SimpleWorldRendererPlugin::step" << std::endl;
+			//exit(EXIT_FAILURE);
 		}
     }
 
 	glViewport(0,0, textureWidth/2.0, textureHeight);
 
+    static double *orientation;
 #ifdef _WIN32
 		static const GLuint groundTexture = loadTexture("\\resources\\humus-skybox\\negy.jpg");
-		double *orientation;
-        orientation = getRiftOrientation();
+//        orientation = getRiftOrientation();
 #else
 		static const GLuint groundTexture = loadTexture("/resources/humus-skybox/negy.jpg");
-		double orientation[16];
-        gluInvertMatrix(get_orientation(), orientation);    
+//        gluInvertMatrix(get_orientation(), orientation);
 #endif
   for (int i2 = 0; i2 < 2; ++i2) {
 //      checkForErrors();
@@ -223,6 +219,9 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
 	glLoadIdentity();
 	glTranslated((i2 == 0) ? IOD: -IOD, 0, 0);
 	gluPerspective(90.0f, width/2.0/height, 0.01f, 1000.0f);
+      
+      if(i2 == 0) orientation = getRiftOrientation();
+      
 	glMultMatrixd(orientation);
 
 	glMatrixMode(GL_MODELVIEW);

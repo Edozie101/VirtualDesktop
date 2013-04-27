@@ -18,8 +18,12 @@ extern "C" {
 }
 
 @interface AppDelegate : NSObject <NSApplicationDelegate,NSWindowDelegate> {
-//    MyOpenGLView *fullScreenView;
+#ifdef ENABLE_OGRE3D
     NSView *fullScreenView;
+#else
+    MyOpenGLView *fullScreenView;
+#endif
+    
     ServerController *serverController;
 }
 

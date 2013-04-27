@@ -138,6 +138,7 @@ int display = 0;
 unsigned long window = 0;
 unsigned long context = 0;
 
+bool done = 0;
 GLfloat physicalWidth = 1440.0;
 GLfloat physicalHeight = 900.0;
 //GLfloat physicalWidth = 2560.0;
@@ -230,7 +231,7 @@ void prep_framebuffers()
         std::cerr << "Stage 0c - Problem generating desktop FBO" << std::endl;
         exit(EXIT_FAILURE);
     }
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0,
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, physicalWidth, physicalHeight, 0,
                GL_RGBA, GL_UNSIGNED_BYTE, 0);
     if (!checkForErrors()) {
         std::cerr << "Stage 0d - Problem generating desktop FBO" << std::endl;
@@ -334,6 +335,8 @@ void renderGL(Desktop3DLocation& loc, double timeDiff_)
 //    }
       
       if(!OGRE3D) {
+          checkForErrors();
+          std::cerr << "init_distortion_shader" << std::endl;
           bool success = init_distortion_shader();
           if (!success) {
               std::cerr << "Failed to init distortion shader!" << std::endl;

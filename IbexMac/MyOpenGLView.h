@@ -9,14 +9,17 @@
 #import <Cocoa/Cocoa.h>
 
 extern char mResourcePath[1024];
+extern NSCondition *cocoaCondition;
 
 @class NSOpenGLContext;
+@class ScreenshotView;
 
 @interface MyOpenGLView : NSOpenGLView {
     CVDisplayLinkRef displayLink; //display link for managing rendering thread
 }
 
 @property (retain,nonatomic) NSOpenGLContext* myContext;
+@property (retain,nonatomic) ScreenshotView *screenshotView;
 
 - (GLuint)getScreenshot;
 - (CVReturn)getFrameForTime:(const CVTimeStamp*)outputTime;
