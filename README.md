@@ -37,7 +37,7 @@ around from there.
 ## Requirements
 ### Mac
 XCode 4.5, OSX 10.8 (Mountain Lion) - Build and run from XCode, check the project dependencies
-to find out where the bullet3d physics library and sixense SDK need to go to build properly
+to find out where the bullet3d physics library and sixense SDK need to go to build properly.  OculusSDK needs to be placed at the same level as your checked-out git repo for ibex and it must be version 0.2.1 or later.  You'll need to rebuild the libovr.a library with C++ RTTI and Exceptions enabled or else it won't link properly with ibex.
 
 ### Windows
 Visual Studio 2012 - Build and run from Visual Studio, Rift SDK must be at same level as ibex folder and named: OculusSDK
