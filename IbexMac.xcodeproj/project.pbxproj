@@ -62,7 +62,6 @@
 		4C46D7CD16F2BB2900B5DD9E /* sixense_controller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C46D7CB16F2BB2900B5DD9E /* sixense_controller.cpp */; };
 		4C4C3C0A1694689400D2285F /* MyWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4C4C3C091694689400D2285F /* MyWindow.mm */; };
 		4C61AC3916F9272000F98776 /* MyOgreView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4C61AC3816F9272000F98776 /* MyOgreView.mm */; };
-		4C6411A316F4C23100132076 /* Ogre.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6411A216F4C23100132076 /* Ogre.framework */; };
 		4C6411A716F4C2D700132076 /* libsixense_utils_x64.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C46D7C616F2B93D00B5DD9E /* libsixense_utils_x64.dylib */; };
 		4C6411A816F4C2D700132076 /* libsixense_x64.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C46D7C716F2B93D00B5DD9E /* libsixense_x64.dylib */; };
 		4C6B99D416F4C17E00C5C725 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CB79876168AB41E00EF5260 /* main.m */; };
@@ -111,7 +110,6 @@
 		4C6F780516F4C4C00089101F /* libsixense_utils_x64.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C46D7C616F2B93D00B5DD9E /* libsixense_utils_x64.dylib */; };
 		4C6F780616F4C4C30089101F /* libsixense_x64.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C46D7C716F2B93D00B5DD9E /* libsixense_x64.dylib */; };
 		4C6F780816F4C4D40089101F /* RenderSystem_GL.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C6411A916F4C30200132076 /* RenderSystem_GL.dylib */; };
-		4C6F780B16F4C5000089101F /* Ogre.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C6411A216F4C23100132076 /* Ogre.framework */; };
 		4C6F780C16F4C5070089101F /* BulletCollision.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C6D8CBF16F401B100C4638B /* BulletCollision.framework */; };
 		4C6F780D16F4C5070089101F /* BulletDynamics.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C6D8CC016F401B100C4638B /* BulletDynamics.framework */; };
 		4C6F780E16F4C5070089101F /* BulletMultiThreaded.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C6D8CC116F401B100C4638B /* BulletMultiThreaded.framework */; };
@@ -136,7 +134,6 @@
 		4C6F783D16F4DF0B0089101F /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C6F783316F4DF0B0089101F /* tinyxmlparser.cpp */; };
 		4C6F783E16F4DF0B0089101F /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C6F783316F4DF0B0089101F /* tinyxmlparser.cpp */; };
 		4C6F783F16F4DF0B0089101F /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C6F783316F4DF0B0089101F /* tinyxmlparser.cpp */; };
-		4C6F784116F4EED80089101F /* libOIS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6F784016F4EED80089101F /* libOIS.a */; };
 		4C6F784916F4EFD40089101F /* Plugin_CgProgramManager.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C6411AE16F4C30200132076 /* Plugin_CgProgramManager.dylib */; };
 		4C6F784A16F4EFD70089101F /* Plugin_BSPSceneManager.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C6411B316F4C30200132076 /* Plugin_BSPSceneManager.dylib */; };
 		4C6F784B16F4EFDF0089101F /* Plugin_OctreeZone.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C6411AA16F4C30200132076 /* Plugin_OctreeZone.dylib */; };
@@ -145,6 +142,11 @@
 		4C6F785016F4F1230089101F /* libOgreProperty.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C6411AC16F4C30200132076 /* libOgreProperty.dylib */; };
 		4C6F785116F4F1280089101F /* libOgrePaging.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C6411B216F4C30200132076 /* libOgrePaging.dylib */; };
 		4C6F785216F4F12B0089101F /* libOgreRTShaderSystem.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C6411AF16F4C30200132076 /* libOgreRTShaderSystem.dylib */; };
+		4C707C55172C474200309642 /* libovr.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CA92BC31729FB1F00994379 /* libovr.a */; };
+		4C707C56172C474F00309642 /* libovr.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CA92BC31729FB1F00994379 /* libovr.a */; };
+		4C707C59172C487200309642 /* Ogre.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C707C57172C487200309642 /* Ogre.framework */; };
+		4C707C5A172C487200309642 /* libOIS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C707C58172C487200309642 /* libOIS.a */; };
+		4C707C5E172C493000309642 /* Ogre.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C707C5D172C493000309642 /* Ogre.framework */; };
 		4C76498F16965A67009CF2EC /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C76498E16965A67009CF2EC /* Carbon.framework */; };
 		4C8758431697E5200022583D /* ibex.iconset in Resources */ = {isa = PBXBuildFile; fileRef = 4C8758421697E5200022583D /* ibex.iconset */; };
 		4C936064172A282100A94980 /* ScreenshotView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4C936063172A282100A94980 /* ScreenshotView.mm */; };
@@ -200,7 +202,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				4C6F780B16F4C5000089101F /* Ogre.framework in CopyFiles */,
+				4C707C5E172C493000309642 /* Ogre.framework in CopyFiles */,
 				4C6F780C16F4C5070089101F /* BulletCollision.framework in CopyFiles */,
 				4C6F780D16F4C5070089101F /* BulletDynamics.framework in CopyFiles */,
 				4C6F780E16F4C5070089101F /* BulletMultiThreaded.framework in CopyFiles */,
@@ -298,6 +300,9 @@
 		4C6F783216F4DF0B0089101F /* tinyxmlerror.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tinyxmlerror.cpp; sourceTree = "<group>"; };
 		4C6F783316F4DF0B0089101F /* tinyxmlparser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tinyxmlparser.cpp; sourceTree = "<group>"; };
 		4C6F784016F4EED80089101F /* libOIS.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libOIS.a; path = ../../OgreSDK/lib/release/libOIS.a; sourceTree = "<group>"; };
+		4C707C57172C487200309642 /* Ogre.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Ogre.framework; path = ../OgreSDK/lib/release/Ogre.framework; sourceTree = "<group>"; };
+		4C707C58172C487200309642 /* libOIS.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libOIS.a; path = ../OgreSDK/lib/release/libOIS.a; sourceTree = "<group>"; };
+		4C707C5D172C493000309642 /* Ogre.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Ogre.framework; path = ../OgreSDK/lib/release/Ogre.framework; sourceTree = "<group>"; };
 		4C76498E16965A67009CF2EC /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 		4C8758421697E5200022583D /* ibex.iconset */ = {isa = PBXFileReference; lastKnownFileType = folder.iconset; path = ibex.iconset; sourceTree = "<group>"; };
 		4C936062172A282100A94980 /* ScreenshotView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScreenshotView.h; sourceTree = "<group>"; };
@@ -375,8 +380,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				4C6F782916F4D9650089101F /* IOKit.framework in Frameworks */,
-				4C6F784116F4EED80089101F /* libOIS.a in Frameworks */,
-				4C6411A316F4C23100132076 /* Ogre.framework in Frameworks */,
+				4C707C59172C487200309642 /* Ogre.framework in Frameworks */,
+				4C707C5A172C487200309642 /* libOIS.a in Frameworks */,
 				4CB8423016FD7FD7009B3DDE /* RenderSystem_GL.dylib in Frameworks */,
 				4C1DD38D16F4F92500302EFA /* Plugin_ParticleFX.dylib in Frameworks */,
 				4C1DD38F16F4F94100302EFA /* Plugin_PCZSceneManager.dylib in Frameworks */,
@@ -400,6 +405,7 @@
 				4C6B99F016F4C17E00C5C725 /* Carbon.framework in Frameworks */,
 				4C6B99F116F4C17E00C5C725 /* QuartzCore.framework in Frameworks */,
 				4C6B99F516F4C17E00C5C725 /* Cocoa.framework in Frameworks */,
+				4C707C56172C474F00309642 /* libovr.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -425,6 +431,7 @@
 				4CAC8D48168E74FB00341AA0 /* GLUT.framework in Frameworks */,
 				4CF354BC168D0E1600EAA2FE /* OpenGL.framework in Frameworks */,
 				4CB7986B168AB41E00EF5260 /* Cocoa.framework in Frameworks */,
+				4C707C55172C474200309642 /* libovr.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -500,6 +507,9 @@
 		4CB7985B168AB41E00EF5260 = {
 			isa = PBXGroup;
 			children = (
+				4C707C5D172C493000309642 /* Ogre.framework */,
+				4C707C57172C487200309642 /* Ogre.framework */,
+				4C707C58172C487200309642 /* libOIS.a */,
 				4CA92BC31729FB1F00994379 /* libovr.a */,
 				4CB79870168AB41E00EF5260 /* IbexMac */,
 				4CB79869168AB41E00EF5260 /* Frameworks */,
@@ -940,27 +950,31 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					/Library/Frameworks,
-					"\"$(SRCROOT)/../../OgreSDK/lib/release\"",
+					"\"$(SRCROOT)/../OgreSDK/lib/release\"",
 				);
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_ENABLE_CPP_RTTI = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "IbexMac/IbexMac-Prefix.pch";
 				HEADER_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/IbexMac",
-					"$(PROJECT_DIR)/../../OgreSDK/include/OGRE/RenderSystems/GL",
-					"$(PROJECT_DIR)/../../OgreSDK/include/OGRE/OSX",
-					"$(PROJECT_DIR)/../../bullet-2.81-rev2613/src",
-					"$(PROJECT_DIR)/../../OgreSDK/include/OGRE",
-					"$(PROJECT_DIR)/../../OgreSDK/include/OIS",
-					"$(PROJECT_DIR)/../../OgreSDK/boost",
+					"$(PROJECT_DIR)/../OgreSDK/include/OGRE/RenderSystems/GL",
+					"$(PROJECT_DIR)/../OgreSDK/include/OGRE/OSX",
+					"$(PROJECT_DIR)/../bullet-2.81-rev2613/src",
+					"$(PROJECT_DIR)/../OgreSDK/include/OGRE",
+					"$(PROJECT_DIR)/../OgreSDK/include/OIS",
+					"$(PROJECT_DIR)/../OgreSDK/boost",
 					/usr/local/include,
+					"$(PROJECT_DIR)/../OculusSDK/LibOVR/Src",
+					"$(PROJECT_DIR)/../OculusSDK/LibOVR/Include",
 				);
 				INFOPLIST_FILE = "IbexMacOgre-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
-					"\"$(SRCROOT)/../../OgreSDK/lib/release\"",
-					"\"$(SRCROOT)\"/../../OgreSDK/lib",
-					"\"$(SRCROOT)/../../OculusSDK/LibOVR/Lib/MacOS/Release\"",
+					"\"$(SRCROOT)/../OgreSDK/lib/release\"",
+					"\"$(SRCROOT)\"/../OgreSDK/lib",
+					"\"$(SRCROOT)/../OculusSDK/LibOVR/Lib/MacOS/Release\"",
 				);
 				OTHER_CFLAGS = "-DENABLE_OGRE3D=1";
 				PRODUCT_NAME = IbexMacOgre;
@@ -979,27 +993,31 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					/Library/Frameworks,
-					"\"$(SRCROOT)/../../OgreSDK/lib/release\"",
+					"\"$(SRCROOT)/../OgreSDK/lib/release\"",
 				);
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_ENABLE_CPP_RTTI = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "IbexMac/IbexMac-Prefix.pch";
 				HEADER_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/IbexMac",
-					"$(PROJECT_DIR)/../../OgreSDK/include/OGRE/RenderSystems/GL",
-					"$(PROJECT_DIR)/../../OgreSDK/include/OGRE/OSX",
-					"$(PROJECT_DIR)/../../bullet-2.81-rev2613/src",
-					"$(PROJECT_DIR)/../../OgreSDK/include/OGRE",
-					"$(PROJECT_DIR)/../../OgreSDK/include/OIS",
-					"$(PROJECT_DIR)/../../OgreSDK/boost",
+					"$(PROJECT_DIR)/../OgreSDK/include/OGRE/RenderSystems/GL",
+					"$(PROJECT_DIR)/../OgreSDK/include/OGRE/OSX",
+					"$(PROJECT_DIR)/../bullet-2.81-rev2613/src",
+					"$(PROJECT_DIR)/../OgreSDK/include/OGRE",
+					"$(PROJECT_DIR)/../OgreSDK/include/OIS",
+					"$(PROJECT_DIR)/../OgreSDK/boost",
 					/usr/local/include,
+					"$(PROJECT_DIR)/../OculusSDK/LibOVR/Src",
+					"$(PROJECT_DIR)/../OculusSDK/LibOVR/Include",
 				);
 				INFOPLIST_FILE = "IbexMacOgre-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
-					"\"$(SRCROOT)/../../OgreSDK/lib/release\"",
-					"\"$(SRCROOT)\"/../../OgreSDK/lib",
-					"\"$(SRCROOT)/../../OculusSDK/LibOVR/Lib/MacOS/Release\"",
+					"\"$(SRCROOT)/../OgreSDK/lib/release\"",
+					"\"$(SRCROOT)\"/../OgreSDK/lib",
+					"\"$(SRCROOT)/../OculusSDK/LibOVR/Lib/MacOS/Release\"",
 				);
 				OTHER_CFLAGS = "-DENABLE_OGRE3D=1";
 				PRODUCT_NAME = IbexMacOgre;
@@ -1070,20 +1088,22 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = IbexMac/IbexMac.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					/Library/Frameworks,
-					../../OculusSDK/LibOVR/Lib/MacOS/Release,
-				);
+				FRAMEWORK_SEARCH_PATHS = /Library/Frameworks;
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_ENABLE_CPP_RTTI = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "IbexMac/IbexMac-Prefix.pch";
 				HEADER_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/IbexMac",
-					"$(PROJECT_DIR)/../../bullet-2.81-rev2613/src",
+					"$(PROJECT_DIR)/../bullet-2.81-rev2613/src",
+					"$(PROJECT_DIR)/../OculusSDK/LibOVR/Src",
+					"$(PROJECT_DIR)/../OculusSDK/LibOVR/Include",
 				);
 				INFOPLIST_FILE = "IbexMac/IbexMac-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../OculusSDK/LibOVR/Lib/MacOS/Release\"",
+					"\"$(SRCROOT)/../OculusSDK/LibOVR/Lib/MacOS/Debug\"",
 				);
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1097,20 +1117,22 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = IbexMac/IbexMac.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					/Library/Frameworks,
-					../../OculusSDK/LibOVR/Lib/MacOS/Release,
-				);
+				FRAMEWORK_SEARCH_PATHS = /Library/Frameworks;
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_ENABLE_CPP_RTTI = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "IbexMac/IbexMac-Prefix.pch";
 				HEADER_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/IbexMac",
-					"$(PROJECT_DIR)/../../bullet-2.81-rev2613/src",
+					"$(PROJECT_DIR)/../bullet-2.81-rev2613/src",
+					"$(PROJECT_DIR)/../OculusSDK/LibOVR/Src",
+					"$(PROJECT_DIR)/../OculusSDK/LibOVR/Include",
 				);
 				INFOPLIST_FILE = "IbexMac/IbexMac-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../OculusSDK/LibOVR/Lib/MacOS/Release\"",
+					"\"$(SRCROOT)/../OculusSDK/LibOVR/Lib/MacOS/Debug\"",
 				);
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
