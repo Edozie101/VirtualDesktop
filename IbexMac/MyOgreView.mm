@@ -11,6 +11,7 @@
 #endif
 
 #import "MyOgreView.h"
+#import "ScreenshotView.h"
 
 #include "ibex.h"
 #include "sixense_controller.h"
@@ -47,7 +48,7 @@ static Ibex *ibex = nil;
 
 static EventHandlerUPP hotKeyFunction;
 
-static NSCondition *cocoaCondition;
+//static NSCondition *cocoaCondition;
 
 // ---------------------------------------------------------------------------
 // Function: checkForErrors
@@ -378,52 +379,52 @@ static CVReturn MyDisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTime
 static NSOpenGLContext *currentContext = nil;
 static NSOpenGLPixelFormat *pixelFormat = nil;
 static NSOpenGLContext* newContext = nil;
-static bool done = 0;
-- (void)loopScreenshot {
-    newContext = [[NSOpenGLContext alloc] initWithFormat:pixelFormat shareContext:currentContext];
-    
-    static GLubyte *cursorData = NULL;
-    static GLubyte *s = NULL;
-    
-    static NSCursor *systemCursor;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        systemCursor = NSCursor.currentSystemCursor;
-    });
-    [newContext makeCurrentContext];
-    
-    while(1) {
-        done = 0;
-        [newContext makeCurrentContext];
-        systemCursor = [NSCursor currentSystemCursor];
-        if(systemCursor != nil) {
-            NSImage *cursorImage = systemCursor.image;
-            CGImageRef cursorImageRef = [cursorImage CGImageForProposedRect:nil context:nil hints:nil];
-            [self createGLTexture:&cursor fromCGImage:cursorImageRef andDataCache:&cursorData andClear:YES];
-        }
-        CFArrayRef a = CGWindowListCreate(
-                                          kCGWindowListOptionOnScreenBelowWindow,
-                                          (CGWindowID)_window.windowNumber
-                                          );
-        
-        CGImageRef img = CGWindowListCreateImageFromArray(
-                                                          CGRectInfinite,
-                                                          a,
-                                                          kCGWindowImageDefault
-                                                          );
-        CFRelease(a);
-        
-        [self createGLTextureNoAlpha:&desktopTexture fromCGImage:img andDataCache:&s andClear:NO];
-        
-        glFlush();
-        
-        CGImageRelease(img);
-        
-        [cocoaCondition lock];
-        [cocoaCondition wait];
-        [cocoaCondition unlock];
-    }
-}
+////static bool done = 0;
+//- (void)loopScreenshot {
+//    newContext = [[NSOpenGLContext alloc] initWithFormat:pixelFormat shareContext:currentContext];
+//    
+//    static GLubyte *cursorData = NULL;
+//    static GLubyte *s = NULL;
+//    
+//    static NSCursor *systemCursor;
+//    static dispatch_once_t onceToken;
+//    dispatch_once(&onceToken, ^{
+//        systemCursor = NSCursor.currentSystemCursor;
+//    });
+//    [newContext makeCurrentContext];
+//    
+//    while(1) {
+//        done = 0;
+//        [newContext makeCurrentContext];
+//        systemCursor = [NSCursor currentSystemCursor];
+//        if(systemCursor != nil) {
+//            NSImage *cursorImage = systemCursor.image;
+//            CGImageRef cursorImageRef = [cursorImage CGImageForProposedRect:nil context:nil hints:nil];
+//            [self createGLTexture:&cursor fromCGImage:cursorImageRef andDataCache:&cursorData andClear:YES];
+//        }
+//        CFArrayRef a = CGWindowListCreate(
+//                                          kCGWindowListOptionOnScreenBelowWindow,
+//                                          (CGWindowID)_window.windowNumber
+//                                          );
+//        
+//        CGImageRef img = CGWindowListCreateImageFromArray(
+//                                                          CGRectInfinite,
+//                                                          a,
+//                                                          kCGWindowImageDefault
+//                                                          );
+//        CFRelease(a);
+//        
+//        [self createGLTextureNoAlpha:&desktopTexture fromCGImage:img andDataCache:&s andClear:NO];
+//        
+//        glFlush();
+//        
+//        CGImageRelease(img);
+//        
+//        [cocoaCondition lock];
+//        [cocoaCondition wait];
+//        [cocoaCondition unlock];
+//    }
+//}
 static CGPoint cursorPos;
 - (GLuint)getScreenshot {
     {
@@ -482,7 +483,18 @@ void startDesktopCapture(void *c, void *p) {
 //    CGLPixelFormatObj pixelFormatObj = CGLGetPixelFormat(*contextObj);
 //    pixelFormat = [[NSOpenGLPixelFormat alloc] initWithCGLPixelFormatObj:(void*)&pixelFormatObj];
     
-    [myOgreView performSelectorInBackground:@selector(loopScreenshot) withObject:nil];
+//    [myOgreView performSelectorInBackground:@selector(loopScreenshot) withObject:nil];
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        glFlush();
+        @autoreleasepool {
+            //[self performSelectorInBackground:@selector(loopScreenshot) withObject:nil];
+            myOgreView.screenshotView.pixelFormat = pixelFormat;
+            myOgreView.screenshotView.share = currentContext;
+            [myOgreView.screenshotView performSelectorInBackground:@selector(loopScreenshot) withObject:nil];
+        }
+    });
+    
 //    [myOgreView loopScreenshot];
 }
 

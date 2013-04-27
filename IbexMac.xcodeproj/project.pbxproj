@@ -54,6 +54,7 @@
 		4C1DD38F16F4F94100302EFA /* Plugin_PCZSceneManager.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6411B016F4C30200132076 /* Plugin_PCZSceneManager.dylib */; };
 		4C1DD39016F4F95300302EFA /* Plugin_OctreeSceneManager.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6411B116F4C30200132076 /* Plugin_OctreeSceneManager.dylib */; };
 		4C1DD39116F4F96000302EFA /* Plugin_OctreeSceneManager.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C6411B116F4C30200132076 /* Plugin_OctreeSceneManager.dylib */; };
+		4C238E18172C6BAD009C22A6 /* libovr.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CA92BC31729FB1F00994379 /* libovr.a */; };
 		4C2DE2FF168B30CC003BEB56 /* ScreenGrabber.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C2DE2FE168B30CC003BEB56 /* ScreenGrabber.m */; };
 		4C41232116936E4F008F5B15 /* IbexMacUtils.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4C41232016936E4F008F5B15 /* IbexMacUtils.mm */; };
 		4C46D7C816F2B93D00B5DD9E /* libsixense_utils_x64.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C46D7C616F2B93D00B5DD9E /* libsixense_utils_x64.dylib */; };
@@ -143,7 +144,6 @@
 		4C6F785116F4F1280089101F /* libOgrePaging.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C6411B216F4C30200132076 /* libOgrePaging.dylib */; };
 		4C6F785216F4F12B0089101F /* libOgreRTShaderSystem.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C6411AF16F4C30200132076 /* libOgreRTShaderSystem.dylib */; };
 		4C707C55172C474200309642 /* libovr.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CA92BC31729FB1F00994379 /* libovr.a */; };
-		4C707C56172C474F00309642 /* libovr.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CA92BC31729FB1F00994379 /* libovr.a */; };
 		4C707C59172C487200309642 /* Ogre.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C707C57172C487200309642 /* Ogre.framework */; };
 		4C707C5A172C487200309642 /* libOIS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C707C58172C487200309642 /* libOIS.a */; };
 		4C707C5E172C493000309642 /* Ogre.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C707C5D172C493000309642 /* Ogre.framework */; };
@@ -299,7 +299,6 @@
 		4C6F783116F4DF0B0089101F /* tinyxml.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tinyxml.h; sourceTree = "<group>"; };
 		4C6F783216F4DF0B0089101F /* tinyxmlerror.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tinyxmlerror.cpp; sourceTree = "<group>"; };
 		4C6F783316F4DF0B0089101F /* tinyxmlparser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tinyxmlparser.cpp; sourceTree = "<group>"; };
-		4C6F784016F4EED80089101F /* libOIS.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libOIS.a; path = ../../OgreSDK/lib/release/libOIS.a; sourceTree = "<group>"; };
 		4C707C57172C487200309642 /* Ogre.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Ogre.framework; path = ../OgreSDK/lib/release/Ogre.framework; sourceTree = "<group>"; };
 		4C707C58172C487200309642 /* libOIS.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libOIS.a; path = ../OgreSDK/lib/release/libOIS.a; sourceTree = "<group>"; };
 		4C707C5D172C493000309642 /* Ogre.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Ogre.framework; path = ../OgreSDK/lib/release/Ogre.framework; sourceTree = "<group>"; };
@@ -405,7 +404,7 @@
 				4C6B99F016F4C17E00C5C725 /* Carbon.framework in Frameworks */,
 				4C6B99F116F4C17E00C5C725 /* QuartzCore.framework in Frameworks */,
 				4C6B99F516F4C17E00C5C725 /* Cocoa.framework in Frameworks */,
-				4C707C56172C474F00309642 /* libovr.a in Frameworks */,
+				4C238E18172C6BAD009C22A6 /* libovr.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -507,10 +506,6 @@
 		4CB7985B168AB41E00EF5260 = {
 			isa = PBXGroup;
 			children = (
-				4C707C5D172C493000309642 /* Ogre.framework */,
-				4C707C57172C487200309642 /* Ogre.framework */,
-				4C707C58172C487200309642 /* libOIS.a */,
-				4CA92BC31729FB1F00994379 /* libovr.a */,
 				4CB79870168AB41E00EF5260 /* IbexMac */,
 				4CB79869168AB41E00EF5260 /* Frameworks */,
 				4CB79867168AB41E00EF5260 /* Products */,
@@ -531,7 +526,10 @@
 		4CB79869168AB41E00EF5260 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				4C6F784016F4EED80089101F /* libOIS.a */,
+				4C707C5D172C493000309642 /* Ogre.framework */,
+				4C707C57172C487200309642 /* Ogre.framework */,
+				4C707C58172C487200309642 /* libOIS.a */,
+				4CA92BC31729FB1F00994379 /* libovr.a */,
 				4C6F782A16F4D97B0089101F /* AGL.framework */,
 				4C6F782816F4D9650089101F /* IOKit.framework */,
 				4C6411A916F4C30200132076 /* RenderSystem_GL.dylib */,
@@ -892,8 +890,8 @@
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = /Library/Frameworks;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_ENABLE_CPP_RTTI = NO;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				GCC_ENABLE_CPP_RTTI = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "IbexMac/IbexMac-Prefix.pch";
 				HEADER_SEARCH_PATHS = (
@@ -920,8 +918,8 @@
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = /Library/Frameworks;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_ENABLE_CPP_RTTI = NO;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				GCC_ENABLE_CPP_RTTI = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "IbexMac/IbexMac-Prefix.pch";
 				HEADER_SEARCH_PATHS = (
@@ -952,8 +950,8 @@
 					/Library/Frameworks,
 					"\"$(SRCROOT)/../OgreSDK/lib/release\"",
 				);
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_ENABLE_CPP_RTTI = NO;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				GCC_ENABLE_CPP_RTTI = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "IbexMac/IbexMac-Prefix.pch";
 				HEADER_SEARCH_PATHS = (
@@ -975,6 +973,7 @@
 					"\"$(SRCROOT)/../OgreSDK/lib/release\"",
 					"\"$(SRCROOT)\"/../OgreSDK/lib",
 					"\"$(SRCROOT)/../OculusSDK/LibOVR/Lib/MacOS/Release\"",
+					"\"$(SRCROOT)/../OculusSDK/LibOVR/Lib/MacOS/Debug\"",
 				);
 				OTHER_CFLAGS = "-DENABLE_OGRE3D=1";
 				PRODUCT_NAME = IbexMacOgre;
@@ -995,8 +994,8 @@
 					/Library/Frameworks,
 					"\"$(SRCROOT)/../OgreSDK/lib/release\"",
 				);
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_ENABLE_CPP_RTTI = NO;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				GCC_ENABLE_CPP_RTTI = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "IbexMac/IbexMac-Prefix.pch";
 				HEADER_SEARCH_PATHS = (
@@ -1018,6 +1017,7 @@
 					"\"$(SRCROOT)/../OgreSDK/lib/release\"",
 					"\"$(SRCROOT)\"/../OgreSDK/lib",
 					"\"$(SRCROOT)/../OculusSDK/LibOVR/Lib/MacOS/Release\"",
+					"\"$(SRCROOT)/../OculusSDK/LibOVR/Lib/MacOS/Debug\"",
 				);
 				OTHER_CFLAGS = "-DENABLE_OGRE3D=1";
 				PRODUCT_NAME = IbexMacOgre;

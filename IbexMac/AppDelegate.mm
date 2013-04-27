@@ -22,13 +22,12 @@
 #import <IOKit/graphics/IOGraphicsLib.h>
 
 #include "OVR.h"
-using namespace OVR;
 
-Ptr<DeviceManager>	pManager;
-Ptr<HMDDevice>		pHMD;
-Ptr<SensorDevice>	pSensor;
-SensorFusion		FusionResult;
-HMDInfo				Info;
+OVR::Ptr<OVR::DeviceManager>	pManager;
+OVR::Ptr<OVR::HMDDevice>		pHMD;
+OVR::Ptr<OVR::SensorDevice>	pSensor;
+OVR::SensorFusion		FusionResult;
+OVR::HMDInfo				Info;
 bool				InfoLoaded = false;
 bool				riftConnected = false;
 
@@ -41,9 +40,9 @@ static int riftResolutionY = 0;
 void initRift() {
     OVR::System::Init(OVR::Log::ConfigureDefaultLog(OVR::LogMask_All));
     
-	pManager = *DeviceManager::Create();
+	pManager = *OVR::DeviceManager::Create();
     
-	pHMD = *pManager->EnumerateDevices<HMDDevice>().CreateDevice();
+	pHMD = *pManager->EnumerateDevices<OVR::HMDDevice>().CreateDevice();
     
 	if (pHMD)
     {
@@ -71,7 +70,7 @@ void initRift() {
 	}
 	else
 	{
-		pSensor = *pManager->EnumerateDevices<SensorDevice>().CreateDevice();
+		pSensor = *pManager->EnumerateDevices<OVR::SensorDevice>().CreateDevice();
 	}
     
 	if (pSensor)
@@ -93,7 +92,7 @@ void cleanUpRift() {
 	pSensor.Clear();
 	pManager.Clear();
     
-	System::Destroy();
+	OVR::System::Destroy();
 }
 
 @interface NSScreen (DisplayName)
@@ -214,6 +213,7 @@ NSWindow *mainWindow;
     [mainWindow setExcludedFromWindowsMenu:YES];
 #ifdef ENABLE_OGRE3D
     fullScreenView = [[MyOgreView alloc] initWithFrame:viewRect];
+    fullScreenView.screenshotView = screenshotView;
 #else
     fullScreenView = [[MyOpenGLView alloc] initWithFrame:viewRect pixelFormat: pixelFormat];
     fullScreenView.screenshotView = screenshotView;

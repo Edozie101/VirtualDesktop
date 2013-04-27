@@ -16,13 +16,12 @@
 #include <time.h>
 
 #include <OVR.h>
-using namespace OVR;
 
-extern Ptr<DeviceManager>	pManager;
-extern Ptr<HMDDevice>		pHMD;
-extern Ptr<SensorDevice>	pSensor;
-extern SensorFusion			FusionResult;
-extern HMDInfo				Info;
+extern OVR::Ptr<OVR::DeviceManager>	pManager;
+extern OVR::Ptr<OVR::HMDDevice>		pHMD;
+extern OVR::Ptr<OVR::SensorDevice>	pSensor;
+extern OVR::SensorFusion			FusionResult;
+extern OVR::HMDInfo				Info;
 
 extern bool					InfoLoaded;
 extern bool					riftConnected;
