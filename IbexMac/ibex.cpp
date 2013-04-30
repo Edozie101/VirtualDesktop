@@ -114,6 +114,7 @@ GLuint depthBuffer;
 
 GLuint desktopFBO;
 GLuint desktopTexture(0);
+GLuint videoTexture[2] = {0,0};
 #ifdef _WIN32
 bool mouseBlendAlternate(false);
 #else
@@ -251,7 +252,7 @@ void prep_framebuffers()
   glGenRenderbuffers(1, &depthBuffer);
   glGenTextures(2, textures);
 
-  for (int i = 0; i < 2; ++i) {
+    for (int i = 0; i < 1; ++i) {//2; ++i) {
     glBindFramebuffer(GL_FRAMEBUFFER, fbos[i]);
     glBindTexture(GL_TEXTURE_2D, textures[i]);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -482,18 +483,15 @@ void processRawMotion(double relativeMouseXDelta, double relativeMouseYDelta, De
 {
   double xRotation, yRotation;
 
+    yRotation = loc.getYRotation();
+    yRotation += relativeMouseYDelta /(double)width * 180.0;
+    loc.setYRotation(yRotation);
+    relativeMouseY = relativeMouseYDelta;
 
-        yRotation = loc.getYRotation();
-        yRotation += relativeMouseYDelta /
-                     (double)width * 180.0;
-        loc.setYRotation(yRotation);
-        relativeMouseY = relativeMouseYDelta;
-
-        xRotation = loc.getXRotation();
-        xRotation += relativeMouseXDelta /
-                     (double)width * 180.0;
-        loc.setXRotation(xRotation);
-        relativeMouseX = relativeMouseXDelta;
+    xRotation = loc.getXRotation();
+    xRotation += relativeMouseXDelta / (double)width * 180.0;
+    loc.setXRotation(xRotation);
+    relativeMouseX = relativeMouseXDelta;
 }
 
 void Ibex::render(double timeDiff) {

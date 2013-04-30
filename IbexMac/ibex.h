@@ -50,6 +50,7 @@ extern double IOD;
 
 extern GLfloat top, bottom;
 extern GLuint desktopTexture;
+extern GLuint videoTexture[2];
 extern bool mouseBlendAlternate;
 extern GLuint cursor;
 extern int cursorSize;
