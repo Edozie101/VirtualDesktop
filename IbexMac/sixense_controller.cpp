@@ -25,6 +25,8 @@
 #include <OpenGL/OpenGL.h>
 #include "ibex.h"
 
+static int sixenseInited = 0;
+
 double sixenseStrafeRight = 0;
 double sixenseWalkForward = 0;
 
@@ -72,6 +74,7 @@ std::deque<sixenseMath::Vector3> pos_hist, vel_hist, accel_hist;
 //  3) Enables hemisphere tracking by calling the Sixense API call sixenseAutoEnableHemisphereTracking. After this is completed full 360 degree
 //     tracking is possible.
 void controller_manager_setup_callback( sixenseUtils::ControllerManager::setup_step step ) {
+    if(!sixenseInited) return;
     
 	if( sixenseUtils::getTheControllerManager()->isMenuVisible() ) {
         
@@ -95,6 +98,7 @@ void controller_manager_setup_callback( sixenseUtils::ControllerManager::setup_s
 // This function causes the 3D objects to flash when the buttons are pressed. It does so using two different techniques
 // available using sixenseUtils
 void check_for_button_presses( sixenseAllControllerData *acd ) {
+    if(!sixenseInited) return;
     
 	// Ask the controller manager which controller is in the left hand and which is in the right
 	int left_index = sixenseUtils::getTheControllerManager()->getIndex( sixenseUtils::ControllerManager::P1L );
@@ -174,6 +178,8 @@ void check_for_button_presses( sixenseAllControllerData *acd ) {
 }
 
 void mySixenseRefresh() {
+    if(!sixenseInited) return;
+    
     // update the controller manager with the latest controller data here
 	sixenseSetActiveBase(0);
 	sixenseAllControllerData acd;
@@ -196,7 +202,7 @@ void mySixenseRefresh() {
 
 void myInitSixense() {
     // Init sixense
-	sixenseInit();
+	sixenseInited = sixenseInit();
     
 	// Init the controller manager. This makes sure the controllers are present, assigned to left and right hands, and that
 	// the hemisphere calibration is complete.
