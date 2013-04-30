@@ -15,6 +15,6 @@ extern NSCondition *cocoaCondition;
 @property (retain,nonatomic) NSOpenGLPixelFormat *pixelFormat;
 @property (retain,nonatomic) NSOpenGLContext *share;
 
-- (void)loopScreenshot:(NSOpenGLPixelFormat *)pixelFormat shareContext:(NSOpenGLContext *)share;
+- (void)loopScreenshot;
 
 @end
