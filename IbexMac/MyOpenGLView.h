@@ -13,6 +13,7 @@ extern NSCondition *cocoaCondition;
 
 @class NSOpenGLContext;
 @class ScreenshotView;
+@class IbexVideoPlayer;
 
 @interface MyOpenGLView : NSOpenGLView {
     CVDisplayLinkRef displayLink; //display link for managing rendering thread
@@ -20,6 +21,7 @@ extern NSCondition *cocoaCondition;
 
 @property (retain,nonatomic) NSOpenGLContext* myContext;
 @property (retain,nonatomic) ScreenshotView *screenshotView;
+@property (retain,nonatomic) IbexVideoPlayer *ibexVideoPlayer;
 
 - (GLuint)getScreenshot;
 - (CVReturn)getFrameForTime:(const CVTimeStamp*)outputTime;

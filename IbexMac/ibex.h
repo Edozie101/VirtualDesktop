@@ -27,6 +27,8 @@ extern bool					InfoLoaded;
 extern bool					riftConnected;
 extern bool                 lensParametersChanged;
 
+extern char fpsString[32];
+
 extern char RiftMonitorName[33];
 extern float EyeDistance;
 extern float DistortionK[4];
@@ -43,6 +45,7 @@ extern unsigned long context;
 extern bool done;
 extern GLfloat physicalWidth,physicalHeight;
 extern GLfloat windowWidth, windowHeight;
+extern GLfloat videoWidth,videoHeight;
 extern GLfloat width,height;
 extern GLfloat textureWidth,textureHeight;
 
@@ -72,6 +75,7 @@ extern bool IRRLICHT;
 extern bool SBS;
 
 extern bool controlDesktop;
+extern bool showDialog;
 
 extern double relativeMouseX;
 extern double relativeMouseY;

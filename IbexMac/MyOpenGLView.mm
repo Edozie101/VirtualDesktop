@@ -6,6 +6,8 @@
 //  Copyright (c) 2012 Hesham Wahba. All rights reserved.
 //
 
+#import "IbexVideoPlayer.h"
+
 //#include "opengl_helpers.h"
 #include <iostream>
 
@@ -122,6 +124,8 @@ static NSTimer *t;
         myInitSixense();
         
         cocoaCondition = [[NSCondition alloc] init];
+        
+        _ibexVideoPlayer = [[IbexVideoPlayer alloc] init];
         
         [self registerHotkey];
         [self controlDesktopUpdate];
@@ -415,6 +419,7 @@ static CGPoint cursorPos;
     fpsTime += timeDiff;
     if(fpsTime >= 5.0) {
         NSLog(@"FPS: %4.2f", ((double)frame)/fpsTime);
+        sprintf(fpsString, "FPS: %4.2f", ((double)frame)/fpsTime);
         frame = 0;
         fpsTime = 0;
     }
@@ -428,18 +433,25 @@ static CGPoint cursorPos;
     
     [glContext makeCurrentContext];
     
-//    glGenTextures(2, desktopTextures);
-//    glFlush();
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         glFlush();
         @autoreleasepool {
-            //[self performSelectorInBackground:@selector(loopScreenshot) withObject:nil];
             _screenshotView.pixelFormat = self.pixelFormat;
             _screenshotView.share = self.openGLContext;
             [_screenshotView performSelectorInBackground:@selector(loopScreenshot) withObject:nil];
         }
     });
+    
+    static dispatch_once_t onceToken2;
+    dispatch_once(&onceToken2, ^{
+        _ibexVideoPlayer.pixelFormat = self.pixelFormat;
+        _ibexVideoPlayer.share = self.openGLContext;
+//        [_ibexVideoPlayer performSelectorInBackground:@selector(loadVideo:andIsStereo:) withObject:@[<movieFilePath>,@false]];
+    });
+    
+    videoWidth = [_ibexVideoPlayer width];
+    videoHeight = [_ibexVideoPlayer height];
     
     [self getScreenshot];
     if(controlDesktop) {
@@ -451,6 +463,8 @@ static CGPoint cursorPos;
         ibex = new Ibex(0,nil);
     }
     
+    videoTexture[0] = _ibexVideoPlayer.videoTexture[0];
+    videoTexture[1] = _ibexVideoPlayer.videoTexture[1];
     ibex->render(timeDiff);
     
 //    glFlush();
@@ -473,19 +487,28 @@ static CGPoint cursorPos;
 
 - (void)keyDown:(NSEvent *)theEvent {
     switch(theEvent.keyCode) {
+        case kVK_UpArrow:
         case kVK_ANSI_W:
             walkForward = 1;
             break;
+        case kVK_DownArrow:
         case kVK_ANSI_S:
             walkForward = -1;
             break;
+        case kVK_LeftArrow:
         case kVK_ANSI_A:
             strafeRight = -1;
             break;
+        case kVK_RightArrow:
         case kVK_ANSI_D:
             strafeRight = 1;
             break;
         case kVK_Space:
+            break;
+        case kVK_ANSI_Slash:
+            if(!controlDesktop) {
+                showDialog = !showDialog;
+            }
             break;
         case kVK_ANSI_Minus:
             IOD -= 0.0005;
@@ -508,15 +531,15 @@ static CGPoint cursorPos;
         case kVK_ANSI_R:
             resetPosition = 1;
             break;
+        case kVK_UpArrow:
         case kVK_ANSI_W:
-            walkForward = 0;
-            break;
+        case kVK_DownArrow:
         case kVK_ANSI_S:
             walkForward = 0;
             break;
+        case kVK_LeftArrow:
         case kVK_ANSI_A:
-            strafeRight = 0;
-            break;
+        case kVK_RightArrow:
         case kVK_ANSI_D:
             strafeRight = 0;
             break;

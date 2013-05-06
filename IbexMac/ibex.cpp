@@ -91,6 +91,7 @@ GLfloat top, bottom;
 
 // TODO: get rid of global variables
 bool controlDesktop  = 1;
+bool showDialog = false;
 
 // external variables
 bool resetPosition          = 0;
@@ -145,6 +146,8 @@ GLfloat physicalHeight = 900.0;
 //GLfloat physicalWidth = 2560.0;
 //GLfloat physicalHeight = 1600.0;
 
+GLfloat videoWidth = 1;
+GLfloat videoHeight = 1;
 GLfloat width = 1440.0;
 GLfloat height = 900.0;
 GLfloat textureWidth = 1280*1.4;//1440.0*2;
@@ -155,7 +158,7 @@ GLfloat windowHeight = 900;//800;
 double IOD = 0.1715; // at scale 0.8 // 0.136; at scale 1.0
 //double IOD = 0.136; // at scale 1.0
 
-
+char fpsString[32] = "FPS: -";
 
 
 /* From: http://stackoverflow.com/questions/5002254/
@@ -522,5 +525,6 @@ void Ibex::render(double timeDiff) {
     renderer->processEvents();
     
     renderGL(desktop3DLocation, timeDiff);
+    
 //    ts_start = ts_current;
 }
