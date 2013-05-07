@@ -87,7 +87,7 @@ private:
     double getSyncClock();
     
 private:
-    AVFormatContext *avFormatCtx = NULL;
+    AVFormatContext *avFormatCtx;
     int             videoStream, audioStream;
     AVCodecContext  *avCodecCtx;
     AVCodecContext  *avAudioCodecCtx;

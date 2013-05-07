@@ -447,7 +447,6 @@ static CGPoint cursorPos;
     dispatch_once(&onceToken2, ^{
         _ibexVideoPlayer.pixelFormat = self.pixelFormat;
         _ibexVideoPlayer.share = self.openGLContext;
-//        [_ibexVideoPlayer performSelectorInBackground:@selector(loadVideo:andIsStereo:) withObject:@[<movieFilePath>,@false]];
     });
     
     videoWidth = [_ibexVideoPlayer width];

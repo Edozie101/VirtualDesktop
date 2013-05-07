@@ -5,7 +5,7 @@
  *      Author: Hesham Wahba
  */
 
-#include <btBulletDynamicsCommon.h>
+#include <bullet/btBulletDynamicsCommon.h>
 
 #include "Filesystem.h"
 

@@ -44,7 +44,8 @@ Ibex::VideoPlayer::VideoPlayer() : videoTexture(new unsigned int[2]),
                                     videoClock(0),
                                     gotCompletePictureFrame(0),
                                     gotCompleteAudioFrame(0),
-                                    videoSyncMode(SyncExternal) {
+                                    videoSyncMode(SyncExternal),
+                                    avFormatCtx(NULL) {
     avcodec_register_all();
     av_register_all();
     avfilter_register_all();
@@ -243,7 +244,9 @@ int Ibex::VideoPlayer::initVideo(const char *fileName, bool isStereo) {
     videoDone = false;
     audioDone = false;
     
-    av_register_all();
+//    av_register_all();
+    
+    avFormatCtx = NULL;
     
     if(avformat_open_input(&avFormatCtx, fileName, NULL, NULL)!=0) {
         return -1;

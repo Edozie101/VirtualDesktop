@@ -9,13 +9,6 @@
 /* Begin PBXBuildFile section */
 		4C006060169D385100B88329 /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C00605F169D385100B88329 /* ApplicationServices.framework */; };
 		4C006063169D38A000B88329 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C006062169D38A000B88329 /* CoreFoundation.framework */; };
-		4C0B3223171A3F4E0098F1CE /* BulletCollision.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6D8CBF16F401B100C4638B /* BulletCollision.framework */; };
-		4C0B3224171A3F4E0098F1CE /* BulletDynamics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6D8CC016F401B100C4638B /* BulletDynamics.framework */; };
-		4C0B3225171A3F4E0098F1CE /* BulletMultiThreaded.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6D8CC116F401B100C4638B /* BulletMultiThreaded.framework */; };
-		4C0B3226171A3F4E0098F1CE /* BulletSoftBody.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6D8CC216F401B100C4638B /* BulletSoftBody.framework */; };
-		4C0B3227171A3F4E0098F1CE /* BulletSoftBodySolvers_OpenCL_Mini.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6D8CC316F401B100C4638B /* BulletSoftBodySolvers_OpenCL_Mini.framework */; };
-		4C0B3228171A3F4E0098F1CE /* LinearMath.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6D8CC416F401B100C4638B /* LinearMath.framework */; };
-		4C0B3229171A3F4E0098F1CE /* MiniCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6D8CC516F401B100C4638B /* MiniCL.framework */; };
 		4C0B322A171A3F4E0098F1CE /* libsixense_utils_x64.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C46D7C616F2B93D00B5DD9E /* libsixense_utils_x64.dylib */; };
 		4C0B322B171A3F4E0098F1CE /* libsixense_x64.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C46D7C716F2B93D00B5DD9E /* libsixense_x64.dylib */; };
 		4C0BAB93171B5600001CDC55 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6F782816F4D9650089101F /* IOKit.framework */; };
@@ -68,6 +61,12 @@
 		4C46D7C916F2B93D00B5DD9E /* libsixense_x64.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C46D7C716F2B93D00B5DD9E /* libsixense_x64.dylib */; };
 		4C46D7CC16F2BB2900B5DD9E /* sixense_controller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C46D7CB16F2BB2900B5DD9E /* sixense_controller.cpp */; };
 		4C46D7CD16F2BB2900B5DD9E /* sixense_controller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C46D7CB16F2BB2900B5DD9E /* sixense_controller.cpp */; };
+		4C4A959E17386F4300172F70 /* libx264.125.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4CABF8341730BDEE00F94A46 /* libx264.125.dylib */; };
+		4C4A959F17386F4900172F70 /* libsixense_utils_x64.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C46D7C616F2B93D00B5DD9E /* libsixense_utils_x64.dylib */; };
+		4C4A95A017386F4B00172F70 /* libsixense_x64.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C46D7C716F2B93D00B5DD9E /* libsixense_x64.dylib */; };
+		4C4A95A117386F5200172F70 /* libiconv.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4CABF82E1730BBFC00F94A46 /* libiconv.dylib */; };
+		4C4A95A41738738A00172F70 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C4A95A31738738A00172F70 /* libz.dylib */; };
+		4C4A95A6173873AC00172F70 /* libbz2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C4A95A5173873AC00172F70 /* libbz2.dylib */; };
 		4C4C3C0A1694689400D2285F /* MyWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4C4C3C091694689400D2285F /* MyWindow.mm */; };
 		4C61AC3916F9272000F98776 /* MyOgreView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4C61AC3816F9272000F98776 /* MyOgreView.mm */; };
 		4C6411A716F4C2D700132076 /* libsixense_utils_x64.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C46D7C616F2B93D00B5DD9E /* libsixense_utils_x64.dylib */; };
@@ -166,18 +165,6 @@
 		4CABF7EA1730926900F94A46 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CABF7E91730926900F94A46 /* OpenAL.framework */; };
 		4CABF7EB1730927500F94A46 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CABF7E91730926900F94A46 /* OpenAL.framework */; };
 		4CABF7EC1730927C00F94A46 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CABF7E91730926900F94A46 /* OpenAL.framework */; };
-		4CABF8221730BAF700F94A46 /* libavcodec.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CABF8161730BAF500F94A46 /* libavcodec.a */; };
-		4CABF8231730BAF700F94A46 /* libavdevice.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CABF8171730BAF500F94A46 /* libavdevice.a */; };
-		4CABF8241730BAF700F94A46 /* libavfilter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CABF8181730BAF600F94A46 /* libavfilter.a */; };
-		4CABF8251730BAF700F94A46 /* libavformat.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CABF8191730BAF600F94A46 /* libavformat.a */; };
-		4CABF8261730BAF700F94A46 /* libavresample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CABF81A1730BAF600F94A46 /* libavresample.a */; };
-		4CABF8271730BAF700F94A46 /* libavutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CABF81B1730BAF600F94A46 /* libavutil.a */; };
-		4CABF8281730BAF700F94A46 /* libpostproc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CABF81C1730BAF600F94A46 /* libpostproc.a */; };
-		4CABF8291730BAF700F94A46 /* libswresample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CABF81D1730BAF600F94A46 /* libswresample.a */; };
-		4CABF82A1730BAF700F94A46 /* libswscale.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CABF81E1730BAF600F94A46 /* libswscale.a */; };
-		4CABF82B1730BAF700F94A46 /* libxvidcore.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CABF81F1730BAF600F94A46 /* libxvidcore.a */; };
-		4CABF82C1730BAF700F94A46 /* libmp3lame.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CABF8201730BAF600F94A46 /* libmp3lame.a */; };
-		4CABF82D1730BAF700F94A46 /* libfaac.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CABF8211730BAF700F94A46 /* libfaac.a */; };
 		4CABF82F1730BBFC00F94A46 /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CABF82E1730BBFC00F94A46 /* libiconv.dylib */; };
 		4CABF8351730BDEE00F94A46 /* libx264.125.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CABF8341730BDEE00F94A46 /* libx264.125.dylib */; };
 		4CAC8D48168E74FB00341AA0 /* GLUT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CAC8D47168E74FB00341AA0 /* GLUT.framework */; };
@@ -188,17 +175,6 @@
 		4CAC8D5C169341F500341AA0 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CAC8D5B169341F500341AA0 /* QuartzCore.framework */; };
 		4CAC8D5E169347AE00341AA0 /* resources in Resources */ = {isa = PBXBuildFile; fileRef = 4CAC8D5D169347AE00341AA0 /* resources */; };
 		4CACE17216A236710085DA5E /* ServerController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CACE17116A236710085DA5E /* ServerController.m */; };
-		4CB09FBC1731E8B900FD4C5D /* BulletCollision.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C6D8CBF16F401B100C4638B /* BulletCollision.framework */; };
-		4CB09FBD1731E8B900FD4C5D /* BulletDynamics.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C6D8CC016F401B100C4638B /* BulletDynamics.framework */; };
-		4CB09FBE1731E8B900FD4C5D /* BulletMultiThreaded.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C6D8CC116F401B100C4638B /* BulletMultiThreaded.framework */; };
-		4CB09FBF1731E8B900FD4C5D /* BulletSoftBody.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C6D8CC216F401B100C4638B /* BulletSoftBody.framework */; };
-		4CB09FC01731E8B900FD4C5D /* BulletSoftBodySolvers_OpenCL_Mini.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C6D8CC316F401B100C4638B /* BulletSoftBodySolvers_OpenCL_Mini.framework */; };
-		4CB09FC11731E8F600FD4C5D /* LinearMath.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C6D8CC416F401B100C4638B /* LinearMath.framework */; };
-		4CB09FC21731E8FF00FD4C5D /* MiniCL.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C6D8CC516F401B100C4638B /* MiniCL.framework */; };
-		4CB09FC31731E90C00FD4C5D /* libsixense_utils_x64.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C46D7C616F2B93D00B5DD9E /* libsixense_utils_x64.dylib */; };
-		4CB09FC41731E90F00FD4C5D /* libsixense_x64.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C46D7C716F2B93D00B5DD9E /* libsixense_x64.dylib */; };
-		4CB09FC51731E91400FD4C5D /* libx264.125.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4CABF8341730BDEE00F94A46 /* libx264.125.dylib */; };
-		4CB09FC61731E91700FD4C5D /* libiconv.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4CABF82E1730BBFC00F94A46 /* libiconv.dylib */; };
 		4CB7986B168AB41E00EF5260 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CB7986A168AB41E00EF5260 /* Cocoa.framework */; };
 		4CB79875168AB41E00EF5260 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4CB79873168AB41E00EF5260 /* InfoPlist.strings */; };
 		4CB79877168AB41E00EF5260 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CB79876168AB41E00EF5260 /* main.m */; };
@@ -270,10 +246,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				4CB09FC31731E90C00FD4C5D /* libsixense_utils_x64.dylib in CopyFiles */,
-				4CB09FC41731E90F00FD4C5D /* libsixense_x64.dylib in CopyFiles */,
-				4CB09FC61731E91700FD4C5D /* libiconv.dylib in CopyFiles */,
-				4CB09FC51731E91400FD4C5D /* libx264.125.dylib in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -283,13 +255,10 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				4CB09FC21731E8FF00FD4C5D /* MiniCL.framework in CopyFiles */,
-				4CB09FC11731E8F600FD4C5D /* LinearMath.framework in CopyFiles */,
-				4CB09FBC1731E8B900FD4C5D /* BulletCollision.framework in CopyFiles */,
-				4CB09FBD1731E8B900FD4C5D /* BulletDynamics.framework in CopyFiles */,
-				4CB09FBE1731E8B900FD4C5D /* BulletMultiThreaded.framework in CopyFiles */,
-				4CB09FBF1731E8B900FD4C5D /* BulletSoftBody.framework in CopyFiles */,
-				4CB09FC01731E8B900FD4C5D /* BulletSoftBodySolvers_OpenCL_Mini.framework in CopyFiles */,
+				4C4A959E17386F4300172F70 /* libx264.125.dylib in CopyFiles */,
+				4C4A959F17386F4900172F70 /* libsixense_utils_x64.dylib in CopyFiles */,
+				4C4A95A017386F4B00172F70 /* libsixense_x64.dylib in CopyFiles */,
+				4C4A95A117386F5200172F70 /* libiconv.dylib in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -330,6 +299,8 @@
 		4C46D7C716F2B93D00B5DD9E /* libsixense_x64.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsixense_x64.dylib; path = /usr/local/lib/libsixense_x64.dylib; sourceTree = "<absolute>"; };
 		4C46D7CA16F2BB2900B5DD9E /* sixense_controller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sixense_controller.h; sourceTree = "<group>"; };
 		4C46D7CB16F2BB2900B5DD9E /* sixense_controller.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sixense_controller.cpp; sourceTree = "<group>"; };
+		4C4A95A31738738A00172F70 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
+		4C4A95A5173873AC00172F70 /* libbz2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libbz2.dylib; path = usr/lib/libbz2.dylib; sourceTree = SDKROOT; };
 		4C4C3C081694689400D2285F /* MyWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyWindow.h; sourceTree = "<group>"; };
 		4C4C3C091694689400D2285F /* MyWindow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MyWindow.mm; sourceTree = "<group>"; };
 		4C61AC3716F9272000F98776 /* MyOgreView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyOgreView.h; sourceTree = "<group>"; };
@@ -440,33 +411,16 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4C4A95A6173873AC00172F70 /* libbz2.dylib in Frameworks */,
+				4C4A95A41738738A00172F70 /* libz.dylib in Frameworks */,
 				4CABF8351730BDEE00F94A46 /* libx264.125.dylib in Frameworks */,
 				4CABF82F1730BBFC00F94A46 /* libiconv.dylib in Frameworks */,
-				4CABF8221730BAF700F94A46 /* libavcodec.a in Frameworks */,
-				4CABF8231730BAF700F94A46 /* libavdevice.a in Frameworks */,
-				4CABF8241730BAF700F94A46 /* libavfilter.a in Frameworks */,
-				4CABF8251730BAF700F94A46 /* libavformat.a in Frameworks */,
-				4CABF8261730BAF700F94A46 /* libavresample.a in Frameworks */,
-				4CABF8271730BAF700F94A46 /* libavutil.a in Frameworks */,
-				4CABF8281730BAF700F94A46 /* libpostproc.a in Frameworks */,
-				4CABF8291730BAF700F94A46 /* libswresample.a in Frameworks */,
-				4CABF82A1730BAF700F94A46 /* libswscale.a in Frameworks */,
-				4CABF82B1730BAF700F94A46 /* libxvidcore.a in Frameworks */,
-				4CABF82C1730BAF700F94A46 /* libmp3lame.a in Frameworks */,
-				4CABF82D1730BAF700F94A46 /* libfaac.a in Frameworks */,
 				4C0BAB94171B5606001CDC55 /* IOKit.framework in Frameworks */,
 				4C19BFE9172CD56400B7599D /* VideoDecodeAcceleration.framework in Frameworks */,
 				4C0D58A616AD656A007BC9CD /* CoreFoundation.framework in Frameworks */,
 				4C0D58A916AD656A007BC9CD /* QuartzCore.framework in Frameworks */,
 				4C0D58AA16AD656A007BC9CD /* CoreVideo.framework in Frameworks */,
 				4CABF7EA1730926900F94A46 /* OpenAL.framework in Frameworks */,
-				4C0B3223171A3F4E0098F1CE /* BulletCollision.framework in Frameworks */,
-				4C0B3224171A3F4E0098F1CE /* BulletDynamics.framework in Frameworks */,
-				4C0B3225171A3F4E0098F1CE /* BulletMultiThreaded.framework in Frameworks */,
-				4C0B3226171A3F4E0098F1CE /* BulletSoftBody.framework in Frameworks */,
-				4C0B3227171A3F4E0098F1CE /* BulletSoftBodySolvers_OpenCL_Mini.framework in Frameworks */,
-				4C0B3228171A3F4E0098F1CE /* LinearMath.framework in Frameworks */,
-				4C0B3229171A3F4E0098F1CE /* MiniCL.framework in Frameworks */,
 				4C0B322A171A3F4E0098F1CE /* libsixense_utils_x64.dylib in Frameworks */,
 				4C0B322B171A3F4E0098F1CE /* libsixense_x64.dylib in Frameworks */,
 				4CA92BC41729FB1F00994379 /* libovr.a in Frameworks */,
@@ -652,6 +606,8 @@
 		4CB79869168AB41E00EF5260 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				4C4A95A5173873AC00172F70 /* libbz2.dylib */,
+				4C4A95A31738738A00172F70 /* libz.dylib */,
 				4CABF8341730BDEE00F94A46 /* libx264.125.dylib */,
 				4CABF82E1730BBFC00F94A46 /* libiconv.dylib */,
 				4CABF8161730BAF500F94A46 /* libavcodec.a */,
@@ -720,11 +676,11 @@
 		4CB79870168AB41E00EF5260 /* IbexMac */ = {
 			isa = PBXGroup;
 			children = (
+				4CB79871168AB41E00EF5260 /* Supporting Files */,
 				4C3CA30B17374B1900A8DA14 /* filesystem */,
 				4C238E19172C9482009C22A6 /* video */,
 				4C6F782D16F4DEA60089101F /* tinyxml */,
 				4C46D7B216F2AEBA00B5DD9E /* sixsense_headers */,
-				4CB79871168AB41E00EF5260 /* Supporting Files */,
 				4CAC8D5D169347AE00341AA0 /* resources */,
 				4CAC8D43168E5F1900341AA0 /* iphone_orientation_plugin */,
 				4CAC8D511690A1C100341AA0 /* GL */,
@@ -794,6 +750,7 @@
 				4C0D58AE16AD656A007BC9CD /* Resources */,
 				4CB09FBA1731E88700FD4C5D /* CopyFiles */,
 				4CB09FBB1731E8A600FD4C5D /* CopyFiles */,
+				4C4A95A21738708100172F70 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -907,6 +864,22 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		4C4A95A21738708100172F70 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "install_name_tool -change /usr/local/lib/libx264.125.dylib @executable_path/../Frameworks/libx264.125.dylib \"$TARGET_BUILD_DIR/$EXECUTABLE_NAME.app/Contents/MacOS/$PRODUCT_NAME\"\n\ninstall_name_tool -change /usr/local/lib/libsixense_utils_x64.dylib @executable_path/../Frameworks/libsixense_utils_x64.dylib \"$TARGET_BUILD_DIR/$EXECUTABLE_NAME.app/Contents/MacOS/$PRODUCT_NAME\"\n\ninstall_name_tool -change /usr/local/lib/libsixense_x64.dylib @executable_path/../Frameworks/libsixense_x64.dylib \"$TARGET_BUILD_DIR/$EXECUTABLE_NAME.app/Contents/MacOS/$PRODUCT_NAME\"\n\ninstall_name_tool -change /usr/local/lib/libsixense_x64.dylib @executable_path/../Frameworks/libsixense_x64.dylib \"$TARGET_BUILD_DIR/$EXECUTABLE_NAME.app/Contents/Frameworks/libsixense_utils_x64.dylib\"\n\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		4C0D589516AD656A007BC9CD /* Sources */ = {
@@ -1057,6 +1030,7 @@
 					/usr/local/include,
 				);
 				INFOPLIST_FILE = "IbexMac/IbexMac-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks @rpath/../Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(PROJECT_DIR)/../OculusSDK/LibOVR/Lib/MacOS/Debug\"",
@@ -1071,6 +1045,28 @@
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
 					"-L/usr/local/lib",
+				);
+				OTHER_LDFLAGS = (
+					/usr/local/lib/libavcodec.a,
+					/usr/local/lib/libavdevice.a,
+					/usr/local/lib/libavfilter.a,
+					/usr/local/lib/libavformat.a,
+					/usr/local/lib/libavresample.a,
+					/usr/local/lib/libavutil.a,
+					/usr/local/lib/libpostproc.a,
+					/usr/local/lib/libswresample.a,
+					/usr/local/lib/libswscale.a,
+					/usr/local/lib/libxvidcore.a,
+					/usr/local/lib/libmp3lame.a,
+					/usr/local/lib/libfaac.a,
+					/usr/local/lib/libBulletSoftBody.a,
+					/usr/local/lib/libBulletCollision.a,
+					/usr/local/lib/libMiniCL.a,
+					/usr/local/lib/libLinearMath.a,
+					/usr/local/lib/libBulletSoftBodySolvers_OpenCL_Mini.a,
+					/usr/local/lib/libBulletSoftBodySolvers_OpenCL_Apple.a,
+					/usr/local/lib/libBulletMultiThreaded.a,
+					/usr/local/lib/libBulletDynamics.a,
 				);
 				PRODUCT_NAME = IbexMac;
 				WRAPPER_EXTENSION = app;
@@ -1099,6 +1095,7 @@
 					/usr/local/include,
 				);
 				INFOPLIST_FILE = "IbexMac/IbexMac-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks @rpath/../Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(PROJECT_DIR)/../OculusSDK/LibOVR/Lib/MacOS/Debug\"",
@@ -1113,6 +1110,28 @@
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
 					"-L/usr/local/lib",
+				);
+				OTHER_LDFLAGS = (
+					/usr/local/lib/libavcodec.a,
+					/usr/local/lib/libavdevice.a,
+					/usr/local/lib/libavfilter.a,
+					/usr/local/lib/libavformat.a,
+					/usr/local/lib/libavresample.a,
+					/usr/local/lib/libavutil.a,
+					/usr/local/lib/libpostproc.a,
+					/usr/local/lib/libswresample.a,
+					/usr/local/lib/libswscale.a,
+					/usr/local/lib/libxvidcore.a,
+					/usr/local/lib/libmp3lame.a,
+					/usr/local/lib/libfaac.a,
+					/usr/local/lib/libBulletSoftBody.a,
+					/usr/local/lib/libBulletCollision.a,
+					/usr/local/lib/libMiniCL.a,
+					/usr/local/lib/libLinearMath.a,
+					/usr/local/lib/libBulletSoftBodySolvers_OpenCL_Mini.a,
+					/usr/local/lib/libBulletSoftBodySolvers_OpenCL_Apple.a,
+					/usr/local/lib/libBulletMultiThreaded.a,
+					/usr/local/lib/libBulletDynamics.a,
 				);
 				PRODUCT_NAME = IbexMac;
 				WRAPPER_EXTENSION = app;
