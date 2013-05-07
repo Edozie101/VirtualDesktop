@@ -44,6 +44,17 @@ to find out where the bullet3d physics library and sixense SDK need to go to bui
 
     brew install ffmpeg x264 xvid yasm faac
     brew install ffmpeg --use-clang
+    
+bullet physics how to build:
+
+    cd ~/Downloads/bullet-2.81-rev2613
+    mkdir bullet-build
+    cd bullet-build
+    cmake .. -G "Unix Makefiles" -DINSTALL_LIBS=ON
+    
+#-DBUILD_SHARED_LIBS=ON                                                                                                                   
+ make -j4
+ sudo make install
 
 ### Windows
 Visual Studio 2012 - Build and run from Visual Studio, Rift SDK must be at same level as ibex folder and named: OculusSDK
