@@ -27,6 +27,7 @@ Walk Sideways Left (Strafe Left): A/Q
 Walk Sideways Right (Strafe Right): D/E   
 Jump: SPACE (Irrlicht renderer only)  
 Show FPS and Info Dialog: / (Mac Only)
+Choose movies: Show info dialog with ‘/‘ then press 1 or 2 for regular or stereo movies, then navigate using arrow keys and enter to select a movie
 Adjust IPD for Rift stereo viewing: -/+ keys
 
 Toggle Barrel Lens Distort: B  
