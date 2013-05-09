@@ -157,6 +157,9 @@
 		4C707C5A172C487200309642 /* libOIS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C707C58172C487200309642 /* libOIS.a */; };
 		4C707C5E172C493000309642 /* Ogre.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C707C5D172C493000309642 /* Ogre.framework */; };
 		4C76498F16965A67009CF2EC /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C76498E16965A67009CF2EC /* Carbon.framework */; };
+		4C86A6CB1739DAC300A1BDEE /* Window.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C86A6C91739DAC300A1BDEE /* Window.cpp */; };
+		4C86A6CC1739DAC300A1BDEE /* Window.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C86A6C91739DAC300A1BDEE /* Window.cpp */; };
+		4C86A6CD1739DAC300A1BDEE /* Window.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C86A6C91739DAC300A1BDEE /* Window.cpp */; };
 		4C8758431697E5200022583D /* ibex.iconset in Resources */ = {isa = PBXBuildFile; fileRef = 4C8758421697E5200022583D /* ibex.iconset */; };
 		4C936064172A282100A94980 /* ScreenshotView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4C936063172A282100A94980 /* ScreenshotView.mm */; };
 		4C936065172A282100A94980 /* ScreenshotView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4C936063172A282100A94980 /* ScreenshotView.mm */; };
@@ -347,6 +350,8 @@
 		4C707C58172C487200309642 /* libOIS.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libOIS.a; path = ../OgreSDK/lib/release/libOIS.a; sourceTree = "<group>"; };
 		4C707C5D172C493000309642 /* Ogre.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Ogre.framework; path = ../OgreSDK/lib/release/Ogre.framework; sourceTree = "<group>"; };
 		4C76498E16965A67009CF2EC /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
+		4C86A6C91739DAC300A1BDEE /* Window.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Window.cpp; sourceTree = "<group>"; };
+		4C86A6CA1739DAC300A1BDEE /* Window.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Window.h; sourceTree = "<group>"; };
 		4C8758421697E5200022583D /* ibex.iconset */ = {isa = PBXFileReference; lastKnownFileType = folder.iconset; path = ibex.iconset; sourceTree = "<group>"; };
 		4C936062172A282100A94980 /* ScreenshotView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScreenshotView.h; sourceTree = "<group>"; };
 		4C936063172A282100A94980 /* ScreenshotView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScreenshotView.mm; sourceTree = "<group>"; };
@@ -583,6 +588,15 @@
 			name = tinyxml;
 			sourceTree = "<group>";
 		};
+		4C86A6C81739DAA600A1BDEE /* ibexwindows */ = {
+			isa = PBXGroup;
+			children = (
+				4C86A6C91739DAC300A1BDEE /* Window.cpp */,
+				4C86A6CA1739DAC300A1BDEE /* Window.h */,
+			);
+			name = ibexwindows;
+			sourceTree = "<group>";
+		};
 		4CB7985B168AB41E00EF5260 = {
 			isa = PBXGroup;
 			children = (
@@ -676,6 +690,7 @@
 		4CB79870168AB41E00EF5260 /* IbexMac */ = {
 			isa = PBXGroup;
 			children = (
+				4C86A6C81739DAA600A1BDEE /* ibexwindows */,
 				4CB79871168AB41E00EF5260 /* Supporting Files */,
 				4C3CA30B17374B1900A8DA14 /* filesystem */,
 				4C238E19172C9482009C22A6 /* video */,
@@ -910,6 +925,7 @@
 				4C64379D172F7B310005504B /* VideoPlayer.cpp in Sources */,
 				4C238E1D172C94A7009C22A6 /* IbexVideoPlayer.mm in Sources */,
 				4C3CA30F17374B2E00A8DA14 /* Filesystem.cpp in Sources */,
+				4C86A6CC1739DAC300A1BDEE /* Window.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -945,6 +961,7 @@
 				4C238E1E172C94A7009C22A6 /* IbexVideoPlayer.mm in Sources */,
 				4C64379E172F7B310005504B /* VideoPlayer.cpp in Sources */,
 				4C3CA31017374B2E00A8DA14 /* Filesystem.cpp in Sources */,
+				4C86A6CD1739DAC300A1BDEE /* Window.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -976,6 +993,7 @@
 				4C238E1C172C94A7009C22A6 /* IbexVideoPlayer.mm in Sources */,
 				4C64379C172F7B310005504B /* VideoPlayer.cpp in Sources */,
 				4C3CA30E17374B2E00A8DA14 /* Filesystem.cpp in Sources */,
+				4C86A6CB1739DAC300A1BDEE /* Window.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

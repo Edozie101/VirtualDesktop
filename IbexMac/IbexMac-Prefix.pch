@@ -4,6 +4,14 @@
 
 #ifdef ENABLE_OGRE3D
 #include <GL/glew.h>
+#else
+
+//#include "GL/glew.h"
+//#include <OpenGL/gl.h>
+//#include <OpenGL/glu.h>
+//#include <OpenGL/glext.h>
+//#include <GLUT/glut.h>
+
 #endif
 
 #ifdef __OBJC__

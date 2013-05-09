@@ -29,6 +29,7 @@ extern "C" {
 }
 
 #include <queue>
+#include <thread>
 
 namespace Ibex {
     
@@ -100,6 +101,10 @@ private:
     int             gotCompletePictureFrame,gotCompleteAudioFrame;
     int             numBytes;
     uint8_t         *buffer;
+    
+private:
+    std::thread syncThread;
+    std::thread audioThread;
 };
     
 }

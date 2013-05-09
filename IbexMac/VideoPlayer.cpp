@@ -35,7 +35,7 @@ void ibex_release_buffer(struct AVCodecContext *c, AVFrame *pic) {
     avcodec_default_release_buffer(c, pic);
 }
 
-Ibex::VideoPlayer::VideoPlayer() : videoTexture(new unsigned int[2]),
+Ibex::VideoPlayer::VideoPlayer() :  videoTexture(new unsigned int[2]),
                                     width(0),
                                     height(0),
                                     done(true),
@@ -45,7 +45,9 @@ Ibex::VideoPlayer::VideoPlayer() : videoTexture(new unsigned int[2]),
                                     gotCompletePictureFrame(0),
                                     gotCompleteAudioFrame(0),
                                     videoSyncMode(SyncExternal),
-                                    avFormatCtx(NULL) {
+                                    avFormatCtx(NULL),
+                                    avAudioCodecCtx(NULL),
+                                    avAudioCodec(NULL) {
     avcodec_register_all();
     av_register_all();
     avfilter_register_all();
@@ -77,7 +79,7 @@ void Ibex::VideoPlayer::addAudioFrame(AudioPacket avAudioFrame) {
     audioQueue.push(avAudioFrame);
 }
 void Ibex::VideoPlayer::addVideoFrame(AudioPacket avVideoFrame) {
-    while(videoQueue.size() > MAX_VIDEO_QUEUE_SIZE) {
+    while(videoQueue.size() > MAX_VIDEO_QUEUE_SIZE && !done) {
 //        std::this_thread::sleep_for(std::chrono::milliseconds(5));
         std::this_thread::yield();
     }
@@ -86,6 +88,8 @@ void Ibex::VideoPlayer::addVideoFrame(AudioPacket avVideoFrame) {
 }
 
 int Ibex::VideoPlayer::playAudio(AVCodecContext *avAudioCodecCtx) {
+    if(avAudioCodecCtx == 0) return 0;
+    
     ////// OpenAL ////////
     ALCdevice *dev;
     ALCcontext *ctx;
@@ -192,7 +196,8 @@ int Ibex::VideoPlayer::playAudio(AVCodecContext *avAudioCodecCtx) {
                     alGetSourcei(source, AL_BUFFERS_PROCESSED, &val);
                     std::this_thread::yield();
 //                    std::this_thread::sleep_for(std::chrono::milliseconds(1));
-                } while(val <= 0);
+                } while(val <= 0 && !done);
+                if(done) break;
                 //                    fprintf(stderr, "Unqueued buffer\n");
                 
                 ALuint buffer;
@@ -249,11 +254,14 @@ int Ibex::VideoPlayer::initVideo(const char *fileName, bool isStereo) {
     avFormatCtx = NULL;
     
     if(avformat_open_input(&avFormatCtx, fileName, NULL, NULL)!=0) {
+        videoDone = audioDone = done = true;
         return -1;
     }
     
-    if(avformat_find_stream_info(avFormatCtx, NULL)<0)
+    if(avformat_find_stream_info(avFormatCtx, NULL)<0) {
+        videoDone = audioDone = done = true;
         return -1;
+    }
     
     av_dump_format(avFormatCtx, 0, fileName, 0);
     
@@ -271,8 +279,10 @@ int Ibex::VideoPlayer::initVideo(const char *fileName, bool isStereo) {
         }
     }
     
-    if(videoStream == -1)
+    if(videoStream == -1) {
+        videoDone = audioDone = done = true;
         return -1; // don't play if no video stream, don't want to do the same for audio
+    }
     
     // Get video stream codec context
     avCodecCtx = avFormatCtx->streams[videoStream]->codec;
@@ -356,14 +366,19 @@ double Ibex::VideoPlayer::synchronize_video(AVFrame *src_frame, double pts) {
 }
 
 int Ibex::VideoPlayer::loadSyncAudioVideo(const char *fileName_, bool isStereo) {
-    SwrContext * swrContext = swr_alloc();
-    av_opt_set_int(swrContext, "in_channel_layout",  avAudioCodecCtx->channel_layout, 0);
-    av_opt_set_int(swrContext, "out_channel_layout", avAudioCodecCtx->channel_layout,  0);
-    av_opt_set_int(swrContext, "in_sample_rate",     avAudioCodecCtx->sample_rate, 0);
-    av_opt_set_int(swrContext, "out_sample_rate",    avAudioCodecCtx->sample_rate, 0);
-    av_opt_set_sample_fmt(swrContext, "in_sample_fmt",  avAudioCodecCtx->sample_fmt, 0);
-    av_opt_set_sample_fmt(swrContext, "out_sample_fmt", AV_SAMPLE_FMT_S16 /* P */,  0);
-    swr_init(swrContext);
+    if(avAudioCodecCtx == 0) audioDone = true;
+    
+    SwrContext * swrContext = 0;
+    if(avAudioCodecCtx != 0) {
+        swrContext = swr_alloc();
+        av_opt_set_int(swrContext, "in_channel_layout",  avAudioCodecCtx->channel_layout, 0);
+        av_opt_set_int(swrContext, "out_channel_layout", avAudioCodecCtx->channel_layout,  0);
+        av_opt_set_int(swrContext, "in_sample_rate",     avAudioCodecCtx->sample_rate, 0);
+        av_opt_set_int(swrContext, "out_sample_rate",    avAudioCodecCtx->sample_rate, 0);
+        av_opt_set_sample_fmt(swrContext, "in_sample_fmt",  avAudioCodecCtx->sample_fmt, 0);
+        av_opt_set_sample_fmt(swrContext, "out_sample_fmt", AV_SAMPLE_FMT_S16 /* P */,  0);
+        swr_init(swrContext);
+    }
     
     int data_size = 0;
     AVRational rational = avCodecCtx->time_base;
@@ -377,7 +392,7 @@ int Ibex::VideoPlayer::loadSyncAudioVideo(const char *fileName_, bool isStereo) 
     uint8_t *audioBuffer = new uint8_t[BUFFER_SIZE+FF_INPUT_BUFFER_PADDING_SIZE];//size];
     memset(audioBuffer, 0, BUFFER_SIZE+FF_INPUT_BUFFER_PADDING_SIZE);//size);
     
-    std::thread audioThread(&Ibex::VideoPlayer::playAudio,this, avAudioCodecCtx);
+    audioThread = std::thread(&Ibex::VideoPlayer::playAudio,this, avAudioCodecCtx);
     
     avFrame = videoFrameQueue.front();
     videoFrameQueue.pop();
@@ -389,13 +404,13 @@ int Ibex::VideoPlayer::loadSyncAudioVideo(const char *fileName_, bool isStereo) 
     
     int64_t globalPts;
     unsigned long count = 0;
-    while(av_read_frame(avFormatCtx, &avPacket)>=0) {
+    while(av_read_frame(avFormatCtx, &avPacket)>=0 && !done) {
         globalPts = avPacket.pts;
         
         ++count;
         msec = 1000*(avPacket.pts * timeBase * avCodecCtx->ticks_per_frame);
         // play audio stream
-        if(avPacket.stream_index == audioStream) {
+        if(avPacket.stream_index == audioStream && avAudioCodecCtx) {
             int size = avPacket.size;
 //            std::cerr << "packet.pts: " << avPacket.pts << std::endl;
             
@@ -427,11 +442,12 @@ int Ibex::VideoPlayer::loadSyncAudioVideo(const char *fileName_, bool isStereo) 
                         a.avAudioFrame = avAudioFrame;
                         addAudioFrame(a);
                         
-                        while(audioBufferQueue.size() <= 0) {
+                        while(audioBufferQueue.size() <= 0 && !done) {
                             std::this_thread::yield();
 //                    std::this_thread::sleep_for(std::chrono::milliseconds(1));
                             continue;
                         }
+                        if(done) continue;
                         p = audioBufferQueue.front();
                         audioBufferQueue.pop();
                         avAudioFrame = p.avAudioFrame;
@@ -453,11 +469,12 @@ int Ibex::VideoPlayer::loadSyncAudioVideo(const char *fileName_, bool isStereo) 
 //            }
             
             if(avFrame == 0) {
-                while(videoFrameQueue.size() <= 0) {
+                while(videoFrameQueue.size() <= 0 && !done) {
                     std::this_thread::yield();
 //                    std::this_thread::sleep_for(std::chrono::milliseconds(1));
                     continue;
                 }
+                if(done) continue;
                 
                 avFrame = videoFrameQueue.front();
                 videoFrameQueue.pop();
@@ -507,10 +524,10 @@ int Ibex::VideoPlayer::loadSyncAudioVideo(const char *fileName_, bool isStereo) 
             av_free_packet(&avPacket);
         }
     }
-    audioDone = true;
-    videoDone = true;
+//    videoDone = true;
     
     audioThread.join();
+    audioDone = true;
     
     for(int i = 0; i < audioBufferQueue.size(); ++i) {
         AudioPacket avAudioFrame = audioBufferQueue.front();
@@ -554,11 +571,35 @@ double Ibex::VideoPlayer::getGlobalVideoPTS(AVFrame *src_frame, double pts) {
 
 int Ibex::VideoPlayer::playVideo(const char *fileName, bool isStereo)
 {
+    if(!done) {
+        done = true;
+        while(!videoDone || !audioDone);
+    }
+
+//    videoTexture(new unsigned int[2]),
+    width = 0;
+    height = 0;
+    done = true;
+    videoDone = true;
+    audioDone = true;
+    videoClock = 0;
+    gotCompletePictureFrame = 0;
+    gotCompleteAudioFrame = 0;
+    videoSyncMode = SyncExternal;
+    avFormatCtx = NULL;
+    avAudioCodecCtx = NULL;
+    avAudioCodec = NULL;
+    videoStream = -1;
+    audioStream = -1;
+    
     if(initVideo(fileName, isStereo)) {
+        videoDone = audioDone = done = true;
         return -1;
     }
+    videoDone = audioDone = done = false;
+
     
-    std::thread syncThread(&Ibex::VideoPlayer::loadSyncAudioVideo, this, fileName, isStereo);
+    syncThread = std::thread(&Ibex::VideoPlayer::loadSyncAudioVideo, this, fileName, isStereo);
     
     AVFrame *avFrameRGB;
     int             numBytes;
@@ -566,8 +607,10 @@ int Ibex::VideoPlayer::playVideo(const char *fileName, bool isStereo)
     
     // create RGB framebuffer
     avFrameRGB = avcodec_alloc_frame();
-    if(avFrameRGB==NULL)
+    if(avFrameRGB==NULL) {
+        videoDone = audioDone = done = true;
         return -1;
+    }
     
     // create RGB framebuffer backing store
     numBytes = avpicture_get_size(PIX_FMT_RGB24, width, height);
@@ -636,6 +679,7 @@ int Ibex::VideoPlayer::playVideo(const char *fileName, bool isStereo)
             double frameDiff = (videoFrame.pts-lastPts);
             double timeDiff = getSyncClock()-timeOfLastFrame;
             if(timeDiff<frameDiff) {
+                if(done) continue;
 //                std::cerr << frameDiff << ", " << timeDiff << std::endl;
 //                std::cerr << "sleep for: " << (int)((frameDiff-timeDiff)*1000.0) << std::endl;
                 std::this_thread::sleep_for(std::chrono::milliseconds((int)((frameDiff-timeDiff)*1000.0)));
@@ -707,8 +751,16 @@ int Ibex::VideoPlayer::playVideo(const char *fileName, bool isStereo)
     for(int i = 0; i < videoFrameQueue.size(); ++i) {
         AVFrame *avFrame = videoFrameQueue.front();
         videoFrameQueue.pop();
-        av_free(avFrame);
+        if(avFrame != NULL) {
+            av_free(avFrame);
+        }
     }
+    
+    if(img_convert_ctx != NULL) {
+        sws_freeContext(img_convert_ctx);
+    }
+    
+    videoDone = true;
     
     return 0;
 }

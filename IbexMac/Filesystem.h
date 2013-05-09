@@ -10,11 +10,18 @@
 #define __IbexMac__Filesystem__
 
 #include <iostream>
+#include <vector>
+#include <string>
 
 //namespace Ibex {
 class Filesystem {
 public:
-    static void listDirectory();
+    static bool isFile(std::string path);
+    static bool isDirectory(std::string path);
+    static std::string getFullPath(std::string from, std::string to);
+    static std::string navigate(std::string from, std::string to);
+    static std::string getHomeDirectory();
+    static std::vector<std::string> listDirectory(const char *directory);
 };
 //}
 

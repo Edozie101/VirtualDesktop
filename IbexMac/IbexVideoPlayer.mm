@@ -42,6 +42,7 @@ static Ibex::VideoPlayer *player = 0;
 
     _videoTexture = player->videoTexture;
     player->playVideo(fileName.UTF8String, isStereo);
+    [NSOpenGLContext clearCurrentContext];
     
     //delete []player;
     //player = 0;

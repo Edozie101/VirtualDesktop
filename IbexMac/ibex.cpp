@@ -85,8 +85,6 @@
 
 #include "sixense_controller.h"
 
-RendererPlugin *renderer;
-
 GLfloat top, bottom;
 
 // TODO: get rid of global variables
@@ -322,7 +320,7 @@ bool didInitOpenGL() {
 // Updated:  Sep 10, 2012
 // TODO:     Split into separate functions
 // ---------------------------------------------------------------------------
-void renderGL(Desktop3DLocation& loc, double timeDiff_)
+void renderGL(Desktop3DLocation& loc, double timeDiff_, RendererPlugin *renderer)
 {
   if (!initedOpenGL) {
     initedOpenGL = true;
@@ -409,7 +407,7 @@ double relativeMouseY = 0;
 
 static bool jump = false;
 
-Ibex::Ibex(int argc, char ** argv) {
+Ibex::Ibex::Ibex(int argc, char ** argv) {
     int c;
 #ifndef _WIN32
     while (argc > 0 && (c = getopt(argc, argv, "oihm")) != -1)
@@ -497,7 +495,7 @@ void processRawMotion(double relativeMouseXDelta, double relativeMouseYDelta, De
     relativeMouseX = relativeMouseXDelta;
 }
 
-void Ibex::render(double timeDiff) {
+void Ibex::Ibex::render(double timeDiff) {
     if (controlDesktop) {
         walkForward = strafeRight = 0;
     }
@@ -524,7 +522,7 @@ void Ibex::render(double timeDiff) {
     }
     renderer->processEvents();
     
-    renderGL(desktop3DLocation, timeDiff);
+    renderGL(desktop3DLocation, timeDiff, renderer);
     
 //    ts_start = ts_current;
 }

@@ -36,11 +36,15 @@
 
 #include "sixense_controller.h"
 
+#include "Window.h"
+
+#include "RendererPlugin.h"
+
 char mResourcePath[1024];
 
 @implementation MyOpenGLView
 
-static Ibex *ibex = nil;
+static Ibex::Ibex *ibex = nil;
 
 static EventHandlerUPP hotKeyFunction;
 
@@ -447,7 +451,14 @@ static CGPoint cursorPos;
     dispatch_once(&onceToken2, ^{
         _ibexVideoPlayer.pixelFormat = self.pixelFormat;
         _ibexVideoPlayer.share = self.openGLContext;
+//        [_ibexVideoPlayer performSelectorInBackground:@selector(loadVideo:andIsStereo:) withObject:@[<movieFilePath>,@false]];
     });
+    if(ibex != nil && ibex->renderer->window.getSelectedVideo()) {
+        ibex->renderer->window.setSelectedVideo(false);
+        
+        NSString *videoPath = [NSString stringWithUTF8String:ibex->renderer->window.getSelectedVideoPath().c_str()];
+        [_ibexVideoPlayer performSelectorInBackground:@selector(loadVideo:andIsStereo:) withObject:@[videoPath,(ibex->renderer->window.getIsStereoVideo())?@YES : @NO]];
+    }
     
     videoWidth = [_ibexVideoPlayer width];
     videoHeight = [_ibexVideoPlayer height];
@@ -459,7 +470,7 @@ static CGPoint cursorPos;
     }
     
     if(ibex == nil) {
-        ibex = new Ibex(0,nil);
+        ibex = new Ibex::Ibex(0,nil);
     }
     
     videoTexture[0] = _ibexVideoPlayer.videoTexture[0];
@@ -485,65 +496,77 @@ static CGPoint cursorPos;
 }
 
 - (void)keyDown:(NSEvent *)theEvent {
-    switch(theEvent.keyCode) {
-        case kVK_UpArrow:
-        case kVK_ANSI_W:
-            walkForward = 1;
-            break;
-        case kVK_DownArrow:
-        case kVK_ANSI_S:
-            walkForward = -1;
-            break;
-        case kVK_LeftArrow:
-        case kVK_ANSI_A:
-            strafeRight = -1;
-            break;
-        case kVK_RightArrow:
-        case kVK_ANSI_D:
-            strafeRight = 1;
-            break;
-        case kVK_Space:
-            break;
-        case kVK_ANSI_Slash:
-            if(!controlDesktop) {
-                showDialog = !showDialog;
-            }
-            break;
-        case kVK_ANSI_Minus:
-            IOD -= 0.0005;
-            lensParametersChanged = true;
-            break;
-        case kVK_ANSI_Equal:
-            IOD += 0.0005;
-            lensParametersChanged = true;
-            break;
+    int processed = 0;
+    if(showDialog) {
+        processed = ibex->renderer->window.processKey(theEvent.keyCode, 1);
+    }
+    if(!processed) {
+        switch(theEvent.keyCode) {
+            case kVK_UpArrow:
+            case kVK_ANSI_W:
+                walkForward = 1;
+                break;
+            case kVK_DownArrow:
+            case kVK_ANSI_S:
+                walkForward = -1;
+                break;
+            case kVK_LeftArrow:
+            case kVK_ANSI_A:
+                strafeRight = -1;
+                break;
+            case kVK_RightArrow:
+            case kVK_ANSI_D:
+                strafeRight = 1;
+                break;
+            case kVK_Space:
+                break;
+            case kVK_ANSI_Slash:
+                if(!controlDesktop) {
+                    showDialog = !showDialog;
+                }
+                break;
+            case kVK_ANSI_Minus:
+                IOD -= 0.0005;
+                lensParametersChanged = true;
+                break;
+            case kVK_ANSI_Equal:
+                IOD += 0.0005;
+                lensParametersChanged = true;
+                break;
+        }
     }
 }
 - (void)keyUp:(NSEvent *)theEvent {
-    switch(theEvent.keyCode) {
-        case kVK_ANSI_B:
-            barrelDistort = !barrelDistort;
-            break;
-        case kVK_ANSI_G:
-            showGround = !showGround;
-            break;
-        case kVK_ANSI_R:
-            resetPosition = 1;
-            break;
-        case kVK_UpArrow:
-        case kVK_ANSI_W:
-        case kVK_DownArrow:
-        case kVK_ANSI_S:
-            walkForward = 0;
-            break;
-        case kVK_LeftArrow:
-        case kVK_ANSI_A:
-        case kVK_RightArrow:
-        case kVK_ANSI_D:
-            strafeRight = 0;
-            break;
-        case kVK_Space:
-            break;
+    int processed = 0;
+    if(showDialog) {
+        processed = ibex->renderer->window.processKey(theEvent.keyCode, 0);
+    }
+    if(!processed) {
+        switch(theEvent.keyCode) {
+            case kVK_ANSI_B:
+                barrelDistort = !barrelDistort;
+                break;
+            case kVK_ANSI_G:
+                showGround = !showGround;
+                break;
+            case kVK_ANSI_R:
+                resetPosition = 1;
+                break;
+            case kVK_UpArrow:
+            case kVK_ANSI_W:
+            case kVK_DownArrow:
+            case kVK_ANSI_S:
+                walkForward = 0;
+                break;
+            case kVK_LeftArrow:
+            case kVK_ANSI_A:
+            case kVK_RightArrow:
+            case kVK_ANSI_D:
+                strafeRight = 0;
+                break;
+            case kVK_Space:
+                break;
+        }
     }
 }
 

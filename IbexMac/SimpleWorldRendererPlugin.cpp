@@ -11,6 +11,7 @@
 
 #include <iostream>
 #include <math.h>
+#include <stdio.h>
 
 #include "distortions.h"
 #include "opengl_helpers.h"
@@ -167,64 +168,6 @@ double *getRiftOrientation() {
 			orientationRift[i] = ((float*)hmdMat.M)[i];
 		}
 		return orientationRift;
-}
-
-void renderBitmapString(
-                        float x,
-                        float y,
-                        float z,
-                        void *font,
-                        char *string) {
-    
-    char *c;
-    
-    glPushMatrix();
-    glRasterPos3f(x, y,z);
-    glScaled(0.001/2.0, 0.001/2.0, 0.001/2.0);
-    for (c=string; *c != '\0'; c++) {
-        glutBitmapCharacter(font, *c);
-    }
-    glPopMatrix();
-}
-
-void renderStrokeFontString(
-                            float x,
-                            float y,
-                            float z,
-                            void *font,
-                            char *string) {
-    
-    char *c;
-    glPushMatrix();
-    glTranslatef(x, y,z);
-    
-    glScaled(0.001/20.0, 0.001/20.0, 0.001/20.0);
-    for (c=string; *c != '\0'; c++) {
-        glutStrokeCharacter(font, *c);
-    }
-    
-    glPopMatrix();
-}
-
-void renderInfoWindow() {
-    static bool directoryChanged = true;
-    if(directoryChanged) {
-        Filesystem::listDirectory();
-        directoryChanged = false;
-    }
-    glBindTexture(GL_TEXTURE_2D, 0);
-    glDisable(GL_DEPTH_TEST);
-    glColor4f(0,0.1,0,0.5);
-    glBegin(GL_QUADS);
-    glVertex3d(-0.05, 0.45, -0.25);
-    glVertex3d(0.05, 0.45, -0.25);
-    glVertex3d(0.05, 0.55, -0.25);
-    glVertex3d(-0.05, 0.55, -0.25);
-    glEnd();
-    glColor4f(1,1,1,1);
-//    renderStrokeFontString(0, 0.5, -0.25, GLUT_STROKE_ROMAN, fpsString);
-    renderBitmapString(0, 0.5, -0.25, GLUT_BITMAP_HELVETICA_18, fpsString);
-    glEnable(GL_DEPTH_TEST);
 }
 
 void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDiff_) {
@@ -430,7 +373,7 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
 		glPopMatrix();
         
         if(showDialog) {
-            renderInfoWindow();
+            window.render();
         }
     }
     //glPopMatrix();
