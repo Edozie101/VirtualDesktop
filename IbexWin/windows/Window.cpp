@@ -256,4 +256,105 @@ int Ibex::Window::processKey(unsigned short keyCode, int down) {
     }
     return processed;
 }
+#else
+#ifdef _WIN32
+int Ibex::Window::processKey(unsigned char key, int down) {
+	int processed = 0;
+    switch(key) {
+		case 'W':
+        case 'w':
+            if(down) {
+                --selectedFile;
+                if(selectedFile < 0) selectedFile += directoryList.size();
+            }
+            processed = 1;
+            break;
+		case 'S':
+		case 's':
+            if(down) {
+                ++selectedFile;
+                selectedFile %= directoryList.size();
+            }
+            
+            processed = 1;
+            break;
+        case '1':
+            if(down) {
+                if(visibleWindow != FileChooser) {
+                    selectedFile = 0;
+                    isStereoVideo = false;
+                    directoryChanged = true;
+                }
+                visibleWindow = FileChooser;
+            }
+            
+            processed = 1;
+            break;
+        case '2':
+            if(down) {
+                if(visibleWindow != FileChooser) {
+                    selectedFile = 0;
+                    isStereoVideo = true;
+                    directoryChanged = true;
+                }
+                visibleWindow = FileChooser;
+            }
+            
+            processed = 1;
+            break;
+        case 127: // DELETE
+            visibleWindow = InfoWindow;
+            
+            processed = 1;
+            break;
+        case 13: // ENTER KEY
+            if(down) {
+                if(selectedFile < directoryList.size()) {
+                    std::string fullPath = Filesystem::getFullPath(currentPath, directoryList[selectedFile]);
+                    if(Filesystem::isFile(fullPath) && !Filesystem::isDirectory(fullPath)) {
+                        selectedVideo = true;
+                        videoPath = fullPath;
+                        showDialog = false;
+                    } else {
+                        currentPath = Filesystem::navigate(currentPath, directoryList[selectedFile]);
+                    }
+                    directoryChanged = true;
+                    selectedFile = 0;
+
+                }
+//            showDialog = false;
+            }
+            
+            processed = 1;
+            break;
+        case 27: // ESCAPE
+            showDialog = false;
+            
+            processed = 1;
+            break;
+    }
+    return processed;
+}
+int Ibex::Window::processSpecialKey(unsigned char key, int down) {
+	int processed = 0;
+    switch(key) {
+        case GLUT_KEY_UP:
+            if(down) {
+                --selectedFile;
+                if(selectedFile < 0) selectedFile += directoryList.size();
+            }
+            processed = 1;
+            break;
+        case GLUT_KEY_DOWN:
+            if(down) {
+                ++selectedFile;
+                selectedFile %= directoryList.size();
+            }
+            
+            processed = 1;
+            break;
+    }
+    return processed;
+}
+#endif
 #endif

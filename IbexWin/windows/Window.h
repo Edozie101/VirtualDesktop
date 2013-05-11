@@ -32,6 +32,11 @@ public:
 
 #ifdef __APPLE__
     int processKey(unsigned short keyCode, int down);
+#else
+#ifdef _WIN32
+	int processKey(unsigned char key, int down);
+	int processSpecialKey(unsigned char key, int down);
+#endif
 #endif
     
 private:

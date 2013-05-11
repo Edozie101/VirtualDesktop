@@ -69,6 +69,7 @@ typedef unsigned long GLXContext;
 #include "math_3d.h"
 
 #include "ibex.h"
+#include "RendererPlugin.h"
 
 #include "distortions.h"
 #include "OVR.h"
@@ -86,8 +87,15 @@ bool modifiedDesktop(false);
 GLuint VBO(0);
 std::condition_variable screenshotCondition;
 
+Ibex::Ibex *ibex = 0;
+
 void Keyboard(unsigned char key, int x, int y)
 {
+	    int processed = 0;
+    if(showDialog) {
+        processed = ibex->renderer->window.processKey(key, 1);
+    }
+    if(!processed) {
   switch (key)
   {
   case 'w':
@@ -118,9 +126,15 @@ void Keyboard(unsigned char key, int x, int y)
 	  lensParametersChanged = true;
 	  break;
   }
+	}
 }
 void KeyboardUp(unsigned char key, int x, int y)
 {
+	    int processed = 0;
+    if(showDialog) {
+        processed = ibex->renderer->window.processKey(key, 0);
+    }
+    if(!processed) {
   switch (key)
   {
   case 'b':
@@ -156,6 +170,7 @@ void KeyboardUp(unsigned char key, int x, int y)
 	  strafeRight = 0;
 	  break;
   }
+	}
 }
 
 void MouseMoved(int x, int y) {
@@ -393,7 +408,6 @@ void loopScreenshot() {
 	}
 }
 
-Ibex::Ibex *ibex = 0;
 static void RenderSceneCB()
 {
 	static double timeprev = glutGet(GLUT_ELAPSED_TIME);
