@@ -58,7 +58,25 @@ bullet physics how to build:
  sudo make install
 
 ### Windows
-Visual Studio 2012 - Build and run from Visual Studio, Rift SDK must be at same level as ibex folder and named: OculusSDK
+Visual Studio 2012 - Build and run from Visual Studio, Rift SDK must be at same level as ibex folder and named: OculusSDK.
+
+You also need to have ffmpeg installed where VS can find it.  I recommend the builds from ([http://ffmpeg.zeranoe.com/builds](http://ffmpeg.zeranoe.com/builds/ "http://ffmpeg.zeranoe.com/builds/")).  You should download the 32-bit shared and dev builds and extract them at the same level as ibex.
+
+Your directory structure should look like:
+
+    * Parent Directory:
+    |
+    |->ibex
+       |...
+       |->IbexMac
+       |->IbexWin
+    |->ffmpeg
+       |
+       |->lib
+    |->ffmpeg-shared
+       |
+       |->bin
+    |->OculusSDK
 
 ### Linux
 Setting up my Ubuntu 12.10 install:
