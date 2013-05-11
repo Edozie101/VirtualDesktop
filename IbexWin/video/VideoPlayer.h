@@ -23,7 +23,7 @@ extern "C" {
 #ifndef _WIN32
 #include <unistd.h>
 #endif
-    
+
 #define __STDC_CONSTANT_MACROS
 #ifdef _STDINT_H
 #undef _STDINT_H

@@ -1,6 +1,10 @@
 // IbexWinNative.cpp : Defines the entry point for the application.
 //
 
+#ifdef _WIN32
+#include "video/VideoPlayer.h"
+#endif
+
 #include "stdafx.h"
 #include "IbexWinNative.h"
 
@@ -38,6 +42,8 @@ typedef unsigned long GLXContext;
 
 #else
 #ifdef _WIN32
+
+#include "video/VideoPlayer.h"
 
 #include "GL/glew.h"
 #include <GL/gl.h>
@@ -408,6 +414,15 @@ void loopScreenshot() {
 	}
 }
 
+Ibex::VideoPlayer *_ibexVideoPlayer;
+static void playVideo() {
+    if(ibex != NULL && ibex->renderer->window.getSelectedVideo()) {
+        ibex->renderer->window.setSelectedVideo(false);
+        
+		_ibexVideoPlayer->playVideo(ibex->renderer->window.getSelectedVideoPath().c_str(),ibex->renderer->window.getIsStereoVideo());
+    }
+}
+
 static void RenderSceneCB()
 {
 	static double timeprev = glutGet(GLUT_ELAPSED_TIME);
@@ -452,6 +467,15 @@ static void RenderSceneCB()
 	{
 		cursorPosX = p.x;
 		cursorPosY = physicalHeight-p.y;
+	}
+
+	if(_ibexVideoPlayer != NULL) {
+		videoTexture[0] = _ibexVideoPlayer->videoTexture[0];
+		videoTexture[1] = _ibexVideoPlayer->videoTexture[1];
+		videoWidth = _ibexVideoPlayer->width;
+		videoHeight = _ibexVideoPlayer->height;
+	} else {
+		videoWidth = videoHeight = videoTexture[0] = videoTexture[1] = 0;
 	}
 
     ibex->render(timeDiff);
