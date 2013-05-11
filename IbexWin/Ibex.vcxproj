@@ -43,17 +43,18 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\OculusSDK\LibOVR\Include;include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\OculusSDK\LibOVR\Include;include;..\..\ffmpeg\include;msinttypes-r26</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;freeglut.lib;glew32.lib;libovrd.lib;Winmm.lib;avcodec.lib;avdevice.lib;avfilter.lib;avformat.lib;avutil.lib;postproc.lib;swresample.lib;swscale.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\OculusSDK\LibOVR\Lib\Win32;lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\OculusSDK\LibOVR\Lib\Win32;lib;..\..\ffmpeg\lib</AdditionalLibraryDirectories>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /y $(ProjectDir)*.dll $(OutDir)
+xcopy /y $(ProjectDir)..\..\ffmpeg-shared\bin\*.dll $(OutDir)
 xcopy /iys $(ProjectDir)resources $(OutDir)resources</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>

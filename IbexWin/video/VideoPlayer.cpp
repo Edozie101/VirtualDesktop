@@ -200,6 +200,8 @@ int Ibex::VideoPlayer::playAudio(AVCodecContext *avAudioCodecCtx) {
                     if(done) return 0;
 #ifdef OPENAL
                     alGetSourcei(source, AL_BUFFERS_PROCESSED, &val);
+#else
+					val = 1;
 #endif
                     std::this_thread::yield();
 //                    std::this_thread::sleep_for(std::chrono::milliseconds(1));

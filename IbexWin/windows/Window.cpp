@@ -12,6 +12,7 @@
 #include "../ibex.h"
 #include "../filesystem/Filesystem.h"
 #include <algorithm>
+#include <string>
 
 #ifdef __APPLE__
 #include <Carbon/Carbon.h>
@@ -94,39 +95,48 @@ void Ibex::Window::renderInfoWindow() {
 }
 
 void Ibex::Window::renderFileChooser() {
+#ifdef _WIN32
+	int listingOffset = 1;
+#else
+	int listingOffset = 2;
+#endif
     if(directoryChanged) {
         directoryList = Filesystem::listDirectory(currentPath.c_str());
         int count = 0;
-        for(auto i = directoryList.end()-1; i >= (directoryList.begin()+2); --i,++count) {
-            if(*i != "..") {
-                bool found = false;
-                for(auto i2 = fileTypes.begin(); i2!= fileTypes.end(); ++i2) {
-                    if(endsWith((*i), *i2)) {
-                        found = true;
-                        break;
-                    }
-                }
-                if((*i).size() && (*i)[0] == '*') {
-                    if((*i).size() > 1 && (*i)[1] == '.') {
-                        directoryList.erase(i);
-                        continue;
-                    }
-                    found = true;
-                }
-                if(!found) {
-                    directoryList.erase(i);
-                    std::cerr << directoryList.size() << std::endl;
-                }
-            }
-        }
-        std::sort(directoryList.begin()+((directoryList.size() >= 2) ? 2 : 1), directoryList.end(), [](const std::string &a, const std::string &b){
-            bool aa = (a.size()) ? a[0] == '*' : 0;
-            bool bb = (b.size()) ? b[0] == '*' : 0;
-            if(aa == bb) {
-                return a < b;
-            }
-            return bb;
-        });
+		if(directoryList.size()) {
+			for(auto i = directoryList.end()-1; i >= (directoryList.begin()+listingOffset);++count) {
+				if(*i != "..") {
+					bool found = false;
+					for(auto i2 = fileTypes.begin(); i2!= fileTypes.end(); ++i2) {
+						if(endsWith((*i), *i2)) {
+							found = true;
+							break;
+						}
+					}
+					if((*i).size() && (*i)[0] == '*') {
+						if((*i).size() > 1 && (*i)[1] == '.') {
+							directoryList.erase(i--);
+							continue;
+						}
+						found = true;
+					}
+					if(!found) {
+						directoryList.erase(i--);
+						std::cerr << directoryList.size() << std::endl;
+						continue;
+					}
+				}
+				--i;
+			}
+			std::sort(directoryList.begin()+((directoryList.size() >= 2) ? 2 : 1), directoryList.end(), [](const std::string &a, const std::string &b){
+				bool aa = (a.size()) ? a[0] == '*' : 0;
+				bool bb = (b.size()) ? b[0] == '*' : 0;
+				if(aa == bb) {
+					return a < b;
+				}
+				return bb;
+			});
+		}
         directoryChanged = false;
     }
     glBindTexture(GL_TEXTURE_2D, 0);

@@ -414,13 +414,12 @@ void loopScreenshot() {
 	}
 }
 
+HGLRC videoPlayerContext;
 Ibex::VideoPlayer *_ibexVideoPlayer;
 static void playVideo() {
-    if(ibex != NULL && ibex->renderer->window.getSelectedVideo()) {
-        ibex->renderer->window.setSelectedVideo(false);
-        
-		_ibexVideoPlayer->playVideo(ibex->renderer->window.getSelectedVideoPath().c_str(),ibex->renderer->window.getIsStereoVideo());
-    }
+	wglMakeCurrent(hdc, videoPlayerContext);       
+	_ibexVideoPlayer = new Ibex::VideoPlayer();
+	_ibexVideoPlayer->playVideo(ibex->renderer->window.getSelectedVideoPath().c_str(),ibex->renderer->window.getIsStereoVideo());
 }
 
 static void RenderSceneCB()
@@ -469,6 +468,11 @@ static void RenderSceneCB()
 		cursorPosY = physicalHeight-p.y;
 	}
 
+	if(ibex != NULL && ibex->renderer->window.getSelectedVideo()) {
+		ibex->renderer->window.setSelectedVideo(false);
+		std::thread screenshotThread(playVideo);
+		screenshotThread.detach();
+	}
 	if(_ibexVideoPlayer != NULL) {
 		videoTexture[0] = _ibexVideoPlayer->videoTexture[0];
 		videoTexture[1] = _ibexVideoPlayer->videoTexture[1];
@@ -678,7 +682,9 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	hdc = GetDC(hwnd);
 	HGLRC mainContext = wglGetCurrentContext();
     loaderContext = wglCreateContext(hdc);
+	videoPlayerContext = wglCreateContext(hdc);
     wglShareLists(loaderContext, mainContext); // Order matters
+	wglShareLists(videoPlayerContext, mainContext);
 	mainThreadId = GetCurrentThreadId();
 
 	std::thread screenshotThread(loopScreenshot);
