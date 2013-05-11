@@ -109,6 +109,9 @@ void Keyboard(unsigned char key, int x, int y)
 	  IOD += 0.0005;
 	  lensParametersChanged = true;
 	  break;
+  case '/':
+	  showDialog = !showDialog;
+	  break;
   case '-':
   case '_':
 	  IOD -= 0.0005;

@@ -476,18 +476,15 @@ void processRawMotion(double relativeMouseXDelta, double relativeMouseYDelta, De
 {
   double xRotation, yRotation;
 
+    yRotation = loc.getYRotation();
+    yRotation += relativeMouseYDelta /(double)width * 180.0;
+    loc.setYRotation(yRotation);
+    relativeMouseY = relativeMouseYDelta;
 
-        yRotation = loc.getYRotation();
-        yRotation += relativeMouseYDelta /
-                     (double)width * 180.0;
-        loc.setYRotation(yRotation);
-        relativeMouseY = relativeMouseYDelta;
-
-        xRotation = loc.getXRotation();
-        xRotation += relativeMouseXDelta /
-                     (double)width * 180.0;
-        loc.setXRotation(xRotation);
-        relativeMouseX = relativeMouseXDelta;
+    xRotation = loc.getXRotation();
+    xRotation += relativeMouseXDelta / (double)width * 180.0;
+    loc.setXRotation(xRotation);
+    relativeMouseX = relativeMouseXDelta;
 }
 
 void Ibex::Ibex::render(double timeDiff) {
