@@ -97,7 +97,7 @@ void Ibex::Window::renderFileChooser() {
     if(directoryChanged) {
         directoryList = Filesystem::listDirectory(currentPath.c_str());
         int count = 0;
-        for(auto i = directoryList.end()-1; i >= (directoryList.begin()+2); --i,++count) {
+        for(auto i = directoryList.end()-1; i >= (directoryList.begin()+2); ++count) {
             if(*i != "..") {
                 bool found = false;
                 for(auto i2 = fileTypes.begin(); i2!= fileTypes.end(); ++i2) {
@@ -108,16 +108,18 @@ void Ibex::Window::renderFileChooser() {
                 }
                 if((*i).size() && (*i)[0] == '*') {
                     if((*i).size() > 1 && (*i)[1] == '.') {
-                        directoryList.erase(i);
+                        directoryList.erase(i--);
                         continue;
                     }
                     found = true;
                 }
                 if(!found) {
-                    directoryList.erase(i);
+                    directoryList.erase(i--);
                     std::cerr << directoryList.size() << std::endl;
+                    continue;
                 }
             }
+            --i;
         }
         std::sort(directoryList.begin()+((directoryList.size() >= 2) ? 2 : 1), directoryList.end(), [](const std::string &a, const std::string &b){
             bool aa = (a.size()) ? a[0] == '*' : 0;
