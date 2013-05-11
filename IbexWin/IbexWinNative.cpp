@@ -390,7 +390,7 @@ void loopScreenshot() {
 	}
 }
 
-Ibex *ibex = 0;
+Ibex::Ibex *ibex = 0;
 static void RenderSceneCB()
 {
 	static double timeprev = glutGet(GLUT_ELAPSED_TIME);
@@ -427,7 +427,7 @@ static void RenderSceneCB()
 	// Add your drawing codes here
     if(ibex == 0) {
 		char *argv[] = {""};
-        ibex = new Ibex(0,0);
+        ibex = new Ibex::Ibex(0,0);
     }
     
 	POINT p;

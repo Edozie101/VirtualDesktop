@@ -15,45 +15,54 @@
 
 #include <time.h>
 
-#ifdef _WIN32
-#include "OVR.h"
-using namespace OVR;
+#include <OVR.h>
 
-extern Ptr<DeviceManager>	pManager;
-extern Ptr<HMDDevice>		pHMD;
-extern Ptr<SensorDevice>	pSensor;
-extern SensorFusion			FusionResult;
-extern HMDInfo				Info;
-#endif
+class RendererPlugin;
+
+extern OVR::Ptr<OVR::DeviceManager>	pManager;
+extern OVR::Ptr<OVR::HMDDevice>		pHMD;
+extern OVR::Ptr<OVR::SensorDevice>	pSensor;
+extern OVR::SensorFusion			FusionResult;
+extern OVR::HMDInfo				Info;
 
 extern bool					InfoLoaded;
 extern bool					riftConnected;
 extern bool                 lensParametersChanged;
+
+extern char fpsString[32];
+
+extern char RiftMonitorName[33];
+extern float EyeDistance;
+extern float DistortionK[4];
 
 typedef unsigned int Display;
 typedef bool Bool;
 
 extern int dpy;
 extern int display;
-extern int window;
+extern unsigned long window;
 
-extern GLfloat physicalWidth,physicalHeight;
-extern GLfloat windowWidth, windowHeight;
-extern GLfloat width,height;
-extern GLfloat textureWidth,textureHeight;
+extern bool done;
+extern float physicalWidth,physicalHeight;
+extern float windowWidth, windowHeight;
+extern float videoWidth,videoHeight;
+extern float width,height;
+extern float textureWidth,textureHeight;
 
 extern double IOD;
 
-extern GLfloat top, bottom;
-extern GLuint desktopTexture;
+extern float top, bottom;
+extern unsigned int desktopTexture;
+extern unsigned int videoTexture[2];
 extern bool mouseBlendAlternate;
-extern GLuint cursor;
+extern unsigned int cursor;
+extern int cursorSize;
 
-extern GLfloat cursorPosX;
-extern GLfloat cursorPosY;
+extern float cursorPosX;
+extern float cursorPosY;
 
-extern GLuint fbos[2];
-extern GLuint textures[2];
+extern unsigned int fbos[2];
+extern unsigned int textures[2];
 
 extern bool resetPosition;
 extern bool showGround;
@@ -66,6 +75,7 @@ extern bool IRRLICHT;
 extern bool SBS;
 
 extern bool controlDesktop;
+extern bool showDialog;
 
 extern double relativeMouseX;
 extern double relativeMouseY;
@@ -159,6 +169,7 @@ void renderSkybox();
 void renderDesktopToTexture();
 
 void resizeGL(unsigned int width, unsigned int height);
+namespace Ibex {
 
 class Ibex {
 public:
@@ -171,6 +182,9 @@ public:
     
     Ibex(int argc, char ** argv);
     void render(double timeDiff);
+public:
+    RendererPlugin *renderer;
 };
-
+    
+}
 #endif /* IBEX_H_ */
