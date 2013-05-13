@@ -711,19 +711,19 @@ int Ibex::VideoPlayer::playVideo(const char *fileName, bool isStereo)
         
         
         if(isStereo) {
-            glBindTexture(GL_TEXTURE_2D, videoTexture[0]);
+            glBindTexture(GL_TEXTURE_2D, videoTexture[1]);
             int stride = width*2;
             glPixelStorei(GL_UNPACK_ROW_LENGTH,stride);
             if(first) {
                 glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, width, height/2, 0,
                              GL_RGB, GL_UNSIGNED_BYTE, avFrameRGB->data[0]);
-                glBindTexture(GL_TEXTURE_2D, videoTexture[1]);
+                glBindTexture(GL_TEXTURE_2D, videoTexture[0]);
                 glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, width, height/2, 0,
                              GL_RGB, GL_UNSIGNED_BYTE, avFrameRGB->data[0]+(width*3));
             } else {
                 glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height/2,
                              GL_RGB, GL_UNSIGNED_BYTE, avFrameRGB->data[0]);
-                glBindTexture(GL_TEXTURE_2D, videoTexture[1]);
+                glBindTexture(GL_TEXTURE_2D, videoTexture[0]);
                 glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height/2,
                              GL_RGB, GL_UNSIGNED_BYTE, avFrameRGB->data[0]+(width*3));
             }
