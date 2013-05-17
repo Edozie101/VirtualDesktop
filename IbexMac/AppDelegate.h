@@ -9,6 +9,7 @@
 #import <Cocoa/Cocoa.h>
 
 @class MyOpenGLView;
+@class MyOgreView;
 @class ServerController;
 
 extern "C" {
@@ -18,8 +19,12 @@ extern "C" {
 }
 
 @interface AppDelegate : NSObject <NSApplicationDelegate,NSWindowDelegate> {
-//    MyOpenGLView *fullScreenView;
-    NSView *fullScreenView;
+#ifdef ENABLE_OGRE3D
+    MyOgreView *fullScreenView;
+#else
+    MyOpenGLView *fullScreenView;
+#endif
+    
     ServerController *serverController;
 }
 

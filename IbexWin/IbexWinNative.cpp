@@ -1,6 +1,10 @@
 // IbexWinNative.cpp : Defines the entry point for the application.
 //
 
+#ifdef _WIN32
+#include "video/VideoPlayer.h"
+#endif
+
 #include "stdafx.h"
 #include "IbexWinNative.h"
 #include "opengl_helpers.h"
@@ -40,6 +44,8 @@ typedef unsigned long GLXContext;
 #else
 #ifdef _WIN32
 
+#include "video/VideoPlayer.h"
+
 #include "GL/glew.h"
 #include <GL/gl.h>
 #include <GL/glu.h>
@@ -70,6 +76,7 @@ typedef unsigned long GLXContext;
 #include "math_3d.h"
 
 #include "ibex.h"
+#include "RendererPlugin.h"
 
 #include "distortions.h"
 #include "OVR.h"
@@ -87,8 +94,15 @@ bool modifiedDesktop(false);
 GLuint VBO(0);
 std::condition_variable screenshotCondition;
 
+Ibex::Ibex *ibex = 0;
+
 void Keyboard(unsigned char key, int x, int y)
 {
+	    int processed = 0;
+    if(showDialog) {
+        processed = ibex->renderer->window.processKey(key, 1);
+    }
+    if(!processed) {
   switch (key)
   {
   case 'w':
@@ -110,15 +124,24 @@ void Keyboard(unsigned char key, int x, int y)
 	  IOD += 0.0005;
 	  lensParametersChanged = true;
 	  break;
+  case '/':
+	  showDialog = !showDialog;
+	  break;
   case '-':
   case '_':
 	  IOD -= 0.0005;
 	  lensParametersChanged = true;
 	  break;
   }
+	}
 }
 void KeyboardUp(unsigned char key, int x, int y)
 {
+	    int processed = 0;
+    if(showDialog) {
+        processed = ibex->renderer->window.processKey(key, 0);
+    }
+    if(!processed) {
   switch (key)
   {
   case 'b':
@@ -154,6 +177,7 @@ void KeyboardUp(unsigned char key, int x, int y)
 	  strafeRight = 0;
 	  break;
   }
+	}
 }
 
 inline void MouseMoved(int x, int y) {
@@ -400,7 +424,14 @@ void loopScreenshot() {
 	}
 }
 
-Ibex *ibex = 0;
+HGLRC videoPlayerContext = NULL;
+Ibex::VideoPlayer *_ibexVideoPlayer = NULL;
+static void playVideo() {
+	wglMakeCurrent(hdc, videoPlayerContext);       
+	_ibexVideoPlayer = new Ibex::VideoPlayer();
+	_ibexVideoPlayer->playVideo(ibex->renderer->window.getSelectedVideoPath().c_str(),ibex->renderer->window.getIsStereoVideo());
+}
+
 static void RenderSceneCB()
 {
 	screenshotCondition.notify_all();
@@ -438,7 +469,7 @@ static void RenderSceneCB()
 	// Add your drawing codes here
     if(ibex == 0) {
 		char *argv[] = {""};
-        ibex = new Ibex(0,0);
+        ibex = new Ibex::Ibex(0,0);
     }
     
 	POINT p;
@@ -446,6 +477,20 @@ static void RenderSceneCB()
 	{
 		cursorPosX = p.x;
 		cursorPosY = physicalHeight-p.y;
+	}
+
+	if(ibex != NULL && ibex->renderer->window.getSelectedVideo()) {
+		ibex->renderer->window.setSelectedVideo(false);
+		std::thread videoThread(playVideo);
+		videoThread.detach();
+	}
+	if(_ibexVideoPlayer != NULL) {
+		videoTexture[0] = _ibexVideoPlayer->videoTexture[0];
+		videoTexture[1] = _ibexVideoPlayer->videoTexture[1];
+		videoWidth = _ibexVideoPlayer->width;
+		videoHeight = _ibexVideoPlayer->height;
+	} else {
+		videoWidth = videoHeight = videoTexture[0] = videoTexture[1] = 0;
 	}
 
     ibex->render(timeDiff);
@@ -648,7 +693,9 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	hdc = GetDC(hwnd);
 	HGLRC mainContext = wglGetCurrentContext();
     loaderContext = wglCreateContext(hdc);
+	videoPlayerContext = wglCreateContext(hdc);
     wglShareLists(loaderContext, mainContext); // Order matters
+	wglShareLists(videoPlayerContext, mainContext);
 	mainThreadId = GetCurrentThreadId();
 
 	std::thread screenshotThread(loopScreenshot);

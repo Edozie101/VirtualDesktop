@@ -7,6 +7,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include <stdlib.h>
+#include <iostream>
 
 #include "utils.h"
 
@@ -99,11 +100,13 @@ GLuint ScaleInUniform;
 GLuint HmdWarpParamUniform;
 
 char RiftMonitorName[33];
-GLfloat EyeDistance = 0.0640000030;
-GLfloat DistortionK[4] = {1.00000000, 0.219999999, 0.239999995, 0.000000000};
+float EyeDistance = 0.0640000030;
+float DistortionK[4] = {1.00000000, 0.219999999, 0.239999995, 0.000000000};
 
 static GLuint make_program(GLuint vertex_shader, GLuint fragment_shader)
 {
+    checkForErrors();
+    std::cerr << "make_program" << std::endl;
     GLint program_ok;
     
     program = glCreateProgram();
@@ -112,11 +115,14 @@ static GLuint make_program(GLuint vertex_shader, GLuint fragment_shader)
     glLinkProgram(program);
     
     glGetProgramiv(program, GL_LINK_STATUS, &program_ok);
+    checkForErrors();
     if (!program_ok) {
         fprintf(stderr, "Failed to link shader program:\n");
         show_info_log(program, glGetProgramiv, glGetProgramInfoLog);
         glDeleteProgram(program);
         return 0;
+    } else {
+        std::cerr << "Linked program" << std::endl;
     }
     
     a_position = glGetAttribLocation(program, "a_position");
@@ -126,6 +132,9 @@ static GLuint make_program(GLuint vertex_shader, GLuint fragment_shader)
     glUniform1i(textureUniform, 0);
     lensTextureUniform = glGetUniformLocation(program, "lensTexture");
     glUniform1i(lensTextureUniform, 1);
+    
+    checkForErrors();
+    std::cerr << "make_program end" << std::endl;
     
     return program;
 }
@@ -173,6 +182,13 @@ static const GLfloat dataArray2[] =
     0,  1, 0, 1, 0.5, 1, 1,
     1,  1, 0, 1, 1, 1, 1
 };
+static const GLfloat dataArrayBoth[] =
+{
+    -1, -1, 0, 1, 0, 0, 1,
+    1, -1, 0, 1, 1, 0, 1,
+    -1,  1, 0, 1, 0, 1, 1,
+    1,  1, 0, 1, 1, 1, 1
+};
 
 static const GLushort indices[] =
 {
@@ -186,13 +202,16 @@ static GLuint _indexBuffer;
 static GLuint vao2;
 static GLuint _vertexBuffer2;
 static GLuint _indexBuffer2;
+static GLuint vaoBoth;
+static GLuint _vertexBufferBoth;
+static GLuint _indexBufferBoth;
 int setup_buffers() {
     if(!GL_ARB_vertex_array_object)
     {
         std::cerr << "CAN'T GEN VAO!" << std::endl;
         exit(1);
     }
-    
+    std::cerr << "setup_buffers" << std::endl;
     checkForErrors();
   glGenVertexArraysAPPLE(1,&vao1);
   glGenVertexArraysAPPLE(1,&vao2);
@@ -237,6 +256,23 @@ int setup_buffers() {
   glVertexAttribPointer(a_position, 4, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*7, 0);
   glEnableVertexAttribArray(a_texCoord);
   glVertexAttribPointer(a_texCoord, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*7, (GLvoid*) (sizeof(GLfloat) * 4));
+    
+    glBindVertexArrayAPPLE(vaoBoth);
+
+    glGenBuffers(1, &_vertexBufferBoth);
+    glBindBuffer(GL_ARRAY_BUFFER, _vertexBufferBoth);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(dataArrayBoth), dataArrayBoth, GL_STATIC_DRAW);
+
+    glGenBuffers(1, &_indexBufferBoth);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBufferBoth);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ARRAY_BUFFER, _vertexBufferBoth);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBufferBoth);
+    glEnableVertexAttribArray(a_position);
+    glVertexAttribPointer(a_position, 4, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*7, 0);
+    glEnableVertexAttribArray(a_texCoord);
+    glVertexAttribPointer(a_texCoord, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*7, (GLvoid*) (sizeof(GLfloat) * 4));
 
 //  glEnableVertexAttribArray(0);
 //  glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -244,6 +280,32 @@ int setup_buffers() {
   glBindVertexArrayAPPLE(0);
 
   return 1;
+}
+
+void render_both_frames(const GLuint textureId)
+{
+    glUseProgram(distortion_shader.program);
+    
+	glBindVertexArrayAPPLE(vaoBoth);
+    
+    glActiveTexture(GL_TEXTURE0);
+    glUniform1i(textureUniform, 0);
+    glBindTexture(GL_TEXTURE_2D, textureId);
+    glActiveTexture(GL_TEXTURE1);
+    glUniform1i(lensTextureUniform, 1);
+    glBindTexture(GL_TEXTURE_2D, lensTexture);
+    //
+    //    glUniform1i(textureUniform, 0);
+    
+    glDrawElements(GL_TRIANGLES, sizeof(indices)/sizeof(indices[0]), GL_UNSIGNED_SHORT, 0);
+    
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glBindVertexArrayAPPLE(0);
+//
+    glUseProgram(0);
 }
 
 void render_distorted_frame(const bool left, const GLuint textureId)
@@ -261,8 +323,6 @@ void render_distorted_frame(const bool left, const GLuint textureId)
     glActiveTexture(GL_TEXTURE1);
     glUniform1i(lensTextureUniform, 1);
     glBindTexture(GL_TEXTURE_2D, lensTexture);
-//    
-//    glUniform1i(textureUniform, 0);
 
     glDrawElements(GL_TRIANGLES, sizeof(indices)/sizeof(indices[0]), GL_UNSIGNED_SHORT, 0);
     

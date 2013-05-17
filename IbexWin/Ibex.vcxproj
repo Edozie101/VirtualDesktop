@@ -43,16 +43,18 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\OculusSDK\LibOVR\Include;include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\OculusSDK\LibOVR\Include;include;..\..\ffmpeg\include;msinttypes-r26</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;freeglut.lib;glew32.lib;libovrd.lib;Winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\OculusSDK\LibOVR\Lib\Win32;lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;freeglut.lib;glew32.lib;libovrd.lib;Winmm.lib;avcodec.lib;avdevice.lib;avfilter.lib;avformat.lib;avutil.lib;postproc.lib;swresample.lib;swscale.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\OculusSDK\LibOVR\Lib\Win32;lib;..\..\ffmpeg\lib</AdditionalLibraryDirectories>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /y $(ProjectDir)*.dll $(OutDir)
+xcopy /y $(ProjectDir)..\..\ffmpeg-shared\bin\*.dll $(OutDir)
 xcopy /iys $(ProjectDir)resources $(OutDir)resources</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -63,22 +65,25 @@ xcopy /iys $(ProjectDir)resources $(OutDir)resources</Command>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\OculusSDK\LibOVR\Include;include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\OculusSDK\LibOVR\Include;include;..\..\ffmpeg\include;msinttypes-r26</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;freeglut.lib;glew32.lib;libovr.lib;Winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\OculusSDK\LibOVR\Lib\Win32;lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;freeglut.lib;glew32.lib;libovr.lib;Winmm.lib;avcodec.lib;avdevice.lib;avfilter.lib;avformat.lib;avutil.lib;postproc.lib;swresample.lib;swscale.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\OculusSDK\LibOVR\Lib\Win32;lib;..\..\ffmpeg\lib</AdditionalLibraryDirectories>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /y $(ProjectDir)*.dll $(OutDir)
+xcopy /y $(ProjectDir)..\..\ffmpeg-shared\bin\*.dll $(OutDir)
 xcopy /iys $(ProjectDir)resources $(OutDir)resources</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="distortions.h" />
+    <ClInclude Include="filesystem\Filesystem.h" />
     <ClInclude Include="guicon.h" />
     <ClInclude Include="ibex.h" />
     <ClInclude Include="IbexWinNative.h" />
@@ -92,6 +97,8 @@ xcopy /iys $(ProjectDir)resources $(OutDir)resources</Command>
     <ClInclude Include="include\GL\wglew.h" />
     <ClInclude Include="iphone_orientation_plugin\iphone_orientation_listener.h" />
     <ClInclude Include="math_3d.h" />
+    <ClInclude Include="msinttypes-r26\inttypes.h" />
+    <ClInclude Include="msinttypes-r26\stdint.h" />
     <ClInclude Include="opengl_helpers.h" />
     <ClInclude Include="RendererPlugin.h" />
     <ClInclude Include="Resource.h" />
@@ -106,9 +113,14 @@ xcopy /iys $(ProjectDir)resources $(OutDir)resources</Command>
     <ClInclude Include="tinystr.h" />
     <ClInclude Include="tinyxml.h" />
     <ClInclude Include="utils.h" />
+    <ClInclude Include="video\VideoPlayer.h" />
+    <ClInclude Include="windows\Window.h" />
+    <ClInclude Include="\\psf\Home\Downloads\msinttypes-r26\inttypes.h" />
+    <ClInclude Include="\\psf\Home\Downloads\msinttypes-r26\stdint.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="distortions.cpp" />
+    <ClCompile Include="filesystem\Filesystem.cpp" />
     <ClCompile Include="guicon.cpp" />
     <ClCompile Include="ibex.cpp" />
     <ClCompile Include="IbexWinNative.cpp" />
@@ -127,6 +139,8 @@ xcopy /iys $(ProjectDir)resources $(OutDir)resources</Command>
     <ClCompile Include="tinyxmlerror.cpp" />
     <ClCompile Include="tinyxmlparser.cpp" />
     <ClCompile Include="utils.cpp" />
+    <ClCompile Include="video\VideoPlayer.cpp" />
+    <ClCompile Include="windows\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="freeglut.dll" />

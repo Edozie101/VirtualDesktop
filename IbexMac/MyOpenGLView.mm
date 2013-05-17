@@ -6,7 +6,10 @@
 //  Copyright (c) 2012 Hesham Wahba. All rights reserved.
 //
 
+#import "IbexVideoPlayer.h"
+
 //#include "opengl_helpers.h"
+#include <iostream>
 
 #import <QuartzCore/QuartzCore.h>
 
@@ -29,17 +32,23 @@
 
 #include <ApplicationServices/ApplicationServices.h>
 
+#import "ScreenshotView.h"
+
 #include "sixense_controller.h"
+
+#include "Window.h"
+
+#include "RendererPlugin.h"
 
 char mResourcePath[1024];
 
 @implementation MyOpenGLView
 
-static Ibex *ibex = nil;
+static Ibex::Ibex *ibex = nil;
 
 static EventHandlerUPP hotKeyFunction;
 
-static NSCondition *cocoaCondition;
+NSCondition *cocoaCondition;
 
 // hides cursor in the background!
 extern "C" void CGSSetConnectionProperty(int, int, CFStringRef, CFBooleanRef);
@@ -120,6 +129,8 @@ static NSTimer *t;
         
         cocoaCondition = [[NSCondition alloc] init];
         
+        _ibexVideoPlayer = [[IbexVideoPlayer alloc] init];
+        
         [self registerHotkey];
         [self controlDesktopUpdate];
     }
@@ -173,58 +184,6 @@ NSTimer *renderTimer;
     CVDisplayLinkStart(displayLink);
 }
 
-static int desktopTextureIndex = 0;
-static GLuint desktopTextures[2] = {NULL, NULL};
-static bool done = 0;
-- (void)loopScreenshot {
-    static NSOpenGLContext* newContext = nil;
-    newContext = [[NSOpenGLContext alloc] initWithFormat:self.pixelFormat shareContext:self.openGLContext];
-    
-    static GLubyte *cursorData = NULL;
-    static GLubyte *s = NULL;
-    
-    static NSCursor *systemCursor;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        systemCursor = NSCursor.currentSystemCursor;
-    });
-    [newContext makeCurrentContext];
-    
-    while(1) {
-        done = 0;
-        [newContext makeCurrentContext];
-        systemCursor = [NSCursor currentSystemCursor];
-        if(systemCursor != nil) {
-            NSImage *cursorImage = systemCursor.image;
-            CGImageRef cursorImageRef = [cursorImage CGImageForProposedRect:nil context:nil hints:nil];
-            [self createGLTexture:&cursor fromCGImage:cursorImageRef andDataCache:&cursorData andClear:YES];
-        }
-    
-        CFArrayRef a = CGWindowListCreate(
-                                          kCGWindowListOptionOnScreenBelowWindow,
-                                          (CGWindowID)_window.windowNumber
-                                          );
-        
-        CGImageRef img = CGWindowListCreateImageFromArray(
-                                                          CGRectMake(0,0,physicalWidth,physicalHeight),//CGRectInfinite,
-                                                          a,
-                                                          kCGWindowImageDefault
-                                                          );
-        CFRelease(a);
-        
-        
-        [self createGLTextureNoAlpha:&desktopTexture fromCGImage:img andDataCache:&s andClear:NO];
-    
-        glFlush();
-    
-        CGImageRelease(img);
-        
-        [cocoaCondition lock];
-        [cocoaCondition wait];
-        [cocoaCondition unlock];
-    }
-}
-
 - (void)savePNGImage:(CGImageRef)imageRef path:(NSString *)path
 {
     NSURL *fileURL = [NSURL fileURLWithPath:path];
@@ -236,10 +195,15 @@ static bool done = 0;
     
     CFRelease(dr);
     } else {
+        NSLog(@"File path: %@", fileURL);
         NSLog(@"ERROR saving");
+        return;
     }
+//    exit(0);
 }
 
+static int desktopTextureIndex = 0;
+static GLuint desktopTextures[2] = {NULL, NULL};
 - (void)loopScreenshot_multipleBuffers {
     static NSOpenGLContext* context = nil;
     if(context == nil)
@@ -286,8 +250,8 @@ static bool done = 0;
 
 //            [self savePNGImage:img path:@"/Users/hesh/file.png"];
             
-            [self createGLTexture:&desktopTextures[index] fromCGImage:img andDataCache:((index)?&s2:&s) andClear:NO];
-//            glFlush();
+            [self createGLTextureNoAlpha:&desktopTextures[index] fromCGImage:img andDataCache:((index)?&s2:&s) andClear:NO];
+            glFlush();
             
 //            [newContext flushBuffer];            
             
@@ -335,7 +299,7 @@ static bool done = 0;
 	// You don't need the context at this point, so you need to release it to avoid memory leaks.
 	CGContextRelease(spriteContext);
 	
-    glEnable(GL_TEXTURE_2D);
+//    glEnable(GL_TEXTURE_2D);
     glPixelStorei(GL_UNPACK_ROW_LENGTH, (GLint)texW);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     glPixelStorei(GL_PACK_ALIGNMENT, 1);
@@ -345,7 +309,7 @@ static bool done = 0;
         // Bind the texture name.
         glBindTexture(GL_TEXTURE_2D, *texName);
         // Specify a 2D texture image, providing the a pointer to the image data in memory
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texW, texH, 0, GL_RGBA, GL_UNSIGNED_BYTE, *spriteData);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, texW, texH, 0, GL_RGBA, GL_UNSIGNED_BYTE, *spriteData);
     } else {
         glBindTexture(GL_TEXTURE_2D, *texName);
         glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, texW, texH, GL_RGBA, GL_UNSIGNED_BYTE, *spriteData);
@@ -353,12 +317,12 @@ static bool done = 0;
 	// Set the texture parameters to use a minifying filter and a linear filer (weighted average)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	
     
     // user-allocated, don't touch it
     //	free(*spriteData);
     //    *spriteData = 0;
 }
+
 
 - (void)createGLTexture:(GLuint *)texName fromCGImage:(CGImageRef)img andDataCache:(GLubyte**)spriteData andClear:(bool)clear
 {
@@ -370,6 +334,8 @@ static bool done = 0;
 	imgH = CGImageGetHeight(img);
     texW = imgW;
     texH = imgH;
+    
+    cursorSize = imgH;
 	
     if(*spriteData == NULL) {
         // Allocated memory needed for the bitmap context
@@ -393,7 +359,7 @@ static bool done = 0;
 	// You don't need the context at this point, so you need to release it to avoid memory leaks.
 	CGContextRelease(spriteContext);
 	
-    glEnable(GL_TEXTURE_2D);
+//    glEnable(GL_TEXTURE_2D);
     glPixelStorei(GL_UNPACK_ROW_LENGTH, (GLint)texW);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     glPixelStorei(GL_PACK_ALIGNMENT, 1);
@@ -403,7 +369,7 @@ static bool done = 0;
         // Bind the texture name.
         glBindTexture(GL_TEXTURE_2D, *texName);
 	// Specify a 2D texture image, providing the a pointer to the image data in memory
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texW, texH, 0, GL_RGBA, GL_UNSIGNED_BYTE, *spriteData);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, texW, texH, 0, GL_RGBA, GL_UNSIGNED_BYTE, *spriteData);
     } else {
         glBindTexture(GL_TEXTURE_2D, *texName);
         glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, texW, texH, GL_RGBA, GL_UNSIGNED_BYTE, *spriteData);
@@ -426,7 +392,7 @@ static bool done = 0;
 static CGPoint cursorPos;
 - (GLuint)getScreenshot {
     {
-        static NSCursor *cursor;
+        /*static */NSCursor *cursor;
         cursor = [NSCursor currentSystemCursor];
         
         cursorPos = NSEvent.mouseLocation;
@@ -457,6 +423,7 @@ static CGPoint cursorPos;
     fpsTime += timeDiff;
     if(fpsTime >= 5.0) {
         NSLog(@"FPS: %4.2f", ((double)frame)/fpsTime);
+        sprintf(fpsString, "FPS: %4.2f", ((double)frame)/fpsTime);
         frame = 0;
         fpsTime = 0;
     }
@@ -470,13 +437,31 @@ static CGPoint cursorPos;
     
     [glContext makeCurrentContext];
     
-//    glGenTextures(2, desktopTextures);
-    glFlush();
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         glFlush();
-        [self performSelectorInBackground:@selector(loopScreenshot) withObject:nil];
+        @autoreleasepool {
+            _screenshotView.pixelFormat = self.pixelFormat;
+            _screenshotView.share = self.openGLContext;
+            [_screenshotView performSelectorInBackground:@selector(loopScreenshot) withObject:nil];
+        }
     });
+    
+    static dispatch_once_t onceToken2;
+    dispatch_once(&onceToken2, ^{
+        _ibexVideoPlayer.pixelFormat = self.pixelFormat;
+        _ibexVideoPlayer.share = self.openGLContext;
+//        [_ibexVideoPlayer performSelectorInBackground:@selector(loadVideo:andIsStereo:) withObject:@[<movieFilePath>,@false]];
+    });
+    if(ibex != nil && ibex->renderer->window.getSelectedVideo()) {
+        ibex->renderer->window.setSelectedVideo(false);
+        
+        NSString *videoPath = [NSString stringWithUTF8String:ibex->renderer->window.getSelectedVideoPath().c_str()];
+        [_ibexVideoPlayer performSelectorInBackground:@selector(loadVideo:andIsStereo:) withObject:@[videoPath,(ibex->renderer->window.getIsStereoVideo())?@YES : @NO]];
+    }
+    
+    videoWidth = [_ibexVideoPlayer width];
+    videoHeight = [_ibexVideoPlayer height];
     
     [self getScreenshot];
     if(controlDesktop) {
@@ -485,9 +470,11 @@ static CGPoint cursorPos;
     }
     
     if(ibex == nil) {
-        ibex = new Ibex(0,nil);
+        ibex = new Ibex::Ibex(0,nil);
     }
     
+    videoTexture[0] = _ibexVideoPlayer.videoTexture[0];
+    videoTexture[1] = _ibexVideoPlayer.videoTexture[1];
     ibex->render(timeDiff);
     
 //    glFlush();
@@ -509,56 +496,77 @@ static CGPoint cursorPos;
 }
 
 - (void)keyDown:(NSEvent *)theEvent {
-    switch(theEvent.keyCode) {
-        case kVK_ANSI_W:
-            walkForward = 1;
-            break;
-        case kVK_ANSI_S:
-            walkForward = -1;
-            break;
-        case kVK_ANSI_A:
-            strafeRight = -1;
-            break;
-        case kVK_ANSI_D:
-            strafeRight = 1;
-            break;
-        case kVK_Space:
-            break;
-        case kVK_ANSI_Minus:
-            IOD -= 0.0005;
-            lensParametersChanged = true;
-            break;
-        case kVK_ANSI_Equal:
-            IOD += 0.0005;
-            lensParametersChanged = true;
-            break;
+    int processed = 0;
+    if(showDialog) {
+        processed = ibex->renderer->window.processKey(theEvent.keyCode, 1);
+    }
+    if(!processed) {
+        switch(theEvent.keyCode) {
+            case kVK_UpArrow:
+            case kVK_ANSI_W:
+                walkForward = 1;
+                break;
+            case kVK_DownArrow:
+            case kVK_ANSI_S:
+                walkForward = -1;
+                break;
+            case kVK_LeftArrow:
+            case kVK_ANSI_A:
+                strafeRight = -1;
+                break;
+            case kVK_RightArrow:
+            case kVK_ANSI_D:
+                strafeRight = 1;
+                break;
+            case kVK_Space:
+                break;
+            case kVK_ANSI_Slash:
+                if(!controlDesktop) {
+                    showDialog = !showDialog;
+                }
+                break;
+            case kVK_ANSI_Minus:
+                IOD -= 0.0005;
+                lensParametersChanged = true;
+                break;
+            case kVK_ANSI_Equal:
+                IOD += 0.0005;
+                lensParametersChanged = true;
+                break;
+        }
     }
 }
 - (void)keyUp:(NSEvent *)theEvent {
-    switch(theEvent.keyCode) {
-        case kVK_ANSI_B:
-            barrelDistort = !barrelDistort;
-            break;
-        case kVK_ANSI_G:
-            showGround = !showGround;
-            break;
-        case kVK_ANSI_R:
-            resetPosition = 1;
-            break;
-        case kVK_ANSI_W:
-            walkForward = 0;
-            break;
-        case kVK_ANSI_S:
-            walkForward = 0;
-            break;
-        case kVK_ANSI_A:
-            strafeRight = 0;
-            break;
-        case kVK_ANSI_D:
-            strafeRight = 0;
-            break;
-        case kVK_Space:
-            break;
+    int processed = 0;
+    if(showDialog) {
+        processed = ibex->renderer->window.processKey(theEvent.keyCode, 0);
+    }
+    if(!processed) {
+        switch(theEvent.keyCode) {
+            case kVK_ANSI_B:
+                barrelDistort = !barrelDistort;
+                break;
+            case kVK_ANSI_G:
+                showGround = !showGround;
+                break;
+            case kVK_ANSI_R:
+                resetPosition = 1;
+                break;
+            case kVK_UpArrow:
+            case kVK_ANSI_W:
+            case kVK_DownArrow:
+            case kVK_ANSI_S:
+                walkForward = 0;
+                break;
+            case kVK_LeftArrow:
+            case kVK_ANSI_A:
+            case kVK_RightArrow:
+            case kVK_ANSI_D:
+                strafeRight = 0;
+                break;
+            case kVK_Space:
+                break;
+        }
     }
 }
 

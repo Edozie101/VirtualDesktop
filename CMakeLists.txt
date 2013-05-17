@@ -37,7 +37,7 @@ iphone_orientation_plugin/iphone_orientation_listener.cpp
 glm/glm_util.c glm/glm.c glm/glmimg.c glm/glmimg_png.c glm/glmimg_jpg.c)
 
 add_executable(ibex ${SRC} ${IRRLICHT_PLUGIN_FILES} ${OGRE_PLUGIN_FILES})
-target_link_libraries(ibex GL GLU glut GLEW X11 Xfixes Xdamage Xrandr Xrender Xcomposite Xxf86vm Xi Xext jpeg rt ${IRRLICHT_LIBRARY} ${OGRE_LIBRARIES} ${OIS_LIBRARIES} ${OGRE_RenderSystem_GL_LIBRARIES}
+target_link_libraries(ibex GL GLU glut GLEW pthread X11 Xfixes Xdamage Xrandr Xrender Xcomposite Xxf86vm Xi Xext jpeg rt ${IRRLICHT_LIBRARY} ${OGRE_LIBRARIES} ${OIS_LIBRARIES} ${OGRE_RenderSystem_GL_LIBRARIES}
 ${OGRE_Terrain_LIBRARIES}
 ${OGRE_ParticleFX_LIBRARIES}
 ${OGRE_BSPSceneManager_LIBRARIES}

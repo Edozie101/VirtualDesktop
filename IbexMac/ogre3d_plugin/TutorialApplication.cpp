@@ -40,7 +40,7 @@ Ogre3DRendererPlugin::~Ogre3DRendererPlugin()
 {
 }
 
-void Ogre3DRendererPlugin::setDesktopTexture(GLuint desktopTexture_) {
+void Ogre3DRendererPlugin::setDesktopTexture(unsigned int desktopTexture_) {
   this->desktopTexture = desktopTexture_;
   if(mRenderSystemCommandsRenderQueueListener) {
       mRenderSystemCommandsRenderQueueListener->desktopTexture = desktopTexture_;

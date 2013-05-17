@@ -5,10 +5,13 @@
  *      Author: Hesham Wahba
  */
 
-#include <btBulletDynamicsCommon.h>
+#include <bullet/btBulletDynamicsCommon.h>
+
+#include "Filesystem.h"
 
 #include <iostream>
 #include <math.h>
+#include <stdio.h>
 
 #include "distortions.h"
 #include "opengl_helpers.h"
@@ -22,10 +25,9 @@
 
 #include "SimpleWorldRendererPlugin.h"
 
-#ifdef _WIN32
 #include "OVR.h"
 using namespace OVR;
-#endif
+
 SimpleWorldRendererPlugin::SimpleWorldRendererPlugin() {
 }
 SimpleWorldRendererPlugin::~SimpleWorldRendererPlugin() {
@@ -149,7 +151,6 @@ void SimpleWorldRendererPlugin::init() {
   loadSkybox();
 }
 
-#ifdef _WIN32
 double orientationRift[16];
 double *getRiftOrientation() {
 	
@@ -168,32 +169,40 @@ double *getRiftOrientation() {
 		}
 		return orientationRift;
 }
-#endif
 
 void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDiff_) {
-#ifdef _WIN32
-		static const GLuint groundTexture = loadTexture("\\resources\\humus-skybox\\negy.jpg");
-		double *orientation;
-        orientation = getRiftOrientation();
-#else
-		static const GLuint groundTexture = loadTexture("/resources/humus-skybox/negy.jpg");
-		double orientation[16];
-        gluInvertMatrix(get_orientation(), orientation);    
-#endif
     if (USE_FBO) {
+		//glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	    //glClearColor(0, 0, 0, 1);
+//        glColor4f(1, 1, 1, 1);
+	    glClear(/*GL_COLOR_BUFFER_BIT |*/ GL_DEPTH_BUFFER_BIT);
+	    //glColor4f(1, 1, 1, 1);
+
         glBindFramebuffer(GL_FRAMEBUFFER, fbos[0]);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		if (!checkForErrors()) {
+			std::cerr << "GL ISSUE -- SimpleWorldRendererPlugin::step" << std::endl;
+			//exit(EXIT_FAILURE);
+		}
     }
+
+	glViewport(0,0, textureWidth/2.0, textureHeight);
+
+    static double *orientation;
+#ifdef _WIN32
+		static const GLuint groundTexture = loadTexture("\\resources\\humus-skybox\\negy.jpg");
+//        orientation = getRiftOrientation();
+#else
+		static const GLuint groundTexture = loadTexture("/resources/humus-skybox/negy.jpg");
+//        gluInvertMatrix(get_orientation(), orientation);
+#endif
   for (int i2 = 0; i2 < 2; ++i2) {
 //      checkForErrors();
     if (USE_FBO) {
       //glBindFramebuffer(GL_FRAMEBUFFER, fbos[i2]);
 		//glBindFramebuffer(GL_FRAMEBUFFER, fbos[0]);
-      if (!checkForErrors()) {
-        std::cerr << "GL ISSUE" << std::endl;
-        exit(EXIT_FAILURE);
-      }
-      glPushMatrix();
+      //glPushMatrix();
     } else {
       if (i2 > 0)
         break;
@@ -201,18 +210,21 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
 
 	//glEnable (GL_SCISSOR_TEST);
 	if(i2 == 0) {
-		glViewport(0,0, textureWidth/2.0, textureHeight);
+		//glViewport(0,0, textureWidth/2.0, textureHeight);
 	} else {
 		glViewport(textureWidth/2.0,0, textureWidth/2.0, textureHeight);
 	}
 
-	glScissor((i2 == 0)? 0 : textureWidth/2.0, 0, textureWidth/2.0, textureHeight);
+	//glScissor((i2 == 0)? 0 : textureWidth/2.0, 0, textureWidth/2.0, textureHeight);
 
 	// Setup the frustum for the left eye
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glTranslated((i2 == 0) ? IOD: -IOD, 0, 0);
 	gluPerspective(90.0f, width/2.0/height, 0.01f, 1000.0f);
+      
+      if(i2 == 0) orientation = getRiftOrientation();
+      
 	glMultMatrixd(orientation);
 
 	glMatrixMode(GL_MODELVIEW);
@@ -222,12 +234,12 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
 	//glDisable(GL_SCISSOR_TEST);
 
     glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, 0);
+    //glBindTexture(GL_TEXTURE_2D, 0);
 
     //double orientation[16];
     //gluInvertMatrix(get_orientation(), orientation);
 
-    glPushMatrix();
+    //glPushMatrix();
     {
 		//glMultMatrixd(orientation);
 		glRotated(loc.getXRotation(), 1, 0, 0);
@@ -237,13 +249,13 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
 
 		renderSkybox();
 		glColor4f(1,1,1,1);
-            
-          glTranslated(loc.getXPosition(),
-                                   loc.getYPosition(),
-                                   loc.getZPosition());
 
           glPushMatrix();
           {
+              glTranslated(loc.getXPosition(),
+                           loc.getYPosition(),
+                           loc.getZPosition());
+              
             if(showGround) {
               static const int gridSize = 25;
               static const int textureRepeat = 2*gridSize;
@@ -262,7 +274,7 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
                 glTexCoord2d(textureRepeat, textureRepeat);
                 glVertex3f(gridSize, 0, gridSize);
               glEnd();
-              glBindTexture(GL_TEXTURE_2D, 0);
+              //glBindTexture(GL_TEXTURE_2D, 0);
             }
 
 			if (renderToTexture) {
@@ -285,6 +297,23 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
                     glVertex3f(0.5, ySize, monitorOriginZ);
                   glEnd();
                 
+                ySize = videoHeight/videoWidth/2.0;
+                glBindTexture(GL_TEXTURE_2D, videoTexture[i2]);
+				glColor4f(1,1,1,1);
+                glBegin(GL_TRIANGLE_STRIP);
+                glTexCoord2d(0, 1);
+                glVertex3f(1.5-0.5, -ySize, monitorOriginZ);
+                
+                glTexCoord2d(1, 1);
+                glVertex3f(1.5+0.5, -ySize, monitorOriginZ);
+                
+                glTexCoord2d(0, 0);
+                glVertex3f(1.5-0.5, ySize, monitorOriginZ);
+                
+                glTexCoord2d(1, 0);
+                glVertex3f(1.5+0.5, ySize, monitorOriginZ);
+                glEnd();
+                
                 
 				glEnable(GL_BLEND);
 
@@ -298,7 +327,7 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
 				glBindTexture( GL_TEXTURE_2D, cursor );
 				glBegin(GL_TRIANGLE_STRIP);
 				{
-					const double cursorSize = 32.0; // was 20.0, not sure which is best on each OS
+//					const double cursorSize = 32.0; // was 20.0, not sure which is best on each OS
 					double x0, x1, y0, y1, z;
 					x0 = -0.5+(cursorPosX/physicalWidth);
 					x1 = -0.5+((cursorPosX+cursorSize)/physicalWidth);
@@ -332,7 +361,7 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
                 glEnd();
 //                glDisable(GL_BLEND);
                 
-				glBindTexture(GL_TEXTURE_2D, 0);
+				//glBindTexture(GL_TEXTURE_2D, 0);
 
 				if(mouseBlendAlternate) { // restore mode
 					glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
@@ -342,20 +371,25 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
 			}
 		}
 		glPopMatrix();
+        
+        if(showDialog) {
+            window.render();
+        }
     }
-    glPopMatrix();
+    //glPopMatrix();
 
-    if (USE_FBO) {
-      glPopMatrix();
-    }
+    //if (USE_FBO) {
+    //  glPopMatrix();
+    //}
   }
 
     glViewport(0,0, windowWidth, windowHeight);
   if (USE_FBO) {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glClearColor(0, 0, 0, 1);
-    glClear(/*GL_COLOR_BUFFER_BIT | */GL_DEPTH_BUFFER_BIT);
-    glColor4f(1, 1, 1, 1);
+    //glClearColor(0, 0, 0, 1);
+	//glColor4f(1, 1, 1, 1);
+    //glClear(/*GL_COLOR_BUFFER_BIT | */GL_DEPTH_BUFFER_BIT);
+    //glColor4f(1, 1, 1, 1);
 
     if (ortho) {
       glMatrixMode(GL_PROJECTION);
@@ -366,16 +400,17 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
     }
       
     if(barrelDistort) {
-        render_distortion_lenses();
-        
-        render_distorted_frame(true, textures[0]);
-        render_distorted_frame(false, textures[0]);//1]);
+		if(lensParametersChanged) {
+			render_distortion_lenses();
+		}
+
+        render_both_frames(textures[0]);
     } else {
       for (int i = 0; i < 2; ++i) {
         if (ortho) {
           double originX = (i == 0) ? 0 : 0.5;
           glBindTexture(GL_TEXTURE_2D, textures[i]);
-          glPushMatrix();
+          //glPushMatrix();
           glColor4f(1, 1, 1, 1);
           glBegin(GL_TRIANGLE_STRIP);
             glTexCoord2d(0, bottom);
@@ -390,7 +425,7 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
             glTexCoord2d(1, top);
             glVertex3f(originX + 0.5, 1, 0);
           glEnd();
-          glPopMatrix();
+          //glPopMatrix();
         } else {
           glBindTexture(GL_TEXTURE_2D, textures[i]);
           glPushMatrix();
@@ -414,14 +449,14 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
       }
     }
 
-    if (ortho) {
-      glMatrixMode(GL_PROJECTION);
-      glLoadIdentity();
-      gluPerspective(90.0f, 1, 0.01f, 1000.0f);
+    //if (ortho) {
+    //  glMatrixMode(GL_PROJECTION);
+    //  glLoadIdentity();
+    //  gluPerspective(90.0f, 1, 0.01f, 1000.0f);
 
-      glMatrixMode(GL_MODELVIEW);
-    }
-    glViewport(0,0, width, height);
+    //  glMatrixMode(GL_MODELVIEW);
+    //}
+    //glViewport(0,0, width, height);
   }
 }
 

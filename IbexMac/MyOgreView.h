@@ -8,8 +8,12 @@
 
 #import <Cocoa/Cocoa.h>
 
+@class ScreenshotView;
+
 @interface MyOgreView : NSView {
         CVDisplayLinkRef displayLink; //display link for managing rendering thread
 }
+
+@property (retain,nonatomic) ScreenshotView *screenshotView;
 
 @end

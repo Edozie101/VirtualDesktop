@@ -85,12 +85,11 @@
 
 #include "sixense_controller.h"
 
-RendererPlugin *renderer;
-
 GLfloat top, bottom;
 
 // TODO: get rid of global variables
 bool controlDesktop  = 1;
+bool showDialog = false;
 
 // external variables
 bool resetPosition          = 0;
@@ -114,12 +113,14 @@ GLuint depthBuffer;
 
 GLuint desktopFBO;
 GLuint desktopTexture(0);
+GLuint videoTexture[2] = {0,0};
 #ifdef _WIN32
 bool mouseBlendAlternate(false);
 #else
 bool mouseBlendAlternate(false);
 #endif
 GLuint cursor(0);
+int cursorSize = 32;
 
 GLfloat cursorPosX(0);
 GLfloat cursorPosY(0);
@@ -137,11 +138,14 @@ int display = 0;
 unsigned long window = 0;
 unsigned long context = 0;
 
+bool done = 0;
 GLfloat physicalWidth = 1440.0;
 GLfloat physicalHeight = 900.0;
 //GLfloat physicalWidth = 2560.0;
 //GLfloat physicalHeight = 1600.0;
 
+GLfloat videoWidth = 1;
+GLfloat videoHeight = 1;
 GLfloat width = 1440.0;
 GLfloat height = 900.0;
 GLfloat textureWidth = 1280*1.4;//1440.0*2;
@@ -152,7 +156,7 @@ GLfloat windowHeight = 900;//800;
 double IOD = 0.1715; // at scale 0.8 // 0.136; at scale 1.0
 //double IOD = 0.136; // at scale 1.0
 
-
+char fpsString[32] = "FPS: -";
 
 
 /* From: http://stackoverflow.com/questions/5002254/
@@ -229,7 +233,7 @@ void prep_framebuffers()
         std::cerr << "Stage 0c - Problem generating desktop FBO" << std::endl;
         exit(EXIT_FAILURE);
     }
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0,
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, physicalWidth, physicalHeight, 0,
                GL_RGBA, GL_UNSIGNED_BYTE, 0);
     if (!checkForErrors()) {
         std::cerr << "Stage 0d - Problem generating desktop FBO" << std::endl;
@@ -249,7 +253,7 @@ void prep_framebuffers()
   glGenRenderbuffers(1, &depthBuffer);
   glGenTextures(2, textures);
 
-  for (int i = 0; i < 2; ++i) {
+    for (int i = 0; i < 1; ++i) {//2; ++i) {
     glBindFramebuffer(GL_FRAMEBUFFER, fbos[i]);
     glBindTexture(GL_TEXTURE_2D, textures[i]);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -316,7 +320,7 @@ bool didInitOpenGL() {
 // Updated:  Sep 10, 2012
 // TODO:     Split into separate functions
 // ---------------------------------------------------------------------------
-void renderGL(Desktop3DLocation& loc, double timeDiff_)
+void renderGL(Desktop3DLocation& loc, double timeDiff_, RendererPlugin *renderer)
 {
   if (!initedOpenGL) {
     initedOpenGL = true;
@@ -333,6 +337,8 @@ void renderGL(Desktop3DLocation& loc, double timeDiff_)
 //    }
       
       if(!OGRE3D) {
+          checkForErrors();
+          std::cerr << "init_distortion_shader" << std::endl;
           bool success = init_distortion_shader();
           if (!success) {
               std::cerr << "Failed to init distortion shader!" << std::endl;
@@ -401,7 +407,7 @@ double relativeMouseY = 0;
 
 static bool jump = false;
 
-Ibex::Ibex(int argc, char ** argv) {
+Ibex::Ibex::Ibex(int argc, char ** argv) {
     int c;
 #ifndef _WIN32
     while (argc > 0 && (c = getopt(argc, argv, "oihm")) != -1)
@@ -478,21 +484,18 @@ void processRawMotion(double relativeMouseXDelta, double relativeMouseYDelta, De
 {
   double xRotation, yRotation;
 
+    yRotation = loc.getYRotation();
+    yRotation += relativeMouseYDelta /(double)width * 180.0;
+    loc.setYRotation(yRotation);
+    relativeMouseY = relativeMouseYDelta;
 
-        yRotation = loc.getYRotation();
-        yRotation += relativeMouseYDelta /
-                     (double)width * 180.0;
-        loc.setYRotation(yRotation);
-        relativeMouseY = relativeMouseYDelta;
-
-        xRotation = loc.getXRotation();
-        xRotation += relativeMouseXDelta /
-                     (double)width * 180.0;
-        loc.setXRotation(xRotation);
-        relativeMouseX = relativeMouseXDelta;
+    xRotation = loc.getXRotation();
+    xRotation += relativeMouseXDelta / (double)width * 180.0;
+    loc.setXRotation(xRotation);
+    relativeMouseX = relativeMouseXDelta;
 }
 
-void Ibex::render(double timeDiff) {
+void Ibex::Ibex::render(double timeDiff) {
     if (controlDesktop) {
         walkForward = strafeRight = 0;
     }
@@ -519,6 +522,7 @@ void Ibex::render(double timeDiff) {
     }
     renderer->processEvents();
     
-    renderGL(desktop3DLocation, timeDiff);
+    renderGL(desktop3DLocation, timeDiff, renderer);
+    
 //    ts_start = ts_current;
 }
