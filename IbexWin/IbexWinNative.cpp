@@ -398,11 +398,8 @@ inline void getScreenshot() {
 HGLRC loaderContext;
 HDC hdc;
 void loopScreenshot() {
-	std::mutex screenshotMutex;
-	std::unique_lock<std::mutex> screenshotLock(screenshotMutex);
 	wglMakeCurrent(hdc, loaderContext);
 	while(1) {
-		//screenshotCondition.wait(screenshotLock);
 		getScreenshot();
 
 #ifdef _DEBUG
