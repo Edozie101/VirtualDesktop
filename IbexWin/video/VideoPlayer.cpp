@@ -932,7 +932,6 @@ int Ibex::VideoPlayer::playVideo(const char *fileName, bool isStereo)
         while(!videoDone || !audioDone);
     }
 
-//    videoTexture(new unsigned int[2]),
     width = 0;
     height = 0;
     done = true;

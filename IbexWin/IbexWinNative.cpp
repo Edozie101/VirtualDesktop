@@ -427,7 +427,9 @@ void loopScreenshot() {
 HGLRC videoPlayerContext = NULL;
 Ibex::VideoPlayer *_ibexVideoPlayer = NULL;
 static void playVideo() {
-	wglMakeCurrent(hdc, videoPlayerContext);       
+	bool success = wglMakeCurrent(hdc, videoPlayerContext);
+	std::cerr << "Video playing wglMakeCurrent: " << success << std::endl;
+
 	_ibexVideoPlayer = new Ibex::VideoPlayer();
 	_ibexVideoPlayer->playVideo(ibex->renderer->window.getSelectedVideoPath().c_str(),ibex->renderer->window.getIsStereoVideo());
 }
@@ -692,10 +694,13 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	hwnd = GetActiveWindow();
 	hdc = GetDC(hwnd);
 	HGLRC mainContext = wglGetCurrentContext();
-    loaderContext = wglCreateContext(hdc);
+    
+	loaderContext = wglCreateContext(hdc);
+	wglShareLists(loaderContext, mainContext); // Order matters
+
 	videoPlayerContext = wglCreateContext(hdc);
-    wglShareLists(loaderContext, mainContext); // Order matters
-	wglShareLists(videoPlayerContext, mainContext);
+	wglShareLists(mainContext, videoPlayerContext);
+
 	mainThreadId = GetCurrentThreadId();
 
 	std::thread screenshotThread(loopScreenshot);
