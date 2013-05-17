@@ -21,6 +21,8 @@
 #include "guicon.h"
 #include <crtdbg.h>
 
+#include "sixense_controller.h"
+
 #define MAX_LOADSTRING 100
 
 // Global Variables:

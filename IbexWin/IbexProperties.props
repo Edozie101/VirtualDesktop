@@ -1,0 +1,70 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup Label="UserMacros">
+    <USE_SIXENSE>1</USE_SIXENSE>
+    <OCULUS_SDK>..\..\OculusSDK</OCULUS_SDK>
+    <FFMPEG_LIB>..\..\ffmpeg</FFMPEG_LIB>
+    <FFMPEG_SHARED>..\..\ffmpeg-shared</FFMPEG_SHARED>
+    <SIXENSE_SDK>..\..\SixenseSDK_062612</SIXENSE_SDK>
+    <SIXENSE_INCLUDES>$(SIXENSE_SDK)\include</SIXENSE_INCLUDES>
+    <SIXENSE_LIB_DIR>$(SIXENSE_SDK)\lib\win32\release_dll</SIXENSE_LIB_DIR>
+    <SIXENSE_LIBS>sixense.lib;sixense_utils.lib</SIXENSE_LIBS>
+    <SIXENSE_DLL_DIR>$(SIXENSE_SDK)\bin\win32\release_dll</SIXENSE_DLL_DIR>
+  </PropertyGroup>
+  <PropertyGroup />
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <PreprocessorDefinitions>_USE_SIXENSE=$(USE_SIXENSE);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SIXENSE_INCLUDES);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>$(SIXENSE_LIB_DIR);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>$(SIXENSE_LIBS);%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>xcopy /y $(ProjectDir)*.dll $(OutDir)
+xcopy /y $(ProjectDir)..\..\ffmpeg-shared\bin\*.dll $(OutDir)
+xcopy /iys $(ProjectDir)resources $(OutDir)resources
+xcopy /y $(SIXENSE_DLL_DIR)\*.dll $(OutDir)</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <BuildMacro Include="USE_SIXENSE">
+      <Value>$(USE_SIXENSE)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="OCULUS_SDK">
+      <Value>$(OCULUS_SDK)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="FFMPEG_LIB">
+      <Value>$(FFMPEG_LIB)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="FFMPEG_SHARED">
+      <Value>$(FFMPEG_SHARED)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="SIXENSE_SDK">
+      <Value>$(SIXENSE_SDK)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="SIXENSE_INCLUDES">
+      <Value>$(SIXENSE_INCLUDES)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="SIXENSE_LIB_DIR">
+      <Value>$(SIXENSE_LIB_DIR)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="SIXENSE_LIBS">
+      <Value>$(SIXENSE_LIBS)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="SIXENSE_DLL_DIR">
+      <Value>$(SIXENSE_DLL_DIR)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+  </ItemGroup>
+</Project>

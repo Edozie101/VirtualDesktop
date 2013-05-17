@@ -111,16 +111,13 @@
     <ClInclude Include="filesystem\Filesystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="\\psf\Home\Downloads\msinttypes-r26\inttypes.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="\\psf\Home\Downloads\msinttypes-r26\stdint.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="msinttypes-r26\inttypes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="msinttypes-r26\stdint.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sixense_controller.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -189,6 +186,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="filesystem\Filesystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="sixense_controller.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
