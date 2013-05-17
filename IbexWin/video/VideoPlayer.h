@@ -96,9 +96,12 @@ private:
     bool videoDone;
     bool audioDone;
     
-    std::queue<AudioPacket> audioQueue;
     std::queue<AudioPacket> videoQueue;
     std::queue<AVFrame*> videoFrameQueue;
+
+	std::mutex aMutex1;
+	std::mutex aMutex2;
+	std::queue<AudioPacket> audioQueue;
     std::queue<AudioPacket> audioBufferQueue;
     
     AVStream *avVideoStream;

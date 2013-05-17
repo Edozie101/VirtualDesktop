@@ -100,8 +100,10 @@ public:
 		if(player->done) return 0;
 			if(player->audioQueue.size() > 0) {
 				try {
-				avAudioFrame = player->audioQueue.front();
-				player->audioQueue.pop();
+					player->aMutex1.lock();
+					avAudioFrame = player->audioQueue.front();
+					player->audioQueue.pop();
+					player->aMutex1.unlock();
 				} catch(...) {
 					buffer.AudioBytes = 0;
 				 buffer.pAudioData = 0;
@@ -135,7 +137,9 @@ public:
 				return 0;
 			}
 
+			aMutex2.lock();
 			player->audioBufferQueue.push(avAudioFrame);
+			aMutex2.unlock();
 		//}
 		return 0;
 	}
@@ -165,10 +169,12 @@ public:
 			if(player->done) return 0;
 
 			if(remainingBytes <= 0) {
-				if(player->audioQueue.size() > 0) {
+				if(!player->audioQueue.empty()) {
+					player->aMutex1.lock();
 					avAudioFrame = player->audioQueue.front();
 					avAudioFrameRemaining = avAudioFrame;
 					player->audioQueue.pop();
+					player->aMutex1.unlock();
 				} else {
 					std::this_thread::yield();
 		//            std::this_thread::sleep_for(std::chrono::milliseconds(1));
@@ -190,7 +196,9 @@ public:
 			*flags = 0;
 
 			if(remainingBytes <= 0) {
+				player->aMutex2.lock();
 				player->audioBufferQueue.push(avAudioFrame);
+				player->aMutex2.unlock();
 			}
 			//if(readBytes >= bufferFrameCount) {
 			//	return 0;
@@ -410,7 +418,9 @@ void Ibex::VideoPlayer::savePPMFrame(const AVFrame *avFrame, int width, int heig
 }
 
 void Ibex::VideoPlayer::addAudioFrame(AudioPacket avAudioFrame) {
+	aMutex1.lock();
 	audioQueue.push(avAudioFrame);
+	aMutex1.unlock();
 }
 void Ibex::VideoPlayer::addVideoFrame(AudioPacket avVideoFrame) {
     while(videoQueue.size() > MAX_VIDEO_QUEUE_SIZE && !done) {
@@ -489,8 +499,10 @@ int Ibex::VideoPlayer::playAudio(AVCodecContext *avAudioCodecCtx) {
     AudioPacket avAudioFrame;
     while(!done) {
         if(audioQueue.size() > 0) {
+			aMutex1.lock();
             avAudioFrame = audioQueue.front();
             audioQueue.pop();
+			aMutex1.unlock();
         } else {
             std::this_thread::yield();
 //            std::this_thread::sleep_for(std::chrono::milliseconds(1));
@@ -586,7 +598,9 @@ int Ibex::VideoPlayer::playAudio(AVCodecContext *avAudioCodecCtx) {
             return 1;
         }
 #endif
+		aMutex2.lock();
         audioBufferQueue.push(avAudioFrame);
+		aMutex2.unlock();
     }
     
     return 0;
@@ -674,7 +688,9 @@ int Ibex::VideoPlayer::initVideo(const char *fileName, bool isStereo) {
         a.audioBuffer = new uint8_t[BUFFER_SIZE+FF_INPUT_BUFFER_PADDING_SIZE];
         a.avAudioFrame = avcodec_alloc_frame();
         avcodec_get_frame_defaults(a.avAudioFrame);
+		aMutex2.lock();
         audioBufferQueue.push(a);
+		aMutex2.unlock();
     }
     // prepare audio,video frame
     avAudioFrame = avcodec_alloc_frame();
@@ -753,8 +769,11 @@ int Ibex::VideoPlayer::loadSyncAudioVideo(const char *fileName_, bool isStereo) 
     avFrame = videoFrameQueue.front();
     videoFrameQueue.pop();
     
+	aMutex2.lock();
     AudioPacket p = audioBufferQueue.front();
     audioBufferQueue.pop();
+	aMutex2.unlock();
+
     avAudioFrame = p.avAudioFrame;
     audioBuffer = p.audioBuffer;
     
@@ -798,14 +817,16 @@ int Ibex::VideoPlayer::loadSyncAudioVideo(const char *fileName_, bool isStereo) 
                         a.avAudioFrame = avAudioFrame;
                         addAudioFrame(a);
                         
-                        while(audioBufferQueue.size() <= 0 && !done) {
+                        while(audioBufferQueue.empty() && !done) {
                             std::this_thread::yield();
 //                    std::this_thread::sleep_for(std::chrono::milliseconds(1));
                             continue;
                         }
                         if(done) continue;
+						aMutex2.lock();
                         p = audioBufferQueue.front();
                         audioBufferQueue.pop();
+						aMutex2.unlock();
                         avAudioFrame = p.avAudioFrame;
                         audioBuffer = p.audioBuffer;
                         
@@ -886,8 +907,10 @@ int Ibex::VideoPlayer::loadSyncAudioVideo(const char *fileName_, bool isStereo) 
     audioDone = true;
     
     for(int i = 0; i < audioBufferQueue.size(); ++i) {
+		aMutex2.lock();
         AudioPacket avAudioFrame = audioBufferQueue.front();
         audioBufferQueue.pop();
+		aMutex2.unlock();
         av_free(avAudioFrame.avAudioFrame);
         delete [] avAudioFrame.audioBuffer;
     }
