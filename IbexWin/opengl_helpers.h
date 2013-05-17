@@ -28,6 +28,7 @@
 #ifdef _WIN32
 
 #include "GL/glew.h"
+#include "GL/wglew.h"
 #include <GL/gl.h>
 #include <GL/glu.h>
 //#include <GL/glext.h>

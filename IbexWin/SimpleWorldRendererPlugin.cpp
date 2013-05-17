@@ -178,10 +178,10 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
         glBindFramebuffer(GL_FRAMEBUFFER, fbos[0]);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		if (!checkForErrors()) {
-			std::cerr << "GL ISSUE" << std::endl;
-			exit(EXIT_FAILURE);
-		}
+		//if (!checkForErrors()) {
+		//	std::cerr << "GL ISSUE" << std::endl;
+		//	exit(EXIT_FAILURE);
+		//}
     }
 
 	glViewport(0,0, textureWidth/2.0, textureHeight);

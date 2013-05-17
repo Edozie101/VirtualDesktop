@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 #include "IbexWinNative.h"
+#include "opengl_helpers.h"
 
 // add if you will call: dwmapi.lib
 // #include <Dwmapi.h>
@@ -155,7 +156,7 @@ void KeyboardUp(unsigned char key, int x, int y)
   }
 }
 
-void MouseMoved(int x, int y) {
+inline void MouseMoved(int x, int y) {
 	if(!controlDesktop) {
 		relativeMouseX = x-500;
 		relativeMouseY = y-500;
@@ -165,9 +166,11 @@ void MouseMoved(int x, int y) {
 
 static inline void getMouseCursor(HDC hdcScreen)
 {
-	CURSORINFO cursorinfo = { 0 };
+	static CURSORINFO cursorinfo = { 0 };
+	static HCURSOR prevCursor = 0;
 	cursorinfo.cbSize = sizeof(cursorinfo);
-	if(GetCursorInfo(&cursorinfo))  {
+	if(GetCursorInfo(&cursorinfo) && cursorinfo.hCursor != prevCursor)  {
+		prevCursor = cursorinfo.hCursor;
 		ICONINFO ii = {0};
 		if(GetIconInfo(cursorinfo.hCursor, &ii)) {
 			BITMAP bitmap = {0};
@@ -198,7 +201,7 @@ static inline void getMouseCursor(HDC hdcScreen)
 					GL_BGRA, GL_UNSIGNED_BYTE, bits);
 				glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
 				glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-				glBindTexture(GL_TEXTURE_2D, 0);
+				//glBindTexture(GL_TEXTURE_2D, 0);
 
 				//delete []bits;
 			} else if(ii.hbmMask != 0) {
@@ -232,7 +235,7 @@ static inline void getMouseCursor(HDC hdcScreen)
 					GL_BGRA, GL_UNSIGNED_BYTE, bits);
 				glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 				glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-				glBindTexture(GL_TEXTURE_2D, 0);
+				//glBindTexture(GL_TEXTURE_2D, 0);
 
 				//delete []bits;
 			}
@@ -240,7 +243,7 @@ static inline void getMouseCursor(HDC hdcScreen)
 	}
 }
 
-int CaptureAnImage(HWND hWnd)
+inline int CaptureAnImage(HWND hWnd)
 {
     HDC hdcScreen;
     HDC hdcWindow;
@@ -277,18 +280,6 @@ int CaptureAnImage(HWND hWnd)
 
     // Select the compatible bitmap into the compatible memory DC.
     SelectObject(hdcMemDC,hbmScreen);
-    
-    // Bit block transfer into our compatible memory DC.
-    if(!BitBlt(hdcMemDC, 
-               0,0, 
-               rcClient.right-rcClient.left, rcClient.bottom-rcClient.top, 
-               hdcWindow, 
-               0,0,
-               SRCCOPY | CAPTUREBLT))
-    {
-        MessageBox(hWnd, L"BitBlt has failed", L"Failed", MB_OK);
-        goto done;
-    }
 
     // Get the BITMAP from the HBITMAP
     GetObject(hbmScreen,sizeof(BITMAP),&bmpScreen);
@@ -300,7 +291,7 @@ int CaptureAnImage(HWND hWnd)
     bi.biWidth = bmpScreen.bmWidth;    
     bi.biHeight = bmpScreen.bmHeight;  
     bi.biPlanes = 1;    
-    bi.biBitCount = 32;    
+    bi.biBitCount = 24;    
     bi.biCompression = BI_RGB;    
     bi.biSizeImage = 0;  
     bi.biXPelsPerMeter = 0;    
@@ -308,7 +299,7 @@ int CaptureAnImage(HWND hWnd)
     bi.biClrUsed = 0;    
     bi.biClrImportant = 0;
 
-    DWORD dwBmpSize = ((bmpScreen.bmWidth * bi.biBitCount + 31) / 32) * 4 * bmpScreen.bmHeight;
+    DWORD dwBmpSize = ((bmpScreen.bmWidth * bi.biBitCount + 23) / 24) * 3 * bmpScreen.bmHeight;
 
     // Starting with 32-bit Windows, GlobalAlloc and LocalAlloc are implemented as wrapper functions that 
     // call HeapAlloc using a handle to the process's default heap. Therefore, GlobalAlloc and LocalAlloc 
@@ -316,6 +307,22 @@ int CaptureAnImage(HWND hWnd)
     //HANDLE hDIB = GlobalAlloc(GHND,dwBmpSize); 
     //char *lpbitmap = (char *)GlobalLock(hDIB);    
 	static char *lpbitmap = new char[dwBmpSize];
+
+	static std::mutex screenshotMutex;
+	static std::unique_lock<std::mutex> screenshotLock(screenshotMutex);
+	screenshotCondition.wait(screenshotLock);
+
+	// Bit block transfer into our compatible memory DC.
+    if(!BitBlt(hdcMemDC, 
+               0,0, 
+               rcClient.right-rcClient.left, rcClient.bottom-rcClient.top, 
+               hdcWindow, 
+               0,0,
+               SRCCOPY | CAPTUREBLT))
+    {
+        MessageBox(hWnd, L"BitBlt has failed", L"Failed", MB_OK);
+        goto done;
+    }
 
     // Gets the "bits" from the bitmap and copies them into a buffer 
     // which is pointed to by lpbitmap.
@@ -328,16 +335,17 @@ int CaptureAnImage(HWND hWnd)
 		static bool used = false;
 		glBindTexture(GL_TEXTURE_2D, desktopTexture);
 		if(used) {
-			glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, bmpScreen.bmWidth, bmpScreen.bmHeight, GL_BGRA, GL_UNSIGNED_BYTE, lpbitmap);
+			glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, bmpScreen.bmWidth, bmpScreen.bmHeight, GL_BGR, GL_UNSIGNED_BYTE, lpbitmap);
 		} else {
 			used = true;
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, bmpScreen.bmWidth, bmpScreen.bmHeight, 0,
-               GL_BGRA, GL_UNSIGNED_BYTE, lpbitmap);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, bmpScreen.bmWidth, bmpScreen.bmHeight, 0,
+               GL_BGR, GL_UNSIGNED_BYTE, lpbitmap);
+			glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_FALSE);
 		}
 		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
 		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
 
-		glBindTexture(GL_TEXTURE_2D, 0);
+		//glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
 	// free []lpbitmap;
@@ -358,7 +366,7 @@ done:
 	return 0;
 }
 
-void getScreenshot() {
+inline void getScreenshot() {
 	HWND hwnd = GetDesktopWindow();
 	CaptureAnImage(hwnd);
 }
@@ -370,9 +378,10 @@ void loopScreenshot() {
 	std::unique_lock<std::mutex> screenshotLock(screenshotMutex);
 	wglMakeCurrent(hdc, loaderContext);
 	while(1) {
-		screenshotCondition.wait(screenshotLock);
+		//screenshotCondition.wait(screenshotLock);
 		getScreenshot();
 
+#ifdef _DEBUG
 		static double timeprev = glutGet(GLUT_ELAPSED_TIME);
 		const double time = glutGet(GLUT_ELAPSED_TIME);
 		timeprev = time;
@@ -387,12 +396,14 @@ void loopScreenshot() {
 			timebase = time;
 			frame = 0;
 		}
+#endif
 	}
 }
 
 Ibex *ibex = 0;
 static void RenderSceneCB()
 {
+	screenshotCondition.notify_all();
 	static double timeprev = glutGet(GLUT_ELAPSED_TIME);
 	double time = glutGet(GLUT_ELAPSED_TIME);
 	double timeDiff = (time - timeprev)/1000.0;
@@ -438,12 +449,12 @@ static void RenderSceneCB()
 	}
 
     ibex->render(timeDiff);
-	checkForErrors();
+	//checkForErrors();
 
 	glutSwapBuffers();
 	glutPostRedisplay();
 
-	screenshotCondition.notify_all();
+	//screenshotCondition.notify_all();
 }
 
 void ReshapeFunc(int width, int height) {

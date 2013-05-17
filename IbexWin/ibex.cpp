@@ -36,6 +36,7 @@
 #ifdef _WIN32
 
 #include "GL/glew.h"
+#include "GL/wglew.h"
 #include <GL/gl.h>
 #include <GL/glu.h>
 //#include <GL/glext.h>
@@ -323,6 +324,10 @@ void renderGL(Desktop3DLocation& loc, double timeDiff_)
         // GLEW failed!
         exit(1);
       }
+#ifdef _WIN32
+	  //bool r = wglSwapIntervalEXT(5);
+	  //std::cerr << "wglSwapIntervalEXT: " << r << std::endl;
+#endif
 //    }
       
       if(!OGRE3D) {
