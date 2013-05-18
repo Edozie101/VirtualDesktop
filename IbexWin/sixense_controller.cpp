@@ -104,7 +104,7 @@ void check_for_button_presses( sixenseAllControllerData *acd ) {
 	int left_index = sixenseUtils::getTheControllerManager()->getIndex( sixenseUtils::ControllerManager::P1L );
 	int right_index = sixenseUtils::getTheControllerManager()->getIndex( sixenseUtils::ControllerManager::P1R );
     
-    
+    if(left_index == -1 || right_index == -1) return;
     
 	// First use the 'ButtonStates' class to flash the object when the 1 button is pressed, or the trigger is pulled.
 	// ButtonStates is a simple class that reports when a button's state just transitioned from released to pressed
@@ -202,7 +202,7 @@ void mySixenseRefresh() {
 
 void myInitSixense() {
     // Init sixense
-	sixenseInited = (sixenseInit() != SIXENSE_FAILURE);
+	sixenseInited = (sixenseInit() == SIXENSE_SUCCESS);
     
 	if(sixenseInited) {
 		// Init the controller manager. This makes sure the controllers are present, assigned to left and right hands, and that
