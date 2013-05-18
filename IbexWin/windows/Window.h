@@ -46,8 +46,10 @@ private:
 private:
     bool selectedVideo;
     bool isStereoVideo;
+public:
     std::string videoPath;
     
+private:
     VisibleWindow visibleWindow;
     std::string currentPath;
     bool directoryChanged;

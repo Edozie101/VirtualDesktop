@@ -276,6 +276,7 @@ int Ibex::Window::processKey(unsigned char key, int down) {
             if(down) {
                 --selectedFile;
                 if(selectedFile < 0) selectedFile += directoryList.size();
+				if(directoryList.size() <= 0) selectedFile = 0;
             }
             processed = 1;
             break;
@@ -283,7 +284,11 @@ int Ibex::Window::processKey(unsigned char key, int down) {
 		case 's':
             if(down) {
                 ++selectedFile;
-                selectedFile %= directoryList.size();
+				if(directoryList.size()) {
+					selectedFile %= directoryList.size();
+				} else {
+					selectedFile = 0;
+				}
             }
             
             processed = 1;
