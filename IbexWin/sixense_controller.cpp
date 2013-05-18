@@ -8,6 +8,9 @@
 
 #include "sixense_controller.h"
 
+double sixenseStrafeRight = 0;
+double sixenseWalkForward = 0;
+
 #if _USE_SIXENSE
 
 #include <sixense.h>
@@ -26,9 +29,6 @@
 #include "ibex.h"
 
 static int sixenseInited = 0;
-
-double sixenseStrafeRight = 0;
-double sixenseWalkForward = 0;
 
 // whether or not we are currently logging position data to a file, and the file pointer to which to log
 static int is_logging = 0;
