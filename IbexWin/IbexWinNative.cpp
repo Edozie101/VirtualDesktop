@@ -414,8 +414,8 @@ void loopScreenshot() {
 	}
 }
 
-HGLRC videoPlayerContext;
-Ibex::VideoPlayer *_ibexVideoPlayer;
+HGLRC videoPlayerContext = NULL;
+Ibex::VideoPlayer *_ibexVideoPlayer = NULL;
 static void playVideo() {
 	wglMakeCurrent(hdc, videoPlayerContext);       
 	_ibexVideoPlayer = new Ibex::VideoPlayer();
@@ -470,8 +470,8 @@ static void RenderSceneCB()
 
 	if(ibex != NULL && ibex->renderer->window.getSelectedVideo()) {
 		ibex->renderer->window.setSelectedVideo(false);
-		std::thread screenshotThread(playVideo);
-		screenshotThread.detach();
+		std::thread videoThread(playVideo);
+		videoThread.detach();
 	}
 	if(_ibexVideoPlayer != NULL) {
 		videoTexture[0] = _ibexVideoPlayer->videoTexture[0];
