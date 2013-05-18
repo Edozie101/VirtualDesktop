@@ -202,12 +202,14 @@ void mySixenseRefresh() {
 
 void myInitSixense() {
     // Init sixense
-	sixenseInited = sixenseInit();
+	sixenseInited = (sixenseInit() != SIXENSE_FAILURE);
     
-	// Init the controller manager. This makes sure the controllers are present, assigned to left and right hands, and that
-	// the hemisphere calibration is complete.
-	sixenseUtils::getTheControllerManager()->setGameType( sixenseUtils::ControllerManager::ONE_PLAYER_TWO_CONTROLLER );
-	sixenseUtils::getTheControllerManager()->registerSetupCallback( controller_manager_setup_callback );
+	if(sixenseInited) {
+		// Init the controller manager. This makes sure the controllers are present, assigned to left and right hands, and that
+		// the hemisphere calibration is complete.
+		sixenseUtils::getTheControllerManager()->setGameType( sixenseUtils::ControllerManager::ONE_PLAYER_TWO_CONTROLLER );
+		sixenseUtils::getTheControllerManager()->registerSetupCallback( controller_manager_setup_callback );
+	}
 }
 
 #endif

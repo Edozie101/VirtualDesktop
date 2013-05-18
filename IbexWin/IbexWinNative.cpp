@@ -6,8 +6,13 @@
 #endif
 
 #include "stdafx.h"
+
 #include "IbexWinNative.h"
 #include "opengl_helpers.h"
+
+#if _USE_SIXENSE
+#include "sixense_controller.h"
+#endif
 
 // add if you will call: dwmapi.lib
 // #include <Dwmapi.h>
@@ -18,10 +23,10 @@
 #include <thread>
 #include <mutex>
 
+#include <string.h>
+
 #include "guicon.h"
 #include <crtdbg.h>
-
-#include "sixense_controller.h"
 
 #define MAX_LOADSTRING 100
 
@@ -82,13 +87,12 @@ typedef unsigned long GLXContext;
 
 #include "distortions.h"
 #include "OVR.h"
-using namespace OVR;
 
-Ptr<DeviceManager>	pManager;
-Ptr<HMDDevice>		pHMD;
-Ptr<SensorDevice>	pSensor;
-SensorFusion		FusionResult;
-HMDInfo				Info;
+OVR::Ptr<OVR::DeviceManager>	pManager;
+OVR::Ptr<OVR::HMDDevice>		pHMD;
+OVR::Ptr<OVR::SensorDevice>	pSensor;
+OVR::SensorFusion		FusionResult;
+OVR::HMDInfo				Info;
 bool				InfoLoaded = false;
 bool				riftConnected = false;
 
@@ -494,6 +498,10 @@ static void RenderSceneCB()
 		videoWidth = videoHeight = videoTexture[0] = videoTexture[1] = 0;
 	}
 
+#if _USE_SIXENSE
+	mySixenseRefresh();
+#endif
+
     ibex->render(timeDiff);
 	//checkForErrors();
 
@@ -548,34 +556,102 @@ void globalHotkeyListener() {
 	return;
 }
 
+
+
 static int riftX = 0;
 static int riftY = 0;
 static int riftResolutionX = 0;
 static int riftResolutionY = 0;
+BOOL CALLBACK MonitorEnumProc(
+  _In_  HMONITOR hMonitor,
+  _In_  HDC hdcMonitor,
+  _In_  LPRECT lprcMonitor,
+  _In_  LPARAM dwData
+) {
+	MONITORINFOEX lpmi;
+	MONITORINFO l;
+	lpmi.cbSize = sizeof(MONITORINFOEX);
+	char name[32];
+	DISPLAY_DEVICE d;
+	
+	if(GetMonitorInfo(hMonitor, &lpmi)) {
+		
+		//strncpy(name, (const char*)lpmi.szDevice, 32);
+		//if(strstr(name, "Rift") != NULL) {
+		if( ((lpmi.rcMonitor.right-lpmi.rcMonitor.left) == riftResolutionX) &&
+					((lpmi.rcMonitor.bottom-lpmi.rcMonitor.top) == riftResolutionY)) {
+			riftX = lpmi.rcMonitor.left;
+			riftY = lpmi.rcMonitor.top;
+		}
+	}
+	return true;
+}
+
+void getRiftDisplay() {
+	if(InfoLoaded) {
+		EnumDisplayMonitors(NULL, NULL, MonitorEnumProc, 0);
+		//char name[32];
+		//DISPLAY_DEVICE d;
+		//d.cb = sizeof(DISPLAY_DEVICE);
+		//int i = 0;
+		//while(EnumDisplayDevices(NULL, i++, &d, NULL)) {
+		//	int i2 = 0;
+		//	d.cb = sizeof(DISPLAY_DEVICE);
+		//	DISPLAY_DEVICE ddMon;
+		//	ZeroMemory(&ddMon, sizeof(ddMon));
+		//	ddMon.cb = sizeof(ddMon);
+		//	DWORD devMon = 0;
+		//	while(EnumDisplayDevices(d.DeviceName, i2++, &ddMon, NULL)) {
+		//		MONITORINFOEX mInfo;
+		//		mInfo.cbSize = sizeof(MONITORINFOEX);
+		//		GetMonitorInfo(ddMon.,&mInfo);
+		//		if( ((mInfo.rcMonitor.right-mInfo.rcMonitor.left) == riftResolutionX) &&
+		//			((mInfo.rcMonitor.top-mInfo.rcMonitor.bottom) == riftResolutionX)) {
+		//		}
+
+		//		d.cb = sizeof(DISPLAY_DEVICE);
+		//		if(strstr((const char*)ddMon.DeviceString, "Rift") != NULL) {
+		//			return;
+		//			//riftX = lpmi.rcMonitor.left;
+		//			//riftY = lpmi.rcMonitor.top;
+		//		}
+		//		devMon++;
+
+		//		ZeroMemory(&ddMon, sizeof(ddMon));
+		//		ddMon.cb = sizeof(ddMon);
+		//	}
+		//	d.cb = sizeof(DISPLAY_DEVICE);
+		//}
+	}
+}
 void initRift() {
-	System::Init();
+	OVR::System::Init(OVR::Log::ConfigureDefaultLog(OVR::LogMask_All));
 
-	pManager = *DeviceManager::Create();
+	pManager = *OVR::DeviceManager::Create();
 
-	pHMD = *pManager->EnumerateDevices<HMDDevice>().CreateDevice();
+	//pManager->SetMessageHandler(this);
+
+	pHMD = *pManager->EnumerateDevices<OVR::HMDDevice>().CreateDevice();
 
 	if (pHMD)
     {
+		pSensor = *pHMD->GetSensor();
+
         InfoLoaded = pHMD->GetDeviceInfo(&Info);
 
 		strncpy(Info.DisplayDeviceName, RiftMonitorName, 32);
+
+		RiftDisplayId = Info.DisplayId;
 
 		EyeDistance = Info.InterpupillaryDistance;
 		DistortionK[0] = Info.DistortionK[0];
 		DistortionK[1] = Info.DistortionK[1];
 		DistortionK[2] = Info.DistortionK[2];
 		DistortionK[3] = Info.DistortionK[3];
-
-		pSensor = *pHMD->GetSensor();
 	}
 	else
 	{
-		pSensor = *pManager->EnumerateDevices<SensorDevice>().CreateDevice();
+		pSensor = *pManager->EnumerateDevices<OVR::SensorDevice>().CreateDevice();
 	}
 
 	if (pSensor)
@@ -592,12 +668,14 @@ void initRift() {
 		   riftResolutionY = Info.VResolution;
 	   }
 	}
+
+	getRiftDisplay();
 }
 void cleanUpRift() {
 	pSensor.Clear();
 	pManager.Clear();
 
-	System::Destroy();
+	OVR::System::Destroy();
 }
 
 // Get the horizontal and vertical screen sizes in pixel
@@ -639,6 +717,10 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	#ifdef _DEBUG
 	RedirectIOToConsole();
 	#endif
+
+#if _USE_SIXENSE
+	myInitSixense();
+#endif
 
 	int mainScreenHorizontal = 0;
 	int mainScreenVertical = 0;

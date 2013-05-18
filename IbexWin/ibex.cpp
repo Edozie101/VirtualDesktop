@@ -84,6 +84,8 @@
 
 #include "ibex.h"
 
+#include "sixense_controller.h"
+
 GLfloat top, bottom;
 
 // TODO: get rid of global variables
@@ -336,6 +338,8 @@ void renderGL(Desktop3DLocation& loc, double timeDiff_, RendererPlugin *renderer
 //    }
       
       if(!OGRE3D) {
+          checkForErrors();
+          std::cerr << "init_distortion_shader" << std::endl;
           bool success = init_distortion_shader();
           if (!success) {
               std::cerr << "Failed to init distortion shader!" << std::endl;
@@ -496,18 +500,27 @@ void Ibex::Ibex::render(double timeDiff) {
     if (controlDesktop) {
         walkForward = strafeRight = 0;
     }
-    processRawMotion(relativeMouseY, relativeMouseX, desktop3DLocation);
+    double rx = relativeMouseX;
+    double ry = relativeMouseY;
     relativeMouseX = 0;
     relativeMouseY = 0;
     
-    desktop3DLocation.walk(walkForward, strafeRight, timeDiff);
+    if(!OGRE3D) {
+        processRawMotion(ry, rx, desktop3DLocation);
+        relativeMouseX = 0;
+        relativeMouseY = 0;
+        desktop3DLocation.walk(walkForward+sixenseWalkForward, strafeRight+sixenseStrafeRight, timeDiff);
+    }
     
     if(resetPosition) {
         resetPosition = 0;
         desktop3DLocation.resetState();
     }
     
-    renderer->move(walkForward, strafeRight, jump, relativeMouseX, relativeMouseY);
+    renderer->setDesktopTexture(desktopTexture);
+    if(OGRE3D) {
+        renderer->move(walkForward+sixenseWalkForward, strafeRight+sixenseStrafeRight, jump, ry, rx);
+    }
     renderer->processEvents();
     
     renderGL(desktop3DLocation, timeDiff, renderer);
