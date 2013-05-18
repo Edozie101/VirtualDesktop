@@ -43,9 +43,15 @@ extern "C" {
 
 #include <queue>
 #include <thread>
+#include <mutex>
+#include <condition_variable>
 
 namespace Ibex {
     
+#ifdef _WIN32
+class WindowsAudioSource;
+#endif
+
 struct AudioPacket {
     AVFrame *avAudioFrame;
     uint8_t *audioBuffer;
@@ -61,6 +67,10 @@ enum VideoSyncMode {
 };
 
 class VideoPlayer {
+#ifdef _WIN32
+	friend class WindowsAudioSource;
+#endif
+
 public:
     VideoPlayer();
     
