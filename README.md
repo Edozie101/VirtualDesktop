@@ -4,9 +4,9 @@
 Ibex is a simple 3D Virtual Reality (VR) world that will allow you to have a number of virtual monitors that contain your current actual desktop or the ability to watch movies.  The idea is for you to have a pretty virtual world to work in regardless of where you are
 so that you can be flying on a plane, for example, but still be flanked by multiple large high resolution monitors and still be effective rather than be limited by a tiny laptop screen.  In addition, through the eventual use of plugins you can change your environment to suit your needs so you can work in a giant castle or out in a serene field.
 
-Networking and multi-user support, physics engine and plugin support are all coming.  Movie playing has gotten intial support on the Mac as well.
+It currently supports the Rift on Windows and Mac OS and when the SDK is updated Linux as well.  If you have a Razer Hydra you can use it to look and walk around.
 
-It currently supports the Rift on Windows and Mac OS and when the SDK is updated Linux as well.
+Networking and multi-user support, physics engine and plugin support are all coming.  Movie playing has gotten intial support on the Mac as well.
 
 # Home Page and Downloads
 
@@ -29,6 +29,7 @@ Jump: SPACE (Irrlicht renderer only)
 Show FPS and Info Dialog: / (Mac Only)
 Choose movies: Show info dialog with ‘/‘ then press 1 or 2 for regular or stereo movies, then navigate using arrow keys and enter to select a movie
 Adjust IPD for Rift stereo viewing: -/+ keys
+Razer Hydra: Calibrate by pressing the LT then RT buttons, after that use the thumbsticks to look around and walk forward
 
 Toggle Barrel Lens Distort: B  
 Toggle Ground Layer: G  
