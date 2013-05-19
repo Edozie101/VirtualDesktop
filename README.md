@@ -20,11 +20,12 @@ Disable Side-by-Side rendering: -m (for mono)
 
 ### Controls
 Toggle Control Desktop/Move Around World: CTRL+SHIFT+Y, Shift+F1 or CTRL+SHIFT+G (Mac), CTRL+SHIFT+G (Win)  
+Toggle Display Shape (Spherical/Flat on Windows and Mac only): Q
 Look: Move Mouse  
 Move Forward: W  
 Move Backwards: S  
-Walk Sideways Left (Strafe Left): A/Q  
-Walk Sideways Right (Strafe Right): D/E   
+Walk Sideways Left (Strafe Left): A  
+Walk Sideways Right (Strafe Right): D
 Jump: SPACE (Irrlicht renderer only)  
 Show FPS and Info Dialog: / (Mac Only)
 Choose movies: Show info dialog with ‘/‘ then press 1 or 2 for regular or stereo movies, then navigate using arrow keys and enter to select a movie
