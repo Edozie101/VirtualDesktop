@@ -1035,7 +1035,10 @@
 				CODE_SIGN_ENTITLEMENTS = IbexMac/IbexMac.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
-				FRAMEWORK_SEARCH_PATHS = /Library/Frameworks;
+				FRAMEWORK_SEARCH_PATHS = (
+					/Library/Frameworks,
+					"$(PROJECT_DIR)/../sixenseSDK_linux_OSX/lib/osx_x64/release_dll/",
+				);
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_ENABLE_CPP_RTTI = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -1045,6 +1048,7 @@
 					"$(PROJECT_DIR)/../bullet-2.81-rev2613/src",
 					"$(PROJECT_DIR)/../OculusSDK/LibOVR/Include",
 					"$(PROJECT_DIR)/../OculusSDK/LibOVR/Src",
+					"$(PROJECT_DIR)/../sixenseSDK_linux_OSX/include",
 					/usr/local/include,
 				);
 				INFOPLIST_FILE = "IbexMac/IbexMac-Info.plist";
@@ -1059,6 +1063,7 @@
 					/usr/local/Cellar/faac/1.28/lib,
 					/usr/local/Cellar/x264/r2197.4/lib,
 					/usr/local/Cellar/boost/1.53.0/lib,
+					"$(PROJECT_DIR)/../sixenseSDK_linux_OSX/lib/osx_x64/release_dll",
 				);
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
@@ -1099,7 +1104,10 @@
 				CODE_SIGN_ENTITLEMENTS = IbexMac/IbexMac.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
-				FRAMEWORK_SEARCH_PATHS = /Library/Frameworks;
+				FRAMEWORK_SEARCH_PATHS = (
+					/Library/Frameworks,
+					"$(PROJECT_DIR)/../sixenseSDK_linux_OSX/lib/osx_x64/release_dll/",
+				);
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_ENABLE_CPP_RTTI = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -1110,6 +1118,7 @@
 					"$(PROJECT_DIR)/../bullet-2.81-rev2613/src",
 					"$(PROJECT_DIR)/../OculusSDK/LibOVR/Include",
 					"$(PROJECT_DIR)/../OculusSDK/LibOVR/Src",
+					"$(PROJECT_DIR)/../sixenseSDK_linux_OSX/include",
 					/usr/local/include,
 				);
 				INFOPLIST_FILE = "IbexMac/IbexMac-Info.plist";
@@ -1124,6 +1133,7 @@
 					/usr/local/Cellar/faac/1.28/lib,
 					/usr/local/Cellar/x264/r2197.4/lib,
 					/usr/local/Cellar/boost/1.53.0/lib,
+					"$(PROJECT_DIR)/../sixenseSDK_linux_OSX/lib/osx_x64/release_dll",
 				);
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
@@ -1316,11 +1326,13 @@
 					"$(PROJECT_DIR)/../bullet-2.81-rev2613/src",
 					"$(PROJECT_DIR)/../OculusSDK/LibOVR/Src",
 					"$(PROJECT_DIR)/../OculusSDK/LibOVR/Include",
+					"$(PROJECT_DIR)/../sixenseSDK_linux_OSX/include",
+					/usr/local/include,
 				);
 				INFOPLIST_FILE = "IbexMac/IbexMac-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/../../OculusSDK/LibOVR/Lib/MacOS/Release\"",
+					"\"$(SRCROOT)/../OculusSDK/LibOVR/Lib/MacOS/Release\"",
 					"\"$(SRCROOT)/../OculusSDK/LibOVR/Lib/MacOS/Debug\"",
 				);
 				OTHER_LDFLAGS = "";
@@ -1345,11 +1357,13 @@
 					"$(PROJECT_DIR)/../bullet-2.81-rev2613/src",
 					"$(PROJECT_DIR)/../OculusSDK/LibOVR/Src",
 					"$(PROJECT_DIR)/../OculusSDK/LibOVR/Include",
+					"$(PROJECT_DIR)/../sixenseSDK_linux_OSX/include",
+					/usr/local/include,
 				);
 				INFOPLIST_FILE = "IbexMac/IbexMac-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/../../OculusSDK/LibOVR/Lib/MacOS/Release\"",
+					"\"$(SRCROOT)/../OculusSDK/LibOVR/Lib/MacOS/Release\"",
 					"\"$(SRCROOT)/../OculusSDK/LibOVR/Lib/MacOS/Debug\"",
 				);
 				OTHER_LDFLAGS = "";
