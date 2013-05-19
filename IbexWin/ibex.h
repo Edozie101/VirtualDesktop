@@ -19,6 +19,12 @@
 
 class RendererPlugin;
 
+enum DisplayShape {
+  FlatDisplay,SphericalDisplay
+};
+
+extern DisplayShape displayShape;
+
 extern OVR::Ptr<OVR::DeviceManager>	pManager;
 extern OVR::Ptr<OVR::HMDDevice>		pHMD;
 extern OVR::Ptr<OVR::SensorDevice>	pSensor;
