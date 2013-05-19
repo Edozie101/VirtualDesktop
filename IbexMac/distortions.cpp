@@ -100,6 +100,7 @@ GLuint ScaleInUniform;
 GLuint HmdWarpParamUniform;
 
 char RiftMonitorName[33];
+int RiftDisplayId;
 float EyeDistance = 0.0640000030;
 float DistortionK[4] = {1.00000000, 0.219999999, 0.239999995, 0.000000000};
 

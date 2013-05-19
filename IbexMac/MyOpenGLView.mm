@@ -125,7 +125,9 @@ static NSTimer *t;
 - (id)initWithFrame:(NSRect)frameRect pixelFormat:(NSOpenGLPixelFormat *)format {
     self = [super initWithFrame:frameRect pixelFormat:format];
     if (self) {
+#if _USE_SIXENSE
         myInitSixense();
+#endif
         
         cocoaCondition = [[NSCondition alloc] init];
         

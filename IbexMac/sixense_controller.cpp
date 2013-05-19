@@ -8,6 +8,11 @@
 
 #include "sixense_controller.h"
 
+double sixenseStrafeRight = 0;
+double sixenseWalkForward = 0;
+
+#if _USE_SIXENSE
+
 #include <sixense.h>
 #include <sixense_math.hpp>
 #ifdef WIN32
@@ -21,14 +26,9 @@
 #include <iostream>
 #include <deque>
 
-
-#include <OpenGL/OpenGL.h>
 #include "ibex.h"
 
 static int sixenseInited = 0;
-
-double sixenseStrafeRight = 0;
-double sixenseWalkForward = 0;
 
 // whether or not we are currently logging position data to a file, and the file pointer to which to log
 static int is_logging = 0;
@@ -189,7 +189,7 @@ void mySixenseRefresh() {
 	check_for_button_presses( &acd );
     
 #ifdef WIN32
-	update_mouse_pointers( &acd );
+	//update_mouse_pointers( &acd );
 #endif
     
 	// Either draw the controller manager instruction screen, or display the controller information
@@ -202,10 +202,14 @@ void mySixenseRefresh() {
 
 void myInitSixense() {
     // Init sixense
-	sixenseInited = sixenseInit();
+	sixenseInited = (sixenseInit() != SIXENSE_FAILURE);
     
-	// Init the controller manager. This makes sure the controllers are present, assigned to left and right hands, and that
-	// the hemisphere calibration is complete.
-	sixenseUtils::getTheControllerManager()->setGameType( sixenseUtils::ControllerManager::ONE_PLAYER_TWO_CONTROLLER );
-	sixenseUtils::getTheControllerManager()->registerSetupCallback( controller_manager_setup_callback );
+	if(sixenseInited) {
+		// Init the controller manager. This makes sure the controllers are present, assigned to left and right hands, and that
+		// the hemisphere calibration is complete.
+		sixenseUtils::getTheControllerManager()->setGameType( sixenseUtils::ControllerManager::ONE_PLAYER_TWO_CONTROLLER );
+		sixenseUtils::getTheControllerManager()->registerSetupCallback( controller_manager_setup_callback );
+	}
 }
+
+#endif

@@ -1043,6 +1043,11 @@
 				GCC_ENABLE_CPP_RTTI = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "IbexMac/IbexMac-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"_USE_SIXENSE=1",
+					"$(inherited)",
+				);
 				HEADER_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/IbexMac",
 					"$(PROJECT_DIR)/../bullet-2.81-rev2613/src",
@@ -1112,6 +1117,7 @@
 				GCC_ENABLE_CPP_RTTI = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "IbexMac/IbexMac-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = "_USE_SIXENSE=1";
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/IbexMac",
@@ -1321,6 +1327,11 @@
 				GCC_ENABLE_CPP_RTTI = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "IbexMac/IbexMac-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"_USE_SIXENSE=1",
+					"$(inherited)",
+				);
 				HEADER_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/IbexMac",
 					"$(PROJECT_DIR)/../bullet-2.81-rev2613/src",
@@ -1352,6 +1363,7 @@
 				GCC_ENABLE_CPP_RTTI = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "IbexMac/IbexMac-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = "_USE_SIXENSE=1";
 				HEADER_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/IbexMac",
 					"$(PROJECT_DIR)/../bullet-2.81-rev2613/src",

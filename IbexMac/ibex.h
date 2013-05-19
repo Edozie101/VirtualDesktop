@@ -32,6 +32,7 @@ extern bool                 lensParametersChanged;
 extern char fpsString[32];
 
 extern char RiftMonitorName[33];
+extern int RiftDisplayId;
 extern float EyeDistance;
 extern float DistortionK[4];
 
