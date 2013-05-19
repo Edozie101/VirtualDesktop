@@ -43,6 +43,21 @@ around from there.
 XCode 4.5, OSX 10.8 (Mountain Lion) - Build and run from XCode, check the project dependencies
 to find out where the bullet3d physics library and sixense SDK need to go to build properly.  OculusSDK needs to be placed at the same level as your checked-out git repo for ibex and it must be version 0.2.1 or later.  You'll need to rebuild the libovr.a library with C++ RTTI and Exceptions enabled or else it won't link properly with ibex.
 
+The [Oculus SDK](https://developer.oculusvr.com) and [sixense SDK](http://sixense.com/developers) must be installed at the same level as the ibex repository directory:
+
+    * Parent Directory:
+    |
+    |->ibex
+       |...
+       |->IbexMac
+       |->IbexWin
+    |
+    |->sixenseSDK_linux_OSX
+    |
+    |->OculusSDK
+
+For video support you need to install the following:
+
     brew install ffmpeg x264 xvid yasm faac
     brew install ffmpeg --use-clang
     
@@ -61,6 +76,8 @@ bullet physics how to build:
 Visual Studio 2012 - Build and run from Visual Studio, Rift SDK must be at same level as ibex folder and named: OculusSDK.
 
 You also need to have ffmpeg installed where VS can find it.  I recommend the builds from ([http://ffmpeg.zeranoe.com/builds](http://ffmpeg.zeranoe.com/builds/ "http://ffmpeg.zeranoe.com/builds/")).  You should download the 32-bit shared and dev builds and extract them at the same level as ibex.
+
+The [Oculus SDK](https://developer.oculusvr.com) and [sixense SDK](http://sixense.com/developers) must also be extracted at the same level as your repository.
 
 Your directory structure should look like:
 
