@@ -522,6 +522,9 @@ static CGPoint cursorPos;
                 break;
             case kVK_Space:
                 break;
+            case kVK_ANSI_Q:
+                displayShape = (displayShape == FlatDisplay) ? SphericalDisplay : FlatDisplay;
+                break;
             case kVK_ANSI_Slash:
                 if(!controlDesktop) {
                     showDialog = !showDialog;

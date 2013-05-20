@@ -28,6 +28,40 @@
 #include "OVR.h"
 using namespace OVR;
 
+void renderSphericalDisplay(double r, double numHorizontalLines, double numVerticalLines, double width, double height) {
+    glPushMatrix();
+    glRotated(90, 0, 1, 0);
+    glPushMatrix();
+    for(double i = 0; i <= numHorizontalLines; i++) {
+        const double latitude0 = M_PI * (-0.5 + (double) (i - 1) / numHorizontalLines) *(width/360.0);
+        const double depth0  = sin(latitude0);
+        const double depthXY0 =  cos(latitude0);
+        
+        const double latitude1 = M_PI * (-0.5 + (double) i / numHorizontalLines) *(width/360.0);
+        const double depth1 = sin(latitude1);
+        const double depthXY1 = cos(latitude1);
+        
+        glBegin(GL_QUAD_STRIP);
+        for(double j = 0; j <= numVerticalLines; j++) {
+            const double longitude = 2 * M_PI * (double) (j - 1) / numVerticalLines *(height/360.0)-M_PI_4;
+            const double x = cos(longitude);
+            const double y = sin(longitude);
+            
+            
+            glTexCoord2d(latitude0/(M_PI*width/360.0)+0.5 +M_PI*+0.25/numHorizontalLines*(width/360.0), 0.5*longitude/(M_PI*height/360.0)+0.5 +M_PI*-1.25/(numVerticalLines-1.0)*(height/360.0));
+            glNormal3f(x * depthXY0, y * depthXY0, depth0);
+            glVertex3f(x * depthXY0, y * depthXY0, depth0);
+            
+            glTexCoord2d(latitude1/(M_PI*width/360.0)+0.5 +M_PI*+0.25/numHorizontalLines*(width/360.0), 0.5*longitude/(M_PI*height/360.0)+0.5 +M_PI*-1.25/(numVerticalLines-1.0)*(height/360.0));
+            glNormal3f(x * depthXY1, y * depthXY1, depth1);
+            glVertex3f(x * depthXY1, y * depthXY1, depth1);
+        }
+        glEnd();
+    }
+    glPopMatrix();
+    glPopMatrix();
+}
+
 SimpleWorldRendererPlugin::SimpleWorldRendererPlugin() {
 }
 SimpleWorldRendererPlugin::~SimpleWorldRendererPlugin() {
@@ -283,6 +317,13 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
 					const double monitorOriginZ = -0.5;
 				glBindTexture(GL_TEXTURE_2D, desktopTexture);
 				glColor4f(1,1,1,1);
+                
+                switch(displayShape) {
+                    case SphericalDisplay:
+                        renderSphericalDisplay(2, 25, 25, 180, 110);
+                        break;
+                    case FlatDisplay:
+                    default:
 					glBegin(GL_TRIANGLE_STRIP);
 					glTexCoord2d(0, 0);
 					glVertex3f(-0.5, -ySize, monitorOriginZ);
@@ -296,6 +337,7 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
                     glTexCoord2d(1, 1);
                     glVertex3f(0.5, ySize, monitorOriginZ);
                   glEnd();
+                }
                 
                 ySize = videoHeight/videoWidth/2.0;
                 glBindTexture(GL_TEXTURE_2D, videoTexture[i2]);
