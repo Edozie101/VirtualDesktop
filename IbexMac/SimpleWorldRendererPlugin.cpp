@@ -31,34 +31,72 @@ using namespace OVR;
 void renderSphericalDisplay(double r, double numHorizontalLines, double numVerticalLines, double width, double height) {
     glPushMatrix();
     glRotated(90, 0, 1, 0);
+    
     glPushMatrix();
     for(double i = 0; i <= numHorizontalLines; i++) {
-        const double latitude0 = M_PI * (-0.5 + (double) (i - 1) / numHorizontalLines) *(width/360.0);
+        const double latitude0 = M_PI * (-0.5 + (i-1.0)/numHorizontalLines) *(width/360.0)-(width*M_2_PI/360/2);
         const double depth0  = sin(latitude0);
         const double depthXY0 =  cos(latitude0);
         
-        const double latitude1 = M_PI * (-0.5 + (double) i / numHorizontalLines) *(width/360.0);
+        const double latitude1 = M_PI * (-0.5 + i / numHorizontalLines) *(width/360.0)-(width*M_2_PI/360/2);
         const double depth1 = sin(latitude1);
         const double depthXY1 = cos(latitude1);
         
         glBegin(GL_QUAD_STRIP);
         for(double j = 0; j <= numVerticalLines; j++) {
-            const double longitude = 2 * M_PI * (double) (j - 1) / numVerticalLines *(height/360.0)-M_PI_4;
+            const double longitude = 2 * M_PI * (j-1.0)/numVerticalLines *(height/360.0) -4*(height*M_2_PI/360);
             const double x = cos(longitude);
             const double y = sin(longitude);
             
-            
-            glTexCoord2d(latitude0/(M_PI*width/360.0)+0.5 +M_PI*+0.25/numHorizontalLines*(width/360.0), 0.5*longitude/(M_PI*height/360.0)+0.5 +M_PI*-1.25/(numVerticalLines-1.0)*(height/360.0));
+            glTexCoord2d(i/(numHorizontalLines+1.0), j/numVerticalLines);
             glNormal3f(x * depthXY0, y * depthXY0, depth0);
             glVertex3f(x * depthXY0, y * depthXY0, depth0);
             
-            glTexCoord2d(latitude1/(M_PI*width/360.0)+0.5 +M_PI*+0.25/numHorizontalLines*(width/360.0), 0.5*longitude/(M_PI*height/360.0)+0.5 +M_PI*-1.25/(numVerticalLines-1.0)*(height/360.0));
+            glTexCoord2d((i+1.0)/(numHorizontalLines+1.0), j/numVerticalLines);
             glNormal3f(x * depthXY1, y * depthXY1, depth1);
             glVertex3f(x * depthXY1, y * depthXY1, depth1);
         }
         glEnd();
     }
     glPopMatrix();
+    
+    glPopMatrix();
+}
+
+void renderCylindricalDisplay(double r, double numHorizontalLines, double numVerticalLines, double width, double height) {
+    glPushMatrix();
+//    glRotated(90, 1, 0, 0);
+    
+    glPushMatrix();
+    for(double i = 0; i <= numHorizontalLines; i++) {
+        const double latitude0 = 2*M_PI * (-0.5 + (i-1.0)/numHorizontalLines) *(width/360.0);
+        const double depth0  = sin(latitude0);
+        const double depthXY0 =  cos(latitude0);
+        
+        const double latitude1 = 2*M_PI * (-0.5 + i / numHorizontalLines) *(width/360.0);
+        const double depth1 = sin(latitude1);
+        const double depthXY1 = cos(latitude1);
+        
+        glBegin(GL_QUAD_STRIP);
+        for(double j = 0; j <= numVerticalLines; j++) {
+            const double longitude = 2 * M_PI * (j-1.0)/numVerticalLines *(height/360.0);//-M_PI_4;
+            //const double x = i/numHorizontalLines;//cos(longitude);
+            //const double y = j/numVerticalLines*r;//sin(longitude);
+            const double x = cos(longitude);
+            const double y = sin(longitude);
+            
+            glTexCoord2d(1-i/(numHorizontalLines+1.0), j/numVerticalLines);
+            glNormal3f(x * depthXY0, depthXY0, y * depthXY0);
+            glVertex3f(depth0*r, (j/numVerticalLines)*2*r-r, depthXY0*r);
+            
+            glTexCoord2d(1-(i+1.0)/(numHorizontalLines+1.0), j/numVerticalLines);
+            glNormal3f(x * depthXY1, y * depthXY1, depthXY1);
+            glVertex3f(depth1*r, (j/numVerticalLines)*2*r-r,depthXY1*r);
+        }
+        glEnd();
+    }
+    glPopMatrix();
+    
     glPopMatrix();
 }
 
@@ -320,7 +358,10 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
                 
                 switch(displayShape) {
                     case SphericalDisplay:
-                        renderSphericalDisplay(2, 25, 25, 180, 110);
+                        renderSphericalDisplay(0.5, 100, 100,180,135);//25, 25, 180, 90);
+                        break;
+                    case CylindricalDisplay:
+                        renderCylindricalDisplay(0.5, 100,100,180,180);//25, 25, 180, 90);
                         break;
                     case FlatDisplay:
                     default:
@@ -448,8 +489,28 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
 
         render_both_frames(textures[0]);
     } else {
-      for (int i = 0; i < 2; ++i) {
-        if (ortho) {
+        if(!SBS) {
+            glViewport(0,0, windowWidth, windowHeight);
+            glBindTexture(GL_TEXTURE_2D, textures[0]);
+            //glPushMatrix();
+            glColor4f(1, 1, 1, 1);
+            glBegin(GL_TRIANGLE_STRIP);
+            glTexCoord2d(0, bottom);
+            glVertex3f(0, 0, 0);
+            
+            glTexCoord2d(0.5, bottom);
+            glVertex3f(1, 0, 0);
+            
+            glTexCoord2d(0, top);
+            glVertex3f(0, 1, 0);
+            
+            glTexCoord2d(0.5, top);
+            glVertex3f(1, 1, 0);
+            glEnd();
+            
+        } else {
+            for (int i = 0; i < 2; ++i) {
+          if (ortho) {
           double originX = (i == 0) ? 0 : 0.5;
           glBindTexture(GL_TEXTURE_2D, textures[i]);
           //glPushMatrix();
@@ -489,6 +550,7 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
           glPopMatrix();
         }
       }
+        }
     }
 
     //if (ortho) {

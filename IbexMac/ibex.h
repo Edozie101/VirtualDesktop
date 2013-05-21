@@ -20,7 +20,7 @@
 class RendererPlugin;
 
 enum DisplayShape {
-  FlatDisplay,SphericalDisplay
+  FlatDisplay,SphericalDisplay,CylindricalDisplay
 };
 
 extern DisplayShape displayShape;
