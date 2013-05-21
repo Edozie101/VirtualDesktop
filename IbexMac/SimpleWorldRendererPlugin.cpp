@@ -407,6 +407,7 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
 				}
 				
 
+                ySize = ((double)height / (double)width) / 2.0;
 				glBindTexture( GL_TEXTURE_2D, cursor );
 				glBegin(GL_TRIANGLE_STRIP);
 				{

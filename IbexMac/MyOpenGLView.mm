@@ -221,20 +221,7 @@ static GLuint desktopTextures[2] = {NULL, NULL};
 
     [newContext makeCurrentContext];
     while(1) {
-//        if(!done)
-        {
-//            NSLog(@"Drawing desktop");
-//            [newContext makeCurrentContext];
-            
-//            cursorPos = NSEvent.mouseLocation;
-//            CGPoint hotSpot = NSCursor.currentSystemCursor.hotSpot;
-//            cursorPos.x -= hotSpot.x;
-//            cursorPos.y += hotSpot.y;
-            CGImageRef cursorImage = [NSCursor.currentSystemCursor.image CGImageForProposedRect:nil context:nil hints:nil];
-            [self createGLTexture:&cursor fromCGImage:cursorImage andDataCache:&cursorData andClear:YES];
-            
-            // ARC says don't release it
-//            CGImageRelease(cursorImage);
+            [self createGLTexture:&cursor fromCGImage:[NSCursor.currentSystemCursor.image CGImageForProposedRect:nil context:nil hints:nil] andDataCache:&cursorData andClear:YES];
             
             
             CFArrayRef a = CGWindowListCreate(
@@ -264,7 +251,6 @@ static GLuint desktopTextures[2] = {NULL, NULL};
             done = 1;
             index = (index+1)%2;
 //            NSLog(@"drawing desktop done");
-        }
     }
 }
 
@@ -394,11 +380,8 @@ static GLuint desktopTextures[2] = {NULL, NULL};
 static CGPoint cursorPos;
 - (GLuint)getScreenshot {
     {
-        /*static */NSCursor *cursor;
-        cursor = [NSCursor currentSystemCursor];
-        
         cursorPos = NSEvent.mouseLocation;
-        CGPoint hotSpot = cursor.hotSpot;
+        CGPoint hotSpot = NSCursor.currentSystemCursor.hotSpot;
         cursorPos.x -= hotSpot.x;
         cursorPos.y += hotSpot.y;
     }
