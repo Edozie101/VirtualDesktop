@@ -112,23 +112,29 @@ void Keyboard(unsigned char key, int x, int y)
   switch (key)
   {
   case 'w':
+  case 'W':
 	  walkForward = 1;
 	  break;
   case 'a':
-  case 'q':
+  case 'A':
 	  strafeRight = -1;
 	  break;
   case 's':
+  case 'S':
 	  walkForward = -1;
 	  break;
   case 'd':
-  case 'e':
+  case 'D':
 	  strafeRight = 1;
 	  break;
   case '=':
   case '+':
 	  IOD += 0.0005;
 	  lensParametersChanged = true;
+	  break;
+  case 'Q':
+  case 'q':
+	  displayShape = (displayShape == FlatDisplay) ? SphericalDisplay : FlatDisplay;
 	  break;
   case '/':
 	  showDialog = !showDialog;
@@ -167,9 +173,7 @@ void KeyboardUp(unsigned char key, int x, int y)
 	  walkForward = 0;
 	  break;
   case 'a':
-  case 'q':
   case 'A':
-  case 'Q':
 	  strafeRight = 0;
 	  break;
   case 's':
@@ -177,9 +181,7 @@ void KeyboardUp(unsigned char key, int x, int y)
 	  walkForward = 0;
 	  break;
   case 'd':
-  case 'e':
   case 'D':
-  case 'E':
 	  strafeRight = 0;
 	  break;
   }

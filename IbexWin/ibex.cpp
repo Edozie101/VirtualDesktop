@@ -89,6 +89,8 @@
 GLfloat top, bottom;
 
 // TODO: get rid of global variables
+DisplayShape displayShape = FlatDisplay;
+
 bool controlDesktop  = 1;
 bool showDialog = false;
 
