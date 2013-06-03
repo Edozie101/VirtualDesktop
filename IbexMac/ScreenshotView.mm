@@ -129,7 +129,7 @@
     glPixelStorei(GL_UNPACK_ROW_LENGTH, (GLint)texW);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     glPixelStorei(GL_PACK_ALIGNMENT, 1);
-    if(newTexture) {
+    if(true || newTexture) {
         // Use OpenGL ES to generate a name for the texture.
         glGenTextures(1, texName);
         // Bind the texture name.
@@ -189,10 +189,8 @@
 //        NSLog(@"NSScreen.mainScreen: %@, size: %@", NSScreen.mainScreen, NSStringFromRect(NSScreen.mainScreen.frame));
         done = 0;
         [newContext makeCurrentContext];
-        systemCursor = [NSCursor currentSystemCursor];
-        if(systemCursor != nil) {
-            NSImage *cursorImage = systemCursor.image;
-            CGImageRef cursorImageRef = [cursorImage CGImageForProposedRect:nil context:nil hints:nil];
+        if(NSCursor.currentSystemCursor != nil) {
+            CGImageRef cursorImageRef = [NSCursor.currentSystemCursor.image CGImageForProposedRect:nil context:nil hints:nil];
             [self createGLTexture:&cursor fromCGImage:cursorImageRef andDataCache:&cursorData andClear:YES];
         }
         
