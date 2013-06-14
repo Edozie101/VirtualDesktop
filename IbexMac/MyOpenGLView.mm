@@ -6,6 +6,8 @@
 //  Copyright (c) 2012 Hesham Wahba. All rights reserved.
 //
 
+#import "opengl_helpers.h"
+
 #import "IbexVideoPlayer.h"
 
 //#include "opengl_helpers.h"
@@ -21,7 +23,7 @@
 #import <mach/mach_time.h>
 #import <libkern/OSAtomic.h>
 
-#import <OpenGL/glext.h>
+//#import <OpenGL/glext.h>
 #import "MyOpenGLView.h"
 
 #import <Carbon/Carbon.h>

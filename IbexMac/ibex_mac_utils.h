@@ -16,6 +16,6 @@
 
 extern char mResourcePath[1024];
 
-extern GLuint loadTexture(const char *path_);
+extern "C" GLuint loadTexture(const char *path_);
 
 #endif
