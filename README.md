@@ -68,11 +68,9 @@ bullet physics how to build:
     cd ~/Downloads/bullet-2.81-rev2613
     mkdir bullet-build
     cd bullet-build
-    cmake .. -G "Unix Makefiles" -DINSTALL_LIBS=ON
-    
-#-DBUILD_SHARED_LIBS=ON                                                                                                                   
- make -j4
- sudo make install
+    cmake .. -G "Unix Makefiles" -DINSTALL_LIBS=ON #-DBUILD_SHARED_LIBS=ON                                                                                                                   
+    make -j4
+    sudo make install
 
 ### Windows
 Visual Studio 2012 - Build and run from Visual Studio, Rift SDK must be at same level as ibex folder and named: OculusSDK.
