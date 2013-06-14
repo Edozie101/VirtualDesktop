@@ -766,6 +766,7 @@
 				4CB09FBA1731E88700FD4C5D /* CopyFiles */,
 				4CB09FBB1731E8A600FD4C5D /* CopyFiles */,
 				4C4A95A21738708100172F70 /* ShellScript */,
+				4CD442BF176AA1D5007BC92A /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -819,8 +820,16 @@
 		4CB7985D168AB41E00EF5260 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0450;
+				LastUpgradeCheck = 0500;
 				ORGANIZATIONNAME = "Hesham Wahba";
+				TargetAttributes = {
+					4C0D589416AD656A007BC9CD = {
+						DevelopmentTeam = HXY6TQZF9A;
+					};
+					4CB79865168AB41E00EF5260 = {
+						DevelopmentTeam = HXY6TQZF9A;
+					};
+				};
 			};
 			buildConfigurationList = 4CB79860168AB41E00EF5260 /* Build configuration list for PBXProject "IbexMac" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -893,6 +902,19 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "install_name_tool -change /usr/local/lib/libx264.125.dylib @executable_path/../Frameworks/libx264.125.dylib \"$TARGET_BUILD_DIR/$EXECUTABLE_NAME.app/Contents/MacOS/$PRODUCT_NAME\"\n\ninstall_name_tool -change /usr/local/lib/libsixense_utils_x64.dylib @executable_path/../Frameworks/libsixense_utils_x64.dylib \"$TARGET_BUILD_DIR/$EXECUTABLE_NAME.app/Contents/MacOS/$PRODUCT_NAME\"\n\ninstall_name_tool -change /usr/local/lib/libsixense_x64.dylib @executable_path/../Frameworks/libsixense_x64.dylib \"$TARGET_BUILD_DIR/$EXECUTABLE_NAME.app/Contents/MacOS/$PRODUCT_NAME\"\n\ninstall_name_tool -change /usr/local/lib/libsixense_x64.dylib @executable_path/../Frameworks/libsixense_x64.dylib \"$TARGET_BUILD_DIR/$EXECUTABLE_NAME.app/Contents/Frameworks/libsixense_utils_x64.dylib\"\n\n";
+		};
+		4CD442BF176AA1D5007BC92A /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Sign all frameworks and dylibs\n\n# WARNING: If you've changed CODE_SIGN_IDENTITY project should be cleaned\n\n# Verify that $CODE_SIGN_IDENTITY is set\nif [ -z \"$CODE_SIGN_IDENTITY\" ] ; then\necho \"need a non-empty CODE_SIGN_IDENTITY to sign!\"\n\n#if [ \"$CONFIGURATION\" = \"Release\" ] ; then\n#exit 1\n#else\n## Codesigning isn't required on non-release builds.\n#exit 0\n#fi\nfi\n\nSAVEIFS=$IFS\nIFS=$(echo -en \"\\n\\b\")\n\nFRAMEWORKS_DIR=\"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}\"\nLIB_DIR=\"${TARGET_BUILD_DIR}\"\n\n# Loop through all frameworks\nFRAMEWORKS_LIST=`find \"${FRAMEWORKS_DIR}\" -type d -name \"*.framework\" | sed -e \"s/\\(.*\\)/\\1\\/Versions\\/A\\//\"`\nRES=$?\nif [[ $RES != 0 ]] ; then\nexit 1\nfi\n\nLIBS=`find \"${LIB_DIR}\" -type f -name \"*.dylib\"`\nRES=$?\nif [[ $RES != 0 ]] ; then\nexit 1\nfi\n\necho \"Searching: ${LIB_DIR} and ${FRAMEWORK_DIR}\"\necho \"Found:\"\necho \"${LIBS}\"\n\nfor LIB in $LIBS;\ndo\necho \"Signing dylib: '${LIB}'\"\n`codesign -fv -s \"${CODE_SIGN_IDENTITY}\" \"${LIB}\"`\nRES=$?\nif [[ $RES != 0 ]] ; then\nexit 1\nfi\ndone\n\necho \"Found:\"\necho \"${FRAMEWORKS}\"\n\nfor FRAMEWORK in $FRAMEWORKS_LIST;\ndo\necho \"Signing framework: '${FRAMEWORK}'\"\n`codesign -fv -s \"${CODE_SIGN_IDENTITY}\" \"${FRAMEWORK}\"`\nRES=$?\nif [[ $RES != 0 ]] ; then\nexit 1\nfi\ndone\n\n# restore $IFS\nIFS=$SAVEIFS";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1033,7 +1055,7 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CODE_SIGN_ENTITLEMENTS = IbexMac/IbexMac.entitlements;
-				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_IDENTITY = "3rd Party Mac Developer Application: Hesham Wahba";
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					/Library/Frameworks,
@@ -1097,6 +1119,7 @@
 					/usr/local/lib/libBulletDynamics.a,
 				);
 				PRODUCT_NAME = IbexMac;
+				PROVISIONING_PROFILE = "9982F9DD-E37D-426A-AC6F-7448E3750E3B";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -1107,7 +1130,7 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CODE_SIGN_ENTITLEMENTS = IbexMac/IbexMac.entitlements;
-				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_IDENTITY = "3rd Party Mac Developer Application: Hesham Wahba";
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					/Library/Frameworks,
@@ -1168,6 +1191,7 @@
 					/usr/local/lib/libBulletDynamics.a,
 				);
 				PRODUCT_NAME = IbexMac;
+				PROVISIONING_PROFILE = "9982F9DD-E37D-426A-AC6F-7448E3750E3B";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -1264,7 +1288,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -1296,7 +1319,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -1321,6 +1343,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = IbexMac/IbexMac.entitlements;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = /Library/Frameworks;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
@@ -1357,6 +1380,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = IbexMac/IbexMac.entitlements;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = /Library/Frameworks;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
