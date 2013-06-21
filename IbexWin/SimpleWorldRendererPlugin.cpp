@@ -318,7 +318,7 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
                 
                 switch(displayShape) {
                     case SphericalDisplay:
-                        renderSphericalDisplay(2, 25, 25, 180, 110);
+                        renderSphericalDisplay(0.5, 25, 25, 180, 110);
                         break;
                     case FlatDisplay:
                     default:
