@@ -436,8 +436,8 @@ static void playVideo() {
 	std::cerr << "Video playing wglMakeCurrent: " << success << std::endl;
 
 	_ibexVideoPlayer = new Ibex::VideoPlayer();
-	//_ibexVideoPlayer->playVideo(ibex->renderer->window.getSelectedVideoPath().c_str(),ibex->renderer->window.getIsStereoVideo());
-	_ibexVideoPlayer->openCamera(ibex->renderer->window.getIsStereoVideo(), -1);
+	_ibexVideoPlayer->playVideo(ibex->renderer->window.getSelectedVideoPath().c_str(),ibex->renderer->window.getIsStereoVideo());
+	//_ibexVideoPlayer->openCamera(ibex->renderer->window.getIsStereoVideo(), -1);
 }
 
 static void RenderSceneCB()
