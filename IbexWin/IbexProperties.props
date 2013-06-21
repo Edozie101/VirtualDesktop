@@ -11,22 +11,30 @@
     <SIXENSE_LIB_DIR>$(SIXENSE_SDK)\lib\win32\release_dll</SIXENSE_LIB_DIR>
     <SIXENSE_LIBS>sixense.lib;sixense_utils.lib</SIXENSE_LIBS>
     <SIXENSE_DLL_DIR>$(SIXENSE_SDK)\bin\win32\release_dll</SIXENSE_DLL_DIR>
+    <OPENCV_VERSION>245</OPENCV_VERSION>
+    <OPENCV_SDK>..\..\opencv</OPENCV_SDK>
+    <OPENCV_INCLUDES>$(OPENCV_SDK)\build\include</OPENCV_INCLUDES>
+    <OPENCV_LIB_DIR>$(OPENCV_SDK)\build\x86\vc11\lib</OPENCV_LIB_DIR>
+    <OPENCV_LIBS>opencv_core$(OPENCV_VERSION).lib;opencv_imgproc$(OPENCV_VERSION).lib;opencv_highgui$(OPENCV_VERSION).lib;opencv_ml$(OPENCV_VERSION).lib;opencv_video$(OPENCV_VERSION).lib;opencv_features2d$(OPENCV_VERSION).lib;opencv_calib3d$(OPENCV_VERSION).lib;opencv_objdetect$(OPENCV_VERSION).lib;opencv_contrib$(OPENCV_VERSION).lib;opencv_legacy$(OPENCV_VERSION).lib;opencv_flann$(OPENCV_VERSION).lib</OPENCV_LIBS>
+    <OPENCV_DLL_DIR>$(OPENCV_SDK)\build\x86\vc11\bin</OPENCV_DLL_DIR>
+    <OPENCV_DLLS>opencv_core$(OPENCV_VERSION).dll;opencv_imgproc$(OPENCV_VERSION).dll;opencv_highgui$(OPENCV_VERSION).dll;opencv_ml$(OPENCV_VERSION).dll;opencv_video$(OPENCV_VERSION).dll;opencv_features2d$(OPENCV_VERSION).dll;opencv_calib3d$(OPENCV_VERSION).dll;opencv_objdetect$(OPENCV_VERSION).dll;opencv_contrib$(OPENCV_VERSION).dll;opencv_legacy$(OPENCV_VERSION).dll;opencv_flann$(OPENCV_VERSION).dll</OPENCV_DLLS>
   </PropertyGroup>
   <PropertyGroup />
   <ItemDefinitionGroup>
     <ClCompile>
       <PreprocessorDefinitions>_USE_SIXENSE=$(USE_SIXENSE);%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SIXENSE_INCLUDES);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(OPENCV_INCLUDES);$(SIXENSE_INCLUDES);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(SIXENSE_LIB_DIR);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>$(SIXENSE_LIBS);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(OPENCV_LIB_DIR);$(SIXENSE_LIB_DIR);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>$(OPENCV_LIBS);$(SIXENSE_LIBS);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /y $(ProjectDir)*.dll $(OutDir)
 xcopy /y $(ProjectDir)..\..\ffmpeg-shared\bin\*.dll $(OutDir)
 xcopy /iys $(ProjectDir)resources $(OutDir)resources
-xcopy /y $(SIXENSE_DLL_DIR)\*.dll $(OutDir)</Command>
+xcopy /y $(SIXENSE_DLL_DIR)\*.dll $(OutDir)
+xcopy /y $(OPENCV_DLL_DIR)\*$(OPENCV_VERSION).dll $(OutDir)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -64,6 +72,34 @@ xcopy /y $(SIXENSE_DLL_DIR)\*.dll $(OutDir)</Command>
     </BuildMacro>
     <BuildMacro Include="SIXENSE_DLL_DIR">
       <Value>$(SIXENSE_DLL_DIR)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="OPENCV_VERSION">
+      <Value>$(OPENCV_VERSION)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="OPENCV_SDK">
+      <Value>$(OPENCV_SDK)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="OPENCV_INCLUDES">
+      <Value>$(OPENCV_INCLUDES)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="OPENCV_LIB_DIR">
+      <Value>$(OPENCV_LIB_DIR)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="OPENCV_LIBS">
+      <Value>$(OPENCV_LIBS)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="OPENCV_DLL_DIR">
+      <Value>$(OPENCV_DLL_DIR)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="OPENCV_DLLS">
+      <Value>$(OPENCV_DLLS)</Value>
       <EnvironmentVariable>true</EnvironmentVariable>
     </BuildMacro>
   </ItemGroup>

@@ -33,6 +33,7 @@ extern "C" {
 
 #include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
+#include <libavdevice/avdevice.h>
 #include <libavfilter/avfilter.h>
 #include <libavfilter/avfiltergraph.h>
 #include <libswscale/swscale.h>
@@ -41,10 +42,14 @@ extern "C" {
 #include <libavutil/time.h>
 }
 
+#include <list>
+#include <string>
 #include <queue>
 #include <thread>
 #include <mutex>
 #include <condition_variable>
+
+struct CvCapture;
 
 namespace Ibex {
     
@@ -76,12 +81,18 @@ public:
     
     void savePPMFrame(const AVFrame *pFrame, int width, int height, int iFrame) const;
     int playVideo(const char *fileName, bool isStereo);
+
+	std::list<std::string> getCameras();
+	int openCamera(bool isStereo, int cameraId);
     
 public:
     unsigned int *videoTexture;
     unsigned int width,height;
     
 private:
+	void createVideoTextures(bool isStereo, int width, int height);
+	void initOpenCV(bool isStereo, int cameraId);
+
     void addAudioFrame(AudioPacket avAudioFrame);
     void addVideoFrame(AudioPacket avAudioFrame);
     int loadSyncAudioVideo(const char *fileName_, bool isStereo);
@@ -92,6 +103,9 @@ private:
     
     VideoSyncMode videoSyncMode;
     
+	bool openCVInited;
+	CvCapture *cvCapture;
+
     bool done;
     bool videoDone;
     bool audioDone;

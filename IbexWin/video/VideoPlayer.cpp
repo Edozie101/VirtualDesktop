@@ -8,6 +8,8 @@
 
 #include "VideoPlayer.h"
 
+#include <opencv/highgui.h>
+
 #include "../opengl_helpers.h"
 
 #include <iostream>
@@ -389,10 +391,13 @@ Ibex::VideoPlayer::VideoPlayer() :  videoTexture(new unsigned int[2]),
                                     videoSyncMode(SyncExternal),
                                     avFormatCtx(NULL),
                                     avAudioCodecCtx(NULL),
-                                    avAudioCodec(NULL) {
+                                    avAudioCodec(NULL),
+									openCVInited(false),
+									cvCapture(0) {
     avcodec_register_all();
     av_register_all();
     avfilter_register_all();
+	//avdevice_register_all();
 }
 
 void Ibex::VideoPlayer::savePPMFrame(const AVFrame *avFrame, int width, int height, int iFrame) const {
@@ -615,7 +620,14 @@ int Ibex::VideoPlayer::initVideo(const char *fileName, bool isStereo) {
     
     avFormatCtx = NULL;
     
-    if(avformat_open_input(&avFormatCtx, fileName, NULL, NULL)!=0) {
+	//AVFormatContext *formatC = avformat_alloc_context();
+	//AVDictionary* options = NULL;
+	//av_dict_set(&options,"list_devices","true",0);
+	//AVInputFormat *iformat = av_find_input_format("dshow");
+
+	//std::cerr << iformat << std::endl;
+ //   if(avformat_open_input(&avFormatCtx, "video=Roxio Video Capture USB", NULL, NULL)!=0) {
+	if(avformat_open_input(&avFormatCtx, fileName, NULL, NULL)!=0) {
         videoDone = audioDone = done = true;
         return -1;
     }
@@ -1002,40 +1014,7 @@ int Ibex::VideoPlayer::playVideo(const char *fileName, bool isStereo)
     // image conversion context
     struct  SwsContext *img_convert_ctx = NULL;
     
-    // load OpenGL textures for video/stereo-video if necessary
-    glGenTextures((isStereo) ? 2 : 1, videoTexture);
-    for(int i = 0; i < 2; ++i) {
-        if(i == 1 && !isStereo) {
-            videoTexture[i] = videoTexture[0];
-            break;
-        }
-        
-        glBindTexture(GL_TEXTURE_2D, videoTexture[i]);
-        if (!checkForErrors()) {
-            fprintf(stderr,"Stage 0a - Problem generating videoTexture FBO");
-            exit(EXIT_FAILURE);
-        }
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        if (!checkForErrors()) {
-            fprintf(stderr,"Stage 0b - Problem generating videoTexture FBO");
-            exit(EXIT_FAILURE);
-        }
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-        if (!checkForErrors()) {
-            fprintf(stderr,"Stage 0c - Problem generating videoTexture FBO");
-            exit(EXIT_FAILURE);
-        }
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, width, height, 0,
-                     GL_RGB, GL_UNSIGNED_BYTE, 0);
-        if (!checkForErrors()) {
-            fprintf(stderr,"Stage 0d - Problem generating videoTexture FBO");
-            exit(EXIT_FAILURE);
-        }
-    }
-    glBindTexture(GL_TEXTURE_2D, 0);
-    glFlush();
+    createVideoTextures(isStereo, width, height);
     ////////////////
     bool first = true;
     AudioPacket videoFrame;
@@ -1145,4 +1124,105 @@ int Ibex::VideoPlayer::playVideo(const char *fileName, bool isStereo)
 
 double Ibex::VideoPlayer::getSyncClock() {
     return av_gettime() / 1000000.0; // get global external clock time
+}
+
+void Ibex::VideoPlayer::initOpenCV(bool isStereo, int cameraId) {
+	if(!openCVInited) {
+		cvCapture = cvCreateCameraCapture(cameraId);
+		createVideoTextures(isStereo, cvGetCaptureProperty(cvCapture, CV_CAP_PROP_FRAME_WIDTH), cvGetCaptureProperty(cvCapture, CV_CAP_PROP_FRAME_HEIGHT));
+		openCVInited = true;
+	}
+}
+
+std::list<std::string> Ibex::VideoPlayer::getCameras() {
+	std::list<std::string> list;
+	return list;
+}
+int Ibex::VideoPlayer::openCamera(bool isStereo, int cameraId) {
+	if(!openCVInited) {
+		initOpenCV(isStereo, cameraId);
+	}
+
+	bool first = true;
+	while(true) {
+		if(cvCapture == 0) {
+			initOpenCV(isStereo, cameraId);
+			continue;
+		}
+		IplImage* cameraCapture = cvQueryFrame(cvCapture);
+		if( (cameraCapture->width > 0) && (cameraCapture->height > 0)) {
+			//if(cameraCapture->nChannels == 3)
+			//	glTexImage2D(GL_TEXTURE_RECTANGLE_ARB, 0, GL_RGB, cameraCapture->width, cameraCapture->height, 0, GL_BGR, GL_UNSIGNED_BYTE, cameraCapture->imageData);
+			//else if(cameraCapture->nChannels == 4)
+			//	glTexImage2D(GL_TEXTURE_RECTANGLE_ARB, 0, GL_RGBA, cameraCapture->width, cameraCapture->height, 0, GL_BGRA, GL_UNSIGNED_BYTE, cameraCapture->imageData);
+			if(isStereo) {
+				glBindTexture(GL_TEXTURE_2D, videoTexture[1]);
+				int stride = width*2;
+				glPixelStorei(GL_UNPACK_ROW_LENGTH,stride);
+				if(first) {
+					glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, width, height/2, 0,
+								 GL_RGB, GL_UNSIGNED_BYTE, cameraCapture->imageData);
+					glBindTexture(GL_TEXTURE_2D, videoTexture[0]);
+					glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, width, height/2, 0,
+								 GL_RGB, GL_UNSIGNED_BYTE, cameraCapture->imageData+(width*3));
+				} else {
+					glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height/2,
+								 GL_RGB, GL_UNSIGNED_BYTE, avFrameRGB->data[0]);
+					glBindTexture(GL_TEXTURE_2D, videoTexture[0]);
+					glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height/2,
+								 GL_RGB, GL_UNSIGNED_BYTE, cameraCapture->imageData+(width*3));
+				}
+			} else {
+				glBindTexture(GL_TEXTURE_2D, videoTexture[0]);
+				if(first) {
+					glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, width, height, 0,
+								 GL_RGB, GL_UNSIGNED_BYTE, cameraCapture->imageData);
+				} else {
+					glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height,
+								 GL_RGB, GL_UNSIGNED_BYTE, cameraCapture->imageData);
+				}
+			}
+			glFlush();
+			std::this_thread::sleep_for(std::chrono::milliseconds(100));
+		}
+	}
+
+	return 0;
+}
+
+void Ibex::VideoPlayer::createVideoTextures(bool isStereo, int width, int height) {
+	// load OpenGL textures for video/stereo-video if necessary
+    glGenTextures((isStereo) ? 2 : 1, videoTexture);
+    for(int i = 0; i < 2; ++i) {
+        if(i == 1 && !isStereo) {
+            videoTexture[i] = videoTexture[0];
+            break;
+        }
+        
+        glBindTexture(GL_TEXTURE_2D, videoTexture[i]);
+        if (!checkForErrors()) {
+            fprintf(stderr,"Stage 0a - Problem generating videoTexture FBO");
+            exit(EXIT_FAILURE);
+        }
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        if (!checkForErrors()) {
+            fprintf(stderr,"Stage 0b - Problem generating videoTexture FBO");
+            exit(EXIT_FAILURE);
+        }
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+        if (!checkForErrors()) {
+            fprintf(stderr,"Stage 0c - Problem generating videoTexture FBO");
+            exit(EXIT_FAILURE);
+        }
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, width, height, 0,
+                     GL_RGB, GL_UNSIGNED_BYTE, 0);
+        if (!checkForErrors()) {
+            fprintf(stderr,"Stage 0d - Problem generating videoTexture FBO");
+            exit(EXIT_FAILURE);
+        }
+    }
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glFlush();
 }
