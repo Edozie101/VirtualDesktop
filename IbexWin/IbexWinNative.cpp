@@ -439,6 +439,13 @@ static void playVideo() {
 	_ibexVideoPlayer->playVideo(ibex->renderer->window.getSelectedVideoPath().c_str(),ibex->renderer->window.getIsStereoVideo());
 	//_ibexVideoPlayer->openCamera(ibex->renderer->window.getIsStereoVideo(), -1);
 }
+static void playCamera() {
+	bool success = wglMakeCurrent(hdc, videoPlayerContext);
+	std::cerr << "Video playing wglMakeCurrent: " << success << std::endl;
+
+	_ibexVideoPlayer = new Ibex::VideoPlayer();
+	_ibexVideoPlayer->openCamera(ibex->renderer->window.getIsStereoVideo(), ibex->renderer->window.getSelectedCameraID());
+}
 
 static void RenderSceneCB()
 {
@@ -487,10 +494,16 @@ static void RenderSceneCB()
 		cursorPosY = physicalHeight-p.y;
 	}
 
-	if(ibex != NULL && ibex->renderer->window.getSelectedVideo()) {
-		ibex->renderer->window.setSelectedVideo(false);
-		std::thread videoThread(playVideo);
-		videoThread.detach();
+	if(ibex != NULL && (ibex->renderer->window.getSelectedVideo() || ibex->renderer->window.getSelectedCamera())) {
+		if(ibex->renderer->window.getSelectedVideo()) {
+			std::thread videoThread(playVideo);
+			videoThread.detach();
+        } else {
+			std::thread videoThread(playCamera);
+			videoThread.detach();
+        }
+        ibex->renderer->window.setSelectedVideo(false);
+        ibex->renderer->window.setSelectedCamera(false);
 	}
 	if(_ibexVideoPlayer != NULL) {
 		videoTexture[0] = _ibexVideoPlayer->videoTexture[0];

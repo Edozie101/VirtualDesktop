@@ -43,6 +43,7 @@ extern "C" {
 }
 
 #include <list>
+#include <vector>
 #include <string>
 #include <queue>
 #include <thread>
@@ -82,8 +83,9 @@ public:
     void savePPMFrame(const AVFrame *pFrame, int width, int height, int iFrame) const;
     int playVideo(const char *fileName, bool isStereo);
 
-	std::list<std::string> getCameras();
 	int openCamera(bool isStereo, int cameraId);
+    static std::vector<int> listCameras();
+    void stopCapturing();
     
 public:
     unsigned int *videoTexture;
@@ -104,6 +106,7 @@ private:
     VideoSyncMode videoSyncMode;
     
 	bool openCVInited;
+    bool captureVideo;
 	CvCapture *cvCapture;
 
     bool done;

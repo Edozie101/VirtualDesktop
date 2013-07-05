@@ -8,6 +8,7 @@
 
 #include "VideoPlayer.h"
 
+#include <opencv/cv.h>
 #include <opencv/highgui.h>
 
 #include "../opengl_helpers.h"
@@ -393,7 +394,10 @@ Ibex::VideoPlayer::VideoPlayer() :  videoTexture(new unsigned int[2]),
                                     avAudioCodecCtx(NULL),
                                     avAudioCodec(NULL),
 									openCVInited(false),
+									captureVideo(false),
 									cvCapture(0) {
+	videoTexture[0] = videoTexture[1] = 0;
+
     avcodec_register_all();
     av_register_all();
     avfilter_register_all();
@@ -1126,72 +1130,105 @@ double Ibex::VideoPlayer::getSyncClock() {
     return av_gettime() / 1000000.0; // get global external clock time
 }
 
+std::vector<int> Ibex::VideoPlayer::listCameras() {
+    std::vector<int> cameras;
+    
+    CvCapture *cam;
+    int i = 0;
+    do
+    {
+        cam = cvCreateCameraCapture(i++);
+        cameras.push_back(i-1);
+        if(cam == NULL) break;
+        cvReleaseCapture(&cam);
+    } while(true && i < 5);
+    if(cam) cvReleaseCapture(&cam);
+    
+    return cameras;
+}
+
+void Ibex::VideoPlayer::stopCapturing() {
+    captureVideo = false;
+    if(cvCapture) {
+        cvReleaseCapture(&cvCapture);
+        cvCapture = NULL;
+        openCVInited = false;
+    }
+}
 void Ibex::VideoPlayer::initOpenCV(bool isStereo, int cameraId) {
 	if(!openCVInited) {
-		cvCapture = cvCreateCameraCapture(cameraId);
-		createVideoTextures(isStereo, cvGetCaptureProperty(cvCapture, CV_CAP_PROP_FRAME_WIDTH), cvGetCaptureProperty(cvCapture, CV_CAP_PROP_FRAME_HEIGHT));
+        captureVideo = true;
+		cvCapture = cvCaptureFromCAM(cameraId);//cvCreateCameraCapture(cameraId);
+        width = cvGetCaptureProperty(cvCapture, CV_CAP_PROP_FRAME_WIDTH);
+        height = cvGetCaptureProperty(cvCapture, CV_CAP_PROP_FRAME_HEIGHT);
+		createVideoTextures(isStereo, width, height);
 		openCVInited = true;
 	}
 }
 
-std::list<std::string> Ibex::VideoPlayer::getCameras() {
-	std::list<std::string> list;
-	return list;
-}
 int Ibex::VideoPlayer::openCamera(bool isStereo, int cameraId) {
 	if(!openCVInited) {
 		initOpenCV(isStereo, cameraId);
 	}
-
+    
 	bool first = true;
-	while(true) {
-		if(cvCapture == 0) {
-			initOpenCV(isStereo, cameraId);
-			continue;
-		}
+	while(captureVideo && cvCapture) {
 		IplImage* cameraCapture = cvQueryFrame(cvCapture);
-		if( (cameraCapture->width > 0) && (cameraCapture->height > 0)) {
-			//if(cameraCapture->nChannels == 3)
-			//	glTexImage2D(GL_TEXTURE_RECTANGLE_ARB, 0, GL_RGB, cameraCapture->width, cameraCapture->height, 0, GL_BGR, GL_UNSIGNED_BYTE, cameraCapture->imageData);
-			//else if(cameraCapture->nChannels == 4)
-			//	glTexImage2D(GL_TEXTURE_RECTANGLE_ARB, 0, GL_RGBA, cameraCapture->width, cameraCapture->height, 0, GL_BGRA, GL_UNSIGNED_BYTE, cameraCapture->imageData);
+        
+		if( cameraCapture && (cameraCapture->width > 0) && (cameraCapture->height > 0)) {
+            //width = cameraCapture->width;
+            //height = cameraCapture->height;
+            const int numBytes = (cameraCapture->widthStep/cameraCapture->width == 4 || cameraCapture->nChannels == 4) ? 4 : 3;
+            const GLenum formatIn = (numBytes == 4) ? GL_BGRA : GL_BGR;
 			if(isStereo) {
 				glBindTexture(GL_TEXTURE_2D, videoTexture[1]);
-				int stride = width*2;
+				const int stride = width*2;
 				glPixelStorei(GL_UNPACK_ROW_LENGTH,stride);
 				if(first) {
 					glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, width, height/2, 0,
-								 GL_RGB, GL_UNSIGNED_BYTE, cameraCapture->imageData);
+								 formatIn, GL_UNSIGNED_BYTE, cameraCapture->imageData);
 					glBindTexture(GL_TEXTURE_2D, videoTexture[0]);
 					glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, width, height/2, 0,
-								 GL_RGB, GL_UNSIGNED_BYTE, cameraCapture->imageData+(width*3));
+								 formatIn, GL_UNSIGNED_BYTE, cameraCapture->imageData+(width*numBytes));
 				} else {
 					glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height/2,
-								 GL_RGB, GL_UNSIGNED_BYTE, avFrameRGB->data[0]);
+								 formatIn, GL_UNSIGNED_BYTE, avFrameRGB->data[0]);
 					glBindTexture(GL_TEXTURE_2D, videoTexture[0]);
 					glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height/2,
-								 GL_RGB, GL_UNSIGNED_BYTE, cameraCapture->imageData+(width*3));
+								 formatIn, GL_UNSIGNED_BYTE, cameraCapture->imageData+(width*numBytes));
 				}
 			} else {
 				glBindTexture(GL_TEXTURE_2D, videoTexture[0]);
+                const int stride = width;
+				glPixelStorei(GL_UNPACK_ROW_LENGTH,stride);
+                glPixelStorei(GL_UNPACK_ALIGNMENT,1);
 				if(first) {
 					glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, width, height, 0,
-								 GL_RGB, GL_UNSIGNED_BYTE, cameraCapture->imageData);
+								 formatIn, GL_UNSIGNED_BYTE, cameraCapture->imageData);
 				} else {
 					glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height,
-								 GL_RGB, GL_UNSIGNED_BYTE, cameraCapture->imageData);
+								 formatIn, GL_UNSIGNED_BYTE, cameraCapture->imageData);
 				}
 			}
 			glFlush();
-			std::this_thread::sleep_for(std::chrono::milliseconds(100));
 		}
+        std::this_thread::sleep_for(std::chrono::milliseconds(30));
 	}
-
+    stopCapturing();
+    
 	return 0;
 }
 
 void Ibex::VideoPlayer::createVideoTextures(bool isStereo, int width, int height) {
 	// load OpenGL textures for video/stereo-video if necessary
+    if(videoTexture[0]) {
+        if(videoTexture[1] == videoTexture[0]) {
+            glDeleteTextures(1, videoTexture);
+        } else {
+            glDeleteTextures(2, videoTexture);
+        }
+        videoTexture[0] = videoTexture[1] = 0;
+    }
     glGenTextures((isStereo) ? 2 : 1, videoTexture);
     for(int i = 0; i < 2; ++i) {
         if(i == 1 && !isStereo) {
