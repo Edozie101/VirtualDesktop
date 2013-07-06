@@ -63,7 +63,7 @@ For video support you need to install the following:
     brew install x264 xvid yasm faac
     brew install ffmpeg --use-clang
     brew tap homebrew/science
-    brew install opencv
+    brew install opencv --env=std
     
 bullet physics how to build:
 
