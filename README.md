@@ -60,8 +60,10 @@ The [Oculus SDK](https://developer.oculusvr.com) and [sixense SDK](http://sixens
 
 For video support you need to install the following:
 
-    brew install ffmpeg x264 xvid yasm faac
+    brew install x264 xvid yasm faac
     brew install ffmpeg --use-clang
+    brew tap homebrew/science
+    brew install opencv
     
 bullet physics how to build:
 

@@ -440,11 +440,16 @@ static CGPoint cursorPos;
         _ibexVideoPlayer.share = self.openGLContext;
 //        [_ibexVideoPlayer performSelectorInBackground:@selector(loadVideo:andIsStereo:) withObject:@[<movieFilePath>,@false]];
     });
-    if(ibex != nil && ibex->renderer->window.getSelectedVideo()) {
+    if(ibex != nil && (ibex->renderer->window.getSelectedVideo() || ibex->renderer->window.getSelectedCamera())) {
+        if(ibex->renderer->window.getSelectedVideo()) {
+            NSString *videoPath = [NSString stringWithUTF8String:ibex->renderer->window.getSelectedVideoPath().c_str()];
+            [_ibexVideoPlayer performSelectorInBackground:@selector(loadVideo:andIsStereo:) withObject:@[videoPath,(ibex->renderer->window.getIsStereoVideo())?@YES : @NO]];
+        } else {
+            NSNumber *cameraID = [NSNumber numberWithInt:ibex->renderer->window.getSelectedCameraID()];
+            [_ibexVideoPlayer performSelectorInBackground:@selector(loadCamera:andIsStereo:) withObject:@[cameraID,(ibex->renderer->window.getIsStereoVideo())?@YES : @NO]];
+        }
         ibex->renderer->window.setSelectedVideo(false);
-        
-        NSString *videoPath = [NSString stringWithUTF8String:ibex->renderer->window.getSelectedVideoPath().c_str()];
-        [_ibexVideoPlayer performSelectorInBackground:@selector(loadVideo:andIsStereo:) withObject:@[videoPath,(ibex->renderer->window.getIsStereoVideo())?@YES : @NO]];
+        ibex->renderer->window.setSelectedCamera(false);
     }
     
     videoWidth = [_ibexVideoPlayer width];

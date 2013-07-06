@@ -62,6 +62,40 @@ void renderSphericalDisplay(double r, double numHorizontalLines, double numVerti
     
     glPopMatrix();
 }
+void renderSphericalMouse(double r, double numHorizontalLines, double numVerticalLines, double width, double height, double x, double y, double sizeX, double sizeY) {
+    glPushMatrix();
+    glRotated(90, 0, 1, 0);
+    
+    glPushMatrix();
+    for(double i = 0; i <= numHorizontalLines; i++) {
+        const double latitude0 = M_PI * (-0.5 + (i-1.0)/numHorizontalLines) *(width/360.0)-(width*M_2_PI/360/2);
+        const double depth0  = sin(latitude0);
+        const double depthXY0 =  cos(latitude0);
+        
+        const double latitude1 = M_PI * (-0.5 + i / numHorizontalLines) *(width/360.0)-(width*M_2_PI/360/2);
+        const double depth1 = sin(latitude1);
+        const double depthXY1 = cos(latitude1);
+        
+        glBegin(GL_QUAD_STRIP);
+        for(double j = 0; j <= numVerticalLines; j++) {
+            const double longitude = 2 * M_PI * (j-1.0)/numVerticalLines *(height/360.0) -4*(height*M_2_PI/360);
+            const double x = cos(longitude);
+            const double y = sin(longitude);
+            
+            glTexCoord2d(i/(numHorizontalLines+1.0), j/numVerticalLines);
+            glNormal3f(x * depthXY0, y * depthXY0, depth0);
+            glVertex3f(x * depthXY0, y * depthXY0, depth0);
+            
+            glTexCoord2d((i+1.0)/(numHorizontalLines+1.0), j/numVerticalLines);
+            glNormal3f(x * depthXY1, y * depthXY1, depth1);
+            glVertex3f(x * depthXY1, y * depthXY1, depth1);
+        }
+        glEnd();
+    }
+    glPopMatrix();
+    
+    glPopMatrix();
+}
 
 void renderCylindricalDisplay(double r, double numHorizontalLines, double numVerticalLines, double width, double height) {
     glPushMatrix();
@@ -79,9 +113,7 @@ void renderCylindricalDisplay(double r, double numHorizontalLines, double numVer
         
         glBegin(GL_QUAD_STRIP);
         for(double j = 0; j <= numVerticalLines; j++) {
-            const double longitude = 2 * M_PI * (j-1.0)/numVerticalLines *(height/360.0);//-M_PI_4;
-            //const double x = i/numHorizontalLines;//cos(longitude);
-            //const double y = j/numVerticalLines*r;//sin(longitude);
+            const double longitude = 2 * M_PI * (j-1.0)/numVerticalLines *(height/360.0);
             const double x = cos(longitude);
             const double y = sin(longitude);
             

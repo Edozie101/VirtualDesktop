@@ -39,13 +39,31 @@ static Ibex::VideoPlayer *player = 0;
     NSOpenGLContext* newContext = nil;
     newContext = [[NSOpenGLContext alloc] initWithFormat:_pixelFormat shareContext:_share];
     [newContext makeCurrentContext];
-
+    
     _videoTexture = player->videoTexture;
     player->playVideo(fileName.UTF8String, isStereo);
     [NSOpenGLContext clearCurrentContext];
     
     //delete []player;
     //player = 0;
+    
+    return 0;
+}
+
+- (int)loadCamera:(NSNumber*)cameraID andIsStereo:(bool)isStereo {
+    if([cameraID isKindOfClass:NSArray.class]) {
+        NSArray *a = (NSArray*)cameraID;
+        cameraID = ((NSNumber*)a[0]);
+        isStereo = ((NSNumber*)a[1]).integerValue;
+    }
+    
+    NSOpenGLContext* newContext = nil;
+    newContext = [[NSOpenGLContext alloc] initWithFormat:_pixelFormat shareContext:_share];
+    [newContext makeCurrentContext];
+    
+    _videoTexture = player->videoTexture;
+    player->openCamera(isStereo, cameraID.intValue);
+    [NSOpenGLContext clearCurrentContext];
     
     return 0;
 }

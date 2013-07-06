@@ -12,6 +12,7 @@
 #include "ibex.h"
 #include "Filesystem.h"
 #include <algorithm>
+#include "VideoPlayer.h"
 
 #ifdef __APPLE__
 #include <Carbon/Carbon.h>
@@ -31,6 +32,8 @@ Ibex::Window::Window() : visibleWindow(InfoWindow) {
     selectedFile = 0;
     selectedVideo = false;
     currentPath = Filesystem::getHomeDirectory();
+    selectedCamera = 0;
+    selectedCameraID = 0;
     
     fileTypes.insert("avi");
     fileTypes.insert("mov");
@@ -88,6 +91,8 @@ void Ibex::Window::renderInfoWindow() {
     glColor4f(1,1,1,1);
     renderBitmapString(-0.045, 0.54, -0.25, GLUT_BITMAP_HELVETICA_18, "1. Load Video");
     renderBitmapString(-0.045, 0.53, -0.25, GLUT_BITMAP_HELVETICA_18, "2. Load Stereo Video");
+    renderBitmapString(-0.045, 0.52, -0.25, GLUT_BITMAP_HELVETICA_18, "3. Camera");
+    renderBitmapString(-0.045, 0.51, -0.25, GLUT_BITMAP_HELVETICA_18, "4. Stereo Camera");
     //    renderStrokeFontString(0, 0.5, -0.25, GLUT_STROKE_ROMAN, fpsString);
     renderBitmapString(0.005, 0.465, -0.25, GLUT_BITMAP_HELVETICA_18, fpsString);
     glEnable(GL_DEPTH_TEST);
@@ -167,12 +172,43 @@ void Ibex::Window::renderFileChooser() {
     glEnable(GL_DEPTH_TEST);
 }
 
+void Ibex::Window::renderCameraChooser() {
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glDisable(GL_DEPTH_TEST);
+    glColor4f(0,0.1,0,0.5);
+    glBegin(GL_QUADS);
+    glVertex3d(-0.1, 0.35, -0.25);
+    glVertex3d(0.1, 0.35, -0.25);
+    glVertex3d(0.1, 0.65, -0.25);
+    glVertex3d(-0.1, 0.65, -0.25);
+    glEnd();
+    glColor4f(1,1,1,1);
+    //    renderStrokeFontString(0, 0.5, -0.25, GLUT_STROKE_ROMAN, fpsString);
+    renderBitmapString(-0.095, 0.64, -0.25, GLUT_BITMAP_HELVETICA_18, "~/Backspace: Back");
+    //    renderBitmapString(-0.045, 0.53, -0.25, GLUT_BITMAP_HELVETICA_18, "2. ");
+    char blah[256];
+    int startIndex = (selectedFile > 28/2) ? selectedFile-28/2 : 0;
+    for(int i = startIndex,index = 0; i < startIndex+28 && i < cameras.size(); ++i,++index) {
+        sprintf(blah,"%d. Camera %d",i+1, cameras[i]);
+        
+        if(selectedFile == i) {
+            glColor4f(1,1,0,1);
+        }
+        renderBitmapString(-0.095, 0.63-index*0.01, -0.25, GLUT_BITMAP_HELVETICA_18, blah);
+        glColor4f(1,1,1,1);
+    }
+    renderBitmapString(0.055, 0.36, -0.25, GLUT_BITMAP_HELVETICA_18, fpsString);
+    glEnable(GL_DEPTH_TEST);
+}
+
 void Ibex::Window::render() {
     switch(visibleWindow) {
         case FileChooser:
             renderFileChooser();
             break;
-            
+        case CameraChooser:
+            renderCameraChooser();
+            break;
         case InfoWindow:
         default:
             renderInfoWindow();
@@ -188,7 +224,8 @@ int Ibex::Window::processKey(unsigned short keyCode, int down) {
         case kVK_ANSI_W:
             if(down) {
                 --selectedFile;
-                if(selectedFile < 0) selectedFile += directoryList.size();
+                if(selectedFile < 0 && directoryList.size()) selectedFile += directoryList.size();
+                else if(!directoryList.size())selectedFile = 0;
             }
             processed = 1;
             break;
@@ -196,7 +233,9 @@ int Ibex::Window::processKey(unsigned short keyCode, int down) {
         case kVK_ANSI_S:
             if(down) {
                 ++selectedFile;
-                selectedFile %= directoryList.size();
+                if(directoryList.size()) {
+                    selectedFile %= directoryList.size();
+                }
             }
             
             processed = 1;
@@ -208,29 +247,50 @@ int Ibex::Window::processKey(unsigned short keyCode, int down) {
             break;
         case kVK_Return:
             if(down) {
-                if(selectedFile < directoryList.size()) {
-                    std::string fullPath = Filesystem::getFullPath(currentPath, directoryList[selectedFile]);
-                    if(Filesystem::isFile(fullPath) && !Filesystem::isDirectory(fullPath)) {
-                        selectedVideo = true;
-                        videoPath = fullPath;
-                        showDialog = false;
-                    } else {
-                        currentPath = Filesystem::navigate(currentPath, directoryList[selectedFile]);
+                switch(visibleWindow) {
+                    case FileChooser:
+                    {
+                        if(selectedFile < directoryList.size() && selectedFile >= 0) {
+                            std::string fullPath = Filesystem::getFullPath(currentPath, directoryList[selectedFile]);
+                            if(Filesystem::isFile(fullPath) && !Filesystem::isDirectory(fullPath)) {
+                                selectedVideo = true;
+                                videoPath = fullPath;
+                                showDialog = false;
+                            } else {
+                                currentPath = Filesystem::navigate(currentPath, directoryList[selectedFile]);
+                            }
+                            directoryChanged = true;
+                            selectedFile = 0;
+                        }
+                        break;
                     }
-                    directoryChanged = true;
-                    selectedFile = 0;
-
+                    case CameraChooser:
+                    {
+                        if(selectedFile >= 0 && selectedFile < cameras.size()) {
+                            selectedCamera = true;
+                            selectedCameraID = cameras[selectedFile];
+                            showDialog = false;
+                            selectedFile = 0;
+                        } else {
+                            
+                        }
+                        break;
+                    }
+                    default:
+                        break;
                 }
 //            showDialog = false;
             }
             
             processed = 1;
             break;
+        case kVK_ANSI_2:
         case kVK_ANSI_1:
             if(down) {
                 if(visibleWindow != FileChooser) {
+                    directoryList.clear();
                     selectedFile = 0;
-                    isStereoVideo = false;
+                    isStereoVideo = (keyCode == kVK_ANSI_2);
                     directoryChanged = true;
                 }
                 visibleWindow = FileChooser;
@@ -238,14 +298,18 @@ int Ibex::Window::processKey(unsigned short keyCode, int down) {
             
             processed = 1;
             break;
-        case kVK_ANSI_2:
+        case kVK_ANSI_4:
+        case kVK_ANSI_3:
             if(down) {
                 if(visibleWindow != FileChooser) {
-                    selectedFile = 0;
-                    isStereoVideo = true;
+                    directoryList.clear();
+                    selectedCamera = 0;
+                    selectedCameraID = -1;
+                    isStereoVideo = (keyCode == kVK_ANSI_4);
                     directoryChanged = true;
                 }
-                visibleWindow = FileChooser;
+                visibleWindow = CameraChooser;
+                cameras = VideoPlayer::listCameras();
             }
             
             processed = 1;

@@ -17,7 +17,7 @@
 namespace Ibex {
     
 enum VisibleWindow {
-    InfoWindow,FileChooser
+    InfoWindow,FileChooser,CameraChooser
 };
 
 class Window {
@@ -27,8 +27,11 @@ public:
     void render();
     bool getIsStereoVideo() { return isStereoVideo; }
     bool getSelectedVideo() { return selectedVideo; }
+    bool getSelectedCamera() { return selectedCamera; }
     bool setSelectedVideo(bool selectedVideo_) { selectedVideo = selectedVideo_; return selectedVideo; }
+    bool setSelectedCamera(bool selectedCamera_) { selectedCamera = selectedCamera_; return selectedCamera; }
     std::string getSelectedVideoPath() { return videoPath; }
+    int getSelectedCameraID() { return selectedCameraID; }
 
 #ifdef __APPLE__
     int processKey(unsigned short keyCode, int down);
@@ -36,6 +39,7 @@ public:
     
 private:
     void renderFileChooser();
+    void renderCameraChooser();
     void renderInfoWindow();
     
 private:
@@ -47,7 +51,10 @@ private:
     std::string currentPath;
     bool directoryChanged;
     int selectedFile;
+    int selectedCamera;
+    int selectedCameraID;
     std::vector<std::string> directoryList;
+    std::vector<int> cameras;
     std::set<std::string> fileTypes;
     
 };

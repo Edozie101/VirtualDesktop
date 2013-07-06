@@ -10,29 +10,54 @@
 #define __IbexMac__VideoPlayer__
 
 extern "C" {
+#ifndef _WIN32
 #include <OpenAL/al.h>
 #include <OpenAL/alc.h>
-    
+#endif
+
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <unistd.h>
 #include <stdlib.h>
-    
+
+#ifndef _WIN32
+#include <unistd.h>
+#endif
+
+#define __STDC_CONSTANT_MACROS
+#ifdef _STDINT_H
+#undef _STDINT_H
+#endif
+
+#include <stdint.h>
+
 #include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
+#include <libavdevice/avdevice.h>
 #include <libavfilter/avfilter.h>
 #include <libavfilter/avfiltergraph.h>
 #include <libswscale/swscale.h>
 #include <libswresample/swresample.h>
 #include <libavutil/opt.h>
+#include <libavutil/time.h>
 }
 
+#include <list>
+#include <vector>
+#include <string>
 #include <queue>
 #include <thread>
+#include <mutex>
+#include <condition_variable>
+
+struct CvCapture;
 
 namespace Ibex {
     
+#ifdef _WIN32
+class WindowsAudioSource;
+#endif
+
 struct AudioPacket {
     AVFrame *avAudioFrame;
     uint8_t *audioBuffer;
@@ -48,17 +73,28 @@ enum VideoSyncMode {
 };
 
 class VideoPlayer {
+#ifdef _WIN32
+	friend class WindowsAudioSource;
+#endif
+
 public:
     VideoPlayer();
     
     void savePPMFrame(const AVFrame *pFrame, int width, int height, int iFrame) const;
     int playVideo(const char *fileName, bool isStereo);
+
+	int openCamera(bool isStereo, int cameraId);
+    static std::vector<int> listCameras();
+    void stopCapturing();
     
 public:
     unsigned int *videoTexture;
     unsigned int width,height;
     
 private:
+	void createVideoTextures(bool isStereo, int width, int height);
+	void initOpenCV(bool isStereo, int cameraId);
+
     void addAudioFrame(AudioPacket avAudioFrame);
     void addVideoFrame(AudioPacket avAudioFrame);
     int loadSyncAudioVideo(const char *fileName_, bool isStereo);
@@ -69,13 +105,20 @@ private:
     
     VideoSyncMode videoSyncMode;
     
+	bool openCVInited;
+    bool captureVideo = false;
+	CvCapture *cvCapture;
+
     bool done;
     bool videoDone;
     bool audioDone;
     
-    std::queue<AudioPacket> audioQueue;
     std::queue<AudioPacket> videoQueue;
     std::queue<AVFrame*> videoFrameQueue;
+
+	std::mutex aMutex1;
+	std::mutex aMutex2;
+	std::queue<AudioPacket> audioQueue;
     std::queue<AudioPacket> audioBufferQueue;
     
     AVStream *avVideoStream;

@@ -8,16 +8,360 @@
 
 #include "VideoPlayer.h"
 
+#include <opencv/cv.h>
+#include <opencv/highgui.h>
 #include "opengl_helpers.h"
 
 #include <iostream>
 #include <chrono>
 #include <thread>
+#include <stdint.h>
 
 #define MAX_VIDEO_QUEUE_SIZE 2
 #define MAX_AUDIO_FRAME_QUEUE_SIZE 40
 #define NUM_BUFFERS 3
 #define BUFFER_SIZE 20480
+
+#ifdef _WIN32
+
+#ifdef _USE_XAUDIO2
+#include <xaudio2.h>
+#endif
+
+#include<Objbase.h>
+#include<Mmreg.h>
+#include <MMDeviceAPI.h>
+#include <AudioClient.h>
+#include <AudioPolicy.h>
+
+#define SAFE_RELEASE(p) if((p) != NULL) { (p)->Release(); (p) = NULL; }
+
+const CLSID CLSID_MMDeviceEnumerator = __uuidof(MMDeviceEnumerator);
+const IID IID_IMMDeviceEnumerator = __uuidof(IMMDeviceEnumerator);
+const IID IID_IAudioClient = __uuidof(IAudioClient);
+const IID IID_IAudioRenderClient = __uuidof(IAudioRenderClient);
+
+#define MONO SPEAKER_FRONT_CENTER
+#define STEREO (SPEAKER_FRONT_LEFT|SPEAKER_FRONT_RIGHT)
+
+class Ibex::WindowsAudioSource {
+private:
+	Ibex::VideoPlayer *player;
+	AVCodecContext *avAudioCodecCtx;
+public:
+	WindowsAudioSource(Ibex::VideoPlayer *player_, AVCodecContext *avAudioCodecCtx_) : player(player_),avAudioCodecCtx(avAudioCodecCtx_),remainingBytes(-1) {
+	}
+	HRESULT AdjustFormat(WAVEFORMATEX *waveFormatEx) {
+		if(avAudioCodecCtx == 0) return 0;
+    
+		int channels, bits;
+		channels = avAudioCodecCtx->channels;//2;//av_frame_get_channels(avAudioFrame);
+		bits = avAudioCodecCtx->bits_per_coded_sample;
+		//channels = 1;
+
+		unsigned int frequency = avAudioCodecCtx->sample_rate;
+
+		waveFormatEx->wFormatTag = WAVE_FORMAT_PCM; //WAVE_FORMAT_EXTENSIBLE;
+		waveFormatEx->nChannels = channels;//(channels == 2) ? STEREO : MONO;
+		waveFormatEx->cbSize = 0;//sizeof(WAVEFORMATEXTENSIBLE)-sizeof(WAVEFORMATEX);//bits;
+		waveFormatEx->wBitsPerSample = bits;
+		waveFormatEx->nSamplesPerSec = frequency;
+		waveFormatEx->nBlockAlign = waveFormatEx->nChannels * (waveFormatEx->wBitsPerSample/8); 
+		waveFormatEx->nAvgBytesPerSec = waveFormatEx->nSamplesPerSec * waveFormatEx->nBlockAlign; 
+	
+		return 0;
+	}
+	HRESULT SetFormat(WAVEFORMATEX *waveFormatEx) {
+		return 0;
+	}
+	#ifdef _USE_XAUDIO2
+	HRESULT LoadData(XAUDIO2_BUFFER &buffer) {
+		if(avAudioCodecCtx == 0) return 0;
+    
+		int channels, bits;
+		channels = 2;//av_frame_get_channels(avAudioFrame);
+		bits = avAudioCodecCtx->bits_per_coded_sample;
+		//channels = 1;
+
+		unsigned int frequency = avAudioCodecCtx->sample_rate;
+
+		unsigned long count = 0;
+		int val = 0;
+		AudioPacket avAudioFrame;
+
+		//while(!player->done) {
+
+		while(true) {//player->audioQueue.size() < 0 && !player->done) {
+			if(player->audioQueue.size() < 0 && !player->done) {
+				continue;
+			} else {
+				break;
+			}
+		}
+
+		if(player->done) return 0;
+			if(player->audioQueue.size() > 0) {
+				try {
+					player->aMutex1.lock();
+					avAudioFrame = player->audioQueue.front();
+					player->audioQueue.pop();
+					player->aMutex1.unlock();
+				} catch(...) {
+					buffer.AudioBytes = 0;
+				 buffer.pAudioData = 0;
+				return 0;
+				}
+			} else {
+				//std::this_thread::yield();
+	//            std::this_thread::sleep_for(std::chrono::milliseconds(1));
+				//continue;
+				
+				 buffer.AudioBytes = 0;
+				 buffer.pAudioData = 0;
+				return 0;
+			}
+
+			if(avAudioFrame.size > 0) {
+	             //std::cerr << "^^^ PLAYING AUDIO" << count << std::endl;
+				//channels = av_frame_get_channels(avAudioFrame.avAudioFrame);
+				//bits = avAudioCodecCtx->bits_per_coded_sample;
+
+				//frequency = avAudioCodecCtx->sample_rate;
+				//avAudioFrame.audioBuffer, avAudioFrame.size, frequency);
+				BYTE * dataBufferBuffer = new BYTE[avAudioFrame.size*channels];
+				 memcpy(dataBufferBuffer, avAudioFrame.audioBuffer, avAudioFrame.size);
+				 buffer.AudioBytes = avAudioFrame.size;
+				 buffer.pAudioData = dataBufferBuffer;
+				 //buffer.Flags = XAUDIO2_END_OF_STREAM;
+			} else {
+				buffer.AudioBytes = 0;
+				 buffer.pAudioData = 0;
+				return 0;
+			}
+
+			aMutex2.lock();
+			player->audioBufferQueue.push(avAudioFrame);
+			aMutex2.unlock();
+		//}
+		return 0;
+	}
+#endif
+
+	AudioPacket avAudioFrameRemaining;
+	long remainingBytes;
+	HRESULT LoadData(UINT32 bufferFrameCount, BYTE *dataBuffer, DWORD *flags) {
+		if(avAudioCodecCtx == 0) return 0;
+    
+		int channels, bits;
+		channels = 2;//av_frame_get_channels(avAudioFrame);
+		bits = avAudioCodecCtx->bits_per_coded_sample;
+		//channels = 1;
+
+		unsigned int frequency = avAudioCodecCtx->sample_rate;
+
+		unsigned long count = 0;
+		int val = 0;
+		AudioPacket avAudioFrame;
+
+		//while(!player->done) {
+		if(player->done) return 0;
+
+		int readBytes = 0;
+		while(readBytes < bufferFrameCount) {
+			if(player->done) return 0;
+
+			if(remainingBytes <= 0) {
+				if(!player->audioQueue.empty()) {
+					player->aMutex1.lock();
+					avAudioFrame = player->audioQueue.front();
+					avAudioFrameRemaining = avAudioFrame;
+					player->audioQueue.pop();
+					player->aMutex1.unlock();
+				} else {
+					std::this_thread::yield();
+		//            std::this_thread::sleep_for(std::chrono::milliseconds(1));
+					continue;
+					//return 0;
+				}
+				remainingBytes = avAudioFrame.size;
+			} else {
+				avAudioFrame = avAudioFrameRemaining;
+			}
+
+			if(avAudioFrame.size > 0) {
+	             //std::cerr << "^^^ PLAYING AUDIO" << count << std::endl;
+				int readSize = (avAudioFrame.size < (bufferFrameCount-readBytes)) ? avAudioFrame.size : (bufferFrameCount-readBytes);
+				memcpy(dataBuffer+readBytes, avAudioFrame.audioBuffer+(avAudioFrame.size-remainingBytes), readSize);
+				readBytes += readSize;
+				remainingBytes -= readSize;
+			}
+			*flags = 0;
+
+			if(remainingBytes <= 0) {
+				player->aMutex2.lock();
+				player->audioBufferQueue.push(avAudioFrame);
+				player->aMutex2.unlock();
+			}
+			//if(readBytes >= bufferFrameCount) {
+			//	return 0;
+			//}
+		}
+		return 0;
+	}
+};
+
+#ifdef _USE_XAUDIO2
+HRESULT PlayAudioStreamXAUDIO2(Ibex::WindowsAudioSource *WindowsAudioSource)
+{
+	WAVEFORMATEX waveFormatEx = {0};
+	XAUDIO2_BUFFER buffer = {0};
+
+	WindowsAudioSource->AdjustFormat(&waveFormatEx);
+
+	CoInitializeEx( NULL, COINIT_MULTITHREADED );
+
+    IXAudio2* xaudio2 = NULL;
+	HRESULT hr;
+	if ( FAILED(hr = XAudio2Create( &xaudio2, 0, XAUDIO2_DEFAULT_PROCESSOR ) ) )
+		return hr;
+
+	IXAudio2MasteringVoice* masteringVoice = NULL;
+	//create the mastering voice
+	if( FAILED( hr = xaudio2->CreateMasteringVoice( &masteringVoice ) ) )
+	{
+		return hr;
+	}
+
+	IXAudio2SourceVoice* sourceVoice = NULL;
+	if( FAILED(hr = xaudio2->CreateSourceVoice(&sourceVoice, (WAVEFORMATEX*)&waveFormatEx)))	
+		return hr;
+
+	while(true) {
+		WindowsAudioSource->LoadData(buffer);
+		if(buffer.AudioBytes == 0) continue;
+		if(FAILED(hr = sourceVoice->SubmitSourceBuffer(&buffer)))
+			continue;//return hr;
+
+		if (FAILED(hr = sourceVoice->Start(0)))
+			return hr;
+
+		//Sleep((DWORD)(2));//buffer.AudioBytes/waveFormatEx.nBlockAlign*1000/waveFormatEx.nSamplesPerSec));//actualDuration/REFTIMES_PER_MILLISEC/2));
+	}
+}
+#endif
+
+HRESULT PlayAudioStreamWASAPI(Ibex::WindowsAudioSource *WindowsAudioSource)
+{
+	const long referenceTimeUnitsPerSecond = 10000000;
+    HRESULT hr;
+    IMMDeviceEnumerator *pEnumerator = NULL;
+    IMMDevice *wasapiDevice = NULL;
+    IAudioClient *wasapiAudioClient = NULL;
+    IAudioRenderClient *wasapiAudioRenderClient = NULL;
+    WAVEFORMATEX *waveFormatEx = NULL;
+    UINT32 bufferFrameCount;
+    UINT32 numAudioFramesAvailable;
+    UINT32 numFramesPadding;
+    BYTE *dataBuffer;
+    DWORD flags = 0;
+	REFERENCE_TIME requestedDuration = referenceTimeUnitsPerSecond;
+    REFERENCE_TIME actualDuration;
+	
+	hr = CoInitialize(NULL);
+	if (FAILED(hr)) { goto CleanupFunction; }
+
+    hr = CoCreateInstance(
+           CLSID_MMDeviceEnumerator, NULL,
+           CLSCTX_ALL, IID_IMMDeviceEnumerator,
+           (void**)&pEnumerator);
+    if (FAILED(hr)) { goto CleanupFunction; }
+
+    hr = pEnumerator->GetDefaultAudioEndpoint(
+                        eRender, eConsole, &wasapiDevice);
+    if (FAILED(hr)) { goto CleanupFunction; }
+
+    hr = wasapiDevice->Activate(
+                    IID_IAudioClient, CLSCTX_ALL,
+                    NULL, (void**)&wasapiAudioClient);
+    if (FAILED(hr)) { goto CleanupFunction; }
+
+    hr = wasapiAudioClient->GetMixFormat(&waveFormatEx);
+    if (FAILED(hr)) { goto CleanupFunction; }
+
+	hr = WindowsAudioSource->AdjustFormat(waveFormatEx);
+	if (FAILED(hr)) { goto CleanupFunction; }
+
+    hr = wasapiAudioClient->Initialize(
+						AUDCLNT_SHAREMODE_EXCLUSIVE,
+						//AUDCLNT_SHAREMODE_SHARED,
+                         0,
+                         requestedDuration,
+                         0,
+                         waveFormatEx,
+                         NULL);
+    if (FAILED(hr)) { goto CleanupFunction; }
+
+    hr = WindowsAudioSource->SetFormat(waveFormatEx);
+    if (FAILED(hr)) { goto CleanupFunction; }
+
+    hr = wasapiAudioClient->GetBufferSize(&bufferFrameCount);
+    if (FAILED(hr)) { goto CleanupFunction; }
+
+    hr = wasapiAudioClient->GetService(
+                         IID_IAudioRenderClient,
+                         (void**)&wasapiAudioRenderClient);
+    if (FAILED(hr)) { goto CleanupFunction; }
+
+    hr = wasapiAudioRenderClient->GetBuffer(bufferFrameCount, &dataBuffer);
+	if (FAILED(hr)) { goto CleanupFunction; }
+
+	hr = WindowsAudioSource->LoadData(bufferFrameCount*waveFormatEx->nBlockAlign, dataBuffer, &flags);
+    if (FAILED(hr)) { goto CleanupFunction; }
+
+    hr = wasapiAudioRenderClient->ReleaseBuffer(bufferFrameCount, flags);
+    if (FAILED(hr)) { goto CleanupFunction; }
+
+    actualDuration = (double)referenceTimeUnitsPerSecond * bufferFrameCount / waveFormatEx->nSamplesPerSec;
+
+    hr = wasapiAudioClient->Start();  // Start playing.
+    if (FAILED(hr)) { goto CleanupFunction; }
+
+    while (flags != AUDCLNT_BUFFERFLAGS_SILENT)
+    {
+        Sleep((DWORD)(actualDuration/referenceTimeUnitsPerSecond/1000/2));
+
+        hr = wasapiAudioClient->GetCurrentPadding(&numFramesPadding);
+        if (FAILED(hr)) { goto CleanupFunction; }
+
+        numAudioFramesAvailable = bufferFrameCount - numFramesPadding;
+
+        hr = wasapiAudioRenderClient->GetBuffer(numAudioFramesAvailable, &dataBuffer);
+        if (FAILED(hr)) { goto CleanupFunction; }
+
+		hr = WindowsAudioSource->LoadData(numAudioFramesAvailable*waveFormatEx->nBlockAlign, dataBuffer, &flags);//, &duration);
+        if (FAILED(hr)) { goto CleanupFunction; }
+
+        hr = wasapiAudioRenderClient->ReleaseBuffer(numAudioFramesAvailable, flags);
+        if (FAILED(hr)) { goto CleanupFunction; }
+    }
+
+    Sleep((DWORD)(actualDuration/referenceTimeUnitsPerSecond/1000/2));
+
+    hr = wasapiAudioClient->Stop();  // Stop playing.
+    if (FAILED(hr)) { goto CleanupFunction; }
+
+CleanupFunction:
+	CoTaskMemFree(waveFormatEx);
+
+    SAFE_RELEASE(pEnumerator)
+    SAFE_RELEASE(wasapiDevice)
+    SAFE_RELEASE(wasapiAudioClient)
+    SAFE_RELEASE(wasapiAudioRenderClient)
+
+    return hr;
+}
+
+#endif
 
 uint64_t global_video_pkt_pts = AV_NOPTS_VALUE;
 
@@ -35,7 +379,7 @@ void ibex_release_buffer(struct AVCodecContext *c, AVFrame *pic) {
     avcodec_default_release_buffer(c, pic);
 }
 
-Ibex::VideoPlayer::VideoPlayer() :  videoTexture(new unsigned int[2]),
+Ibex::VideoPlayer::VideoPlayer() :  videoTexture(new unsigned int[2]{0,0}),
                                     width(0),
                                     height(0),
                                     done(true),
@@ -47,10 +391,13 @@ Ibex::VideoPlayer::VideoPlayer() :  videoTexture(new unsigned int[2]),
                                     videoSyncMode(SyncExternal),
                                     avFormatCtx(NULL),
                                     avAudioCodecCtx(NULL),
-                                    avAudioCodec(NULL) {
+                                    avAudioCodec(NULL),
+									openCVInited(false),
+									cvCapture(0) {
     avcodec_register_all();
     av_register_all();
     avfilter_register_all();
+	//avdevice_register_all();
 }
 
 void Ibex::VideoPlayer::savePPMFrame(const AVFrame *avFrame, int width, int height, int iFrame) const {
@@ -220,7 +567,7 @@ int Ibex::VideoPlayer::playAudio(AVCodecContext *avAudioCodecCtx) {
                 
                 if(alGetError() != AL_NO_ERROR)
                 {
-                    fprintf(stderr, "Error loading buffers[%d] :(\n", count);
+                    fprintf(stderr, "Error loading buffers[%lu] :(\n", count);
                     exit(1);
                     return 1;
                 }
@@ -576,7 +923,6 @@ int Ibex::VideoPlayer::playVideo(const char *fileName, bool isStereo)
         while(!videoDone || !audioDone);
     }
 
-//    videoTexture(new unsigned int[2]),
     width = 0;
     height = 0;
     done = true;
@@ -624,40 +970,7 @@ int Ibex::VideoPlayer::playVideo(const char *fileName, bool isStereo)
     // image conversion context
     struct  SwsContext *img_convert_ctx = NULL;
     
-    // load OpenGL textures for video/stereo-video if necessary
-    glGenTextures((isStereo) ? 2 : 1, videoTexture);
-    for(int i = 0; i < 2; ++i) {
-        if(i == 1 && !isStereo) {
-            videoTexture[i] = videoTexture[0];
-            break;
-        }
-        
-        glBindTexture(GL_TEXTURE_2D, videoTexture[i]);
-        if (!checkForErrors()) {
-            fprintf(stderr,"Stage 0a - Problem generating videoTexture FBO");
-            exit(EXIT_FAILURE);
-        }
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        if (!checkForErrors()) {
-            fprintf(stderr,"Stage 0b - Problem generating videoTexture FBO");
-            exit(EXIT_FAILURE);
-        }
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-        if (!checkForErrors()) {
-            fprintf(stderr,"Stage 0c - Problem generating videoTexture FBO");
-            exit(EXIT_FAILURE);
-        }
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, width, height, 0,
-                     GL_RGB, GL_UNSIGNED_BYTE, 0);
-        if (!checkForErrors()) {
-            fprintf(stderr,"Stage 0d - Problem generating videoTexture FBO");
-            exit(EXIT_FAILURE);
-        }
-    }
-    glBindTexture(GL_TEXTURE_2D, 0);
-    glFlush();
+    createVideoTextures(isStereo, width, height);
     ////////////////
     bool first = true;
     AudioPacket videoFrame;
@@ -767,4 +1080,138 @@ int Ibex::VideoPlayer::playVideo(const char *fileName, bool isStereo)
 
 double Ibex::VideoPlayer::getSyncClock() {
     return av_gettime() / 1000000.0; // get global external clock time
+}
+
+std::vector<int> Ibex::VideoPlayer::listCameras() {
+    std::vector<int> cameras;
+    
+    CvCapture *cam;
+    int i = 0;
+    do
+    {
+        cam = cvCreateCameraCapture(i++);
+        cameras.push_back(i-1);
+        if(cam == NULL) break;
+        cvReleaseCapture(&cam);
+    } while(true);
+    if(cam) cvReleaseCapture(&cam);
+    
+    return cameras;
+}
+
+void Ibex::VideoPlayer::stopCapturing() {
+    captureVideo = false;
+    if(cvCapture) {
+        cvReleaseCapture(&cvCapture);
+        cvCapture = NULL;
+        openCVInited = false;
+    }
+}
+void Ibex::VideoPlayer::initOpenCV(bool isStereo, int cameraId) {
+	if(!openCVInited) {
+        captureVideo = true;
+		cvCapture = cvCaptureFromCAM(cameraId);//cvCreateCameraCapture(cameraId);
+        width = cvGetCaptureProperty(cvCapture, CV_CAP_PROP_FRAME_WIDTH);
+        height = cvGetCaptureProperty(cvCapture, CV_CAP_PROP_FRAME_HEIGHT);
+		createVideoTextures(isStereo, width, height);
+		openCVInited = true;
+	}
+}
+
+int Ibex::VideoPlayer::openCamera(bool isStereo, int cameraId) {
+	if(!openCVInited) {
+		initOpenCV(isStereo, cameraId);
+	}
+    
+	bool first = true;
+	while(captureVideo && cvCapture) {
+		IplImage* cameraCapture = cvQueryFrame(cvCapture);
+        
+		if( cameraCapture && (cameraCapture->width > 0) && (cameraCapture->height > 0)) {
+            //width = cameraCapture->width;
+            //height = cameraCapture->height;
+            const int numBytes = (cameraCapture->widthStep/cameraCapture->width == 4 || cameraCapture->nChannels == 4) ? 4 : 3;
+            const GLenum formatIn = (numBytes == 4) ? GL_BGRA : GL_BGR;
+			if(isStereo) {
+				glBindTexture(GL_TEXTURE_2D, videoTexture[1]);
+				const int stride = width*2;
+				glPixelStorei(GL_UNPACK_ROW_LENGTH,stride);
+				if(first) {
+					glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, width, height/2, 0,
+								 formatIn, GL_UNSIGNED_BYTE, cameraCapture->imageData);
+					glBindTexture(GL_TEXTURE_2D, videoTexture[0]);
+					glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, width, height/2, 0,
+								 formatIn, GL_UNSIGNED_BYTE, cameraCapture->imageData+(width*numBytes));
+				} else {
+					glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height/2,
+								 formatIn, GL_UNSIGNED_BYTE, avFrameRGB->data[0]);
+					glBindTexture(GL_TEXTURE_2D, videoTexture[0]);
+					glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height/2,
+								 formatIn, GL_UNSIGNED_BYTE, cameraCapture->imageData+(width*numBytes));
+				}
+			} else {
+				glBindTexture(GL_TEXTURE_2D, videoTexture[0]);
+                const int stride = width;
+				glPixelStorei(GL_UNPACK_ROW_LENGTH,stride);
+                glPixelStorei(GL_UNPACK_ALIGNMENT,1);
+				if(first) {
+					glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, width, height, 0,
+								 formatIn, GL_UNSIGNED_BYTE, cameraCapture->imageData);
+				} else {
+					glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height,
+								 formatIn, GL_UNSIGNED_BYTE, cameraCapture->imageData);
+				}
+			}
+			glFlush();
+		}
+        std::this_thread::sleep_for(std::chrono::milliseconds(30));
+	}
+    stopCapturing();
+    
+	return 0;
+}
+
+void Ibex::VideoPlayer::createVideoTextures(bool isStereo, int width, int height) {
+	// load OpenGL textures for video/stereo-video if necessary
+    if(videoTexture[0]) {
+        if(videoTexture[1] == videoTexture[0]) {
+            glDeleteTextures(1, videoTexture);
+        } else {
+            glDeleteTextures(2, videoTexture);
+        }
+        videoTexture[0] = videoTexture[1] = 0;
+    }
+    glGenTextures((isStereo) ? 2 : 1, videoTexture);
+    for(int i = 0; i < 2; ++i) {
+        if(i == 1 && !isStereo) {
+            videoTexture[i] = videoTexture[0];
+            break;
+        }
+        
+        glBindTexture(GL_TEXTURE_2D, videoTexture[i]);
+        if (!checkForErrors()) {
+            fprintf(stderr,"Stage 0a - Problem generating videoTexture FBO");
+            exit(EXIT_FAILURE);
+        }
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        if (!checkForErrors()) {
+            fprintf(stderr,"Stage 0b - Problem generating videoTexture FBO");
+            exit(EXIT_FAILURE);
+        }
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+        if (!checkForErrors()) {
+            fprintf(stderr,"Stage 0c - Problem generating videoTexture FBO");
+            exit(EXIT_FAILURE);
+        }
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, width, height, 0,
+                     GL_RGB, GL_UNSIGNED_BYTE, 0);
+        if (!checkForErrors()) {
+            fprintf(stderr,"Stage 0d - Problem generating videoTexture FBO");
+            exit(EXIT_FAILURE);
+        }
+    }
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glFlush();
 }

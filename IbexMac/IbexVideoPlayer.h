@@ -16,6 +16,7 @@
 @property (nonatomic)        GLuint *videoTexture;
 
 - (int)loadVideo:(NSString*)fileName_ andIsStereo:(bool)isStereo;
+- (int)loadCamera:(NSNumber*)cameraID andIsStereo:(bool)isStereo;
 - (GLfloat)width;
 - (GLfloat)height;
 
