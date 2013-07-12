@@ -736,20 +736,54 @@ static void GetDesktopResolution(int& horizontal, int& vertical)
    vertical = desktop.bottom-desktop.top;
 }
 
-// add if you will call: dwmapi.lib
-//BOOL IsAeroActive()
-//{
-//    // Check if Aero is enabled;
-//	BOOL enabled = FALSE;
-//    if (DwmIsCompositionEnabled(&enabled) == S_OK)
-//    {
-//        return enabled;
-//    }
-//    else
-//    {
-//        return false;
-//    }
-//}
+///////////////// compositing management (from comments on http://weblogs.asp.net/kennykerr/comments/429272.aspx) ///////////////////////////////
+typedef HRESULT (CALLBACK * P_DwmIsCompositionEnabled)(BOOL *pfEnabled);
+typedef HRESULT (CALLBACK * P_DwmEnableComposition)   (BOOL   fEnable);
+
+struct DWMAPILib {
+	HMODULE	 lib;
+	P_DwmIsCompositionEnabled	fIsEnabled;
+	P_DwmEnableComposition	 fEnable;
+
+	DWMAPILib() : lib((HMODULE)0xFFFFFFFF), fIsEnabled(NULL), fEnable(NULL) {}
+	~DWMAPILib() {
+		if (lib != NULL && lib != (HMODULE)0xFFFFFFFF)
+		::FreeLibrary(lib);
+		lib = (HMODULE)0xFFFFFFFF;
+	}
+
+	BOOL Load() {
+		if (lib == NULL) return FALSE;
+		lib = ::LoadLibrary(L"dwmapi.dll");
+		if (lib == NULL) return FALSE;
+		fIsEnabled = (P_DwmIsCompositionEnabled)::GetProcAddress(lib, "DwmIsCompositionEnabled");
+		fEnable    = (P_DwmEnableComposition)   ::GetProcAddress(lib, "DwmEnableComposition");
+		return TRUE;
+	}
+	bool IsCompositionEnabled() {
+		BOOL	enabled = FALSE;
+		return (fIsEnabled != NULL && SUCCEEDED(fIsEnabled(&enabled)) && enabled);
+	}
+	HRESULT EnableComposition(BOOL enable) {
+		if (!fIsEnabled) return 0x80070000 + ERROR_PROC_NOT_FOUND;  // @@@efh really should get from GetLastError / ERROR_MOD_NOT_FOUND if lib == NULL
+		return fEnable(enable);
+	}
+};
+
+static DWMAPILib	dwmapiLib;
+static BOOL	 compositingWasEnabled = false;
+void disableCompositing()
+{
+	if (!dwmapiLib.Load()) return;
+	if ((compositingWasEnabled = dwmapiLib.IsCompositionEnabled()) == true)
+	dwmapiLib.EnableComposition(FALSE);	 // DWM_EC_DISABLECOMPOSITION
+}
+
+void restoreCompositing() {
+	if (compositingWasEnabled && dwmapiLib.Load())
+	dwmapiLib.EnableComposition(TRUE);	 // DWM_EC_ENABLECOMPOSITION
+}
+/////////////////
 
 static void exiting() {
 	captureDesktop = false;
@@ -835,29 +869,9 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	std::thread screenshotThread(loopScreenshot);
 	std::thread hotkeyThread(globalHotkeyListener);
 
-	// add if you will call: dwmapi.lib
-	//if(IsAeroActive()) 
-	//{
-		//SetWindowLong(hwnd, GWL_EXSTYLE, GetWindowLong(hwnd, GWL_EXSTYLE) | WS_EX_LAYERED);
-		//SetLayeredWindowAttributes(hwnd, 0, 255, LWA_ALPHA);
-
-		//	HDC hdcBuffer = CreateCompatibleDC(hdc);
-		//	POINT ptZero = {0, 0};
-		//POINT ptDrawPos = {0, 0};
-		//RECT rctCyauWnd;
-		//GetWindowRect(hwnd, &rctCyauWnd);
-		//SIZE szCyauWnd={rctCyauWnd.right - rctCyauWnd.left, rctCyauWnd.bottom - rctCyauWnd.top};
-		//BLENDFUNCTION blendPixelFunction = { AC_SRC_OVER, 0, 100, AC_SRC_ALPHA};
-		//	UpdateLayeredWindow(hwnd,
-		//    hdc, &ptZero,
-		//    &szCyauWnd,
-		//    hdcBuffer, &ptZero,
-		//    0, //RGB(255, 255, 255),
-		//    &blendPixelFunction,
-		//    ULW_ALPHA);
-	//}
-
+	disableCompositing();
     glutMainLoop();
+	restoreCompositing();
 
 	cleanUpRift();
 
