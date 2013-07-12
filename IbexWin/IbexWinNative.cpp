@@ -102,7 +102,7 @@ std::condition_variable screenshotCondition;
 
 Ibex::Ibex *ibex = 0;
 
-void processSpecialKey(int key, int down) {
+static inline void processSpecialKey(int key, int down) {
 	if(showDialog) ibex->renderer->window.processSpecialKey(key, down);
 	else {
 		switch(key) {
@@ -121,104 +121,97 @@ void processSpecialKey(int key, int down) {
 		}
 	}
 }
-void processSpecialKeyDown(int key, int x, int y) {
+static void processSpecialKeyDown(int key, int x, int y) {
 	processSpecialKey(key, 1);
 }
-void processSpecialKeyUp(int key, int x, int y) {
+static void processSpecialKeyUp(int key, int x, int y) {
 	processSpecialKey(key, 0);
 }
-void Keyboard(unsigned char key, int x, int y)
-{
-	    int processed = 0;
-    if(showDialog) {
-        processed = ibex->renderer->window.processKey(key, 1);
-    }
-    if(!processed) {
-  switch (key)
-  {
-  case 'w':
-  case 'W':
-	  walkForward = 1;
-	  break;
-  case 'a':
-  case 'A':
-	  strafeRight = -1;
-	  break;
-  case 's':
-  case 'S':
-	  walkForward = -1;
-	  break;
-  case 'd':
-  case 'D':
-	  strafeRight = 1;
-	  break;
-  case '=':
-  case '+':
-	  IOD += 0.0005;
-	  lensParametersChanged = true;
-	  break;
-  case 'Q':
-  case 'q':
-	  if(glutGetModifiers() == GLUT_ACTIVE_CTRL) {
-		  exit(0); 
-		  break; 
-	  }
-	  displayShape = (displayShape == FlatDisplay) ? SphericalDisplay : FlatDisplay;
-	  break;
-  case '/':
-	  showDialog = !showDialog;
-	  ibex->renderer->window.reset();
-	  break;
-  case '-':
-  case '_':
-	  IOD -= 0.0005;
-	  lensParametersChanged = true;
-	  break;
-  }
+static inline void Keyboard(unsigned char key, int down) {
+	int processed = 0;
+	if(showDialog) {
+		processed = ibex->renderer->window.processKey(key, down);
+	}
+	if(!processed) {
+		switch (key)
+		{
+		case 'w':
+		case 'W':
+			walkForward = 1*down;
+			break;
+		case 'a':
+		case 'A':
+			strafeRight = -1*down;
+			break;
+		case 's':
+		case 'S':
+			walkForward = -1*down;
+			break;
+		case 'd':
+		case 'D':
+			strafeRight = 1*down;
+			break;
+		case '=':
+		case '+':
+			if(down) {
+				IOD += 0.0005;
+				lensParametersChanged = true;
+			}
+			break;
+		case 'Q':
+		case 'q':
+			if(down) {
+				if(glutGetModifiers() == GLUT_ACTIVE_CTRL) {
+					exit(0); 
+					break; 
+				}
+				displayShape = (displayShape == FlatDisplay) ? SphericalDisplay : FlatDisplay;
+			}
+			break;
+		case '/':
+			if(down) {
+				showDialog = !showDialog;
+				ibex->renderer->window.reset();
+			}
+			break;
+		case '-':
+		case '_':
+			if(down) {
+				IOD -= 0.0005;
+				lensParametersChanged = true;
+			}
+			break;
+		case 'b':
+		case 'B':
+			if(!down) {
+				barrelDistort = !barrelDistort;
+			}
+			break;
+		case 'g':
+		case 'G':
+			if(!down) {
+				showGround = !showGround;
+			}
+			break;
+		case 'r':
+		case 'R':
+			if(!down) {
+				resetPosition = 1;
+			}
+			break;
+		}
 	}
 }
-void KeyboardUp(unsigned char key, int x, int y)
+static void KeyboardDown(unsigned char key, int x, int y)
 {
-	    int processed = 0;
-    if(showDialog) {
-        processed = ibex->renderer->window.processKey(key, 0);
-    }
-    if(!processed) {
-  switch (key)
-  {
-  case 'b':
-  case 'B':
-    barrelDistort = !barrelDistort;
-    break;
-  case 'g':
-  case 'G':
-	  showGround = !showGround;
-	  break;
-  case 'r':
-  case 'R':
-	  resetPosition = 1;
-	  break;
-  case 'w':
-  case 'W':
-	  walkForward = 0;
-	  break;
-  case 'a':
-  case 'A':
-	  strafeRight = 0;
-	  break;
-  case 's':
-	  case 'S':
-	  walkForward = 0;
-	  break;
-  case 'd':
-  case 'D':
-	  strafeRight = 0;
-	  break;
-  }
-	}
+	Keyboard(key, 1);
+}
+static void KeyboardUp(unsigned char key, int x, int y)
+{
+	Keyboard(key, 0);
 }
 
-inline void MouseMoved(int x, int y) {
+static inline void MouseMoved(int x, int y) {
 	if(!controlDesktop) {
 		relativeMouseX = x-500;
 		relativeMouseY = y-500;
@@ -305,7 +298,7 @@ static inline void getMouseCursor(HDC hdcScreen)
 	}
 }
 
-inline int CaptureAnImage(HWND hWnd)
+static inline int CaptureAnImage(HWND hWnd)
 {
     HDC hdcScreen;
     HDC hdcWindow;
@@ -428,7 +421,7 @@ done:
 	return 0;
 }
 
-inline void getScreenshot() {
+static inline void getScreenshot() {
 	HWND hwnd = GetDesktopWindow();
 	CaptureAnImage(hwnd);
 }
@@ -436,7 +429,7 @@ inline void getScreenshot() {
 static HGLRC loaderContext;
 static HDC hdc;
 static bool captureDesktop = true;
-void loopScreenshot() {
+static void loopScreenshot() {
 	wglMakeCurrent(hdc, loaderContext);
 	while(captureDesktop) {
 		getScreenshot();
@@ -567,7 +560,7 @@ static void InitializeGlutCallbacks()
 	glutWarpPointer(500, 500);
 
     glutDisplayFunc(RenderSceneCB);
-	glutKeyboardFunc (Keyboard);
+	glutKeyboardFunc (KeyboardDown);
 	glutKeyboardUpFunc (KeyboardUp);
 	glutSpecialFunc(processSpecialKeyDown);
 	glutSpecialUpFunc(processSpecialKeyUp);
@@ -578,7 +571,7 @@ static void InitializeGlutCallbacks()
 static HWND hwnd;
 static DWORD WINAPI mainThreadId;
 static bool captureInput = true;
-void globalHotkeyListener() {
+static void globalHotkeyListener() {
 	//AttachThreadInput(mainThreadId,GetCurrentThreadId(),true);
 
 	RegisterHotKey(NULL, 1, MOD_CONTROL | MOD_SHIFT | MOD_NOREPEAT, 'g');
@@ -637,7 +630,7 @@ BOOL CALLBACK MonitorEnumProc(
 	return true;
 }
 
-void getRiftDisplay() {
+static void getRiftDisplay() {
 	if(InfoLoaded) {
 		EnumDisplayMonitors(NULL, NULL, MonitorEnumProc, 0);
 		//char name[32];
@@ -674,7 +667,7 @@ void getRiftDisplay() {
 		//}
 	}
 }
-void initRift() {
+static void initRift() {
 	OVR::System::Init(OVR::Log::ConfigureDefaultLog(OVR::LogMask_All));
 
 	pManager = *OVR::DeviceManager::Create();
@@ -721,7 +714,7 @@ void initRift() {
 
 	getRiftDisplay();
 }
-void cleanUpRift() {
+static void cleanUpRift() {
 	pSensor.Clear();
 	pManager.Clear();
 
@@ -729,7 +722,7 @@ void cleanUpRift() {
 }
 
 // Get the horizontal and vertical screen sizes in pixel
-void GetDesktopResolution(int& horizontal, int& vertical)
+static void GetDesktopResolution(int& horizontal, int& vertical)
 {
    RECT desktop;
    // Get a handle to the desktop window
@@ -758,7 +751,7 @@ void GetDesktopResolution(int& horizontal, int& vertical)
 //    }
 //}
 
-void exiting() {
+static void exiting() {
 	captureDesktop = false;
 	captureInput = false;
 }
