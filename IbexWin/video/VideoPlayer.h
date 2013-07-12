@@ -79,6 +79,7 @@ class VideoPlayer {
 
 public:
     VideoPlayer();
+	~VideoPlayer();
     
     void savePPMFrame(const AVFrame *pFrame, int width, int height, int iFrame) const;
     int playVideo(const char *fileName, bool isStereo);
@@ -86,6 +87,7 @@ public:
 	int openCamera(bool isStereo, int cameraId);
     static std::vector<int> listCameras();
     void stopCapturing();
+	void stopPlaying();
     
 public:
     unsigned int *videoTexture;

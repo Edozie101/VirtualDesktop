@@ -24,6 +24,7 @@ class Window {
 public:
     Window();
     
+	void reset();
     void render();
     bool getIsStereoVideo() { return isStereoVideo; }
     bool getSelectedVideo() { return selectedVideo; }

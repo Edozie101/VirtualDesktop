@@ -102,6 +102,31 @@ std::condition_variable screenshotCondition;
 
 Ibex::Ibex *ibex = 0;
 
+void processSpecialKey(int key, int down) {
+	if(showDialog) ibex->renderer->window.processSpecialKey(key, down);
+	else {
+		switch(key) {
+        case GLUT_KEY_UP:
+			walkForward = 1 * down;
+            break;
+        case GLUT_KEY_DOWN:
+            walkForward = -1 * down;
+            break;
+		case GLUT_KEY_RIGHT:
+            strafeRight = 1 * down;
+            break;
+		case GLUT_KEY_LEFT:
+            strafeRight = -1 * down;
+            break;
+		}
+	}
+}
+void processSpecialKeyDown(int key, int x, int y) {
+	processSpecialKey(key, 1);
+}
+void processSpecialKeyUp(int key, int x, int y) {
+	processSpecialKey(key, 0);
+}
 void Keyboard(unsigned char key, int x, int y)
 {
 	    int processed = 0;
@@ -134,10 +159,15 @@ void Keyboard(unsigned char key, int x, int y)
 	  break;
   case 'Q':
   case 'q':
+	  if(glutGetModifiers() == GLUT_ACTIVE_CTRL) {
+		  exit(0); 
+		  break; 
+	  }
 	  displayShape = (displayShape == FlatDisplay) ? SphericalDisplay : FlatDisplay;
 	  break;
   case '/':
 	  showDialog = !showDialog;
+	  ibex->renderer->window.reset();
 	  break;
   case '-':
   case '_':
@@ -403,11 +433,12 @@ inline void getScreenshot() {
 	CaptureAnImage(hwnd);
 }
 
-HGLRC loaderContext;
-HDC hdc;
+static HGLRC loaderContext;
+static HDC hdc;
+static bool captureDesktop = true;
 void loopScreenshot() {
 	wglMakeCurrent(hdc, loaderContext);
-	while(1) {
+	while(captureDesktop) {
 		getScreenshot();
 
 #ifdef _DEBUG
@@ -538,12 +569,15 @@ static void InitializeGlutCallbacks()
     glutDisplayFunc(RenderSceneCB);
 	glutKeyboardFunc (Keyboard);
 	glutKeyboardUpFunc (KeyboardUp);
+	glutSpecialFunc(processSpecialKeyDown);
+	glutSpecialUpFunc(processSpecialKeyUp);
 	glutPassiveMotionFunc (MouseMoved);
 	glutReshapeFunc(ReshapeFunc);
 }
 
-HWND hwnd;
-DWORD WINAPI mainThreadId;
+static HWND hwnd;
+static DWORD WINAPI mainThreadId;
+static bool captureInput = true;
 void globalHotkeyListener() {
 	//AttachThreadInput(mainThreadId,GetCurrentThreadId(),true);
 
@@ -554,7 +588,7 @@ void globalHotkeyListener() {
 	RegisterHotKey(NULL, 2, MOD_CONTROL | MOD_SHIFT | MOD_NOREPEAT, VK_F2);
 
 	MSG msg = {0};
-    while (GetMessage(&msg, NULL, 0, 0))
+    while (GetMessage(&msg, NULL, 0, 0) && captureInput)
     {
         //TranslateMessage(&msg);
         //DispatchMessage(&msg);
@@ -724,12 +758,17 @@ void GetDesktopResolution(int& horizontal, int& vertical)
 //    }
 //}
 
+void exiting() {
+	captureDesktop = false;
+	captureInput = false;
+}
 
 int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
                      _In_ LPTSTR    lpCmdLine,
                      _In_ int       nCmdShow)
 {
+	atexit(exiting);
 	#ifdef _DEBUG
 	RedirectIOToConsole();
 	#endif
@@ -772,7 +811,7 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	int argc = 0;
 	char **argv = 0;
     glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA|GLUT_FULL_SCREEN);
+	glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGB|GLUT_FULL_SCREEN);
     glutInitWindowSize(width, height);
     glutInitWindowPosition(0, 0);
 	glutInitWindowPosition(riftX, riftY);
@@ -827,10 +866,14 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 
     glutMainLoop();
 
+	cleanUpRift();
+
+	captureDesktop = false;
+	captureInput = false;
+	std::terminate();
+
 	screenshotThread.join();
 	hotkeyThread.join();
-
-	cleanUpRift();
 
 	return 0;
 }

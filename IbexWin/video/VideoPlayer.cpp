@@ -403,6 +403,10 @@ Ibex::VideoPlayer::VideoPlayer() :  videoTexture(new unsigned int[2]),
     avfilter_register_all();
 	//avdevice_register_all();
 }
+Ibex::VideoPlayer::~VideoPlayer() {
+	stopCapturing();
+	stopPlaying();
+}
 
 void Ibex::VideoPlayer::savePPMFrame(const AVFrame *avFrame, int width, int height, int iFrame) const {
     FILE *pFile;
@@ -1148,6 +1152,7 @@ std::vector<int> Ibex::VideoPlayer::listCameras() {
 }
 
 void Ibex::VideoPlayer::stopCapturing() {
+	done = true;
     captureVideo = false;
     if(cvCapture) {
         cvReleaseCapture(&cvCapture);
@@ -1155,6 +1160,10 @@ void Ibex::VideoPlayer::stopCapturing() {
         openCVInited = false;
     }
 }
+void Ibex::VideoPlayer::stopPlaying() {
+	done = true;
+}
+
 void Ibex::VideoPlayer::initOpenCV(bool isStereo, int cameraId) {
 	if(!openCVInited) {
         captureVideo = true;

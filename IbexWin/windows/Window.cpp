@@ -209,6 +209,16 @@ void Ibex::Window::renderCameraChooser() {
     glEnable(GL_DEPTH_TEST);
 }
 
+void Ibex::Window::reset() {
+	directoryChanged = true;
+	directoryList.clear();
+	selectedFile = 0;
+	selectedCamera = 0;
+	isStereoVideo = 0;
+	selectedCameraID = 0;
+	visibleWindow = InfoWindow;
+}
+
 void Ibex::Window::render() {
     switch(visibleWindow) {
         case FileChooser:
@@ -339,8 +349,8 @@ int Ibex::Window::processKey(unsigned char key, int down) {
         case 'w':
             if(down) {
                 --selectedFile;
-                if(selectedFile < 0) selectedFile += directoryList.size();
-				if(directoryList.size() <= 0) selectedFile = 0;
+                if(selectedFile < 0 && directoryList.size() > 0) selectedFile += directoryList.size();
+				if(directoryList.size() <= 0 && selectedFile < 0) selectedFile = 0;
             }
             processed = 1;
             break;
@@ -348,10 +358,10 @@ int Ibex::Window::processKey(unsigned char key, int down) {
 		case 's':
             if(down) {
                 ++selectedFile;
-				if(directoryList.size()) {
+				if(directoryList.size() > 0) {
 					selectedFile %= directoryList.size();
 				} else {
-					selectedFile = 0;
+					//selectedFile = 0;
 				}
             }
             
@@ -360,7 +370,8 @@ int Ibex::Window::processKey(unsigned char key, int down) {
         case '1':
         case '2':
             if(down) {
-                if(visibleWindow != FileChooser) {
+                if(visibleWindow == InfoWindow) {
+					reset();
                     directoryList.clear();
                     selectedFile = 0;
                     isStereoVideo = (key == '2');
@@ -374,7 +385,8 @@ int Ibex::Window::processKey(unsigned char key, int down) {
         case '3':
 		case '4':
             if(down) {
-                if(visibleWindow != FileChooser) {
+                if(visibleWindow == InfoWindow) {
+					reset();
                     directoryList.clear();
                     selectedCamera = 0;
                     selectedCameraID = -1;
@@ -387,6 +399,7 @@ int Ibex::Window::processKey(unsigned char key, int down) {
             
             processed = 1;
             break;
+		case 8: // BACKSPACE
         case 127: // DELETE
             visibleWindow = InfoWindow;
             
@@ -407,6 +420,7 @@ int Ibex::Window::processKey(unsigned char key, int down) {
                                 currentPath = Filesystem::navigate(currentPath, directoryList[selectedFile]);
                             }
                             directoryChanged = true;
+							directoryList.clear();
                             selectedFile = 0;
                         }
                         break;
@@ -414,6 +428,7 @@ int Ibex::Window::processKey(unsigned char key, int down) {
                     case CameraChooser:
                     {
                         if(selectedFile >= 0 && selectedFile < cameras.size()) {
+							directoryList.clear();
                             selectedCamera = true;
                             selectedCameraID = cameras[selectedFile];
                             showDialog = false;
@@ -445,15 +460,15 @@ int Ibex::Window::processSpecialKey(unsigned char key, int down) {
         case GLUT_KEY_UP:
             if(down) {
                 --selectedFile;
-                if(selectedFile < 0 && directoryList.size()) selectedFile += directoryList.size();
-                else if(!directoryList.size())selectedFile = 0;
+                if(selectedFile < 0 && directoryList.size() > 0) selectedFile += directoryList.size();
+                else if(directoryList.size() <= 0 && selectedFile < 0)selectedFile = 0;
             }
             processed = 1;
             break;
         case GLUT_KEY_DOWN:
             if(down) {
                 ++selectedFile;
-                if(directoryList.size()) {
+                if(directoryList.size() > 0) {
                     selectedFile %= directoryList.size();
                 }
             }
