@@ -15,6 +15,11 @@ find_package(Irrlicht)
 find_package(OGRE)
 find_package(OIS)
 
+set(Boost_USE_STATIC_LIBS ON) 
+set(Boost_USE_MULTITHREADED OFF)  
+set(Boost_USE_STATIC_RUNTIME OFF) 
+find_package(Boost 1.53.0 COMPONENTS boost_system)
+
 if( OGRE_FOUND )
   add_definitions( -DENABLE_OGRE3D )
   #set(OGRE_INCLUDE_FLAGS "-I${OGRE_INCLUDE_DIRS}")
@@ -39,7 +44,9 @@ add_subdirectory(glm)
 
 include_directories(
  ${CMAKE_CURRENT_SOURCE_DIR}
+ ${Boost_INCLUDE_DIR}
  )
+link_directories(${Boost_LIBRARY_DIR})
 
 set(SRC 
 RendererPlugin.cpp RendererPlugin.h 
@@ -55,7 +62,10 @@ iphone_orientation_plugin/iphone_orientation_listener.cpp iphone_orientation_plu
 set(RESOURCES README.md COPYING AUTHORS)
 
 add_executable(ibex ${SRC} ${IRRLICHT_PLUGIN_FILES} ${OGRE_PLUGIN_FILES})
-target_link_libraries(ibex GL GLU glut GLEW pthread X11 Xfixes Xdamage Xrandr Xrender Xcomposite Xxf86vm Xi Xext jpeg rt 
+target_link_libraries(ibex GL GLU glut GLEW
+X11 Xfixes Xdamage Xrandr Xrender Xcomposite Xxf86vm Xi Xext  pthread
+jpeg rt
+${Boost_LIBRARIES}
 ${IRRLICHT_LIBRARY} ${OGRE_LIBRARIES} ${OIS_LIBRARIES} ${OGRE_RenderSystem_GL_LIBRARIES}
 ${OGRE_Terrain_LIBRARIES}
 ${OGRE_ParticleFX_LIBRARIES}
@@ -66,7 +76,6 @@ ${OGRE_OctreeZone_LIBRARIES}
 ${OGRE_OctreeSceneManager_LIBRARIES}
 tinyxml
 glm
-
 ${RESOURCES}
 )
  
