@@ -4,11 +4,21 @@ cmake_minimum_required(VERSION 2.8)
 SET(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 SET(CMAKE_MODULE_PATH "/usr/share/OGRE/cmake/modules" ${CMAKE_MODULE_PATH})
 
-find_package(OpenGL REQUIRED)	
+find_package(OpenGL REQUIRED)
+
+IF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+    # Linux specific code
+    SET(OperatingSystem "Linux")
+
 find_package(GLUT REQUIRED)
 find_package(Irrlicht)
 find_package(OGRE)
 find_package(OIS)
+
+set(Boost_USE_STATIC_LIBS ON) 
+set(Boost_USE_MULTITHREADED OFF)  
+set(Boost_USE_STATIC_RUNTIME OFF) 
+find_package(Boost 1.53.0 COMPONENTS boost_system)
 
 if( OGRE_FOUND )
   add_definitions( -DENABLE_OGRE3D )
@@ -26,18 +36,37 @@ if( IRRLICHT_FOUND )
   set(IRRLICHT_PLUGIN_FILES "irrlicht_plugin/irrlicht_plugin.cpp")
 endif( IRRLICHT_FOUND )
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -DHAVE_LIBJPEG=1 ${IRRLICHT_INCLUDE_FLAGS} ${OGRE_INCLUDE_FLAGS}")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -DHAVE_LIBJPEG=1 ${IRRLICHT_INCLUDE_FLAGS} ${OGRE_INCLUDE_FLAGS}")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -g -DHAVE_LIBJPEG=1 ${IRRLICHT_INCLUDE_FLAGS} ${OGRE_INCLUDE_FLAGS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -g -DHAVE_LIBJPEG=1 ${IRRLICHT_INCLUDE_FLAGS} ${OGRE_INCLUDE_FLAGS}")
+ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+
+add_subdirectory(glm)
+
+include_directories(
+ ${CMAKE_CURRENT_SOURCE_DIR}
+ ${Boost_INCLUDE_DIR}
+ )
+link_directories(${Boost_LIBRARY_DIR})
 
 set(SRC 
-ibex.cpp utils.cpp distortions.cpp opengl_helpers.cpp opengl_setup_x11.cpp
-RendererPlugin.cpp
-simpleworld_plugin/SimpleWorldRendererPlugin.cpp
-iphone_orientation_plugin/iphone_orientation_listener.cpp
-glm/glm_util.c glm/glm.c glm/glmimg.c glm/glmimg_png.c glm/glmimg_jpg.c)
+RendererPlugin.cpp RendererPlugin.h 
+distortions.cpp distortions.h 
+ibex.cpp ibex.h 
+opengl_helpers.cpp opengl_helpers.h
+opengl_setup_x11.cpp opengl_setup_x11.h
+utils.cpp utils.h
+simpleworld_plugin/SimpleWorldRendererPlugin.cpp simpleworld_plugin/SimpleWorldRendererPlugin.h
+iphone_orientation_plugin/iphone_orientation_listener.cpp iphone_orientation_plugin/iphone_orientation_listener.h
+)
+
+set(RESOURCES README.md COPYING AUTHORS)
 
 add_executable(ibex ${SRC} ${IRRLICHT_PLUGIN_FILES} ${OGRE_PLUGIN_FILES})
-target_link_libraries(ibex GL GLU glut GLEW pthread X11 Xfixes Xdamage Xrandr Xrender Xcomposite Xxf86vm Xi Xext jpeg rt ${IRRLICHT_LIBRARY} ${OGRE_LIBRARIES} ${OIS_LIBRARIES} ${OGRE_RenderSystem_GL_LIBRARIES}
+target_link_libraries(ibex GL GLU glut GLEW
+X11 Xfixes Xdamage Xrandr Xrender Xcomposite Xxf86vm Xi Xext  pthread
+jpeg rt
+${Boost_LIBRARIES}
+${IRRLICHT_LIBRARY} ${OGRE_LIBRARIES} ${OIS_LIBRARIES} ${OGRE_RenderSystem_GL_LIBRARIES}
 ${OGRE_Terrain_LIBRARIES}
 ${OGRE_ParticleFX_LIBRARIES}
 ${OGRE_BSPSceneManager_LIBRARIES}
@@ -46,8 +75,11 @@ ${OGRE_PCZSceneManager_LIBRARIES}
 ${OGRE_OctreeZone_LIBRARIES}
 ${OGRE_OctreeSceneManager_LIBRARIES}
 tinyxml
+glm
+${RESOURCES}
 )
  
-
+set_target_properties( ibex PROPERTIES
+RESOURCE "${RESOURCES}" )
 
 install (DIRECTORY resources DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
