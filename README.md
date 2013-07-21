@@ -106,7 +106,7 @@ Setting up my Ubuntu 12.10 install:
     sudo apt-get install libirrlicht-dev  
 
 * Blender
-* Blender2Ogre to convert models to Ogre meshes: https://code.google.com/p/blender2ogre/
+* Blender2Ogre to convert models to Ogre meshes: [Blender2Ogre](https://code.google.com/p/blender2ogre/)
  
 To run:  
 
@@ -119,5 +119,5 @@ To run:
 
 ----
 
-Author: Hesham Wahba (http://hwahba.com)  
+Author: Hesham Wahba ([http://hwahba.com](http://hwahba.com))  
 Copyright Hesham Wahba 2012,2013
