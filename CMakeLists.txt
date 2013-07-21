@@ -37,12 +37,22 @@ ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 
 add_subdirectory(glm)
 
+include_directories(
+ ${CMAKE_CURRENT_SOURCE_DIR}
+ )
+
 set(SRC 
-ibex.cpp utils.cpp distortions.cpp opengl_helpers.cpp opengl_setup_x11.cpp
-RendererPlugin.cpp
-simpleworld_plugin/SimpleWorldRendererPlugin.cpp
-iphone_orientation_plugin/iphone_orientation_listener.cpp
+RendererPlugin.cpp RendererPlugin.h 
+distortions.cpp distortions.h 
+ibex.cpp ibex.h 
+opengl_helpers.cpp opengl_helpers.h
+opengl_setup_x11.cpp opengl_setup_x11.h
+utils.cpp utils.h
+simpleworld_plugin/SimpleWorldRendererPlugin.cpp simpleworld_plugin/SimpleWorldRendererPlugin.h
+iphone_orientation_plugin/iphone_orientation_listener.cpp iphone_orientation_plugin/iphone_orientation_listener.h
 )
+
+set(RESOURCES README.md COPYING AUTHORS)
 
 add_executable(ibex ${SRC} ${IRRLICHT_PLUGIN_FILES} ${OGRE_PLUGIN_FILES})
 target_link_libraries(ibex GL GLU glut GLEW pthread X11 Xfixes Xdamage Xrandr Xrender Xcomposite Xxf86vm Xi Xext jpeg rt ${IRRLICHT_LIBRARY} ${OGRE_LIBRARIES} ${OIS_LIBRARIES} ${OGRE_RenderSystem_GL_LIBRARIES}
@@ -55,8 +65,11 @@ ${OGRE_OctreeZone_LIBRARIES}
 ${OGRE_OctreeSceneManager_LIBRARIES}
 tinyxml
 glm
+
+${RESOURCES}
 )
  
-
+set_target_properties( ibex PROPERTIES
+RESOURCE "${RESOURCES}" )
 
 install (DIRECTORY resources DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
