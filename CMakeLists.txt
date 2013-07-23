@@ -18,9 +18,9 @@ find_package(OIS)
 set(Boost_USE_STATIC_LIBS ON) 
 set(Boost_USE_MULTITHREADED OFF)  
 set(Boost_USE_STATIC_RUNTIME OFF) 
-find_package(Boost 1.53.0 COMPONENTS boost_system)
+find_package(Boost 1.53.0 COMPONENTS filesystem system)
 
-if( OGRE_FOUND )
+if( OGRE_FOUND AND OGRE )
   add_definitions( -DENABLE_OGRE3D )
   #set(OGRE_INCLUDE_FLAGS "-I${OGRE_INCLUDE_DIRS}")
   set(OGRE_PLUGIN_FILES "ogre3d_plugin/BaseApplication.cpp" "ogre3d_plugin/TutorialApplication.cpp" "ogre3d_plugin/DotSceneLoader.cpp")
@@ -28,13 +28,13 @@ if( OGRE_FOUND )
         ${OGRE_INCLUDE_DIRS}
         ${OGRE_SAMPLES_INCLUDEPATH}
 )
-endif( OGRE_FOUND )
+endif( OGRE_FOUND AND OGRE )
 
-if( IRRLICHT_FOUND )  
+if( IRRLICHT_FOUND AND IRRLICHT )  
   add_definitions( -DENABLE_IRRLICHT )
   set(IRRLICHT_INCLUDE_FLAGS "-I${IRRLICHT_INCLUDE_DIRS}")
   set(IRRLICHT_PLUGIN_FILES "irrlicht_plugin/irrlicht_plugin.cpp")
-endif( IRRLICHT_FOUND )
+endif( IRRLICHT_FOUND AND IRRLICHT )
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -g -DHAVE_LIBJPEG=1 ${IRRLICHT_INCLUDE_FLAGS} ${OGRE_INCLUDE_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -g -DHAVE_LIBJPEG=1 ${IRRLICHT_INCLUDE_FLAGS} ${OGRE_INCLUDE_FLAGS}")
@@ -62,8 +62,8 @@ iphone_orientation_plugin/iphone_orientation_listener.cpp iphone_orientation_plu
 set(RESOURCES README.md COPYING AUTHORS)
 
 add_executable(ibex ${SRC} ${IRRLICHT_PLUGIN_FILES} ${OGRE_PLUGIN_FILES})
-target_link_libraries(ibex GL GLU glut GLEW
-X11 Xfixes Xdamage Xrandr Xrender Xcomposite Xxf86vm Xi Xext  pthread
+target_link_libraries(ibex glm GL GLU glut GLEW
+X11 Xfixes Xdamage Xrandr Xrender Xcomposite Xxf86vm Xi Xext pthread
 jpeg rt
 ${Boost_LIBRARIES}
 ${IRRLICHT_LIBRARY} ${OGRE_LIBRARIES} ${OIS_LIBRARIES} ${OGRE_RenderSystem_GL_LIBRARIES}
@@ -75,8 +75,6 @@ ${OGRE_PCZSceneManager_LIBRARIES}
 ${OGRE_OctreeZone_LIBRARIES}
 ${OGRE_OctreeSceneManager_LIBRARIES}
 tinyxml
-glm
-${RESOURCES}
 )
  
 set_target_properties( ibex PROPERTIES
