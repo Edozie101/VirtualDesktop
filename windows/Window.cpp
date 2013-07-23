@@ -47,14 +47,11 @@ void renderBitmapString(
                         float y,
                         float z,
                         void *font,
-                        char *string) {
-    
-    char *c;
-    
+                        const char *string) {
     glPushMatrix();
     glRasterPos3f(x, y,z);
     glScaled(0.001/2.0, 0.001/2.0, 0.001/2.0);
-    for (c=string; *c != '\0'; c++) {
+    for (const char *c=string; *c != '\0'; c++) {
         glutBitmapCharacter(font, *c);
     }
     glPopMatrix();
@@ -65,14 +62,12 @@ void renderStrokeFontString(
                             float y,
                             float z,
                             void *font,
-                            char *string) {
-    
-    char *c;
+                            const char *string) {
     glPushMatrix();
     glTranslatef(x, y,z);
     
     glScaled(0.001/20.0, 0.001/20.0, 0.001/20.0);
-    for (c=string; *c != '\0'; c++) {
+    for (const char *c=string; *c != '\0'; c++) {
         glutStrokeCharacter(font, *c);
     }
     
@@ -101,13 +96,13 @@ void Ibex::Window::renderInfoWindow() {
 
 void Ibex::Window::renderFileChooser() {
 #ifdef _WIN32
-	int listingOffset = 1;
+	uint listingOffset = 1;
 #else
-	int listingOffset = 2;
+	uint listingOffset = 2;
 #endif
     if(directoryChanged) {
         directoryList = Filesystem::listDirectory(currentPath.c_str());
-        int count = 0;
+        uint count = 0;
 		if(directoryList.size()) {
 			for(auto i = directoryList.end()-1; i >= (directoryList.begin()+listingOffset);++count) {
 				if(*i != "..") {
@@ -158,14 +153,14 @@ void Ibex::Window::renderFileChooser() {
     renderBitmapString(-0.095, 0.64, -0.25, GLUT_BITMAP_HELVETICA_18, "~/Backspace: Back");
     //    renderBitmapString(-0.045, 0.53, -0.25, GLUT_BITMAP_HELVETICA_18, "2. ");
     char blah[256];
-    int startIndex = (selectedFile > 28/2) ? selectedFile-28/2 : 0;
-    for(int i = startIndex,index = 0; i < startIndex+28 && i < directoryList.size(); ++i,++index) {
+    uint startIndex = (selectedFile > 28/2) ? selectedFile-28/2 : 0;
+    for(uint i = startIndex,index = 0; i < startIndex+28 && i < directoryList.size(); ++i,++index) {
         std::string pathWithoutDir = directoryList[i];
         if(directoryList[i].size() && directoryList[i][0] == '*') {
             pathWithoutDir = pathWithoutDir.substr(1);
         }
         
-        sprintf(blah,"%d. %s",i+1,(i < directoryList.size()) ? pathWithoutDir.c_str() : "---------");
+        sprintf(blah,"%ul. %s",i+1,(i < directoryList.size()) ? pathWithoutDir.c_str() : "---------");
         
         if(directoryList[i].size() && directoryList[i][0] == '*') {
             glColor4f(0.,0.,1,1);
@@ -195,8 +190,8 @@ void Ibex::Window::renderCameraChooser() {
     renderBitmapString(-0.095, 0.64, -0.25, GLUT_BITMAP_HELVETICA_18, "~/Backspace: Back");
     //    renderBitmapString(-0.045, 0.53, -0.25, GLUT_BITMAP_HELVETICA_18, "2. ");
     char blah[256];
-    int startIndex = (selectedFile > 28/2) ? selectedFile-28/2 : 0;
-    for(int i = startIndex,index = 0; i < startIndex+28 && i < cameras.size(); ++i,++index) {
+    uint startIndex = (selectedFile > 28/2) ? selectedFile-28/2 : 0;
+    for(uint i = startIndex,index = 0; i < startIndex+28 && i < cameras.size(); ++i,++index) {
         sprintf(blah,"%d. Camera %d",i+1, cameras[i]);
         
         if(selectedFile == i) {

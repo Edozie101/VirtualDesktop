@@ -95,18 +95,18 @@ public:
     void savePPMFrame(const AVFrame *pFrame, int width, int height, int iFrame) const;
     int playVideo(const char *fileName, bool isStereo);
 
-	int openCamera(bool isStereo, int cameraId);
+    int openCamera(bool isStereo, int cameraId);
     static std::vector<int> listCameras();
     void stopCapturing();
-	void stopPlaying();
+    void stopPlaying();
     
 public:
     unsigned int *videoTexture;
     unsigned int width,height;
     
 private:
-	void createVideoTextures(bool isStereo, int width, int height);
-	void initOpenCV(bool isStereo, int cameraId);
+    void createVideoTextures(bool isStereo, int width, int height);
+    void initOpenCV(bool isStereo, int cameraId);
 
     void addAudioFrame(AudioPacket avAudioFrame);
     void addVideoFrame(AudioPacket avAudioFrame);
@@ -118,10 +118,6 @@ private:
     
     VideoSyncMode videoSyncMode;
     
-	bool openCVInited;
-    bool captureVideo;
-	CvCapture *cvCapture;
-
     bool done;
     bool videoDone;
     bool audioDone;
@@ -129,9 +125,9 @@ private:
     std::queue<AudioPacket> videoQueue;
     std::queue<AVFrame*> videoFrameQueue;
 
-	std::mutex aMutex1;
-	std::mutex aMutex2;
-	std::queue<AudioPacket> audioQueue;
+    std::mutex aMutex1;
+    std::mutex aMutex2;
+    std::queue<AudioPacket> audioQueue;
     std::queue<AudioPacket> audioBufferQueue;
     
     AVStream *avVideoStream;
@@ -157,6 +153,10 @@ private:
     int             gotCompletePictureFrame,gotCompleteAudioFrame;
     int             numBytes;
     uint8_t         *buffer;
+
+    bool openCVInited;
+    bool captureVideo;
+    CvCapture *cvCapture;
     
 private:
     std::thread syncThread;

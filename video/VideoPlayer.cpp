@@ -383,19 +383,19 @@ void ibex_release_buffer(struct AVCodecContext *c, AVFrame *pic) {
 Ibex::VideoPlayer::VideoPlayer() :  videoTexture(new unsigned int[2]),
                                     width(0),
                                     height(0),
+                                    videoSyncMode(SyncExternal),
                                     done(true),
                                     videoDone(true),
                                     audioDone(true),
                                     videoClock(0),
-                                    gotCompletePictureFrame(0),
-                                    gotCompleteAudioFrame(0),
-                                    videoSyncMode(SyncExternal),
                                     avFormatCtx(NULL),
                                     avAudioCodecCtx(NULL),
                                     avAudioCodec(NULL),
-									openCVInited(false),
-									captureVideo(false),
-									cvCapture(0) {
+                                    gotCompletePictureFrame(0),
+                                    gotCompleteAudioFrame(0),
+				    openCVInited(false),
+				    captureVideo(false),
+				    cvCapture(0) {
 	videoTexture[0] = videoTexture[1] = 0;
 
     avcodec_register_all();
@@ -590,7 +590,7 @@ int Ibex::VideoPlayer::playAudio(AVCodecContext *avAudioCodecCtx) {
                 
                 if(alGetError() != AL_NO_ERROR)
                 {
-                    fprintf(stderr, "Error loading buffers[%d] :(\n", count);
+                    fprintf(stderr, "Error loading buffers[%lu] :(\n", count);
                     exit(1);
                     return 1;
                 }
@@ -650,7 +650,7 @@ int Ibex::VideoPlayer::initVideo(const char *fileName, bool isStereo) {
     // Find the first video stream
     videoStream=-1;
     audioStream=-1;
-    for(int i=0; i<avFormatCtx->nb_streams&&(videoStream<0||audioStream<0); i++) {
+    for(uint i=0; i<avFormatCtx->nb_streams&&(videoStream<0||audioStream<0); i++) {
         if(videoStream < 0 && avFormatCtx->streams[i]->codec->codec_type==AVMEDIA_TYPE_VIDEO) {
             videoStream=i;
             avVideoStream = avFormatCtx->streams[videoStream];
@@ -926,7 +926,7 @@ int Ibex::VideoPlayer::loadSyncAudioVideo(const char *fileName_, bool isStereo) 
     audioThread.join();
     audioDone = true;
     
-    for(int i = 0; i < audioBufferQueue.size(); ++i) {
+    for(uint i = 0; i < audioBufferQueue.size(); ++i) {
 		aMutex2.lock();
         AudioPacket avAudioFrame = audioBufferQueue.front();
         audioBufferQueue.pop();
@@ -1113,7 +1113,7 @@ int Ibex::VideoPlayer::playVideo(const char *fileName, bool isStereo)
     
     syncThread.join();
     
-    for(int i = 0; i < videoFrameQueue.size(); ++i) {
+    for(uint i = 0; i < videoFrameQueue.size(); ++i) {
         AVFrame *avFrame = videoFrameQueue.front();
         videoFrameQueue.pop();
         if(avFrame != NULL) {
