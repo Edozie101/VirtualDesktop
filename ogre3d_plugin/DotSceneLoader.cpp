@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "DotSceneLoader.h"
 #include "tinyxml.h"
 #include <Ogre.h>

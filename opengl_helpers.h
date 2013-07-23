@@ -8,10 +8,34 @@
 #ifndef OPENGL_HELPERS_H_
 #define OPENGL_HELPERS_H_
 
-#include <iostream>
+#include <stdio.h>
 
 // --- OpenGL ----------------------------------------------------------------
+
+#ifndef GLX_GLXEXT_PROTOTYPES
+
 #define GLX_GLXEXT_PROTOTYPES
+
+#ifdef __APPLE__
+
+#include "GL/glew.h"
+#include <OpenGL/gl.h>
+#include <OpenGL/glu.h>
+#include <OpenGL/glext.h>
+#include <GLUT/glut.h>
+
+#else
+#ifdef _WIN32
+
+#include "GL/glew.h"
+#include "GL/wglew.h"
+#include <GL/gl.h>
+#include <GL/glu.h>
+//#include <GL/glext.h>
+#include <GL/glut.h>
+
+#else
+
 #include <GL/glew.h>
 #include <GL/glxew.h>
 #include <GL/gl.h>
@@ -20,6 +44,11 @@
 #include <GL/glxext.h>
 #include <GL/glut.h>
 #include <GL/glu.h>
+
+#endif
+#endif
+
+#endif
 
 bool gluInvertMatrix(const double m[16], double invOut[16]);
 double distort2ShaderScaleFactor(double ax, double ay);
@@ -84,7 +113,7 @@ inline static bool checkForErrors()
   }
 
   if (!retVal)
-    std::cerr << "OpenGL ERROR: " << errorString << " -- " << error << std::endl;
+      fprintf(stderr, "OpenGL ERROR: %s -- %d\n", errorString, error);
 
   return retVal;
 }

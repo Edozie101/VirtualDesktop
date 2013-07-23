@@ -10,15 +10,71 @@
 
 #include "opengl_setup_x11.h"
 
-#include "math.h"
+#define _USE_MATH_DEFINES
+#include <math.h>
 
-extern GLfloat top, bottom;
-extern GLuint desktopTexture;
+#include <time.h>
+
+#include <OVR.h>
+
+class RendererPlugin;
+
+enum DisplayShape {
+  FlatDisplay,SphericalDisplay,CylindricalDisplay
+};
+
+extern DisplayShape displayShape;
+
+extern OVR::Ptr<OVR::DeviceManager>	pManager;
+extern OVR::Ptr<OVR::HMDDevice>		pHMD;
+extern OVR::Ptr<OVR::SensorDevice>	pSensor;
+extern OVR::SensorFusion			FusionResult;
+extern OVR::HMDInfo				Info;
+
+extern bool					InfoLoaded;
+extern bool					riftConnected;
+extern bool                 lensParametersChanged;
+
+extern char fpsString[32];
+
+extern char RiftMonitorName[33];
+extern int RiftDisplayId;
+extern float EyeDistance;
+extern float DistortionK[4];
+
+typedef unsigned int Display;
+typedef unsigned int XVisualInfo;
+typedef bool Bool;
+
+extern int dpy;
+extern int display;
+extern unsigned long window;
+extern unsigned long context;
+
+extern bool done;
+extern float physicalWidth,physicalHeight;
+extern float windowWidth, windowHeight;
+extern float videoWidth,videoHeight;
+extern float width,height;
+extern float textureWidth,textureHeight;
+
+extern double IOD;
+
 extern Window overlay;
+extern float top, bottom;
+extern unsigned int desktopTexture;
+extern unsigned int videoTexture[2];
+extern bool mouseBlendAlternate;
+extern unsigned int cursor;
+extern int cursorSize;
 
-extern GLuint fbos[2];
-extern GLuint textures[2];
+extern float cursorPosX;
+extern float cursorPosY;
 
+extern unsigned int fbos[2];
+extern unsigned int textures[2];
+
+extern bool resetPosition;
 extern bool showGround;
 extern bool barrelDistort;
 extern bool ortho;
@@ -27,6 +83,14 @@ extern bool USE_FBO;
 extern bool OGRE3D;
 extern bool IRRLICHT;
 extern bool SBS;
+
+extern bool controlDesktop;
+extern bool showDialog;
+
+extern double relativeMouseX;
+extern double relativeMouseY;
+extern double walkForward;
+extern double strafeRight;
 
 // ---------------------------------------------------------------------------
 // Class:    Desktop3DLocation
@@ -39,7 +103,7 @@ class Desktop3DLocation
 public:
   // Prevent unforeseen copying
   explicit Desktop3DLocation()
-    : WALK_SPEED(1.0),
+    : WALK_SPEED(0.2),//1),
       m_xRotation(0.0), m_yRotation(0.0), m_zRotation(0.0),
       m_xPosition(0.0), m_yPosition(0.0), m_zPosition(0.0) {};
   // Class not intended for inheritence
@@ -115,5 +179,27 @@ bool didInitOpenGL();
 
 void renderSkybox();
 void renderDesktopToTexture();
+
+void resizeGL(unsigned int width, unsigned int height);
+namespace Ibex {
+
+class Ibex {
+public:
+    // Instance of the class that tracks position/orientation of desktop
+    Desktop3DLocation desktop3DLocation;
+
+#ifndef _WIN32
+    struct timespec ts_start;
+#endif
+    
+    Ibex(int argc, char ** argv);
+    void render(double timeDiff);
+public:
+    RendererPlugin *renderer;
+};
+    
+}
+
+void startDesktopCapture(void *c, void *p);
 
 #endif /* IBEX_H_ */

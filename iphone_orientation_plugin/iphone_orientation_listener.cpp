@@ -1,10 +1,19 @@
+#ifdef _WIN32
+
+#include <winsock.h>
+
+#else
+
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <ifaddrs.h>
-#include <stdio.h>
-#include <sys/types.h>
 #include <sys/socket.h>
 #include <unistd.h>
+
+#endif
+
+#include <stdio.h>
+#include <sys/types.h>
 #include <string.h>
 #include <iostream>
 
@@ -106,7 +115,7 @@ static double matrix_returned[16] = {
 const double *get_orientation() {
         int i2 = 0;
         pthread_mutex_lock(&mymutex);
-        for(int i = 0; i < 16; ++i) {
+        for(int i = 0; i < 12/*16*/; ++i) {
                 if((i%4)!=3) {
                         matrix_returned[i] = matrix[i2++];
 //                      std::cerr << matrix_returned[i];
@@ -129,7 +138,7 @@ static float matrix_returned_f[16] = {
 const float *get_orientation_f() {
         int i2 = 0;
         pthread_mutex_lock(&mymutex);
-        for(int i = 0; i < 16; ++i) {
+        for(int i = 0; i < 12/*16*/; ++i) {
                 if((i%4)!=3) {
                         matrix_returned_f[i] = matrix[i2++];
 //                      std::cerr << matrix_returned[i];

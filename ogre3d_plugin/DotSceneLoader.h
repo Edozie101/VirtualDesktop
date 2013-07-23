@@ -1,6 +1,8 @@
 #ifndef DOT_SCENELOADER_H
 #define DOT_SCENELOADER_H
 
+#define OGRE_CONTAINERS_USE_CUSTOM_MEMORY_ALLOCATOR 0
+
 // Includes
 #include <OgreString.h>
 #include <OgreVector3.h>

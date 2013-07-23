@@ -80,10 +80,15 @@ bool BaseApplication::configure()
    }
 
   std::ostringstream out;
+#ifdef __APPLE__
+    out << (unsigned long)window;
+#else
   out << (unsigned long)dpy << ":";
   out << (unsigned long)screen << ":";
   out << (unsigned long)window << ":";
   out << (unsigned long)visualinfo;
+#endif
+    
 
   std::ostringstream out2;
   out2 << (unsigned long)context;

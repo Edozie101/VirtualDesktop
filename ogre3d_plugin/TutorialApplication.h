@@ -14,6 +14,8 @@ This source file is part of the
       http://www.ogre3d.org/tikiwiki/
 -----------------------------------------------------------------------------
 */
+#define OGRE_CONTAINERS_USE_CUSTOM_MEMORY_ALLOCATOR 0
+
 #ifndef __TutorialApplication_h_
 #define __TutorialApplication_h_
 
@@ -74,7 +76,16 @@ public:
           orientation[4],orientation[5],orientation[6],orientation[7],
           orientation[8],orientation[9],orientation[10],orientation[11],
           orientation[12],orientation[13],orientation[14],orientation[15]);
-      mCamera2->setCustomViewMatrix(true, m.concatenateAffine(mCamera->getViewMatrix()));
+        if(m.isAffine()) {
+          mCamera2->setCustomViewMatrix(true, m.concatenateAffine(mCamera->getViewMatrix()));
+        } else {
+            for(int i = 0 ; i < 16 ; ++i) {
+                std::cerr << orientation[i] << " ";
+                if(i%4 == 3)
+                    std::cerr << std::endl;
+            }
+            std::cerr << "problem with the orientation matrix" << std::endl;
+        }
 
       render(timeDiff_);
     }

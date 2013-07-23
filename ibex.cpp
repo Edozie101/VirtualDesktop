@@ -9,7 +9,9 @@
 // --- Standard library ------------------------------------------------------
 #include <stdlib.h>
 #include <ctype.h>
+#ifndef _WIN32
 #include <unistd.h>
+#endif
 #include <time.h>
 #include <cstdio>
 #include <cmath>
@@ -22,6 +24,26 @@
 
 // --- OpenGL ----------------------------------------------------------------
 #define GLX_GLXEXT_PROTOTYPES
+#ifdef __APPLE__
+
+#include "GL/glew.h"
+#include <OpenGL/gl.h>
+#include <OpenGL/glu.h>
+#include <OpenGL/glext.h>
+#include <GLUT/glut.h>
+
+#else
+#ifdef _WIN32
+
+#include "GL/glew.h"
+#include "GL/wglew.h"
+#include <GL/gl.h>
+#include <GL/glu.h>
+//#include <GL/glext.h>
+#include <GL/glut.h>
+
+#else
+
 #include <GL/glew.h>
 #include <GL/glxew.h>
 #include <GL/gl.h>
@@ -30,6 +52,9 @@
 #include <GL/glxext.h>
 #include <GL/glut.h>
 #include <GL/glu.h>
+
+#endif
+#endif
 
 // --- X11 -------------------------------------------------------------------
 #include "opengl_setup_x11.h"

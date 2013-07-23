@@ -14,8 +14,18 @@ This source file is part of the
       http://www.ogre3d.org/tikiwiki/
 -----------------------------------------------------------------------------
 */
+#define OGRE_CONTAINERS_USE_CUSTOM_MEMORY_ALLOCATOR 0
+
 #ifndef __BaseApplication_h_
 #define __BaseApplication_h_
+
+#define GLX_GLXEXT_PROTOTYPES
+
+#ifdef __APPLE__
+
+#include <OSX/macUtils.h>
+
+#endif
 
 #include <OgreCamera.h>
 #include <OgreEntity.h>
@@ -34,11 +44,28 @@ This source file is part of the
 #include <SdkTrays.h>
 #include <SdkCameraMan.h>
 
+#ifdef __APPLE__
+
+#define GLX_GLXEXT_PROTOTYPES
+#include "GL/glew.h"
+#include <OpenGL/gl.h>
+#include <OpenGL/glu.h>
+#include <OpenGL/glext.h>
+#include <GLUT/glut.h>
+
+#include "../ibex.h"
+
+#define Window unsigned long
+
+#else
+
 #include <X11/Xlib.h>
 #include <X11/Xregion.h>
 #include <X11/Xresource.h>
 #include <X11/X.h>
 #include <X11/Xutil.h>
+
+#endif
 
 class BaseApplication : public Ogre::FrameListener, public Ogre::WindowEventListener, public OIS::KeyListener, public OIS::MouseListener, OgreBites::SdkTrayListener
 {

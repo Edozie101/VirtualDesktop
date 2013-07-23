@@ -18,12 +18,23 @@
  A sample demonstrating how to add render system specific native code to an existing scene.
  I based this sample on the SkyDome sample, just added a FrameListener
  */
+#define OGRE_CONTAINERS_USE_CUSTOM_MEMORY_ALLOCATOR 0
 
 #ifndef __NativeRenderSystemCommands_h_
 #define __NativeRenderSystemCommands_h_
 
 // --- OpenGL ----------------------------------------------------------------
 #define GLX_GLXEXT_PROTOTYPES
+#ifdef __APPLE__
+
+#include "GL/glew.h"
+#include <OpenGL/gl.h>
+#include <OpenGL/glu.h>
+#include <OpenGL/glext.h>
+#include <GLUT/glut.h>
+
+#else
+
 #include <GL/glew.h>
 #include <GL/glxew.h>
 #include <GL/gl.h>
@@ -32,6 +43,8 @@
 #include <GL/glxext.h>
 #include <GL/glut.h>
 #include <GL/glu.h>
+
+#endif
 
 #include <OgreCamera.h>
 #include <OgreEntity.h>
@@ -70,6 +83,11 @@ protected:
 
   void NativeRender()
   {
+      static bool init = false;
+      if(!init) {
+          init = true;
+          startDesktopCapture(0, 0);
+      }
     const double s = (double)width/(double)height;
 
     glEnable(GL_DEPTH_TEST);

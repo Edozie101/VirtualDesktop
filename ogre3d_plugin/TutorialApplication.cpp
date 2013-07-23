@@ -14,6 +14,8 @@ This source file is part of the
       http://www.ogre3d.org/tikiwiki/
 -----------------------------------------------------------------------------
 */
+#define OGRE_CONTAINERS_USE_CUSTOM_MEMORY_ALLOCATOR 0
+
 #include "TutorialApplication.h"
 
 #include <OgreHardwarePixelBuffer.h>
@@ -35,7 +37,7 @@ Ogre3DRendererPlugin::~Ogre3DRendererPlugin()
 {
 }
 
-void Ogre3DRendererPlugin::setDesktopTexture(GLuint desktopTexture_) {
+void Ogre3DRendererPlugin::setDesktopTexture(unsigned int desktopTexture_) {
   this->desktopTexture = desktopTexture_;
   if(mRenderSystemCommandsRenderQueueListener) {
       mRenderSystemCommandsRenderQueueListener->desktopTexture = desktopTexture_;

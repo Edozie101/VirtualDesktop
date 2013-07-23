@@ -8,18 +8,11 @@
 #ifndef RENDERERPLUGIN_H_
 #define RENDERERPLUGIN_H_
 
-// --- OpenGL ----------------------------------------------------------------
-#define GLX_GLXEXT_PROTOTYPES
-#include <GL/glew.h>
-#include <GL/glxew.h>
-#include <GL/gl.h>
-#include <GL/glx.h>
-#include <GL/glext.h>
-#include <GL/glxext.h>
-#include <GL/glut.h>
-#include <GL/glu.h>
-
 #include "ibex.h"
+#include "Window.h"
+
+typedef unsigned long Window;
+typedef unsigned long GLXContext;
 
 class RendererPlugin {
 public:
@@ -35,7 +28,7 @@ public:
   virtual GLXContext getOpenGLContext();
 
   // set desktop texture if we are processing separately
-  virtual void setDesktopTexture(GLuint desktopTexture_) {}
+  virtual void setDesktopTexture(unsigned int desktopTexture_) {}
 
   // process message pump for plugin
   virtual void processEvents() {}
@@ -48,6 +41,9 @@ public:
 
   // do we need to swap the GLX buffer for double-buffering at the end of a render?
   virtual bool needsSwapBuffers() { return false; }
+    
+public:
+  Ibex::Window window;
 };
 
 #endif /* RENDERERPLUGIN_H_ */
