@@ -100,11 +100,12 @@ Your directory structure should look like:
 ### Linux
 Setting up my Ubuntu 12.10 install:
 
-    sudo apt-get install mesa-utils eclipse-cdt freeglut3-dev glew-utils libglew1.6-dev libxrender-dev libxrender1-dbg libxrender1 libxdamage-dev libxdamage1-dbg libxcomposite1-dbg libxcomposite-dev libxxf86vm-dev libxxf86vm1-dbg libxcb1-dev libxrandr-dev libxft-dev libx11-xcb-dev libxi-dev cmake  
-    sudo apt-get install libtinyxml-dev  
-    sudo apt-get install nvidia-current-updates-dev  
-    sudo apt-get install libirrlicht-dev  
+    sudo apt-get install mesa-utils eclipse-cdt freeglut3-dev glew-utils libglew1.6-dev libxrender-dev libxrender1-dbg libxrender1 libxdamage-dev libxdamage1-dbg libxcomposite1-dbg libxcomposite-dev libxxf86vm-dev libxxf86vm1-dbg libxcb1-dev libxrandr-dev libxft-dev libx11-xcb-dev libxi-dev cmake
+    sudo apt-get install libtinyxml-dev
+    sudo apt-get install nvidia-current-updates-dev
+    sudo apt-get install libirrlicht-dev
     sudo apt-get install libjpeg62-dev libboost1.53-all-dev
+    sudo apt-get install libudev-dev
 
 * Blender
 * Blender2Ogre to convert models to Ogre meshes: [Blender2Ogre](https://code.google.com/p/blender2ogre/)

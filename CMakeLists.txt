@@ -11,6 +11,7 @@ IF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     SET(OperatingSystem "Linux")
 
 find_package(GLUT REQUIRED)
+find_package(OculusSDK)
 find_package(Irrlicht)
 find_package(OGRE)
 find_package(OIS)
@@ -66,6 +67,7 @@ target_link_libraries(ibex glm GL GLU glut GLEW
 X11 Xfixes Xdamage Xrandr Xrender Xcomposite Xxf86vm Xi Xext pthread
 jpeg rt
 ${Boost_LIBRARIES}
+${OCULUS_LIBRARY}
 ${IRRLICHT_LIBRARY} ${OGRE_LIBRARIES} ${OIS_LIBRARIES} ${OGRE_RenderSystem_GL_LIBRARIES}
 ${OGRE_Terrain_LIBRARIES}
 ${OGRE_ParticleFX_LIBRARIES}
