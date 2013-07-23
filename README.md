@@ -105,7 +105,11 @@ Setting up my Ubuntu 12.10 install:
     sudo apt-get install nvidia-current-updates-dev
     sudo apt-get install libirrlicht-dev
     sudo apt-get install libjpeg62-dev libboost1.53-all-dev
-    sudo apt-get install libudev-dev
+    sudo apt-get install libudev-dev libopenal-dev
+
+    sudo add-apt-repository ppa:jon-severinsson/ffmpeg
+    sudo apt-get install libavcodec-dev libavdevice-dev libavfilter-dev libavformat-dev libswscale-dev libavutil-dev libx264-dev libswresample-dev # ffmpeg 0.10.7
+    sudo apt-get install libopencv-dev
 
 * Blender
 * Blender2Ogre to convert models to Ogre meshes: [Blender2Ogre](https://code.google.com/p/blender2ogre/)

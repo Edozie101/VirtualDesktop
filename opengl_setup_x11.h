@@ -82,8 +82,8 @@ extern int                     screen;
 /* our window instance */
 extern Window                  window;
 extern GLXContext              context;
-extern unsigned int            width, height;
-extern unsigned int            physicalWidth, physicalHeight;
+//extern unsigned int            width, height;
+//extern unsigned int            physicalWidth, physicalHeight;
 extern Bool                    doubleBuffered;
 
 extern XVisualInfo *visinfo;

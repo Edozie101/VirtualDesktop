@@ -1,10 +1,10 @@
 # - Try to find OculusSDK
 # Once done this will define
 #
-# OCULUSSDK_FOUND - system has OculusSDK
-# OCULUSSDK_INCLUDE_DIRS - the OculusSDK include directory
-# OCULUSSDK_LIBRARIES - Link these to use OculusSDK
-# OCULUSSDK_DEFINITIONS - Compiler switches required for using OculusSDK
+# OCULUS_FOUND - system has OculusSDK
+# OCULUS_INCLUDE_DIRS - the OculusSDK include directory
+# OCULUS_LIBRARIES - Link these to use OculusSDK
+# OCULUS_DEFINITIONS - Compiler switches required for using OculusSDK
 #
 # Copyright (c) 2006 Andreas Schneider <mail@cynapses.org>
 #
@@ -12,12 +12,12 @@
 # BSD license.
 # For details see the accompanying COPYING-CMAKE-SCRIPTS file.
 #
-if (OCULUSSDK_LIBRARIES AND OCULUSSDK_INCLUDE_DIRS)
+if (OCULUS_LIBRARIES AND OCULUS_INCLUDE_DIRS)
   # in cache already
-  set(OCULUSSDK_FOUND TRUE)
-else (OCULUSSDK_LIBRARIES AND OCULUSSDK_INCLUDE_DIRS)
+  set(OCULUS_FOUND TRUE)
+else (OCULUS_LIBRARIES AND OCULUS_INCLUDE_DIRS)
 
-  find_path(OCULUSSDK_INCLUDE_DIR
+  find_path(OCULUS_INCLUDE_DIR
     NAMES
       OVR.h OVRVersion.h
     PATHS
@@ -33,7 +33,7 @@ else (OCULUSSDK_LIBRARIES AND OCULUSSDK_INCLUDE_DIRS)
       ../../OculusSDK/LibOVR/Include
   )
 
-  find_library(OCULUSSDK_LIBRARY
+  find_library(OCULUS_LIBRARY
     NAMES
         ovr
     PATHS
@@ -47,37 +47,37 @@ else (OCULUSSDK_LIBRARIES AND OCULUSSDK_INCLUDE_DIRS)
       ../../OculusSDK/LibOVR/Lib/Linux/Release/x86_64
   )
 
-  if (OCULUSSDK_LIBRARY)
-    set(OCULUSSDK_FOUND TRUE)
-  endif (OCULUSSDK_LIBRARY)
+  if (OCULUS_LIBRARY)
+    set(OCULUS_FOUND TRUE)
+  endif (OCULUS_LIBRARY)
 
-  set(OCULUSSDK_INCLUDE_DIRS
-    ${OCULUSSDK_INCLUDE_DIR}
+  set(OCULUS_INCLUDE_DIRS
+    ${OCULUS_INCLUDE_DIR}
   )
 
-  if (OCULUSSDK_FOUND)
-    set(OCULUSSDK_LIBRARIES
-      ${OCULUSSDK_LIBRARIES}
-      ${OCULUSSDK_LIBRARY}
+  if (OCULUS_FOUND)
+    set(OCULUS_LIBRARIES
+      ${OCULUS_LIBRARIES}
+      ${OCULUS_LIBRARY}
     )
-  endif (OCULUSSDK_FOUND)
+  endif (OCULUS_FOUND)
 
-  if (OCULUSSDK_INCLUDE_DIRS AND OCULUSSDK_LIBRARIES)
-     set(OCULUSSDK_FOUND TRUE)
-  endif (OCULUSSDK_INCLUDE_DIRS AND OCULUSSDK_LIBRARIES)
+  if (OCULUS_INCLUDE_DIRS AND OCULUS_LIBRARIES)
+     set(OCULUS_FOUND TRUE)
+  endif (OCULUS_INCLUDE_DIRS AND OCULUS_LIBRARIES)
 
-  if (OCULUSSDK_FOUND)
-    if (NOT OCULUSSDK_FIND_QUIETLY)
-      message(STATUS "Found OculusSDK: ${OCULUSSDK_LIBRARIES}")
-    endif (NOT OCULUSSDK_FIND_QUIETLY)
-  else (OCULUSSDK_FOUND)
-    if (OCULUSSDK_FIND_REQUIRED)
+  if (OCULUS_FOUND)
+    if (NOT OCULUS_FIND_QUIETLY)
+      message(STATUS "Found OculusSDK: ${OCULUS_LIBRARIES}")
+    endif (NOT OCULUS_FIND_QUIETLY)
+  else (OCULUS_FOUND)
+    if (OCULUS_FIND_REQUIRED)
       message(FATAL_ERROR "Could not find OculusSDK")
-    endif (OCULUSSDK_FIND_REQUIRED)
-  endif (OCULUSSDK_FOUND)
+    endif (OCULUS_FIND_REQUIRED)
+  endif (OCULUS_FOUND)
 
-  # show the OCULUSSDK_INCLUDE_DIRS and OCULUSSDK_LIBRARIES variables only in the advanced view
-  mark_as_advanced(OCULUSSDK_INCLUDE_DIRS OCULUSSDK_LIBRARIES)
+  # show the OCULUS_INCLUDE_DIRS and OCULUS_LIBRARIES variables only in the advanced view
+  mark_as_advanced(OCULUS_INCLUDE_DIRS OCULUS_LIBRARIES)
 
-endif (OCULUSSDK_LIBRARIES AND OCULUSSDK_INCLUDE_DIRS)
+endif (OCULUS_LIBRARIES AND OCULUS_INCLUDE_DIRS)
 

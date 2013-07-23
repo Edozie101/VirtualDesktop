@@ -42,6 +42,7 @@ extern int RiftDisplayId;
 extern float EyeDistance;
 extern float DistortionK[4];
 
+#if defined(__APPLE__) or defined(WIN32)
 typedef unsigned int Display;
 typedef unsigned int XVisualInfo;
 typedef bool Bool;
@@ -50,6 +51,7 @@ extern int dpy;
 extern int display;
 extern unsigned long window;
 extern unsigned long context;
+#endif
 
 extern bool done;
 extern float physicalWidth,physicalHeight;

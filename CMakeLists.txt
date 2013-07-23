@@ -12,6 +12,7 @@ IF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 
 find_package(GLUT REQUIRED)
 find_package(OculusSDK)
+find_package(OpenAL)
 find_package(Irrlicht)
 find_package(OGRE)
 find_package(OIS)
@@ -31,21 +32,29 @@ if( OGRE_FOUND AND OGRE )
 )
 endif( OGRE_FOUND AND OGRE )
 
+if( OCULUS_FOUND )
+  include_directories( ${OCULUS_INCLUDE_DIRS} )
+endif( OCULUS_FOUND )
+
 if( IRRLICHT_FOUND AND IRRLICHT )  
   add_definitions( -DENABLE_IRRLICHT )
   set(IRRLICHT_INCLUDE_FLAGS "-I${IRRLICHT_INCLUDE_DIRS}")
   set(IRRLICHT_PLUGIN_FILES "irrlicht_plugin/irrlicht_plugin.cpp")
 endif( IRRLICHT_FOUND AND IRRLICHT )
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -g -DHAVE_LIBJPEG=1 ${IRRLICHT_INCLUDE_FLAGS} ${OGRE_INCLUDE_FLAGS}")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -g -DHAVE_LIBJPEG=1 ${IRRLICHT_INCLUDE_FLAGS} ${OGRE_INCLUDE_FLAGS}")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -g -DHAVE_LIBJPEG=1 ${IRRLICHT_INCLUDE_FLAGS} ${OGRE_INCLUDE_FLAGS} ${OCULUS_INCLUDE_FLAGS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -g -DHAVE_LIBJPEG=1 ${IRRLICHT_INCLUDE_FLAGS} ${OGRE_INCLUDE_FLAGS} ${OCULUS_INCLUDE_FLAGS}")
 ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 
 add_subdirectory(glm)
+add_subdirectory(windows)
+add_subdirectory(filesystem)
+add_subdirectory(video)
 
 include_directories(
  ${CMAKE_CURRENT_SOURCE_DIR}
  ${Boost_INCLUDE_DIR}
+ ${OCULUS_LIBRARY_DIR}
  )
 link_directories(${Boost_LIBRARY_DIR})
 
@@ -63,7 +72,10 @@ iphone_orientation_plugin/iphone_orientation_listener.cpp iphone_orientation_plu
 set(RESOURCES README.md COPYING AUTHORS)
 
 add_executable(ibex ${SRC} ${IRRLICHT_PLUGIN_FILES} ${OGRE_PLUGIN_FILES})
-target_link_libraries(ibex glm GL GLU glut GLEW
+target_link_libraries(ibex 
+glm ibex_windows ibex_filesystem ibex_video
+GL GLU glut GLEW
+openal
 X11 Xfixes Xdamage Xrandr Xrender Xcomposite Xxf86vm Xi Xext pthread
 jpeg rt
 ${Boost_LIBRARIES}
