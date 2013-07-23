@@ -72,6 +72,8 @@ static void glmImgInit(void)
     glm_do_init = 0;
     _glmTextureTarget = GL_TEXTURE_2D;
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &gl_max_texture_size);
+    if (gl_max_texture_size <= 0)
+        __glmFatalError( "glmImgInit() failed: glGetIntegerv(GL_MAX_TEXTURE_SIZE) returned %d. Maybe the OpenGL context is not initialized?", gl_max_texture_size);
 #if GLM_MAX_TEXTURE_SIZE > 0    
 #warning GLM_MAX_TEXTURE_SIZE
     if(gl_max_texture_size > GLM_MAX_TEXTURE_SIZE)
@@ -149,6 +151,7 @@ glmReadPPM(const char* filename, GLboolean alpha, int* width, int* height, int *
     fgets(head, 70, fp);
     if (strncmp(head, "P6", 2)) {
 	DBG_(__glmWarning("glmReadPPM() failed: %s: Not a raw PPM file", filename));
+	fclose(fp);
         return NULL;
     }
     
