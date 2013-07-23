@@ -104,6 +104,7 @@ Setting up my Ubuntu 12.10 install:
     sudo apt-get install libtinyxml-dev  
     sudo apt-get install nvidia-current-updates-dev  
     sudo apt-get install libirrlicht-dev  
+    sudo apt-get install libjpeg62-dev libboost1.53-all-dev
 
 * Blender
 * Blender2Ogre to convert models to Ogre meshes: [Blender2Ogre](https://code.google.com/p/blender2ogre/)
