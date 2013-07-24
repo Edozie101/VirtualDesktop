@@ -52,163 +52,164 @@ private:
 public:
 	WindowsAudioSource(Ibex::VideoPlayer *player_, AVCodecContext *avAudioCodecCtx_) : player(player_),avAudioCodecCtx(avAudioCodecCtx_),remainingBytes(-1) {
 	}
-	HRESULT AdjustFormat(WAVEFORMATEX *waveFormatEx) {
-		if(avAudioCodecCtx == 0) return 0;
+
+  HRESULT AdjustFormat(WAVEFORMATEX *waveFormatEx) {
+    if(avAudioCodecCtx == 0) return 0;
     
-		int channels, bits;
-		channels = avAudioCodecCtx->channels;//2;//av_frame_get_channels(avAudioFrame);
-		bits = avAudioCodecCtx->bits_per_coded_sample;
-		//channels = 1;
-
-		unsigned int frequency = avAudioCodecCtx->sample_rate;
-
-		waveFormatEx->wFormatTag = WAVE_FORMAT_PCM; //WAVE_FORMAT_EXTENSIBLE;
-		waveFormatEx->nChannels = channels;//(channels == 2) ? STEREO : MONO;
-		waveFormatEx->cbSize = 0;//sizeof(WAVEFORMATEXTENSIBLE)-sizeof(WAVEFORMATEX);//bits;
-		waveFormatEx->wBitsPerSample = bits;
-		waveFormatEx->nSamplesPerSec = frequency;
-		waveFormatEx->nBlockAlign = waveFormatEx->nChannels * (waveFormatEx->wBitsPerSample/8); 
-		waveFormatEx->nAvgBytesPerSec = waveFormatEx->nSamplesPerSec * waveFormatEx->nBlockAlign; 
-	
-		return 0;
-	}
-	HRESULT SetFormat(WAVEFORMATEX *waveFormatEx) {
-		return 0;
-	}
-	#ifdef _USE_XAUDIO2
-	HRESULT LoadData(XAUDIO2_BUFFER &buffer) {
-		if(avAudioCodecCtx == 0) return 0;
+    int channels, bits;
+    channels = 2;//av_frame_get_channels(avAudioFrame);
+    bits = avAudioCodecCtx->bits_per_coded_sample;
+    //channels = 1;
     
-		int channels, bits;
-		channels = 2;//av_frame_get_channels(avAudioFrame);
-		bits = avAudioCodecCtx->bits_per_coded_sample;
-		//channels = 1;
-
-		unsigned int frequency = avAudioCodecCtx->sample_rate;
-
-		unsigned long count = 0;
-		int val = 0;
-		AudioPacket avAudioFrame;
-
-		//while(!player->done) {
-
-		while(true) {//player->audioQueue.size() < 0 && !player->done) {
-			if(player->audioQueue.size() < 0 && !player->done) {
-				continue;
-			} else {
-				break;
-			}
-		}
-
-		if(player->done) return 0;
-			if(player->audioQueue.size() > 0) {
-				try {
-					player->aMutex1.lock();
-					avAudioFrame = player->audioQueue.front();
-					player->audioQueue.pop();
-					player->aMutex1.unlock();
-				} catch(...) {
-					buffer.AudioBytes = 0;
-				 buffer.pAudioData = 0;
-				return 0;
-				}
-			} else {
-				//std::this_thread::yield();
-	//            std::this_thread::sleep_for(std::chrono::milliseconds(1));
-				//continue;
-				
-				 buffer.AudioBytes = 0;
-				 buffer.pAudioData = 0;
-				return 0;
-			}
-
-			if(avAudioFrame.size > 0) {
-	             //std::cerr << "^^^ PLAYING AUDIO" << count << std::endl;
-				//channels = av_frame_get_channels(avAudioFrame.avAudioFrame);
-				//bits = avAudioCodecCtx->bits_per_coded_sample;
-
-				//frequency = avAudioCodecCtx->sample_rate;
-				//avAudioFrame.audioBuffer, avAudioFrame.size, frequency);
-				BYTE * dataBufferBuffer = new BYTE[avAudioFrame.size*channels];
-				 memcpy(dataBufferBuffer, avAudioFrame.audioBuffer, avAudioFrame.size);
-				 buffer.AudioBytes = avAudioFrame.size;
-				 buffer.pAudioData = dataBufferBuffer;
-				 //buffer.Flags = XAUDIO2_END_OF_STREAM;
-			} else {
-				buffer.AudioBytes = 0;
-				 buffer.pAudioData = 0;
-				return 0;
-			}
-
-			aMutex2.lock();
-			player->audioBufferQueue.push(avAudioFrame);
-			aMutex2.unlock();
-		//}
-		return 0;
-	}
+    unsigned int frequency = avAudioCodecCtx->sample_rate;
+    
+    waveFormatEx->wFormatTag = WAVE_FORMAT_PCM; //WAVE_FORMAT_EXTENSIBLE;
+    waveFormatEx->nChannels = channels;//(channels == 2) ? STEREO : MONO;
+    waveFormatEx->cbSize = 0;//sizeof(WAVEFORMATEXTENSIBLE)-sizeof(WAVEFORMATEX);//bits;
+    waveFormatEx->wBitsPerSample = bits;
+    waveFormatEx->nSamplesPerSec = frequency;
+    waveFormatEx->nBlockAlign = waveFormatEx->nChannels * (waveFormatEx->wBitsPerSample/8); 
+    waveFormatEx->nAvgBytesPerSec = waveFormatEx->nSamplesPerSec * waveFormatEx->nBlockAlign; 
+    
+    return 0;
+  }
+  HRESULT SetFormat(WAVEFORMATEX *waveFormatEx) {
+    return 0;
+  }
+#ifdef _USE_XAUDIO2
+  HRESULT LoadData(XAUDIO2_BUFFER &buffer) {
+    if(avAudioCodecCtx == 0) return 0;
+    
+    int channels, bits;
+    channels = avAudioCodecCtx->channels;//2;//av_frame_get_channels(avAudioFrame);
+    bits = avAudioCodecCtx->bits_per_coded_sample;
+    //channels = 1;
+    
+    unsigned int frequency = avAudioCodecCtx->sample_rate;
+    
+    unsigned long count = 0;
+    int val = 0;
+    AudioPacket avAudioFrame;
+    
+    //while(!player->done) {
+    
+    while(true) {//player->audioQueue.size() < 0 && !player->done) {
+      if(player->audioQueue.size() < 0 && !player->done) {
+	continue;
+      } else {
+	break;
+      }
+    }
+    
+    if(player->done) return 0;
+    if(player->audioQueue.size() > 0) {
+      try {
+	player->aMutex1.lock();
+	avAudioFrame = player->audioQueue.front();
+	player->audioQueue.pop();
+	player->aMutex1.unlock();
+      } catch(...) {
+	buffer.AudioBytes = 0;
+	buffer.pAudioData = 0;
+	return 0;
+      }
+    } else {
+      //std::this_thread::yield();
+      //            std::this_thread::sleep_for(std::chrono::milliseconds(1));
+      //continue;
+      
+      buffer.AudioBytes = 0;
+      buffer.pAudioData = 0;
+      return 0;
+    }
+    
+    if(avAudioFrame.size > 0) {
+      //std::cerr << "^^^ PLAYING AUDIO" << count << std::endl;
+      //channels = av_frame_get_channels(avAudioFrame.avAudioFrame);
+      //bits = avAudioCodecCtx->bits_per_coded_sample;
+      
+      //frequency = avAudioCodecCtx->sample_rate;
+      //avAudioFrame.audioBuffer, avAudioFrame.size, frequency);
+      BYTE * dataBufferBuffer = new BYTE[avAudioFrame.size*channels];
+      memcpy(dataBufferBuffer, avAudioFrame.audioBuffer, avAudioFrame.size);
+      buffer.AudioBytes = avAudioFrame.size;
+      buffer.pAudioData = dataBufferBuffer;
+      //buffer.Flags = XAUDIO2_END_OF_STREAM;
+    } else {
+      buffer.AudioBytes = 0;
+      buffer.pAudioData = 0;
+      return 0;
+    }
+    
+    aMutex2.lock();
+    player->audioBufferQueue.push(avAudioFrame);
+    aMutex2.unlock();
+    //}
+    return 0;
+  }
 #endif
-
-	AudioPacket avAudioFrameRemaining;
-	long remainingBytes;
-	HRESULT LoadData(UINT32 bufferFrameCount, BYTE *dataBuffer, DWORD *flags) {
-		if(avAudioCodecCtx == 0) return 0;
+  
+  AudioPacket avAudioFrameRemaining;
+  long remainingBytes;
+  HRESULT LoadData(UINT32 bufferFrameCount, BYTE *dataBuffer, DWORD *flags) {
+    if(avAudioCodecCtx == 0) return 0;
     
-		int channels, bits;
-		channels = 2;//av_frame_get_channels(avAudioFrame);
-		bits = avAudioCodecCtx->bits_per_coded_sample;
-		//channels = 1;
-
-		unsigned int frequency = avAudioCodecCtx->sample_rate;
-
-		unsigned long count = 0;
-		int val = 0;
-		AudioPacket avAudioFrame;
-
-		//while(!player->done) {
-		if(player->done) return 0;
-
-		int readBytes = 0;
-		while(readBytes < bufferFrameCount) {
-			if(player->done) return 0;
-
-			if(remainingBytes <= 0) {
-				if(!player->audioQueue.empty()) {
-					player->aMutex1.lock();
-					avAudioFrame = player->audioQueue.front();
-					avAudioFrameRemaining = avAudioFrame;
-					player->audioQueue.pop();
-					player->aMutex1.unlock();
-				} else {
-					std::this_thread::yield();
-		//            std::this_thread::sleep_for(std::chrono::milliseconds(1));
-					continue;
-					//return 0;
-				}
-				remainingBytes = avAudioFrame.size;
-			} else {
-				avAudioFrame = avAudioFrameRemaining;
-			}
-
-			if(avAudioFrame.size > 0) {
-	             //std::cerr << "^^^ PLAYING AUDIO" << count << std::endl;
-				int readSize = (avAudioFrame.size < (bufferFrameCount-readBytes)) ? avAudioFrame.size : (bufferFrameCount-readBytes);
-				memcpy(dataBuffer+readBytes, avAudioFrame.audioBuffer+(avAudioFrame.size-remainingBytes), readSize);
-				readBytes += readSize;
-				remainingBytes -= readSize;
-			}
-			*flags = 0;
-
-			if(remainingBytes <= 0) {
-				player->aMutex2.lock();
-				player->audioBufferQueue.push(avAudioFrame);
-				player->aMutex2.unlock();
-			}
-			//if(readBytes >= bufferFrameCount) {
-			//	return 0;
-			//}
-		}
-		return 0;
+    int channels, bits;
+    channels = 2;//av_frame_get_channels(avAudioFrame);
+    bits = avAudioCodecCtx->bits_per_coded_sample;
+    //channels = 1;
+    
+    unsigned int frequency = avAudioCodecCtx->sample_rate;
+    
+    unsigned long count = 0;
+    int val = 0;
+    AudioPacket avAudioFrame;
+    
+    //while(!player->done) {
+    if(player->done) return 0;
+    
+    int readBytes = 0;
+    while(readBytes < bufferFrameCount) {
+      if(player->done) return 0;
+      
+      if(remainingBytes <= 0) {
+	if(!player->audioQueue.empty()) {
+	  player->aMutex1.lock();
+	  avAudioFrame = player->audioQueue.front();
+	  avAudioFrameRemaining = avAudioFrame;
+	  player->audioQueue.pop();
+	  player->aMutex1.unlock();
+	} else {
+	  std::this_thread::yield();
+	  //            std::this_thread::sleep_for(std::chrono::milliseconds(1));
+	  continue;
+	  //return 0;
 	}
+	remainingBytes = avAudioFrame.size;
+      } else {
+	avAudioFrame = avAudioFrameRemaining;
+      }
+      
+      if(avAudioFrame.size > 0) {
+	//std::cerr << "^^^ PLAYING AUDIO" << count << std::endl;
+	int readSize = (avAudioFrame.size < (bufferFrameCount-readBytes)) ? avAudioFrame.size : (bufferFrameCount-readBytes);
+	memcpy(dataBuffer+readBytes, avAudioFrame.audioBuffer+(avAudioFrame.size-remainingBytes), readSize);
+	readBytes += readSize;
+	remainingBytes -= readSize;
+      }
+      *flags = 0;
+      
+      if(remainingBytes <= 0) {
+	player->aMutex2.lock();
+	player->audioBufferQueue.push(avAudioFrame);
+	player->aMutex2.unlock();
+      }
+      //if(readBytes >= bufferFrameCount) {
+      //	return 0;
+      //}
+    }
+    return 0;
+  }
 };
 
 #ifdef _USE_XAUDIO2
@@ -527,10 +528,10 @@ int Ibex::VideoPlayer::playAudio(AVCodecContext *avAudioCodecCtx) {
 //                                                   avAudioCodecCtx->sample_fmt, 1);
 //        fprintf(stderr, "data_size: %d\n", avAudioFrame.size);//data_size);
         if(avAudioFrame.size > 0) {//data_size > 0) {
-//            std::cerr << "^^^ PLAYING AUDIO" << count << std::endl;
-            channels = av_frame_get_channels(avAudioFrame.avAudioFrame);
-            bits = avAudioCodecCtx->bits_per_coded_sample;
-
+	  //            std::cerr << "^^^ PLAYING AUDIO" << count << std::endl;
+	  channels = av_frame_get_channels(avAudioFrame.avAudioFrame);
+	  bits = avAudioCodecCtx->bits_per_coded_sample;
+	  
 #ifdef OPENAL
             format = 0;
 //            channels = 2;
