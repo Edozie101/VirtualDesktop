@@ -130,9 +130,6 @@ GLfloat cursorPosY(0);
 
 GLuint cursorTexture(0);
 
-static int xi_opcode;
-static int xfixes_event_base;
-
 double walkForward = 0;
 double strafeRight = 0;
 
