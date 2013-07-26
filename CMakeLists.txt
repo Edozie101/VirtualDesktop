@@ -50,6 +50,7 @@ add_subdirectory(glm)
 add_subdirectory(windows)
 add_subdirectory(filesystem)
 add_subdirectory(video)
+add_subdirectory(x11)
 
 include_directories(
  ${CMAKE_CURRENT_SOURCE_DIR}
@@ -73,7 +74,7 @@ set(RESOURCES README.md COPYING AUTHORS)
 
 add_executable(ibex ${SRC} ${IRRLICHT_PLUGIN_FILES} ${OGRE_PLUGIN_FILES})
 target_link_libraries(ibex 
-glm ibex_windows ibex_filesystem ibex_video
+ibex_windows ibex_filesystem ibex_video ibex_x11 ibex_glm
 GL GLU glut GLEW
 openal
 X11 Xfixes Xdamage Xrandr Xrender Xcomposite Xxf86vm Xi Xext pthread

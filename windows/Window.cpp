@@ -13,7 +13,7 @@
 #include "../filesystem/Filesystem.h"
 #include <algorithm>
 #include <string>
-#include "../video/VideoPlayer.h"
+#include "../video/VLCVideoPlayer.h"
 
 #ifdef __APPLE__
 #include <Carbon/Carbon.h>
@@ -322,7 +322,7 @@ int Ibex::Window::processKey(unsigned short keyCode, int down) {
                     directoryChanged = true;
                 }
                 visibleWindow = CameraChooser;
-                cameras = VideoPlayer::listCameras();
+                cameras = VLCVideoPlayer::listCameras();
             }
             
             processed = 1;
@@ -389,7 +389,7 @@ int Ibex::Window::processKey(unsigned char key, int down) {
                     directoryChanged = true;
                 }
                 visibleWindow = CameraChooser;
-                cameras = VideoPlayer::listCameras();
+                cameras = VLCVideoPlayer::listCameras();
             }
             
             processed = 1;

@@ -6,6 +6,7 @@
  */
 #include <iostream>
 
+#include "ibex.h"
 #include "opengl_setup_x11.h"
 
 GLXFBConfig fbconfig;
@@ -17,8 +18,8 @@ Window                  window;
 GLXContext              context;
 XF86VidModeModeInfo     desktopMode; // original desktop mode which we save so we can restore it later
 Bool                    doubleBuffered;
-unsigned int            width, height;
-unsigned int            physicalWidth, physicalHeight;
+//unsigned int            width, height;
+//unsigned int            physicalWidth, physicalHeight;
 
 XVisualInfo *visinfo;
 

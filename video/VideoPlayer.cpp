@@ -1202,7 +1202,7 @@ int Ibex::VideoPlayer::openCamera(bool isStereo, int cameraId) {
 								 formatIn, GL_UNSIGNED_BYTE, cameraCapture->imageData+(width*numBytes));
 				} else {
 					glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height/2,
-								 formatIn, GL_UNSIGNED_BYTE, avFrameRGB->data[0]);
+								 formatIn, GL_UNSIGNED_BYTE, cameraCapture->imageData);
 					glBindTexture(GL_TEXTURE_2D, videoTexture[0]);
 					glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height/2,
 								 formatIn, GL_UNSIGNED_BYTE, cameraCapture->imageData+(width*numBytes));

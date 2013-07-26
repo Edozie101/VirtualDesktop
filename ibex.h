@@ -36,6 +36,7 @@ extern bool					riftConnected;
 extern bool                 lensParametersChanged;
 
 extern char fpsString[32];
+extern char mResourcePath[1024];
 
 extern char RiftMonitorName[33];
 extern int RiftDisplayId;
@@ -49,9 +50,9 @@ typedef bool Bool;
 
 extern int dpy;
 extern int display;
-extern unsigned long window;
 extern unsigned long context;
 #endif
+extern unsigned long window;
 
 extern bool done;
 extern float physicalWidth,physicalHeight;
@@ -65,6 +66,7 @@ extern double IOD;
 extern Window overlay;
 extern float top, bottom;
 extern unsigned int desktopTexture;
+extern GLuint desktopFBO;
 extern unsigned int videoTexture[2];
 extern bool mouseBlendAlternate;
 extern unsigned int cursor;
@@ -72,6 +74,7 @@ extern int cursorSize;
 
 extern float cursorPosX;
 extern float cursorPosY;
+extern GLuint cursorTexture;
 
 extern unsigned int fbos[2];
 extern unsigned int textures[2];

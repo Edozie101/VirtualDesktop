@@ -310,7 +310,7 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
 }
 
 Window SimpleWorldRendererPlugin::getWindowID() {
-  return window;
+  return ::window;
 }
 
 bool SimpleWorldRendererPlugin::needsSwapBuffers() {
