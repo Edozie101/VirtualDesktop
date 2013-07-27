@@ -16,57 +16,61 @@ int riftResolutionX = 0;
 int riftResolutionY = 0;
 
 void initRift() {
-	OVR::System::Init(OVR::Log::ConfigureDefaultLog(OVR::LogMask_All));
+  OVR::System::Init(OVR::Log::ConfigureDefaultLog(OVR::LogMask_All));
 
-	pManager = *OVR::DeviceManager::Create();
+  pManager = *OVR::DeviceManager::Create();
 
-	//pManager->SetMessageHandler(this);
+  //pManager->SetMessageHandler(this);
 
-	pHMD = *pManager->EnumerateDevices<OVR::HMDDevice>().CreateDevice();
+  pHMD = *pManager->EnumerateDevices<OVR::HMDDevice>().CreateDevice();
 
-	if (pHMD)
+  if (pHMD)
     {
-		pSensor = *pHMD->GetSensor();
+      pSensor = *pHMD->GetSensor();
 
-        InfoLoaded = pHMD->GetDeviceInfo(&Info);
+      InfoLoaded = pHMD->GetDeviceInfo(&Info);
 
-		strncpy(Info.DisplayDeviceName, RiftMonitorName, 32);
+      strncpy(Info.DisplayDeviceName, RiftMonitorName, 32);
 
-		RiftDisplayId = Info.DisplayId;
+      RiftDisplayId = Info.DisplayId;
 
-		EyeDistance = Info.InterpupillaryDistance;
-		DistortionK[0] = Info.DistortionK[0];
-		DistortionK[1] = Info.DistortionK[1];
-		DistortionK[2] = Info.DistortionK[2];
-		DistortionK[3] = Info.DistortionK[3];
-	}
-	else
-	{
-		pSensor = *pManager->EnumerateDevices<OVR::SensorDevice>().CreateDevice();
-	}
+      EyeDistance = Info.InterpupillaryDistance;
+      DistortionK[0] = Info.DistortionK[0];
+      DistortionK[1] = Info.DistortionK[1];
+      DistortionK[2] = Info.DistortionK[2];
+      DistortionK[3] = Info.DistortionK[3];
+    }
+  else
+    {
+      pSensor = *pManager->EnumerateDevices<OVR::SensorDevice>().CreateDevice();
+    }
 
-	if (pSensor)
-	{
-	   FusionResult.AttachToSensor(pSensor);
+  if (pSensor)
+    {
+      FusionResult.AttachToSensor(pSensor);
+      FusionResult.SetPredictionEnabled(true);
+      float motionPred = FusionResult.GetPredictionDelta(); // adjust in 0.01 increments
+      if(motionPred < 0) motionPred = 0;
+      FusionResult.SetPrediction(motionPred);
 
-	   if(InfoLoaded) {
-		   riftConnected = true;
+      if(InfoLoaded) {
+	riftConnected = true;
 
-		   riftX = Info.DesktopX;
-		   riftY = Info.DesktopY;
+	riftX = Info.DesktopX;
+	riftY = Info.DesktopY;
 
-		   riftResolutionX = Info.HResolution;
-		   riftResolutionY = Info.VResolution;
-	   }
-	}
+	riftResolutionX = Info.HResolution;
+	riftResolutionY = Info.VResolution;
+      }
+    }
 
 #ifdef WIN32
-	getRiftDisplay();
+  getRiftDisplay();
 #endif
 }
 void cleanUpRift() {
-	pSensor.Clear();
-	pManager.Clear();
+  pSensor.Clear();
+  pManager.Clear();
 
-	OVR::System::Destroy();
+  OVR::System::Destroy();
 }

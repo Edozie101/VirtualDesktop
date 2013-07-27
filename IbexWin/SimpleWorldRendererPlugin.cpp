@@ -186,7 +186,7 @@ void SimpleWorldRendererPlugin::init() {
 double orientationRift[16];
 double *getRiftOrientation() {
 	
-	Quatf quaternion = FusionResult.GetOrientation();
+  Quatf quaternion = FusionResult.GetPredictedOrientation(); //FusionResult.GetOrientation();
 
 		//float yaw, pitch, roll;
 		//quaternion.GetEulerAngles<Axis_Y, Axis_X, Axis_Z>(&yaw, &pitch, &roll);

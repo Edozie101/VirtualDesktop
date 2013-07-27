@@ -700,6 +700,10 @@ static void initRift() {
 	if (pSensor)
 	{
 	   FusionResult.AttachToSensor(pSensor);
+	   FusionResult.SetPredictionEnabled(true);
+	   float motionPred = FusionResult.GetPredictionDelta(); // adjust in 0.01 increments
+	   if(motionPred < 0) motionPred = 0;
+	   FusionResult.SetPrediction(motionPred);
 
 	   if(InfoLoaded) {
 		   riftConnected = true;
