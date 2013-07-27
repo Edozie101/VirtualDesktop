@@ -116,6 +116,7 @@ static GLuint make_program(GLuint vertex_shader, GLuint fragment_shader)
   glAttachShader(program, vertex_shader);
   glAttachShader(program, fragment_shader);
   glLinkProgram(program);
+  checkForErrors();
 
   glGetProgramiv(program, GL_LINK_STATUS, &program_ok);
   checkForErrors();
@@ -130,12 +131,14 @@ static GLuint make_program(GLuint vertex_shader, GLuint fragment_shader)
 
   a_position = glGetAttribLocation(program, "a_position");
   a_texCoord = glGetAttribLocation(program, "a_texCoord");
-    
+
   textureUniform = glGetUniformLocation(program, "texture");
-  glUniform1i(textureUniform, 0);
   lensTextureUniform = glGetUniformLocation(program, "lensTexture");
+
+  glUseProgram(program);
+  glUniform1i(textureUniform, 0);
   glUniform1i(lensTextureUniform, 1);
-    
+
   checkForErrors();
   std::cerr << "make_program end" << std::endl;
     
@@ -343,6 +346,7 @@ int init_distortion_shader()
   char path[2048];
   strcpy(path, mResourcePath);
   strcat(path, "/resources/shaders/distortions.v.glsl");
+  std::cerr << "loading shader: " << path << std::endl;
   distortion_shader.vertex_shader = make_shader(
 						GL_VERTEX_SHADER,
 						path
@@ -352,6 +356,7 @@ int init_distortion_shader()
 
   strcpy(path, mResourcePath);
   strcat(path, "/resources/shaders/distortions.f.glsl");
+  std::cerr << "loading shader: " << path << std::endl;
   distortion_shader.fragment_shader = make_shader(
 						  GL_FRAGMENT_SHADER,
 						  path
@@ -414,6 +419,7 @@ int init_distortion_shader_cache()
   char path[2048];
   strcpy(path, mResourcePath);
   strcat(path, "/resources/shaders/distortions.v.glsl");
+  std::cerr << "loading shader: " << path << std::endl;
   distortion_shader_cache.vertex_shader = make_shader(
 						      GL_VERTEX_SHADER,
 						      path
@@ -423,6 +429,7 @@ int init_distortion_shader_cache()
     
   strcpy(path, mResourcePath);
   strcat(path, "/resources/shaders/distortions_cache.f.glsl");
+  std::cerr << "loading shader: " << path << std::endl;
   distortion_shader_cache.fragment_shader = make_shader(
 							GL_FRAGMENT_SHADER,
 							path

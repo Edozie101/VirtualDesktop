@@ -12,25 +12,37 @@
 # BSD license.
 # For details see the accompanying COPYING-CMAKE-SCRIPTS file.
 #
-if (OCULUS_LIBRARIES AND OCULUS_INCLUDE_DIRS)
+if (OCULUS_LIBRARIES AND OCULUS_INCLUDE_DIRS AND OCULUS_LIBRARY_DIR)
   # in cache already
   set(OCULUS_FOUND TRUE)
-else (OCULUS_LIBRARIES AND OCULUS_INCLUDE_DIRS)
+else (OCULUS_LIBRARIES AND OCULUS_INCLUDE_DIRS AND OCULUS_LIBRARY_DIR)
 
   find_path(OCULUS_INCLUDE_DIR
     NAMES
       OVR.h OVRVersion.h
     PATHS
       /usr/include
-      /usr/include/irrlicht
       /usr/local/include
-      /usr/local/include/irrlicht
       /opt/local/include
       /sw/include
       ~/OculusSDK/LibOVR/Include
       ~/Downloads/OculusSDK/LibOVR/Include
       ../OculusSDK/LibOVR/Include
       ../../OculusSDK/LibOVR/Include
+  )
+
+find_path(OCULUS_LIBRARY_DIR
+    NAMES
+      libovr.a
+    PATHS
+      /usr/lib
+      /usr/local/lib
+      /opt/local/lib
+      /sw/lib
+      ~/OculusSDK/LibOVR/Lib/Linux/Release/x86_64
+      ~/Downloads/OculusSDK/LibOVR/Lib/Linux/Release/x86_64
+      ../OculusSDK/LibOVR/Lib/Linux/Release/x86_64
+      ../../OculusSDK/LibOVR/Lib/Linux/Release/x86_64
   )
 
   find_library(OCULUS_LIBRARY
@@ -79,5 +91,5 @@ else (OCULUS_LIBRARIES AND OCULUS_INCLUDE_DIRS)
   # show the OCULUS_INCLUDE_DIRS and OCULUS_LIBRARIES variables only in the advanced view
   mark_as_advanced(OCULUS_INCLUDE_DIRS OCULUS_LIBRARIES)
 
-endif (OCULUS_LIBRARIES AND OCULUS_INCLUDE_DIRS)
+endif (OCULUS_LIBRARIES AND OCULUS_INCLUDE_DIRS AND OCULUS_LIBRARY_DIR)
 

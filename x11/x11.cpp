@@ -1,4 +1,9 @@
 #include "x11.h"
+#include "../iphone_orientation_plugin/iphone_orientation_listener.h"
+#include "../simpleworld_plugin/SimpleWorldRendererPlugin.h"
+#include "../sixense/sixense_controller.h"
+#include "../oculus/Rift.h"
+#include "../ibex.h"
 
 extern "C" {
 #define HAVE_LIBJPEG 1
@@ -9,6 +14,7 @@ extern "C" {
 #include "../RendererPlugin.h"
 #include "../opengl_helpers.h"
 
+static Ibex::Ibex *ibex = nullptr;
 
 // ---------------------------------------------------------------------------
 // Class:    WindowInfo
@@ -628,12 +634,12 @@ void debugRawMotion(XIRawEvent *event)
 
 
 // ---------------------------------------------------------------------------
-// Function: processRawMotion
+// Function: processRawMotionX11
 // Design:   Belongs to Input Hardware Control component
 // Purpose:  Modifies desktop orientation/position using mouse as a tracker
 // Updated:  Sep 10, 2012
 // ---------------------------------------------------------------------------
-void processRawMotion(XIRawEvent *event, Desktop3DLocation& loc)
+void processRawMotionX11(XIRawEvent *event, Desktop3DLocation& loc)
 {
   double *raw_valuator = event->raw_values;
   double *valuator = event->valuators.values;
@@ -643,18 +649,18 @@ void processRawMotion(XIRawEvent *event, Desktop3DLocation& loc)
     if (XIMaskIsSet(event->valuators.mask, i)) {
       switch (i) {
       case 0:
-        yRotation = loc.getYRotation();
-        yRotation += (double)(*valuator - *raw_valuator) /
-                     (double)width * 180.0;
-        loc.setYRotation(yRotation);
-        relativeMouseY = (double)(*valuator - *raw_valuator);
+        //yRotation = loc.getYRotation();
+        //yRotation += (double)(*valuator - *raw_valuator) /
+        //             (double)width * 180.0;
+        //loc.setYRotation(yRotation);
+        relativeMouseY += (double)(*valuator - *raw_valuator);
         break;
       case 1:
-        xRotation = loc.getXRotation();
-        xRotation += (double)(*valuator - *raw_valuator) /
-                     (double)width * 180.0;
-        loc.setXRotation(xRotation);
-        relativeMouseX = (double)(*valuator - *raw_valuator);
+        //xRotation = loc.getXRotation();
+        //xRotation += (double)(*valuator - *raw_valuator) /
+        //             (double)width * 180.0;
+        //loc.setXRotation(xRotation);
+        relativeMouseX += (double)(*valuator - *raw_valuator);
         break;
       }
       valuator++;
@@ -843,4 +849,209 @@ void renderDesktopToTexture()
     }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
   }
+}
+
+// ===========================================================================
+// Function: main
+// Design:   Should be split into X11, OpenGL and architectural to glue them
+// Purpose:  Initializes and runs the rendering loop for 3D desktop
+// Updated:  Sep 10, 2012
+// TODO:     Event loop should be pulled out of main. In large software
+//           projects main() is to parse input arguments, initialize the code
+//           and pass the control over to the engine.
+// ===========================================================================
+int main(int argc, char ** argv)
+{
+  getcwd(mResourcePath, sizeof(mResourcePath));
+
+  initRift();
+  FusionResult.Reset();
+
+  // Instance of the class that tracks position/orientation of desktop
+  Desktop3DLocation desktop3DLocation;
+
+  prep_root();
+
+  XEvent event;
+  Bool done = False;
+
+  XWindowAttributes attr;
+  XGetWindowAttributes( dpy, root, &attr );
+  width = attr.width;
+  height = attr.height;
+  physicalWidth = width;
+  physicalHeight = height;
+  std::cerr << "Virtual width: " << width << " height: " << height << std::endl;
+
+  if(OGRE3D) {
+#ifdef ENABLE_OGRE3D
+    createWindow(dpy, root);
+    XIfEvent(dpy, &event, WaitForNotify, (char*)window);
+    bool r = glXMakeCurrent(dpy, window, context);
+    std::cerr << "* glXMakeCurrent(dpy, window, context): " << r << std::endl;
+    //renderer = new Ogre3DRendererPlugin(dpy, screen, window, visinfo, (unsigned long)context);
+    //renderer->init();
+#endif
+  } else {
+    createWindow(dpy, root);
+    XIfEvent(dpy, &event, WaitForNotify, (char*)window);
+  }
+
+  std::cerr << "Physical Width x Height: " << physicalWidth << "x" << physicalHeight << std::endl;
+
+  //glutInit(&argc, argv);
+
+  prep_overlay();
+  //if(renderer->getWindowID()) {
+  //  window = renderer->getWindowID();
+  //}
+  prep_stage(window);
+//  XIfEvent(dpy, &event, WaitForNotify, (char*)overlay);
+
+
+  //setup_iphone_listener();
+  std::cerr << "dpy: " << dpy << ", display: " << display << ", " << window << std::endl;
+
+  // Set X error handler here since expected errors on some window mappings
+  XSetErrorHandler(errorHandler);
+
+  XFixesHideCursor (dpy, overlay);
+  setup_hotkey(dpy);
+
+  // loadMonitorModel();
+
+  struct timespec ts_start;
+  clock_gettime(CLOCK_MONOTONIC, &ts_start);
+
+  XEvent peekEvent;
+  int pointerX, pointerY;
+  unsigned int pointerMods;
+  // wait for events and eat up cpu. ;-)
+  while (!done) {
+    // handle the events in the queue
+    while (XPending(dpy) > 0) {
+      XNextEvent(dpy, &event);
+      XGenericEventCookie *cookie = &event.xcookie;
+
+      if (event.xcookie.extension == xi_opcode &&
+          event.xcookie.type == GenericEvent) {
+        XGetEventData(dpy, cookie);
+        XIDeviceEvent *xi_event = (XIDeviceEvent*)event.xcookie.data;
+
+        switch (xi_event->evtype) {
+        case XI_KeyPress:
+          if (!controlDesktop) {
+            processXInput2Key(xi_event, true, desktop3DLocation);
+          }
+          break;
+        case XI_KeyRelease:
+          if (!controlDesktop) {
+            processXInput2Key(xi_event, false, desktop3DLocation);
+          }
+          break;
+        case XI_RawMotion:
+          if (!controlDesktop) {
+            processRawMotionX11((XIRawEvent*)event.xcookie.data,
+                             desktop3DLocation);
+          }
+          break;
+        }
+
+        XFreeEventData(dpy, cookie);
+        continue;
+      }
+
+      if (event.xany.type == xfixes_event_base + XFixesCursorNotify) {
+        XFixesCursorNotifyEvent *notify_event;
+        notify_event = (XFixesCursorNotifyEvent *)(&event);
+
+        if (notify_event->subtype == XFixesDisplayCursorNotify) {
+          getCursorTexture();
+        }
+        continue;
+      }
+
+      switch (event.type) {
+        case Expose:
+        case ConfigureNotify:
+        case MapNotify:
+        case DestroyNotify:
+        case UnmapNotify:
+          unbindRedirectedWindow(dpy, event.xclient.window);
+          break;
+
+        case ButtonPress:
+        case ButtonRelease:
+          pointerX = event.xbutton.x_root;
+          pointerY = event.xbutton.y_root;
+          pointerMods = event.xbutton.state;
+          break;
+
+        case KeyPress:
+        case KeyRelease:
+          pointerX = event.xkey.x_root;
+          pointerY = event.xkey.y_root;
+          pointerMods = event.xbutton.state;
+          if (event.type == KeyRelease) {
+            processKey(event.xkey);
+          }
+          break;
+
+        case MotionNotify:
+          while (XPending (dpy)) {
+            XPeekEvent (dpy, &peekEvent);
+            if (peekEvent.type != MotionNotify)
+              break;
+            XNextEvent (dpy, &event);
+          }
+
+          pointerX = event.xmotion.x_root;
+          pointerY = event.xmotion.y_root;
+          pointerMods = event.xbutton.state;
+          break;
+
+        case EnterNotify:
+        case LeaveNotify:
+          pointerX = event.xcrossing.x_root;
+          pointerY = event.xcrossing.y_root;
+          pointerMods = event.xbutton.state;
+          break;
+        default:
+          break;
+      }
+    }
+
+    struct timespec ts_current;
+    clock_gettime(CLOCK_MONOTONIC, &ts_current);
+
+    /*
+    if (controlDesktop) {
+      walkForward = strafeRight = 0;
+    }
+    */
+    double timeDiff = (double)(ts_current.tv_sec - ts_start.tv_sec) + (double)(ts_current.tv_nsec - ts_start.tv_nsec) * 1.0e-09;
+
+    /*
+    desktop3DLocation.walk(walkForward, strafeRight, timeDiff);
+
+    renderer->move(walkForward, strafeRight, jump, relativeMouseX, relativeMouseY);
+    renderer->processEvents();*/
+
+    if(ibex == nullptr) {
+      ibex = new Ibex::Ibex(argc, argv);//0,nullptr);
+    }
+
+    ibex->render(timeDiff);
+    //renderGL(desktop3DLocation, timeDiff, renderer);
+    
+
+    relativeMouseX = 0;
+    relativeMouseY = 0;
+
+    ts_start = ts_current;
+  }
+
+  destroyWindow();
+
+  return 0;
 }

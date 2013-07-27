@@ -62,6 +62,7 @@
 
 #include "opengl_helpers.h"
 #include "iphone_orientation_plugin/iphone_orientation_listener.h"
+#include "sixense/sixense_controller.h"
 #include "distortions.h"
 
 #define HAVE_LIBJPEG 1
@@ -129,7 +130,6 @@ int cursorSize = 32;
 GLfloat cursorPosX(0);
 GLfloat cursorPosY(0);
 
-GLuint texture(0);
 GLuint cursorTexture(0);
 
 double walkForward = 0;
@@ -317,8 +317,6 @@ void renderGL(Desktop3DLocation& loc, double timeDiff_, RendererPlugin *renderer
     frame = 0;
   }
 
-  renderer->step(loc, timeDiff_);
-
   if (!initedOpenGL) {
     initedOpenGL = true;
 
@@ -349,21 +347,22 @@ void renderGL(Desktop3DLocation& loc, double timeDiff_, RendererPlugin *renderer
       std::cerr << "Got fbconfig: " << fbconfig << std::endl;
     }
 
-    bool success = init_distortion_shader();
-    if (!success) {
-      std::cerr << "Failed to init distortion shader!" << std::endl;
-      exit(1);
-    }
+	if(!OGRE3D) {
+		  checkForErrors();
+		  std::cerr << "init_distortion_shader" << std::endl;
+		  bool success = init_distortion_shader();
+		  if (!success) {
+		      std::cerr << "Failed to init distortion shader!" << std::endl;
+		      exit(1);
+		  }
+		  success = init_distortion_shader_cache();
+		  if (!success) {
+		      std::cerr << "Failed to init distortion shader cache!" << std::endl;
+		      exit(1);
+		  }
 
-    if (texture == 0) {
-      std::cout << "gen texture" << std::endl;
-      glGenTextures(1, &texture);
-      checkForErrors();
-      std::cout << "gen texture done" << std::endl;
-    }
-
-    if (USE_FBO) prep_framebuffers();
-
+		  if (USE_FBO) prep_framebuffers();
+	  }
     renderer->setDesktopTexture(desktopTexture);
 
     getCursorTexture();
@@ -374,10 +373,28 @@ void renderGL(Desktop3DLocation& loc, double timeDiff_, RendererPlugin *renderer
     renderDesktopToTexture();
     restoreState();
   }
+  renderer->step(loc, timeDiff_);
 
   if(renderer->needsSwapBuffers()) {
     glXSwapBuffers(display, window);
   }
+}
+
+void resizeGL(unsigned int width, unsigned int height)
+{
+	windowWidth = width;
+	windowHeight = height;
+
+    /* prevent divide-by-zero */
+    if (height == 0)
+        height = 1;
+    glViewport(0, 0, width, height);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+//    gluPerspective(45.0f, 1, 0.1f, 100.0f);//(GLfloat)width / (GLfloat)height, 0.1f, 100.0f);
+    gluPerspective(110.0f, 0.81818181, 0.01f, 1000.0f);
+//    gluPerspective(120.0f, 0.75, 0.1f, 100.0f);//(GLfloat)width / (GLfloat)height, 0.1f, 100.0f);
+    glMatrixMode(GL_MODELVIEW);
 }
 
 // ---------------------------------------------------------------------------
@@ -425,228 +442,126 @@ double relativeMouseY = 0;
 
 static bool jump = false;
 
-// ===========================================================================
-// Function: main
-// Design:   Should be split into X11, OpenGL and architectural to glue them
-// Purpose:  Initializes and runs the rendering loop for 3D desktop
-// Updated:  Sep 10, 2012
-// TODO:     Event loop should be pulled out of main. In large software
-//           projects main() is to parse input arguments, initialize the code
-//           and pass the control over to the engine.
-// ===========================================================================
-int main(int argc, char ** argv)
-{
-  int c;
-  while ((c = getopt(argc, argv, "oihm")) != -1)
-    switch (c) {
-    case 'o':
-      OGRE3D = true;
-      break;
-    case 'i':
-      IRRLICHT = true;
-      break;
-    case 'm':
-      SBS = false;
-      break;
-    case 'h':
-    case '?':
-    default:
-      if (isprint(optopt))
-        fprintf(stderr, "Unknown option `-%c'.\n", optopt);
-      else
-        fprintf(stderr, "Unknown option character `\\x%x'.\n", optopt);
-      return 1;
-    }
-  
-  getcwd(mResourcePath, sizeof(mResourcePath));
-
-  // Instance of the class that tracks position/orientation of desktop
-  Desktop3DLocation desktop3DLocation;
-
-  prep_root();
-
-  XEvent event;
-  Bool done = False;
-
-  XWindowAttributes attr;
-  XGetWindowAttributes( dpy, root, &attr );
-  width = attr.width;
-  height = attr.height;
-  physicalWidth = width;
-  physicalHeight = height;
-  std::cerr << "Virtual width: " << width << " height: " << height << std::endl;
-
-  if(OGRE3D) {
+Ibex::Ibex::Ibex(int argc, char ** argv) {
+    int c;
+#ifndef _WIN32
+    while (argc > 0 && (c = getopt(argc, argv, "oihm")) != -1)
+        switch (c) {
+            case 'o':
+                OGRE3D = true;
+                break;
+            case 'i':
+                IRRLICHT = true;
+                break;
+            case 'm':
+                SBS = false;
+                break;
+            case 'h':
+            case '?':
+            default:
+                if (isprint(optopt))
+                    fprintf(stderr, "Unknown option `-%c'.\n", optopt);
+                else
+                    fprintf(stderr, "Unknown option character `\\x%x'.\n", optopt);
+                return;// 1;
+        }
+#endif
+    
+    //  prep_root();
+    
+    std::cerr << "Virtual width: " << width << " height: " << height << std::endl;
+    
+    if(!OGRE3D)
+        initGL();
+    
+    setup_iphone_listener();
+    
+    if(OGRE3D) {
 #ifdef ENABLE_OGRE3D
-    createWindow(dpy, root);
-    XIfEvent(dpy, &event, WaitForNotify, (char*)window);
-    bool r = glXMakeCurrent(dpy, window, context);
-    std::cerr << "* glXMakeCurrent(dpy, window, context): " << r << std::endl;
-    renderer = new Ogre3DRendererPlugin(dpy, screen, window, visinfo, (unsigned long)context);
-    renderer->init();
+//        unsigned long root = 0;
+        unsigned long screen = 0;
+        unsigned int visinfo = 0;
+        unsigned int dpy2 = 0;
+//        createWindow(dpy, root);
+#if defined(WIN32) OR defined(__APPLE__)
+        renderer = new Ogre3DRendererPlugin(&dpy2, screen, window, &visinfo, (unsigned long)context);
+#else
+	renderer = new Ogre3DRendererPlugin(dpy, screen, window, visinfo, (unsigned long)context);
 #endif
-  } else if(IRRLICHT) {
+        renderer->init();
+        renderer->processEvents();
+        return;
+        
+#endif
+    } else if(IRRLICHT) {
 #ifdef ENABLE_IRRLICHT
-    renderer = new IrrlichtRendererPlugin();
-    renderer->init();
+        renderer = new IrrlichtRendererPlugin();
+        renderer->init();
 #endif
-    dpy = display;
-//    irrlicht_run_loop();
-  } else {
-    createWindow(dpy, root);
-    XIfEvent(dpy, &event, WaitForNotify, (char*)window);
-
-    renderer = new SimpleWorldRendererPlugin();
-    renderer->init();
-  }
-
-  std::cerr << "Physical Width x Height: " << physicalWidth << "x" << physicalHeight << std::endl;
-
-  glutInit(&argc, argv);
-
-  prep_overlay();
-  if(renderer->getWindowID()) {
-    window = renderer->getWindowID();
-  }
-  prep_stage(window);
-//  XIfEvent(dpy, &event, WaitForNotify, (char*)overlay);
-
-
-  setup_iphone_listener();
-  std::cerr << "dpy: " << dpy << ", display: " << display << ", " << window << std::endl;
-
-  // Set X error handler here since expected errors on some window mappings
-  XSetErrorHandler(errorHandler);
-
-  XFixesHideCursor (dpy, overlay);
-  setup_hotkey(dpy);
-
-  // loadMonitorModel();
-
-  struct timespec ts_start;
-  clock_gettime(CLOCK_MONOTONIC, &ts_start);
-
-  XEvent peekEvent;
-  int pointerX, pointerY;
-  unsigned int pointerMods;
-  // wait for events and eat up cpu. ;-)
-  while (!done) {
-    // handle the events in the queue
-    while (XPending(dpy) > 0) {
-      XNextEvent(dpy, &event);
-      XGenericEventCookie *cookie = &event.xcookie;
-
-      if (event.xcookie.extension == xi_opcode &&
-          event.xcookie.type == GenericEvent) {
-        XGetEventData(dpy, cookie);
-        XIDeviceEvent *xi_event = (XIDeviceEvent*)event.xcookie.data;
-
-        switch (xi_event->evtype) {
-        case XI_KeyPress:
-          if (!controlDesktop) {
-            processXInput2Key(xi_event, true, desktop3DLocation);
-          }
-          break;
-        case XI_KeyRelease:
-          if (!controlDesktop) {
-            processXInput2Key(xi_event, false, desktop3DLocation);
-          }
-          break;
-        case XI_RawMotion:
-          if (!controlDesktop) {
-            processRawMotion((XIRawEvent*)event.xcookie.data,
-                             desktop3DLocation);
-          }
-          break;
-        }
-
-        XFreeEventData(dpy, cookie);
-        continue;
-      }
-
-      if (event.xany.type == xfixes_event_base + XFixesCursorNotify) {
-        XFixesCursorNotifyEvent *notify_event;
-        notify_event = (XFixesCursorNotifyEvent *)(&event);
-
-        if (notify_event->subtype == XFixesDisplayCursorNotify) {
-          getCursorTexture();
-        }
-        continue;
-      }
-
-      switch (event.type) {
-        case Expose:
-        case ConfigureNotify:
-        case MapNotify:
-        case DestroyNotify:
-        case UnmapNotify:
-          unbindRedirectedWindow(dpy, event.xclient.window);
-          break;
-
-        case ButtonPress:
-        case ButtonRelease:
-          pointerX = event.xbutton.x_root;
-          pointerY = event.xbutton.y_root;
-          pointerMods = event.xbutton.state;
-          break;
-
-        case KeyPress:
-        case KeyRelease:
-          pointerX = event.xkey.x_root;
-          pointerY = event.xkey.y_root;
-          pointerMods = event.xbutton.state;
-          if (event.type == KeyRelease) {
-            processKey(event.xkey);
-          }
-          break;
-
-        case MotionNotify:
-          while (XPending (dpy)) {
-            XPeekEvent (dpy, &peekEvent);
-            if (peekEvent.type != MotionNotify)
-              break;
-            XNextEvent (dpy, &event);
-          }
-
-          pointerX = event.xmotion.x_root;
-          pointerY = event.xmotion.y_root;
-          pointerMods = event.xbutton.state;
-          break;
-
-        case EnterNotify:
-        case LeaveNotify:
-          pointerX = event.xcrossing.x_root;
-          pointerY = event.xcrossing.y_root;
-          pointerMods = event.xbutton.state;
-          break;
-        default:
-          break;
-      }
+        dpy = display;
+        //    irrlicht_run_loop();
+    } else {
+        //    createWindow(dpy, root);
+        
+        renderer = new SimpleWorldRendererPlugin();
+        renderer->init();
     }
-
-    struct timespec ts_current;
-    clock_gettime(CLOCK_MONOTONIC, &ts_current);
-
-    if (controlDesktop) {
-      walkForward = strafeRight = 0;
+    
+    std::cerr << "Physical Width x Height: " << physicalWidth << "x" << physicalHeight << std::endl;
+    
+    glutInit(&argc, argv);
+    
+    //  prep_overlay();
+    if(renderer->getWindowID()) {
+        window = renderer->getWindowID();
     }
-
-    double timeDiff = (double)(ts_current.tv_sec - ts_start.tv_sec) + (double)(ts_current.tv_nsec - ts_start.tv_nsec) * 1.0e-09;
-    desktop3DLocation.walk(walkForward, strafeRight, timeDiff);
-
-    renderer->move(walkForward, strafeRight, jump, relativeMouseX, relativeMouseY);
-    renderer->processEvents();
-
-    renderGL(desktop3DLocation, timeDiff, renderer);
-
-    relativeMouseX = 0;
-    relativeMouseY = 0;
-
-    ts_start = ts_current;
-  }
-
-  destroyWindow();
-
-  return 0;
+    
+    std::cerr << "dpy: " << dpy << ", display: " << display << ", " << window << std::endl;
 }
 
+void processRawMotion(double relativeMouseXDelta, double relativeMouseYDelta, Desktop3DLocation& loc)
+{
+  double xRotation, yRotation;
+
+    yRotation = loc.getYRotation();
+    yRotation += relativeMouseYDelta /(double)width * 180.0;
+    loc.setYRotation(yRotation);
+    relativeMouseY = relativeMouseYDelta;
+
+    xRotation = loc.getXRotation();
+    xRotation += relativeMouseXDelta / (double)width * 180.0;
+    loc.setXRotation(xRotation);
+    relativeMouseX = relativeMouseXDelta;
+}
+
+void Ibex::Ibex::render(double timeDiff) {
+    if (controlDesktop) {
+        walkForward = strafeRight = 0;
+    }
+    double rx = relativeMouseX;
+    double ry = relativeMouseY;
+    relativeMouseX = 0;
+    relativeMouseY = 0;
+    
+    if(!OGRE3D) {
+        processRawMotion(ry, rx, desktop3DLocation);
+        relativeMouseX = 0;
+        relativeMouseY = 0;
+        desktop3DLocation.walk(walkForward+sixenseWalkForward, strafeRight+sixenseStrafeRight, timeDiff);
+    }
+    
+    if(resetPosition) {
+        resetPosition = 0;
+        desktop3DLocation.resetState();
+    }
+    
+    renderer->setDesktopTexture(desktopTexture);
+    if(OGRE3D) {
+        renderer->move(walkForward+sixenseWalkForward, strafeRight+sixenseStrafeRight, jump, ry, rx);
+    }
+    renderer->processEvents();
+    
+    renderGL(desktop3DLocation, timeDiff, renderer);
+    
+//    ts_start = ts_current;
+}

@@ -91,7 +91,6 @@ extern XVisualInfo *visinfo;
 /* prototypes */
 void createWindow();
 void destroyWindow();
-void resizeGL(unsigned int, unsigned int);
 void initGL();
 
 void initFBConfig(Display *dpy, Window root);

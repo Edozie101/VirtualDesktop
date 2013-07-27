@@ -19,6 +19,8 @@
 
 class RendererPlugin;
 
+extern RendererPlugin *renderer;
+
 enum DisplayShape {
   FlatDisplay,SphericalDisplay,CylindricalDisplay
 };
@@ -177,8 +179,6 @@ private:
 };
 
 void getCursorTexture();
-
-void prep_stage(Window window_);
 
 bool didInitOpenGL();
 

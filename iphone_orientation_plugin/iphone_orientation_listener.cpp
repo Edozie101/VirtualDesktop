@@ -88,7 +88,7 @@ void* setup_socket(void *inputData)
   double buf2[512];
 //  for (i=0; i<NPACK; i++) {
   while(1) {
-	  const int count = recvfrom(s, buf2, BUFLEN, 0, (sockaddr*)&si_other, &slen);
+	  const ssize_t count = recvfrom(s, buf2, BUFLEN, 0, (sockaddr*)&si_other, &slen);
     if (count ==-1)
       diep("recvfrom()");
 //    printf("Received packet from %s:%d\nCount: %d\n\n", inet_ntoa(si_other.sin_addr), ntohs(si_other.sin_port), count);//, buf[0]);

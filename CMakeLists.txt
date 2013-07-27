@@ -50,14 +50,15 @@ add_subdirectory(glm)
 add_subdirectory(windows)
 add_subdirectory(filesystem)
 add_subdirectory(video)
+add_subdirectory(sixense)
+add_subdirectory(oculus)
 add_subdirectory(x11)
 
 include_directories(
  ${CMAKE_CURRENT_SOURCE_DIR}
  ${Boost_INCLUDE_DIR}
- ${OCULUS_LIBRARY_DIR}
  )
-link_directories(${Boost_LIBRARY_DIR})
+link_directories(${Boost_LIBRARY_DIR} ${OCULUS_LIBRARY_DIR})
 
 set(SRC 
 RendererPlugin.cpp RendererPlugin.h 
@@ -74,13 +75,14 @@ set(RESOURCES README.md COPYING AUTHORS)
 
 add_executable(ibex ${SRC} ${IRRLICHT_PLUGIN_FILES} ${OGRE_PLUGIN_FILES})
 target_link_libraries(ibex 
-ibex_windows ibex_filesystem ibex_video ibex_x11 ibex_glm
+ibex_windows ibex_filesystem ibex_video ibex_x11 ibex_glm ibex_sixense ibex_oculus
 GL GLU glut GLEW
 openal
-X11 Xfixes Xdamage Xrandr Xrender Xcomposite Xxf86vm Xi Xext pthread
+ovr
+X11 Xfixes Xdamage Xrandr Xrender Xcomposite Xxf86vm Xi Xext Xinerama udev pthread
 jpeg rt
 ${Boost_LIBRARIES}
-${OCULUS_LIBRARY}
+#${OCULUS_LIBRARY}
 ${IRRLICHT_LIBRARY} ${OGRE_LIBRARIES} ${OIS_LIBRARIES} ${OGRE_RenderSystem_GL_LIBRARIES}
 ${OGRE_Terrain_LIBRARIES}
 ${OGRE_ParticleFX_LIBRARIES}

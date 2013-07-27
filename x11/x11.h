@@ -93,7 +93,7 @@ void toggleControl();
 void processKey(XKeyEvent ke);
 void debugRawMotion(XIRawEvent *event);
 
-void processRawMotion(XIRawEvent *event, Desktop3DLocation& loc);
+void processRawMotionX11(XIRawEvent *event, Desktop3DLocation& loc);
 void processXInput2Key(XIDeviceEvent *event, bool pressed, Desktop3DLocation& loc);
 
 void renderDesktopToTexture();
