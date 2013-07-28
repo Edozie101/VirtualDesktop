@@ -344,7 +344,7 @@ void bindRedirectedWindowToTexture(Display *display_, Window window_, int screen
   static const int pixmapAttribs[] = { GLX_TEXTURE_TARGET_EXT,
                                        GLX_TEXTURE_2D_EXT,
                                        GLX_TEXTURE_FORMAT_EXT,
-                                       GLX_TEXTURE_FORMAT_RGBA_EXT,
+                                       GLX_TEXTURE_FORMAT_RGB_EXT,
                                        None };
 
   WindowInfo windowInfo;
@@ -653,14 +653,14 @@ void processRawMotionX11(XIRawEvent *event, Desktop3DLocation& loc)
         //yRotation += (double)(*valuator - *raw_valuator) /
         //             (double)width * 180.0;
         //loc.setYRotation(yRotation);
-        relativeMouseY += (double)(*valuator - *raw_valuator);
+        relativeMouseX += (double)(*valuator - *raw_valuator);
         break;
       case 1:
         //xRotation = loc.getXRotation();
         //xRotation += (double)(*valuator - *raw_valuator) /
         //             (double)width * 180.0;
         //loc.setXRotation(xRotation);
-        relativeMouseX += (double)(*valuator - *raw_valuator);
+        relativeMouseY += (double)(*valuator - *raw_valuator);
         break;
       }
       valuator++;
@@ -881,6 +881,11 @@ int main(int argc, char ** argv)
   height = attr.height;
   physicalWidth = width;
   physicalHeight = height;
+  textureWidth = width*1.4;//1280*1.4;//1440.0*2;
+  textureHeight = height*1.4;//800*1.4;//900.0*2;
+  windowWidth = width;//1440;//1280;
+  windowHeight = height;//900;//800;
+
   std::cerr << "Virtual width: " << width << " height: " << height << std::endl;
 
   if(OGRE3D) {
@@ -899,7 +904,7 @@ int main(int argc, char ** argv)
 
   std::cerr << "Physical Width x Height: " << physicalWidth << "x" << physicalHeight << std::endl;
 
-  //glutInit(&argc, argv);
+  glutInit(&argc, argv);
 
   prep_overlay();
   //if(renderer->getWindowID()) {
@@ -1042,8 +1047,6 @@ int main(int argc, char ** argv)
     }
 
     ibex->render(timeDiff);
-    //renderGL(desktop3DLocation, timeDiff, renderer);
-    
 
     relativeMouseX = 0;
     relativeMouseY = 0;

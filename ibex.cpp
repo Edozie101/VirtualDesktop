@@ -99,7 +99,7 @@ bool showDialog = false;
 // external variables
 bool resetPosition          = 0;
 bool showGround             = 0;
-bool barrelDistort          = 0;
+bool barrelDistort          = 1;
 bool ortho                  = 1;
 bool renderToTexture        = 1;
 bool USE_FBO                = 1;
@@ -157,26 +157,26 @@ char fpsString[32] = "FPS: -";
 char mResourcePath[1024];
 
 /* From: http://stackoverflow.com/questions/5002254/
-                adapt-existing-code-for-opengl-stereoscopic-rendering
- * Stereo SBS projection info
+   adapt-existing-code-for-opengl-stereoscopic-rendering
+   * Stereo SBS projection info
 
-glMatrixMode(GL_PROJECTION);
-glLoadIdentity();
-stereo_offset = eye * near * parallax_factor / convergence_distance;
-glFrustum(stereo_offset + left, stereo_offset + right, bottom, top, near, far);
+   glMatrixMode(GL_PROJECTION);
+   glLoadIdentity();
+   stereo_offset = eye * near * parallax_factor / convergence_distance;
+   glFrustum(stereo_offset + left, stereo_offset + right, bottom, top, near, far);
 
-glMatrixMode(GL_MODELVIEW);
-glLoadIdentity();
-glTranslatef(eye * parallax_factor * convergence_distance, 0, 0);
+   glMatrixMode(GL_MODELVIEW);
+   glLoadIdentity();
+   glTranslatef(eye * parallax_factor * convergence_distance, 0, 0);
 
-// now use gluLookAt here as this were a normal 2D rendering
+   // now use gluLookAt here as this were a normal 2D rendering
 
- * parallax_factor should be no larger than the ratio of
- * half_eye_distance / screen_width, so the larger the screen gets the smaller
- * the parallax_factor is.
- * A good value for parallax_factor for computer display use is 0.05,
- * for large screens (think cinema) it's something like 0.01
- */
+   * parallax_factor should be no larger than the ratio of
+   * half_eye_distance / screen_width, so the larger the screen gets the smaller
+   * the parallax_factor is.
+   * A good value for parallax_factor for computer display use is 0.05,
+   * for large screens (think cinema) it's something like 0.01
+   */
 
 // ---------------------------------------------------------------------------
 // Function: prep_framebuffers
@@ -194,50 +194,50 @@ void prep_framebuffers()
     std::cout << "GL_ARB_framebuffer_object SUPPORT" << std::endl;
   }
 
-//    if (!checkForErrors()) {
-//        std::cerr << "Stage 0w - Problem generating desktop FBO" << std::endl;
-//        exit(EXIT_FAILURE);
-//    }
-    checkForErrors();
+  //    if (!checkForErrors()) {
+  //        std::cerr << "Stage 0w - Problem generating desktop FBO" << std::endl;
+  //        exit(EXIT_FAILURE);
+  //    }
+  checkForErrors();
     
   glGenFramebuffers(1, &desktopFBO);
-    if (!checkForErrors()) {
-        std::cerr << "Stage 0z - Problem generating desktop FBO" << std::endl;
-        exit(EXIT_FAILURE);
-    }
+  if (!checkForErrors()) {
+    std::cerr << "Stage 0z - Problem generating desktop FBO" << std::endl;
+    exit(EXIT_FAILURE);
+  }
   glBindFramebuffer(GL_FRAMEBUFFER, desktopFBO);
-    if (!checkForErrors() ) {
-        std::cerr << "Stage 0y - Problem generating desktop FBO" << std::endl;
-        exit(EXIT_FAILURE);
-    }
+  if (!checkForErrors() ) {
+    std::cerr << "Stage 0y - Problem generating desktop FBO" << std::endl;
+    exit(EXIT_FAILURE);
+  }
   if(desktopTexture == 0) {
     glGenTextures(1, &desktopTexture);
   }
   glBindTexture(GL_TEXTURE_2D, desktopTexture);
-    if (!checkForErrors()) {
-        std::cerr << "Stage 0a - Problem generating desktop FBO" << std::endl;
-        exit(EXIT_FAILURE);
-    }
+  if (!checkForErrors()) {
+    std::cerr << "Stage 0a - Problem generating desktop FBO" << std::endl;
+    exit(EXIT_FAILURE);
+  }
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    if (!checkForErrors()) {
-        std::cerr << "Stage 0b - Problem generating desktop FBO" << std::endl;
-        exit(EXIT_FAILURE);
-    }
+  if (!checkForErrors()) {
+    std::cerr << "Stage 0b - Problem generating desktop FBO" << std::endl;
+    exit(EXIT_FAILURE);
+  }
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-    if (!checkForErrors()) {
-        std::cerr << "Stage 0c - Problem generating desktop FBO" << std::endl;
-        exit(EXIT_FAILURE);
-    }
+  if (!checkForErrors()) {
+    std::cerr << "Stage 0c - Problem generating desktop FBO" << std::endl;
+    exit(EXIT_FAILURE);
+  }
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, physicalWidth, physicalHeight, 0,
                GL_RGBA, GL_UNSIGNED_BYTE, 0);
-    if (!checkForErrors()) {
-        std::cerr << "Stage 0d - Problem generating desktop FBO" << std::endl;
-        exit(EXIT_FAILURE);
-    }
+  if (!checkForErrors()) {
+    std::cerr << "Stage 0d - Problem generating desktop FBO" << std::endl;
+    exit(EXIT_FAILURE);
+  }
   glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-                        GL_TEXTURE_2D, desktopTexture, 0);
+			 GL_TEXTURE_2D, desktopTexture, 0);
   if (!checkForErrors() ||
       glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
     std::cerr << "Stage 0e - Problem generating desktop FBO" << std::endl;
@@ -250,7 +250,7 @@ void prep_framebuffers()
   glGenRenderbuffers(1, &depthBuffer);
   glGenTextures(2, textures);
 
-    for (int i = 0; i < 1; ++i) {//2; ++i) {
+  for (int i = 0; i < 1; ++i) {//2; ++i) {
     glBindFramebuffer(GL_FRAMEBUFFER, fbos[i]);
     glBindTexture(GL_TEXTURE_2D, textures[i]);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -293,7 +293,7 @@ void prep_framebuffers()
 // ---------------------------------------------------------------------------
 static bool initedOpenGL = false;
 bool didInitOpenGL() {
-//  std::cerr << "didInitOpenGL: " << initedOpenGL << std::endl;
+  //  std::cerr << "didInitOpenGL: " << initedOpenGL << std::endl;
   return initedOpenGL;
 }
 
@@ -327,7 +327,7 @@ void renderGL(Desktop3DLocation& loc, double timeDiff_, RendererPlugin *renderer
         std::cerr << "context: " << context << ", " << glXGetCurrentContext() << std::endl;
         std::cerr << "dpy: " << dpy << ", window: " << window << std::endl;
         if(!context) {
-            context = glXGetCurrentContext();
+	  context = glXGetCurrentContext();
         }
         std::cerr << "context: " << context << ", " << glXGetCurrentContext() << std::endl;
 
@@ -347,29 +347,29 @@ void renderGL(Desktop3DLocation& loc, double timeDiff_, RendererPlugin *renderer
       std::cerr << "Got fbconfig: " << fbconfig << std::endl;
     }
 
-	if(!OGRE3D) {
-		  checkForErrors();
-		  std::cerr << "init_distortion_shader" << std::endl;
-		  bool success = init_distortion_shader();
-		  if (!success) {
-		      std::cerr << "Failed to init distortion shader!" << std::endl;
-		      exit(1);
-		  }
-		  success = init_distortion_shader_cache();
-		  if (!success) {
-		      std::cerr << "Failed to init distortion shader cache!" << std::endl;
-		      exit(1);
-		  }
+    if(!OGRE3D) {
+      checkForErrors();
+      std::cerr << "init_distortion_shader" << std::endl;
+      bool success = init_distortion_shader();
+      if (!success) {
+	std::cerr << "Failed to init distortion shader!" << std::endl;
+	exit(1);
+      }
+      success = init_distortion_shader_cache();
+      if (!success) {
+	std::cerr << "Failed to init distortion shader cache!" << std::endl;
+	exit(1);
+      }
 
-		  if (USE_FBO) prep_framebuffers();
-	  }
+      if (USE_FBO) prep_framebuffers();
+    }
     renderer->setDesktopTexture(desktopTexture);
 
     getCursorTexture();
   }
-
+  
   if ((renderToTexture || OGRE3D) && !IRRLICHT) {
-      saveState();
+    saveState();
     renderDesktopToTexture();
     restoreState();
   }
@@ -382,19 +382,19 @@ void renderGL(Desktop3DLocation& loc, double timeDiff_, RendererPlugin *renderer
 
 void resizeGL(unsigned int width, unsigned int height)
 {
-	windowWidth = width;
-	windowHeight = height;
+  windowWidth = width;
+  windowHeight = height;
 
-    /* prevent divide-by-zero */
-    if (height == 0)
-        height = 1;
-    glViewport(0, 0, width, height);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-//    gluPerspective(45.0f, 1, 0.1f, 100.0f);//(GLfloat)width / (GLfloat)height, 0.1f, 100.0f);
-    gluPerspective(110.0f, 0.81818181, 0.01f, 1000.0f);
-//    gluPerspective(120.0f, 0.75, 0.1f, 100.0f);//(GLfloat)width / (GLfloat)height, 0.1f, 100.0f);
-    glMatrixMode(GL_MODELVIEW);
+  /* prevent divide-by-zero */
+  if (height == 0)
+    height = 1;
+  glViewport(0, 0, width, height);
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  //    gluPerspective(45.0f, 1, 0.1f, 100.0f);//(GLfloat)width / (GLfloat)height, 0.1f, 100.0f);
+  gluPerspective(110.0f, 0.81818181, 0.01f, 1000.0f);
+  //    gluPerspective(120.0f, 0.75, 0.1f, 100.0f);//(GLfloat)width / (GLfloat)height, 0.1f, 100.0f);
+  glMatrixMode(GL_MODELVIEW);
 }
 
 // ---------------------------------------------------------------------------
@@ -443,125 +443,125 @@ double relativeMouseY = 0;
 static bool jump = false;
 
 Ibex::Ibex::Ibex(int argc, char ** argv) {
-    int c;
+  int c;
 #ifndef _WIN32
-    while (argc > 0 && (c = getopt(argc, argv, "oihm")) != -1)
-        switch (c) {
-            case 'o':
-                OGRE3D = true;
-                break;
-            case 'i':
-                IRRLICHT = true;
-                break;
-            case 'm':
-                SBS = false;
-                break;
-            case 'h':
-            case '?':
-            default:
-                if (isprint(optopt))
-                    fprintf(stderr, "Unknown option `-%c'.\n", optopt);
-                else
-                    fprintf(stderr, "Unknown option character `\\x%x'.\n", optopt);
-                return;// 1;
-        }
+  while (argc > 0 && (c = getopt(argc, argv, "oihm")) != -1)
+    switch (c) {
+    case 'o':
+      OGRE3D = true;
+      break;
+    case 'i':
+      IRRLICHT = true;
+      break;
+    case 'm':
+      SBS = false;
+      break;
+    case 'h':
+    case '?':
+    default:
+      if (isprint(optopt))
+	fprintf(stderr, "Unknown option `-%c'.\n", optopt);
+      else
+	fprintf(stderr, "Unknown option character `\\x%x'.\n", optopt);
+      return;// 1;
+    }
 #endif
     
-    //  prep_root();
+  //  prep_root();
     
-    std::cerr << "Virtual width: " << width << " height: " << height << std::endl;
+  std::cerr << "Virtual width: " << width << " height: " << height << std::endl;
     
-    if(!OGRE3D)
-        initGL();
+  if(!OGRE3D)
+    initGL();
     
-    setup_iphone_listener();
+  setup_iphone_listener();
     
-    if(OGRE3D) {
+  if(OGRE3D) {
 #ifdef ENABLE_OGRE3D
-//        unsigned long root = 0;
-        unsigned long screen = 0;
-        unsigned int visinfo = 0;
-        unsigned int dpy2 = 0;
-//        createWindow(dpy, root);
+    //        unsigned long root = 0;
+    unsigned long screen = 0;
+    unsigned int visinfo = 0;
+    unsigned int dpy2 = 0;
+    //        createWindow(dpy, root);
 #if defined(WIN32) OR defined(__APPLE__)
-        renderer = new Ogre3DRendererPlugin(&dpy2, screen, window, &visinfo, (unsigned long)context);
+    renderer = new Ogre3DRendererPlugin(&dpy2, screen, window, &visinfo, (unsigned long)context);
 #else
-	renderer = new Ogre3DRendererPlugin(dpy, screen, window, visinfo, (unsigned long)context);
+    renderer = new Ogre3DRendererPlugin(dpy, screen, window, visinfo, (unsigned long)context);
 #endif
-        renderer->init();
-        renderer->processEvents();
-        return;
+    renderer->init();
+    renderer->processEvents();
+    return;
         
 #endif
-    } else if(IRRLICHT) {
+  } else if(IRRLICHT) {
 #ifdef ENABLE_IRRLICHT
-        renderer = new IrrlichtRendererPlugin();
-        renderer->init();
+    renderer = new IrrlichtRendererPlugin();
+    renderer->init();
 #endif
-        dpy = display;
-        //    irrlicht_run_loop();
-    } else {
-        //    createWindow(dpy, root);
+    dpy = display;
+    //    irrlicht_run_loop();
+  } else {
+    //    createWindow(dpy, root);
         
-        renderer = new SimpleWorldRendererPlugin();
-        renderer->init();
-    }
+    renderer = new SimpleWorldRendererPlugin();
+    renderer->init();
+  }
     
-    std::cerr << "Physical Width x Height: " << physicalWidth << "x" << physicalHeight << std::endl;
+  std::cerr << "Physical Width x Height: " << physicalWidth << "x" << physicalHeight << std::endl;
     
-    glutInit(&argc, argv);
+  //glutInit(&argc, argv);
     
-    //  prep_overlay();
-    if(renderer->getWindowID()) {
-        window = renderer->getWindowID();
-    }
+  //  prep_overlay();
+  if(renderer->getWindowID()) {
+    window = renderer->getWindowID();
+  }
     
-    std::cerr << "dpy: " << dpy << ", display: " << display << ", " << window << std::endl;
+  std::cerr << "dpy: " << dpy << ", display: " << display << ", " << window << std::endl;
 }
 
 void processRawMotion(double relativeMouseXDelta, double relativeMouseYDelta, Desktop3DLocation& loc)
 {
   double xRotation, yRotation;
 
-    yRotation = loc.getYRotation();
-    yRotation += relativeMouseYDelta /(double)width * 180.0;
-    loc.setYRotation(yRotation);
-    relativeMouseY = relativeMouseYDelta;
+  yRotation = loc.getYRotation();
+  yRotation += relativeMouseYDelta /(double)width * 180.0;
+  loc.setYRotation(yRotation);
+  relativeMouseY = relativeMouseYDelta;
 
-    xRotation = loc.getXRotation();
-    xRotation += relativeMouseXDelta / (double)width * 180.0;
-    loc.setXRotation(xRotation);
-    relativeMouseX = relativeMouseXDelta;
+  xRotation = loc.getXRotation();
+  xRotation += relativeMouseXDelta / (double)width * 180.0;
+  loc.setXRotation(xRotation);
+  relativeMouseX = relativeMouseXDelta;
 }
 
 void Ibex::Ibex::render(double timeDiff) {
-    if (controlDesktop) {
-        walkForward = strafeRight = 0;
-    }
-    double rx = relativeMouseX;
-    double ry = relativeMouseY;
+  if (controlDesktop) {
+    walkForward = strafeRight = 0;
+  }
+  double rx = relativeMouseX;
+  double ry = relativeMouseY;
+  relativeMouseX = 0;
+  relativeMouseY = 0;
+    
+  if(!OGRE3D) {
+    processRawMotion(ry, rx, desktop3DLocation);
     relativeMouseX = 0;
     relativeMouseY = 0;
+    desktop3DLocation.walk(walkForward+sixenseWalkForward, strafeRight+sixenseStrafeRight, timeDiff);
+  }
     
-    if(!OGRE3D) {
-        processRawMotion(ry, rx, desktop3DLocation);
-        relativeMouseX = 0;
-        relativeMouseY = 0;
-        desktop3DLocation.walk(walkForward+sixenseWalkForward, strafeRight+sixenseStrafeRight, timeDiff);
-    }
+  if(resetPosition) {
+    resetPosition = 0;
+    desktop3DLocation.resetState();
+  }
     
-    if(resetPosition) {
-        resetPosition = 0;
-        desktop3DLocation.resetState();
-    }
+  renderer->setDesktopTexture(desktopTexture);
+  if(OGRE3D) {
+    renderer->move(walkForward+sixenseWalkForward, strafeRight+sixenseStrafeRight, jump, ry, rx);
+  }
+  renderer->processEvents();
     
-    renderer->setDesktopTexture(desktopTexture);
-    if(OGRE3D) {
-        renderer->move(walkForward+sixenseWalkForward, strafeRight+sixenseStrafeRight, jump, ry, rx);
-    }
-    renderer->processEvents();
+  renderGL(desktop3DLocation, timeDiff, renderer);
     
-    renderGL(desktop3DLocation, timeDiff, renderer);
-    
-//    ts_start = ts_current;
+  //    ts_start = ts_current;
 }
