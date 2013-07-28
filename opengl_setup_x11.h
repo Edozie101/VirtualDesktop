@@ -11,6 +11,7 @@
 #include <X11/extensions/XInput2.h>
 #include <X11/extensions/Xfixes.h>
 #include <X11/extensions/Xrandr.h>
+#include <X11/extensions/Xinerama.h>
 #include <X11/Xlib.h>
 #include <X11/Xregion.h>
 #include <X11/Xresource.h>
@@ -56,6 +57,8 @@
 #define HEIGHT (800.0)
 //#define HEIGHT (WIDTH*900./1440.)
 #define TITLE "Ibex"
+
+extern bool chooseFirstDisplay;
 
 typedef struct {
     Display *dpy;

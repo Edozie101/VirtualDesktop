@@ -9,6 +9,8 @@
 #include "ibex.h"
 #include "opengl_setup_x11.h"
 
+bool chooseFirstDisplay(false);
+
 GLXFBConfig fbconfig;
 bool glxYInverted;
 
@@ -113,6 +115,8 @@ void initFBConfig(Display *dpy, Window root)
     fbconfig = fbconfigs[0];
     visinfo = glXGetVisualFromFBConfig(dpy, fbconfig);
     pictFormat = XRenderFindVisualFormat(dpy, visinfo->visual);
+    std::cerr << "Couldn't find an fbConfig so defaulting to the 0th" << std::endl;
+    i = 0;
   }
 
   glXGetFBConfigAttrib(dpy, fbconfigs[i], GLX_Y_INVERTED_EXT, &value);
@@ -127,6 +131,8 @@ void initFBConfig(Display *dpy, Window root)
 
 void createWindow(Display *dpy_, Window root_)
 {
+  int xOffset = 0, yOffset = 0;
+  int displayWidth = -1, displayHeight = -1;
     XVisualInfo *vi;
     Colormap cmap;
     int i, dpyWidth, dpyHeight;
@@ -177,6 +183,29 @@ void createWindow(Display *dpy_, Window root_)
     winAttr.colormap = cmap;
     winAttr.border_pixel = 0;
 
+    if (XineramaIsActive(display)) {
+      int nscreens;
+      XineramaScreenInfo * info = XineramaQueryScreens( display, &nscreens );
+      printf("Xinerama is active\n");
+      for( i = 0; i< nscreens; i++ ) {
+	printf( "Screen %d: (%d) %d+%d+%dx%d\n", i, info[i].screen_number, 
+		info[i].x_org, info[i].y_org,
+		info[i].width, info[i].height);
+	if(chooseFirstDisplay || (info[i].width == 1280 && info[i].height == 800)) {
+	  std::cerr << "Choose first display: " << chooseFirstDisplay << std::endl;
+	  xOffset = info[i].x_org;
+	  yOffset = info[i].y_org;
+	  displayWidth = info[i].width;
+	  displayHeight = info[i].height;
+	  width = displayWidth;
+	  height = displayHeight;
+	  break;
+	}
+      }
+    } else {
+      printf("Xinerama is not active\n");
+    }
+
     if (fullscreen)
     {
         /* switch to fullscreen */
@@ -188,12 +217,14 @@ void createWindow(Display *dpy_, Window root_)
                 std::cerr << "Couldn't switch to resolution: " << WIDTH << ", " << HEIGHT << std::endl;
                 exit(1);
         }
-        XF86VidModeSetViewPort(display, screen, 0, 0);
+        XF86VidModeSetViewPort(display, screen, 0, 0);//xOffset, yOffset);
         dpyWidth = modes[bestMode]->hdisplay;
         dpyHeight = modes[bestMode]->vdisplay;
         printf("resolution %dx%d\n", dpyWidth, dpyHeight);
-        physicalWidth = dpyWidth;
-        physicalHeight = dpyHeight;
+	dpyWidth = (displayWidth > 0) ? displayWidth : dpyWidth;
+	dpyHeight = (displayHeight > 0)? displayHeight : dpyHeight;
+        //physicalWidth = (displayWidth > 0)? displayWidth : dpyWidth;
+	//physicalHeight = (displayHeight > 0)? displayHeight : dpyHeight;
         XFree(modes);
 
         /* set window attributes */
@@ -201,7 +232,8 @@ void createWindow(Display *dpy_, Window root_)
         winAttr.event_mask = ExposureMask | KeyPressMask | ButtonPressMask |
             SubstructureNotifyMask;// | SubstructureNotifyMask;// | PointerMotionMask;
         window = XCreateWindow(display, RootWindow(display, vi->screen),
-            0, 0, dpyWidth, dpyHeight, 0, vi->depth, InputOutput, vi->visual,
+			       xOffset,yOffset, dpyWidth, dpyHeight, 
+			       0, vi->depth, InputOutput, vi->visual,
             CWBorderPixel | CWColormap | CWEventMask | CWOverrideRedirect,
             &winAttr);
         XWarpPointer(display, None, window, 0, 0, 0, 0, 0, 0);
@@ -217,8 +249,9 @@ void createWindow(Display *dpy_, Window root_)
         winAttr.event_mask = ExposureMask | KeyPressMask | ButtonPressMask |
             SubstructureNotifyMask;// | SubstructureNotifyMask;
         window = XCreateWindow(display, RootWindow(display, vi->screen),
-            0, 0, width, height, 0, vi->depth, InputOutput, vi->visual,
-            CWBorderPixel | CWColormap | CWEventMask, &winAttr);
+			       xOffset, yOffset, width, height, 
+			       0, vi->depth, InputOutput, vi->visual,
+			       CWBorderPixel | CWColormap | CWEventMask, &winAttr);
         /* only set window title and handle wm_delete_events if in windowed mode */
         wmDelete = XInternAtom(display, "WM_DELETE_WINDOW", True);
         XSetWMProtocols(display, window, &wmDelete, 1);

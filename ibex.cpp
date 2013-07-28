@@ -443,8 +443,8 @@ double relativeMouseY = 0;
 static bool jump = false;
 
 Ibex::Ibex::Ibex(int argc, char ** argv) {
-  int c;
 #ifndef _WIN32
+  int c;
   while (argc > 0 && (c = getopt(argc, argv, "oihm")) != -1)
     switch (c) {
     case 'o':

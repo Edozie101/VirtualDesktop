@@ -187,6 +187,7 @@ void prep_root(void)
   scrn = DefaultScreenOfDisplay(dpy);
   screen = XDefaultScreen(dpy);
   for (int i = 0; i < ScreenCount(dpy); ++i) {
+    std::cerr << "Screens[" << i << "]" << std::endl;
     XSelectInput(dpy, RootWindow(dpy, i), SubstructureNotifyMask |
                                           PointerMotionMask |
                                           KeyPressMask);
@@ -872,6 +873,17 @@ void renderDesktopToTexture()
 // ===========================================================================
 int main(int argc, char ** argv)
 {
+#if !defined(_WIN32) && !defined(__APPLE__)
+  int c = 0;
+  while (argc > 0 && (c = getopt(argc, argv, "f")) != -1) {
+    switch (c) {
+    case 'f':
+      chooseFirstDisplay = true;
+      break;
+    }
+  }
+#endif
+
   getcwd(mResourcePath, sizeof(mResourcePath));
 
   initRift();
@@ -911,8 +923,19 @@ int main(int argc, char ** argv)
     createWindow(dpy, root);
     XIfEvent(dpy, &event, WaitForNotify, (char*)window);
   }
+  //width = attr.width;
+  //height = attr.height;
+  //physicalWidth = width;
+  //physicalHeight = height;
+  //physicalWidth = 3840;
+  //physicalHeight = 1600;
+  textureWidth = width*1.4;//1280*1.4;//1440.0*2;
+  textureHeight = height*1.4;//800*1.4;//900.0*2;
+  windowWidth = width;//1440;//1280;
+  windowHeight = height;//900;//800;
 
   std::cerr << "Physical Width x Height: " << physicalWidth << "x" << physicalHeight << std::endl;
+  std::cerr << "Virtual width: " << width << " height: " << height << std::endl;
 
   glutInit(&argc, argv);
 
