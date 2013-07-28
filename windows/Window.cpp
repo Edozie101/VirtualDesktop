@@ -473,5 +473,10 @@ int Ibex::Window::processSpecialKey(unsigned char key, int down) {
     }
     return processed;
 }
+#else
+int Ibex::Window::processKey(XIDeviceEvent *event, bool pressed) {
+  int processed = 0;
+  return processed;
+}
 #endif
 #endif

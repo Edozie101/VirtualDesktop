@@ -9,6 +9,7 @@
 #ifndef __IbexMac__Window__
 #define __IbexMac__Window__
 
+#include "../x11/x11.h"
 #include <iostream>
 #include <vector>
 #include <string>
@@ -40,6 +41,8 @@ public:
 #ifdef _WIN32
     int processKey(unsigned char key, int down);
     int processSpecialKey(unsigned char key, int down);
+#else
+    int processKey(XIDeviceEvent *event, bool pressed);
 #endif
 #endif
     

@@ -690,32 +690,42 @@ void processXInput2Key(XIDeviceEvent *event, bool pressed, Desktop3DLocation& lo
   static KeyCode Q = XKeysymToKeycode(dpy, XK_Q);
   static KeyCode E = XKeysymToKeycode(dpy, XK_E);
   static KeyCode R = XKeysymToKeycode(dpy, XK_R);
+  static KeyCode FORWARD_SLASH = XKeysymToKeycode(dpy, XK_slash);
   static KeyCode SPACE = XKeysymToKeycode(dpy, XK_space);
 
+  int processed = 0;
   if (!controlDesktop) {
     if (pressed) {
-      if (event->detail == W) {
-        walkForward = 1;
-      } else if (event->detail == S) {
-        walkForward = -1;
-      } else if (event->detail == A) {
-        strafeRight = -1;
-      } else if (event->detail == D) {
-        strafeRight = 1;
-      } else if (event->detail == Q) {
-        strafeRight = -1;
-      } else if (event->detail == E) {
-        strafeRight = 1;
-      } else if (event->detail == B) {
+      if(showDialog) {
+	processed = ibex->renderer->window.processKey(event, pressed);
+      }
+      if(!processed) {
+	if (event->detail == W) {
+	  walkForward = 1;
+	} else if (event->detail == S) {
+	  walkForward = -1;
+	} else if (event->detail == A) {
+	  strafeRight = -1;
+	} else if (event->detail == D) {
+	  strafeRight = 1;
+	} else if (event->detail == Q) {
+	  strafeRight = -1;
+	} else if (event->detail == E) {
+	  strafeRight = 1;
+	} else if (event->detail == B) {
           barrelDistort = !barrelDistort;
-      } else if (event->detail == G) {
+	} else if (event->detail == G) {
           showGround = !showGround;
-      } else if (event->detail == R) {
-       std::cout << "RESET POSITION!" << std::endl;
-       // Reset the desktop location to all zero state
-       loc.resetState();
-      } else if (event->detail == SPACE) {
-        jump = true;
+	} else if (event->detail == R) {
+	  std::cout << "RESET POSITION!" << std::endl;
+	  // Reset the desktop location to all zero state
+	  loc.resetState();
+	} else if (event->detail == SPACE) {
+	  jump = true;
+	} else if (event->detail == FORWARD_SLASH) {
+	  showDialog = !showDialog;
+	  ibex->renderer->window.reset();
+	}
       }
     } else {
       if (walkForward ==  1 && event->detail == W)
