@@ -88,6 +88,12 @@ void SimpleWorldRendererPlugin::loadSkybox()
     _skybox[4] = loadTexture("/resources/humus-skybox/posy.jpg");
     _skybox[5] = loadTexture("/resources/humus-skybox/negy.jpg");
 #endif
+  for(int i = 0; i < 6; ++i) {
+    glBindTexture(GL_TEXTURE_2D, _skybox[i]);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  }
+  glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 

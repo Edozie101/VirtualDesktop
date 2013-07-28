@@ -183,6 +183,12 @@ void SimpleWorldRendererPlugin::loadSkybox()
                               GL_TRUE, GL_FALSE, &sizeX, &sizeY);
 #endif
 #endif
+  for(int i = 0; i < 6; ++i) {
+    glBindTexture(GL_TEXTURE_2D, _skybox[i]);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  }
+  glBindTexture(GL_TEXTURE_2D, 0);
   std::cout << _skybox[5] << std::endl;
 }
 
