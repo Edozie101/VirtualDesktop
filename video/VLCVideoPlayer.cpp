@@ -28,11 +28,8 @@
 
 #include "../opengl_setup_x11.h"
 
-#define WIDTH 640
-#define HEIGHT 360//480
-
-#define VIDEOWIDTH 640
-#define VIDEOHEIGHT 360
+#define VIDEOWIDTH 1280
+#define VIDEOHEIGHT 720
 
 // based off of http://wiki.videolan.org/index.php?title=LibVLC_SampleCode_SDL&redirect=no which was licensed under the WTFPL license http://en.wikipedia.org/wiki/WTFPL 
 
@@ -192,7 +189,7 @@ int Ibex::VLCVideoPlayer::playVLCVideo(const char *fileName, Display *dpy, GLXDr
     libvlc_media_release(m);
     pixels = new uint32_t[VIDEOWIDTH*VIDEOHEIGHT*4];
     libvlc_video_set_callbacks(mp, vlclock, vlcunlock, vlcdisplay, &context);
-    libvlc_video_set_format(mp, "RV32", VIDEOWIDTH, VIDEOHEIGHT, VIDEOWIDTH*4);
+    libvlc_video_set_format(mp, "RV32", VIDEOWIDTH, VIDEOHEIGHT, VIDEOWIDTH*sizeof(uint32_t));
     //libvlc_video_set_format(mp, "YUYV", VIDEOWIDTH, VIDEOHEIGHT, VIDEOWIDTH*2);
     libvlc_media_player_play(mp);
     
