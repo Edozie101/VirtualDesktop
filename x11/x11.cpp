@@ -183,11 +183,30 @@ void prep_root(void)
     exit(EXIT_FAILURE);
   }
 
+  if(!XQueryExtension(dpy, "XINERAMA", &major, &event, &error)) {
+    std::cerr << "Xinerama missing " << std::endl;
+    //exit(EXIT_FAILURE);
+  }
+
   root = DefaultRootWindow(dpy);
   scrn = DefaultScreenOfDisplay(dpy);
   screen = XDefaultScreen(dpy);
   for (int i = 0; i < ScreenCount(dpy); ++i) {
     std::cerr << "Screens[" << i << "]" << std::endl;
+    Screen *s = ScreenOfDisplay(dpy, i);
+    if((chooseFirstDisplay && i == 0) || (!chooseFirstDisplay && WidthOfScreen(s) == 1280 && HeightOfScreen(s) == 800)) {
+      if(chooseFirstDisplay) {
+	std::cerr << "Forcing the first screen! Screens[" << i << "]" << std::endl;
+      } else {
+	std::cerr << "Changing screen to that of the Rift! Screens[" << i << "]" << std::endl;
+      }
+      root = XRootWindow(dpy, i);
+      scrn = s;
+      screen = i;
+      width = WidthOfScreen(s);
+      height = HeightOfScreen(s);
+    }
+
     XSelectInput(dpy, RootWindow(dpy, i), SubstructureNotifyMask |
                                           PointerMotionMask |
                                           KeyPressMask);
@@ -215,8 +234,8 @@ void prep_root(void)
   evmask.mask_len = sizeof(mask);
   evmask.mask = mask;
 
-  XISelectEvents(dpy, DefaultRootWindow(dpy), &evmask, 1);
-  XFixesSelectCursorInput(dpy, DefaultRootWindow(dpy),
+  XISelectEvents(dpy, RootWindow(dpy, screen), &evmask, 1);
+  XFixesSelectCursorInput(dpy, RootWindow(dpy, screen),
                           XFixesDisplayCursorNotifyMask);
 }
 
@@ -263,7 +282,7 @@ void prep_input(void)
                         0, 0,  /* x, y */
                         attr.width, attr.height,
                         0, 0, /* border width, depth */
-                        InputOnly, DefaultVisual (dpy, 0), 0, 0);
+                        InputOnly, DefaultVisual (dpy, screen/*0*/), 0, 0);
 
   XSelectInput(dpy, input, StructureNotifyMask |
                             FocusChangeMask |
@@ -361,6 +380,10 @@ void bindRedirectedWindowToTexture(Display *display_, Window window_, int screen
 
     Pixmap pixmap = XCompositeNameWindowPixmap(display_, window_);
     if (!pixmap) {
+      std::cerr << "no redirect: " << display_ << " " << window_ << std::endl;
+      //XTextProperty windowName;
+      //XGetWMName(display_, window_, &windowName);
+      //std::cerr << "window name: " << windowName.value << std::endl;
       redirectedWindows[window_] = windowInfo;
       return;
     }
@@ -577,16 +600,16 @@ void toggleControl()
                  0 /*cursor*/, GrabModeAsync, 0 /*pairedMode*/,
                  False, &eventmask);
 
-    XGrabKeyboard(dpy, DefaultRootWindow(dpy), False, GrabModeAsync,
+    XGrabKeyboard(dpy, root/*DefaultRootWindow(dpy)*/, False, GrabModeAsync,
                   GrabModeAsync, CurrentTime);
-    XGrabPointer(dpy, DefaultRootWindow(dpy), False,
+    XGrabPointer(dpy, root/*DefaultRootWindow(dpy)*/, False,
                  ButtonPressMask |
                  ButtonReleaseMask |
                  PointerMotionMask |
                  FocusChangeMask |
                  EnterWindowMask |
                  LeaveWindowMask,
-                 GrabModeAsync, GrabModeAsync, DefaultRootWindow(dpy), None,
+                 GrabModeAsync, GrabModeAsync, root/*DefaultRootWindow(dpy)*/, None,
                  CurrentTime);
   }
 }
@@ -928,6 +951,10 @@ int main(int argc, char ** argv)
   //physicalWidth = width;
   //physicalHeight = height;
   //physicalWidth = 3840;
+  //physicalHeight = 1600;
+  //  width = 2560;
+  //height = 1600;
+  //physicalWidth = 2560;
   //physicalHeight = 1600;
   textureWidth = width*1.4;//1280*1.4;//1440.0*2;
   textureHeight = height*1.4;//800*1.4;//900.0*2;

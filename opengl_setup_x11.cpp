@@ -147,7 +147,7 @@ void createWindow(Display *dpy_, Window root_)
     bestMode = 0;
     /* get a connection */
     display = dpy_;
-    screen = DefaultScreen(display);
+    //screen = DefaultScreen(display);
     XF86VidModeQueryVersion(display, &vmMajor, &vmMinor);
     printf("XF86 VideoMode extension version %d.%d\n", vmMajor, vmMinor);
     XF86VidModeGetAllModeLines(display, screen, &modeNum, &modes);
@@ -183,7 +183,7 @@ void createWindow(Display *dpy_, Window root_)
     winAttr.colormap = cmap;
     winAttr.border_pixel = 0;
 
-    if (XineramaIsActive(display)) {
+    if (false && XineramaIsActive(display)) {
       int nscreens;
       XineramaScreenInfo * info = XineramaQueryScreens( display, &nscreens );
       printf("Xinerama is active\n");
@@ -205,6 +205,13 @@ void createWindow(Display *dpy_, Window root_)
     } else {
       printf("Xinerama is not active\n");
     }
+
+    //displayWidth = 2560;
+    //displayHeight = 1600;
+    //width = displayWidth;
+    //height = displayHeight;
+    //dpyWidth = 2560;
+    //dpyHeight = 1600;
 
     if (fullscreen)
     {
@@ -369,10 +376,10 @@ chooseFBConfig(Display *dpy, const GLint *attribList, GLint *nElements)
   GLXFBConfig *fbConfigs;
 
   if (GLXEW_VERSION_1_3)
-    fbConfigs = glXChooseFBConfig(dpy, DefaultScreen(dpy), attribList,
+    fbConfigs = glXChooseFBConfig(dpy, /*DefaultScreen(dpy)*/screen, attribList,
         nElements);
   else
-    fbConfigs = glXChooseFBConfigSGIX(dpy, DefaultScreen(dpy), attribList,
+    fbConfigs = glXChooseFBConfigSGIX(dpy, /*DefaultScreen(dpy)*/screen, attribList,
         nElements);
 
   return fbConfigs;
@@ -402,8 +409,8 @@ getFBConfigFromVisualID(Display *dpy, VisualID visualid)
   if (GLXEW_SGIX_fbconfig && glXGetFBConfigFromVisualSGIX) {
     XVisualInfo visualInfo;
 
-    visualInfo.screen = DefaultScreen(dpy);
-    visualInfo.depth = DefaultDepth(dpy, DefaultScreen(dpy));
+    visualInfo.screen = screen;//DefaultScreen(dpy);
+    visualInfo.depth = DefaultDepth(dpy, screen);//DefaultScreen(dpy));
     visualInfo.visualid = visualid;
 
     fbConfig = glXGetFBConfigFromVisualSGIX(dpy, &visualInfo);
@@ -446,7 +453,7 @@ getFBConfigFromContext(Display *dpy, GLXContext context)
     int nElements = 0;
 
     glXQueryContext(dpy, context, GLX_FBCONFIG_ID, &fbConfigAttrib[1]);
-    fbConfigs = glXChooseFBConfig(dpy, DefaultScreen(dpy), fbConfigAttrib,
+    fbConfigs = glXChooseFBConfig(dpy, screen/*DefaultScreen(dpy)*/, fbConfigAttrib,
         &nElements);
 
     if (nElements) {
