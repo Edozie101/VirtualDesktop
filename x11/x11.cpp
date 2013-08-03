@@ -207,10 +207,10 @@ void prep_root(void)
       height = HeightOfScreen(s);
     }
 
-    XSelectInput(dpy, RootWindow(dpy, i), SubstructureNotifyMask |
+    XSelectInput(dpy, XRootWindow(dpy, i), SubstructureNotifyMask |
                                           PointerMotionMask |
                                           KeyPressMask);
-    XCompositeRedirectSubwindows(dpy, RootWindow(dpy, i),
+    XCompositeRedirectSubwindows(dpy, XRootWindow(dpy, i),
                                  CompositeRedirectAutomatic);
     XSync(dpy, false);
     XIEventMask evmask;
@@ -221,8 +221,8 @@ void prep_root(void)
     evmask.mask_len = sizeof(mask);
     evmask.mask = mask;
 
-    XISelectEvents(dpy, RootWindow(dpy, i), &evmask, 1);
-    XFixesSelectCursorInput(dpy, RootWindow(dpy, i),
+    XISelectEvents(dpy, XRootWindow(dpy, i), &evmask, 1);
+    XFixesSelectCursorInput(dpy, XRootWindow(dpy, i),
                             XFixesDisplayCursorNotifyMask);
   }
 
@@ -234,8 +234,8 @@ void prep_root(void)
   evmask.mask_len = sizeof(mask);
   evmask.mask = mask;
 
-  XISelectEvents(dpy, RootWindow(dpy, screen), &evmask, 1);
-  XFixesSelectCursorInput(dpy, RootWindow(dpy, screen),
+  XISelectEvents(dpy, XRootWindow(dpy, screen), &evmask, 1);
+  XFixesSelectCursorInput(dpy, XRootWindow(dpy, screen),
                           XFixesDisplayCursorNotifyMask);
 }
 
@@ -810,11 +810,11 @@ void renderDesktopToTexture()
 
   XSync(dpy, false);
   XGrabServer(dpy);
-  mousePositionGrabbed = XQueryPointer(dpy, XDefaultRootWindow(dpy),
+  mousePositionGrabbed = XQueryPointer(dpy, XRootWindow(dpy,screen),
                                        &window_returned, &window_returned,
                                        &root_x, &root_y, &win_x, &win_y,
                                        &mask_return);
-  XQueryTree(dpy, XDefaultRootWindow(dpy), &parent, &root2, &children,
+  XQueryTree(dpy, XRootWindow(dpy,screen), &parent, &root2, &children,
              &countChildren);
 
   int d = 0;
