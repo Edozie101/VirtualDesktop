@@ -80,6 +80,7 @@ extern bool glxYInverted;
 /* most important variable
  * it contains information about the X server which we communicate with
  */
+extern XVisualInfo *vi;
 extern Display               * display;
 extern int                     screen;
 /* our window instance */

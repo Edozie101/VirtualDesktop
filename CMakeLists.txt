@@ -75,8 +75,10 @@ set(RESOURCES README.md COPYING AUTHORS)
 
 add_executable(ibex ${SRC} ${IRRLICHT_PLUGIN_FILES} ${OGRE_PLUGIN_FILES})
 target_link_libraries(ibex 
-ibex_windows ibex_filesystem ibex_video ibex_x11 ibex_glm ibex_sixense ibex_oculus
+ibex_windows ibex_filesystem ibex_x11 ibex_video ibex_glm ibex_sixense ibex_oculus
 GL GLU glut GLEW
+vlc
+opencv_core opencv_highgui opencv_video opencv_contrib opencv_ts opencv_legacy 
 openal
 ovr
 X11 Xfixes Xdamage Xrandr Xrender Xcomposite Xxf86vm Xi Xext Xinerama udev pthread

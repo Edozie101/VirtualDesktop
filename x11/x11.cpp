@@ -1,3 +1,5 @@
+#include "../video/VLCVideoPlayer.h"
+
 #include "x11.h"
 #include "../iphone_orientation_plugin/iphone_orientation_listener.h"
 #include "../simpleworld_plugin/SimpleWorldRendererPlugin.h"
@@ -752,16 +754,21 @@ void processXInput2Key(XIDeviceEvent *event, bool pressed, Desktop3DLocation& lo
 	}
       }
     } else {
-      if (walkForward ==  1 && event->detail == W)
-        walkForward = 0;
-      if (walkForward == -1 && event->detail == S)
-        walkForward = 0;
-      if (strafeRight ==  1 && (event->detail == D || event->detail == E))
-        strafeRight = 0;
-      if (strafeRight == -1 && (event->detail == A || event->detail == Q))
-        strafeRight = 0;
-      if (jump && event->detail == SPACE)
-        jump = false;
+      if(showDialog) {
+	processed = ibex->renderer->window.processKey(event, pressed);
+      }
+      if(!processed) {
+	if (walkForward ==  1 && event->detail == W)
+	  walkForward = 0;
+	if (walkForward == -1 && event->detail == S)
+	  walkForward = 0;
+	if (strafeRight ==  1 && (event->detail == D || event->detail == E))
+	  strafeRight = 0;
+	if (strafeRight == -1 && (event->detail == A || event->detail == Q))
+	  strafeRight = 0;
+	if (jump && event->detail == SPACE)
+	  jump = false;
+      }
     }
   }
 }
@@ -885,6 +892,37 @@ void renderDesktopToTexture()
   }
 }
 
+//HGLRC videoPlayerContext = NULL;
+Ibex::VLCVideoPlayer *_ibexVideoPlayer = NULL;
+static void playVideo() {
+  // Create the pixmap, where one designs the scene
+  Pixmap pix = XCreatePixmap(dpy, root, width, height, vi->depth);
+  GLXPixmap px = glXCreateGLXPixmap(dpy, vi, pix);
+
+  GLXContext ctx = glXCreateContext(display, vi, context, GL_TRUE);
+  bool r = glXMakeCurrent(dpy, px, ctx);
+  // Activate the current context
+  if (!r) {
+    fprintf(stderr, "glXMakeCurrent failed!\n");
+    return;
+  }
+
+  //bool success = wglMakeCurrent(hdc, videoPlayerContext);
+  //	std::cerr << "Video playing wglMakeCurrent: " << success << std::endl;
+
+  _ibexVideoPlayer = new Ibex::VLCVideoPlayer();
+  _ibexVideoPlayer->playVideo(ibex->renderer->window.getSelectedVideoPath().c_str(),ibex->renderer->window.getIsStereoVideo(),
+			      dpy, root);
+  //_ibexVideoPlayer->openCamera(ibex->renderer->window.getIsStereoVideo(), -1);
+}
+static void playCamera() {
+  //	bool success = wglMakeCurrent(hdc, videoPlayerContext);
+  //	std::cerr << "Video playing wglMakeCurrent: " << success << std::endl;
+
+	_ibexVideoPlayer = new Ibex::VLCVideoPlayer();
+	//_ibexVideoPlayer->openCamera(ibex->renderer->window.getIsStereoVideo(), ibex->renderer->window.getSelectedCameraID());
+}
+
 // ===========================================================================
 // Function: main
 // Design:   Should be split into X11, OpenGL and architectural to glue them
@@ -896,6 +934,7 @@ void renderDesktopToTexture()
 // ===========================================================================
 int main(int argc, char ** argv)
 {
+  XInitThreads();
 #if !defined(_WIN32) && !defined(__APPLE__)
   int c = 0;
   while (argc > 0 && (c = getopt(argc, argv, "f")) != -1) {
@@ -1106,8 +1145,30 @@ int main(int argc, char ** argv)
       ibex = new Ibex::Ibex(argc, argv);//0,nullptr);
     }
 
-    ibex->render(timeDiff);
+    if(ibex != NULL && (ibex->renderer->window.getSelectedVideo() || ibex->renderer->window.getSelectedCamera())) {
+      if(ibex->renderer->window.getSelectedVideo()) {
+	std::thread videoThread(playVideo);
+	videoThread.detach();
+      } else {
+	std::thread videoThread(playCamera);
+	videoThread.detach();
+      }
+      ibex->renderer->window.setSelectedVideo(false);
+      ibex->renderer->window.setSelectedCamera(false);
+    }
+    if(_ibexVideoPlayer != NULL) {
+      videoTexture[0] = _ibexVideoPlayer->videoTexture[0];
+      videoTexture[1] = _ibexVideoPlayer->videoTexture[1];
+      videoWidth = _ibexVideoPlayer->width;
+      videoHeight = _ibexVideoPlayer->height;
+      //std::cerr << "videoTexture[0]: " << videoTexture[0] << std::endl;
+      //std::cerr << "videoDimensions: " << videoWidth << "x" << videoHeight << std::endl;
+    } else {
+      videoWidth = videoHeight = videoTexture[0] = videoTexture[1] = 0;
+    }
 
+    ibex->render(timeDiff);
+    
     relativeMouseX = 0;
     relativeMouseY = 0;
 

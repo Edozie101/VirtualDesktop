@@ -5,10 +5,10 @@
 //  Created by Hesham Wahba on 4/30/13.
 //  Copyright (c) 2013 Hesham Wahba. All rights reserved.
 //
-#include "VLCVideoPlayer.h"
-
 #include <opencv/cv.h>
 #include <opencv/highgui.h>
+
+#include "VLCVideoPlayer.h"
 
 #include "../opengl_helpers.h"
 
@@ -26,36 +26,47 @@
 
 #include "vlc/vlc.h"
 
-#define WIDTH 640
-#define HEIGHT 480
+#include "../opengl_setup_x11.h"
 
-#define VIDEOWIDTH 320
-#define VIDEOHEIGHT 240
+#define WIDTH 640
+#define HEIGHT 360//480
+
+#define VIDEOWIDTH 640
+#define VIDEOHEIGHT 360
 
 // based off of http://wiki.videolan.org/index.php?title=LibVLC_SampleCode_SDL&redirect=no which was licensed under the WTFPL license http://en.wikipedia.org/wiki/WTFPL 
 
 struct context {
   // textures or whatever can go here
+  Ibex::VLCVideoPlayer *player;
+  unsigned int *videoTexture;
+  bool isStereo;
+  Display *dpy;
+  GLXDrawable root;
   int n;
 };
 
+static uint32_t *pixels;
 // VLC prepares to render a video frame.
-static void *lock(void *data, void **p_pixels) {
+static void *vlclock(void *data, void **p_pixels) {
+  //std::cerr << "lock" << std::endl;
   //struct context *c = (context *)data;
 
   //int pitch;
     // lock mutex for texture update
+  *p_pixels = pixels;
 
     return NULL; // Picture identifier, not needed here.
 }
 
 // VLC just rendered a video frame.
-static void unlock(void *data, void *id, void *const *p_pixels) {
-
+static void vlcunlock(void *data, void *id, void *const *p_pixels) {
+  //std::cerr << "unlock" << std::endl;
+  //return;
   //struct context *c = (context *)data;
 
-    uint16_t *pixels = (uint16_t *)*p_pixels;
-
+    uint32_t *pixels = (uint32_t *)*p_pixels;
+    /*
     // We can also render stuff.
     int x, y;
     for(y = 10; y < 40; y++) {
@@ -67,14 +78,71 @@ static void unlock(void *data, void *id, void *const *p_pixels) {
                 pixels[y * VIDEOWIDTH + x] = 0x02ff;
             }
         }
-    }
+	}*/
 
     // unlock texture update mutex
     assert(id == NULL); // picture identifier, not needed here
 }
 
 // VLC wants to display a video frame.
-static void display(void *data, void *id) {
+static void vlcdisplay(void *data, void *id) {
+  struct context *c = (struct context*)data;
+  unsigned int *videoTexture = c->videoTexture;
+  bool isStereo = c->isStereo;
+  //std::cerr << "**** display: " << videoTexture[0] << std::endl;
+
+
+ // Create the pixmap, where one designs the scene
+  static Pixmap pix = XCreatePixmap(c->dpy, c->root, VIDEOWIDTH, VIDEOHEIGHT, vi->depth);
+  static GLXPixmap px = glXCreateGLXPixmap(c->dpy, vi, pix);
+
+  static GLXContext ctx = glXCreateContext(c->dpy, vi, context, GL_TRUE);
+  static bool r = glXMakeCurrent(c->dpy, px, ctx);
+  if(!r) {
+    std::cerr << "* failed to create GL for video" << std::endl;
+  }
+
+  static bool init = false;
+  if(!init) {
+    c->player->createVideoTextures(c->isStereo, VIDEOWIDTH, VIDEOHEIGHT);
+    c->player->width = VIDEOWIDTH;
+    c->player->height = VIDEOHEIGHT;
+    isStereo = false;
+    init = true;
+  }
+
+  GLuint width = VIDEOWIDTH;
+  GLuint height = VIDEOHEIGHT;
+  bool first = true;
+  if(isStereo) {
+    glBindTexture(GL_TEXTURE_2D, videoTexture[1]);
+    int stride = width*2;
+    glPixelStorei(GL_UNPACK_ROW_LENGTH,stride);
+    if(first) {
+      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, width, height/2, 0,
+		   GL_BGRA, GL_UNSIGNED_BYTE, pixels);
+      glBindTexture(GL_TEXTURE_2D, videoTexture[0]);
+      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, width, height/2, 0,
+		   GL_BGRA, GL_UNSIGNED_BYTE, pixels+(width*3));
+    } else {
+      glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height/2,
+		      GL_RGB, GL_UNSIGNED_BYTE, pixels);
+      glBindTexture(GL_TEXTURE_2D, videoTexture[0]);
+      glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height/2,
+		      GL_RGB, GL_UNSIGNED_BYTE, pixels+(width*3));
+    }
+  } else {
+    glBindTexture(GL_TEXTURE_2D, videoTexture[0]);
+    if(first) {
+      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, width, height, 0,
+      	   GL_BGRA, GL_UNSIGNED_BYTE, pixels);
+    } else {
+      glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height,
+		      GL_BGRA, GL_UNSIGNED_BYTE, pixels);
+    }
+  }
+  glFlush();
+
   //struct context *c = (context *)data;
     // WIDTH/HEIGHT VIDEOWIDTH/VIDEOHEIGHT
 }
@@ -83,15 +151,14 @@ static void quit(int c) {
     exit(c);
 }
 
-static int main_test(int argc, char *argv[]) {
-
+int Ibex::VLCVideoPlayer::playVLCVideo(const char *fileName, Display *dpy, GLXDrawable root) {
     libvlc_instance_t *libvlc;
     libvlc_media_t *m;
     libvlc_media_player_t *mp;
     char const *vlc_argv[] = {
 
-        "--no-audio", // Don't play audio.
-        "--no-xlib", // Don't use Xlib.
+      //"--no-audio", // Don't play audio.
+       "--no-xlib", // Don't use Xlib.
 
         // Apply a video filter.
         //"--video-filter", "sepia",
@@ -101,12 +168,12 @@ static int main_test(int argc, char *argv[]) {
 
     int done = 0, action = 0, pause = 0;
     struct context context;
+    context.isStereo = 0;
+    context.videoTexture = videoTexture;
+    context.player = this;
+    context.dpy = dpy;
+    context.root = root;
 
-    if(argc < 2) {
-        printf("Usage: %s <filename>\n", argv[0]);
-        return EXIT_FAILURE;
-    }
-   
     // create texture/mutex
 
     // If you don't have this variable set you must have plugins directory
@@ -120,12 +187,13 @@ static int main_test(int argc, char *argv[]) {
         return EXIT_FAILURE;
     }
 
-    m = libvlc_media_new_path(libvlc, argv[1]);
+    m = libvlc_media_new_path(libvlc, fileName);
     mp = libvlc_media_player_new_from_media(m);
     libvlc_media_release(m);
-
-    libvlc_video_set_callbacks(mp, lock, unlock, display, &context);
-    libvlc_video_set_format(mp, "RV16", VIDEOWIDTH, VIDEOHEIGHT, VIDEOWIDTH*2);
+    pixels = new uint32_t[VIDEOWIDTH*VIDEOHEIGHT*4];
+    libvlc_video_set_callbacks(mp, vlclock, vlcunlock, vlcdisplay, &context);
+    libvlc_video_set_format(mp, "RV32", VIDEOWIDTH, VIDEOHEIGHT, VIDEOWIDTH*4);
+    //libvlc_video_set_format(mp, "YUYV", VIDEOWIDTH, VIDEOHEIGHT, VIDEOWIDTH*2);
     libvlc_media_player_play(mp);
     
     // Main loop.
@@ -175,8 +243,11 @@ Ibex::VLCVideoPlayer::~VLCVideoPlayer() {
   stopPlaying();
 }
 
-int Ibex::VLCVideoPlayer::playVideo(const char *fileName, bool isStereo)
+int Ibex::VLCVideoPlayer::playVideo(const char *fileName, bool isStereo, Display *dpy, GLXDrawable root)
 {
+  //createVideoTextures(isStereo, VIDEOWIDTH, VIDEOHEIGHT);
+  this->isStereo = isStereo;
+  playVLCVideo(fileName, dpy, root);
   return 0;
 }
 

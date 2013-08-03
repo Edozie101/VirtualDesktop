@@ -378,7 +378,7 @@ int Ibex::Window::processKey(unsigned char key, int down) {
             processed = 1;
             break;
         case '3':
-		case '4':
+    case '4':
             if(down) {
                 if(visibleWindow == InfoWindow) {
 					reset();
@@ -450,7 +450,7 @@ int Ibex::Window::processKey(unsigned char key, int down) {
     return processed;
 }
 int Ibex::Window::processSpecialKey(unsigned char key, int down) {
-	int processed = 0;
+  int processed = 0;
     switch(key) {
         case GLUT_KEY_UP:
             if(down) {
@@ -474,8 +474,113 @@ int Ibex::Window::processSpecialKey(unsigned char key, int down) {
     return processed;
 }
 #else
-int Ibex::Window::processKey(XIDeviceEvent *event, bool pressed) {
+int Ibex::Window::processKey(XIDeviceEvent *event, bool down) {
+  static KeyCode B = XKeysymToKeycode(dpy, XK_B); // toggle barrel distort
+  static KeyCode G = XKeysymToKeycode(dpy, XK_G); // toggle ground
+
+  static KeyCode KC1 = XKeysymToKeycode(dpy, XK_1);
+  static KeyCode KC2 = XKeysymToKeycode(dpy, XK_2);
+  static KeyCode KC3 = XKeysymToKeycode(dpy, XK_3);
+  static KeyCode KC4 = XKeysymToKeycode(dpy, XK_4);
+  
+  static KeyCode W = XKeysymToKeycode(dpy, XK_W);
+  static KeyCode S = XKeysymToKeycode(dpy, XK_S);
+  static KeyCode A = XKeysymToKeycode(dpy, XK_A);
+  static KeyCode D = XKeysymToKeycode(dpy, XK_D);
+  static KeyCode Q = XKeysymToKeycode(dpy, XK_Q);
+  static KeyCode E = XKeysymToKeycode(dpy, XK_E);
+  static KeyCode R = XKeysymToKeycode(dpy, XK_R);
+  static KeyCode FORWARD_SLASH = XKeysymToKeycode(dpy, XK_slash);
+  static KeyCode SPACE = XKeysymToKeycode(dpy, XK_space);
+  static KeyCode ENTER = XKeysymToKeycode(dpy, XK_Return);
+
+  KeyCode key = event->detail;
   int processed = 0;
+  if(key == W) {
+    if(down) {
+      --selectedFile;
+      if(selectedFile < 0 && directoryList.size() > 0) selectedFile += directoryList.size();
+      else if(directoryList.size() <= 0 && selectedFile < 0)selectedFile = 0;
+    }
+    processed = 1;
+  } else if(key == S) {
+    if(down) {
+      ++selectedFile;
+      if(directoryList.size() > 0) {
+	selectedFile %= directoryList.size();
+      }
+    }
+    processed = 1;
+  } else if(key == ENTER) {
+    if(down) {
+      switch(visibleWindow) {
+      case FileChooser:
+	{
+	  if(selectedFile < directoryList.size() && selectedFile >= 0) {
+	    std::string fullPath = Filesystem::getFullPath(currentPath, directoryList[selectedFile]);
+	    if(Filesystem::isFile(fullPath) && !Filesystem::isDirectory(fullPath)) {
+	      selectedVideo = true;
+	      videoPath = fullPath;
+	      showDialog = false;
+	    } else {
+	      currentPath = Filesystem::navigate(currentPath, directoryList[selectedFile]);
+	    }
+	    directoryChanged = true;
+	    directoryList.clear();
+	    selectedFile = 0;
+	  }
+	  break;
+	}
+      case CameraChooser:
+	{
+	  if(selectedFile >= 0 && selectedFile < cameras.size()) {
+	    directoryList.clear();
+	    selectedCamera = true;
+	    selectedCameraID = cameras[selectedFile];
+	    showDialog = false;
+	    selectedFile = 0;
+	  } else {
+                            
+	  }
+	  break;
+	}
+      default:
+	break;
+      }
+      //            showDialog = false;
+    }
+    processed = 1;
+  } else if(key == KC1 || key == KC2) {
+    if(down) {
+      if(visibleWindow == InfoWindow) {
+	reset();
+	directoryList.clear();
+	selectedFile = 0;
+	isStereoVideo = (key == KC2);
+	directoryChanged = true;
+      }
+      visibleWindow = FileChooser;
+    }
+    
+    processed = 1;
+  } else if(key == KC3 || key == KC4) {
+    /*
+    if(down) {
+      if(visibleWindow == InfoWindow) {
+	reset();
+	directoryList.clear();
+	selectedCamera = 0;
+	selectedCameraID = -1;
+	isStereoVideo = (key == KC4);
+	directoryChanged = true;
+      }
+      visibleWindow = CameraChooser;
+      cameras = VLCVideoPlayer::listCameras();
+    }
+    */
+    processed = 1;
+  }
+
   return processed;
 }
 #endif

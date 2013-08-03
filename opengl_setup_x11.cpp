@@ -14,6 +14,7 @@ bool chooseFirstDisplay(false);
 GLXFBConfig fbconfig;
 bool glxYInverted;
 
+XVisualInfo *vi;
 Display               * display;
 int                     screen;
 Window                  window;
@@ -133,7 +134,7 @@ void createWindow(Display *dpy_, Window root_)
 {
   int xOffset = 0, yOffset = 0;
   int displayWidth = -1, displayHeight = -1;
-    XVisualInfo *vi;
+  //XVisualInfo *vi;
     Colormap cmap;
     int i, dpyWidth, dpyHeight;
     int glxMajor, glxMinor, vmMajor, vmMinor;
