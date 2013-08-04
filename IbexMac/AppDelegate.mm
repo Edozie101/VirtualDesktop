@@ -76,7 +76,7 @@ void initRift() {
 	if (pSensor)
 	{
         FusionResult.AttachToSensor(pSensor);
-	FusionResult.SetPredictionEnabled(tru	e);
+	FusionResult.SetPredictionEnabled(true);
 	float motionPred = FusionResult.GetPredictionDelta(); // adjust in 0.01 increments
         if(motionPred < 0) motionPred = 0;
         FusionResult.SetPrediction(motionPred);
