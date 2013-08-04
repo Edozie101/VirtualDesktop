@@ -41,7 +41,7 @@ varying vec3 eyeVector;
 
 void main(void)
 {
-    return;
+    //return;
 	// sum normal maps
 	// sample from 3 different points so no texture repetition is noticeable
     vec4 t0 = texture2D(NormalMap, bumpCoord0) * 2.0 - 1.0;
