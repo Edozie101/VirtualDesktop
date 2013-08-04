@@ -423,7 +423,9 @@ void Ibex::VideoPlayer::savePPMFrame(const AVFrame *avFrame, int width, int heig
 }
 
 void Ibex::VideoPlayer::addAudioFrame(AudioPacket avAudioFrame) {
-    audioQueue.push(avAudioFrame);
+	aMutex1.lock();
+	audioQueue.push(avAudioFrame);
+	aMutex1.unlock();
 }
 void Ibex::VideoPlayer::addVideoFrame(AudioPacket avVideoFrame) {
     while(videoQueue.size() > MAX_VIDEO_QUEUE_SIZE && !done) {
@@ -437,6 +439,13 @@ void Ibex::VideoPlayer::addVideoFrame(AudioPacket avVideoFrame) {
 int Ibex::VideoPlayer::playAudio(AVCodecContext *avAudioCodecCtx) {
     if(avAudioCodecCtx == 0) return 0;
     
+	int channels, bits;
+    channels = 2;//av_frame_get_channels(avAudioFrame);
+    bits = avAudioCodecCtx->bits_per_coded_sample;
+    channels = 1;
+
+	unsigned int frequency = avAudioCodecCtx->sample_rate;
+#ifdef OPENAL
     ////// OpenAL ////////
     ALCdevice *dev;
     ALCcontext *ctx;
@@ -456,7 +465,6 @@ int Ibex::VideoPlayer::playAudio(AVCodecContext *avAudioCodecCtx) {
     }
     
     ALuint source, buffers[NUM_BUFFERS];
-    ALuint frequency;
     ALenum format;
     
     alGenBuffers(NUM_BUFFERS, buffers);
@@ -467,12 +475,7 @@ int Ibex::VideoPlayer::playAudio(AVCodecContext *avAudioCodecCtx) {
         return 1;
     }
     
-    
-    int channels, bits;
-    channels = 2;//av_frame_get_channels(avAudioFrame);
-    bits = avAudioCodecCtx->bits_per_coded_sample;
-    format = 0;
-    channels = 1;
+	format = 0;
     if(bits == 8)
     {
         if(channels == 1)
@@ -487,7 +490,6 @@ int Ibex::VideoPlayer::playAudio(AVCodecContext *avAudioCodecCtx) {
         else if(channels == 2)
             format = AL_FORMAT_STEREO16;
     }
-    frequency = avAudioCodecCtx->sample_rate;
     if(!format)
     {
         fprintf(stderr, "Incompatible format (%d, %d) :(\n", channels, bits);
@@ -495,14 +497,17 @@ int Ibex::VideoPlayer::playAudio(AVCodecContext *avAudioCodecCtx) {
         return 1;
     }
     /////
-    
+#endif
+
     unsigned long count = 0;
     int val = 0;
     AudioPacket avAudioFrame;
     while(!done) {
         if(audioQueue.size() > 0) {
+			aMutex1.lock();
             avAudioFrame = audioQueue.front();
             audioQueue.pop();
+			aMutex1.unlock();
         } else {
             std::this_thread::yield();
 //            std::this_thread::sleep_for(std::chrono::milliseconds(1));
@@ -517,6 +522,8 @@ int Ibex::VideoPlayer::playAudio(AVCodecContext *avAudioCodecCtx) {
 //            std::cerr << "^^^ PLAYING AUDIO" << count << std::endl;
             channels = av_frame_get_channels(avAudioFrame.avAudioFrame);
             bits = avAudioCodecCtx->bits_per_coded_sample;
+
+#ifdef OPENAL
             format = 0;
 //            channels = 2;
 //            channels = 1;
@@ -534,19 +541,25 @@ int Ibex::VideoPlayer::playAudio(AVCodecContext *avAudioCodecCtx) {
                 else if(channels == 2)
                     format = AL_FORMAT_STEREO16;
             }
+#endif
             frequency = avAudioCodecCtx->sample_rate;
 //            frequency = 44100;
             
             if(count >= NUM_BUFFERS) {
                 do {
                     if(done) return 0;
+#ifdef OPENAL
                     alGetSourcei(source, AL_BUFFERS_PROCESSED, &val);
+#else
+					val = 1;
+#endif
                     std::this_thread::yield();
 //                    std::this_thread::sleep_for(std::chrono::milliseconds(1));
                 } while(val <= 0 && !done);
                 if(done) break;
                 //                    fprintf(stderr, "Unqueued buffer\n");
-                
+
+#ifdef OPENAL
                 ALuint buffer;
                 alSourceUnqueueBuffers(source, 1, &buffer);
                 
@@ -561,7 +574,9 @@ int Ibex::VideoPlayer::playAudio(AVCodecContext *avAudioCodecCtx) {
                     exit(1);
                     return 1;
                 }
+#endif
             } else {
+#ifdef OPENAL
                 alBufferData(buffers[count], format, avAudioFrame.audioBuffer, avAudioFrame.size, frequency);
                 alSourceQueueBuffers(source, 1, &(buffers[count]));
                 
@@ -571,10 +586,12 @@ int Ibex::VideoPlayer::playAudio(AVCodecContext *avAudioCodecCtx) {
                     exit(1);
                     return 1;
                 }
+#endif
             }
             ++count;
         }
         
+#ifdef OPENAL
         // Make sure the source is still playing, and restart it if needed.
         alGetSourcei(source, AL_SOURCE_STATE, &val);
         if(val != AL_PLAYING)
@@ -585,7 +602,10 @@ int Ibex::VideoPlayer::playAudio(AVCodecContext *avAudioCodecCtx) {
             exit(1);
             return 1;
         }
+#endif
+		aMutex2.lock();
         audioBufferQueue.push(avAudioFrame);
+		aMutex2.unlock();
     }
     
     return 0;
@@ -600,7 +620,14 @@ int Ibex::VideoPlayer::initVideo(const char *fileName, bool isStereo) {
     
     avFormatCtx = NULL;
     
-    if(avformat_open_input(&avFormatCtx, fileName, NULL, NULL)!=0) {
+	//AVFormatContext *formatC = avformat_alloc_context();
+	//AVDictionary* options = NULL;
+	//av_dict_set(&options,"list_devices","true",0);
+	//AVInputFormat *iformat = av_find_input_format("dshow");
+
+	//std::cerr << iformat << std::endl;
+ //   if(avformat_open_input(&avFormatCtx, "video=Roxio Video Capture USB", NULL, NULL)!=0) {
+	if(avformat_open_input(&avFormatCtx, fileName, NULL, NULL)!=0) {
         videoDone = audioDone = done = true;
         return -1;
     }
@@ -673,7 +700,9 @@ int Ibex::VideoPlayer::initVideo(const char *fileName, bool isStereo) {
         a.audioBuffer = new uint8_t[BUFFER_SIZE+FF_INPUT_BUFFER_PADDING_SIZE];
         a.avAudioFrame = avcodec_alloc_frame();
         avcodec_get_frame_defaults(a.avAudioFrame);
+		aMutex2.lock();
         audioBufferQueue.push(a);
+		aMutex2.unlock();
     }
     // prepare audio,video frame
     avAudioFrame = avcodec_alloc_frame();
@@ -739,13 +768,24 @@ int Ibex::VideoPlayer::loadSyncAudioVideo(const char *fileName_, bool isStereo) 
     uint8_t *audioBuffer = new uint8_t[BUFFER_SIZE+FF_INPUT_BUFFER_PADDING_SIZE];//size];
     memset(audioBuffer, 0, BUFFER_SIZE+FF_INPUT_BUFFER_PADDING_SIZE);//size);
     
+#ifdef _WIN32
+#ifdef _USE_XAUDIO2
+	audioThread = std::thread(PlayAudioStreamXAUDIO2, new Ibex::WindowsAudioSource(this, avAudioCodecCtx));
+#else
+	audioThread = std::thread(PlayAudioStreamWASAPI, new Ibex::WindowsAudioSource(this, avAudioCodecCtx));
+#endif
+#else
     audioThread = std::thread(&Ibex::VideoPlayer::playAudio,this, avAudioCodecCtx);
+#endif
     
     avFrame = videoFrameQueue.front();
     videoFrameQueue.pop();
     
+	aMutex2.lock();
     AudioPacket p = audioBufferQueue.front();
     audioBufferQueue.pop();
+	aMutex2.unlock();
+
     avAudioFrame = p.avAudioFrame;
     audioBuffer = p.audioBuffer;
     
@@ -789,14 +829,16 @@ int Ibex::VideoPlayer::loadSyncAudioVideo(const char *fileName_, bool isStereo) 
                         a.avAudioFrame = avAudioFrame;
                         addAudioFrame(a);
                         
-                        while(audioBufferQueue.size() <= 0 && !done) {
+                        while(audioBufferQueue.empty() && !done) {
                             std::this_thread::yield();
 //                    std::this_thread::sleep_for(std::chrono::milliseconds(1));
                             continue;
                         }
                         if(done) continue;
+						aMutex2.lock();
                         p = audioBufferQueue.front();
                         audioBufferQueue.pop();
+						aMutex2.unlock();
                         avAudioFrame = p.avAudioFrame;
                         audioBuffer = p.audioBuffer;
                         
@@ -877,8 +919,10 @@ int Ibex::VideoPlayer::loadSyncAudioVideo(const char *fileName_, bool isStereo) 
     audioDone = true;
     
     for(int i = 0; i < audioBufferQueue.size(); ++i) {
+		aMutex2.lock();
         AudioPacket avAudioFrame = audioBufferQueue.front();
         audioBufferQueue.pop();
+		aMutex2.unlock();
         av_free(avAudioFrame.avAudioFrame);
         delete [] avAudioFrame.audioBuffer;
     }
@@ -1093,13 +1137,14 @@ std::vector<int> Ibex::VideoPlayer::listCameras() {
         cameras.push_back(i-1);
         if(cam == NULL) break;
         cvReleaseCapture(&cam);
-    } while(true);
+    } while(true && i < 5);
     if(cam) cvReleaseCapture(&cam);
     
     return cameras;
 }
 
 void Ibex::VideoPlayer::stopCapturing() {
+	done = true;
     captureVideo = false;
     if(cvCapture) {
         cvReleaseCapture(&cvCapture);
@@ -1107,6 +1152,10 @@ void Ibex::VideoPlayer::stopCapturing() {
         openCVInited = false;
     }
 }
+void Ibex::VideoPlayer::stopPlaying() {
+	done = true;
+}
+
 void Ibex::VideoPlayer::initOpenCV(bool isStereo, int cameraId) {
 	if(!openCVInited) {
         captureVideo = true;
