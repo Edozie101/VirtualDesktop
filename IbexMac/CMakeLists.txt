@@ -6,12 +6,12 @@ SET(CMAKE_MODULE_PATH "/usr/share/OGRE/cmake/modules" ${CMAKE_MODULE_PATH})
 
 find_package(OpenGL REQUIRED)
 
+find_package(OculusSDK)
 IF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     # Linux specific code
     SET(OperatingSystem "Linux")
 
 find_package(GLUT REQUIRED)
-find_package(OculusSDK)
 find_package(OpenAL)
 find_package(Irrlicht)
 find_package(OGRE)
@@ -51,7 +51,7 @@ add_subdirectory(windows)
 add_subdirectory(filesystem)
 add_subdirectory(video)
 add_subdirectory(sixense)
-#add_subdirectory(oculus)
+add_subdirectory(oculus)
 #add_subdirectory(x11)
 
 include_directories(
@@ -75,7 +75,11 @@ set(RESOURCES README.md COPYING AUTHORS)
 
 add_executable(ibex ${SRC} ${IRRLICHT_PLUGIN_FILES} ${OGRE_PLUGIN_FILES})
 target_link_libraries(ibex 
-ibex_windows ibex_filesystem ibex_x11 ibex_video ibex_glm ibex_sixense ibex_oculus
+ibex_windows ibex_filesystem
+#ibex_x11
+ibex_video
+#ibex_glm
+ibex_sixense ibex_oculus
 GL GLU glut GLEW
 vlc
 opencv_core opencv_highgui opencv_video opencv_contrib opencv_ts opencv_legacy 

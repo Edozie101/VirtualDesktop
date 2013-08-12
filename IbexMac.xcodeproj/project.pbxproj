@@ -262,6 +262,14 @@
 		4C961B5417B89A780028D242 /* SimpleWorldRendererPlugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C961B5117B89A780028D242 /* SimpleWorldRendererPlugin.cpp */; };
 		4C961B5517B89A780028D242 /* SimpleWorldRendererPlugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C961B5117B89A780028D242 /* SimpleWorldRendererPlugin.cpp */; };
 		4C961B5617B89A780028D242 /* SimpleWorldRendererPlugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C961B5117B89A780028D242 /* SimpleWorldRendererPlugin.cpp */; };
+		4C961B5B17B89DB50028D242 /* CMakeLists.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4C961B5817B89DB50028D242 /* CMakeLists.txt */; };
+		4C961B5C17B89DB50028D242 /* CMakeLists.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4C961B5817B89DB50028D242 /* CMakeLists.txt */; };
+		4C961B5D17B89DB50028D242 /* CMakeLists.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4C961B5817B89DB50028D242 /* CMakeLists.txt */; };
+		4C961B5E17B89DB50028D242 /* CMakeLists.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4C961B5817B89DB50028D242 /* CMakeLists.txt */; };
+		4C961B5F17B89DB50028D242 /* Rift.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C961B5917B89DB50028D242 /* Rift.cpp */; };
+		4C961B6017B89DB50028D242 /* Rift.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C961B5917B89DB50028D242 /* Rift.cpp */; };
+		4C961B6117B89DB50028D242 /* Rift.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C961B5917B89DB50028D242 /* Rift.cpp */; };
+		4C961B6217B89DB50028D242 /* Rift.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C961B5917B89DB50028D242 /* Rift.cpp */; };
 		4CA92BC41729FB1F00994379 /* libovr.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CA92BC31729FB1F00994379 /* libovr.a */; };
 		4CABF7EA1730926900F94A46 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CABF7E91730926900F94A46 /* OpenAL.framework */; };
 		4CABF7EB1730927500F94A46 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CABF7E91730926900F94A46 /* OpenAL.framework */; };
@@ -558,6 +566,9 @@
 		4C961B4B17B899F10028D242 /* sixense_controller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sixense_controller.h; sourceTree = "<group>"; };
 		4C961B5117B89A780028D242 /* SimpleWorldRendererPlugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleWorldRendererPlugin.cpp; sourceTree = "<group>"; };
 		4C961B5217B89A780028D242 /* SimpleWorldRendererPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleWorldRendererPlugin.h; sourceTree = "<group>"; };
+		4C961B5817B89DB50028D242 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		4C961B5917B89DB50028D242 /* Rift.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Rift.cpp; sourceTree = "<group>"; };
+		4C961B5A17B89DB50028D242 /* Rift.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Rift.h; sourceTree = "<group>"; };
 		4CA92BC31729FB1F00994379 /* libovr.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libovr.a; path = ../OculusSDK/LibOVR/Lib/MacOS/Debug/libovr.a; sourceTree = "<group>"; };
 		4CABF7E91730926900F94A46 /* OpenAL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenAL.framework; path = System/Library/Frameworks/OpenAL.framework; sourceTree = SDKROOT; };
 		4CABF81F1730BAF600F94A46 /* libxvidcore.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libxvidcore.a; path = /usr/local/Cellar/xvid/1.3.2/lib/libxvidcore.a; sourceTree = "<absolute>"; };
@@ -889,6 +900,16 @@
 			path = simpleworld_plugin;
 			sourceTree = "<group>";
 		};
+		4C961B5717B89DB50028D242 /* oculus */ = {
+			isa = PBXGroup;
+			children = (
+				4C961B5817B89DB50028D242 /* CMakeLists.txt */,
+				4C961B5917B89DB50028D242 /* Rift.cpp */,
+				4C961B5A17B89DB50028D242 /* Rift.h */,
+			);
+			path = oculus;
+			sourceTree = "<group>";
+		};
 		4CB7985B168AB41E00EF5260 = {
 			isa = PBXGroup;
 			children = (
@@ -995,6 +1016,7 @@
 		4CB79870168AB41E00EF5260 /* IbexMac */ = {
 			isa = PBXGroup;
 			children = (
+				4C961B5717B89DB50028D242 /* oculus */,
 				4C961B5017B89A780028D242 /* simpleworld_plugin */,
 				4C961B4917B899F10028D242 /* sixense */,
 				4C961B2817B895330028D242 /* video */,
@@ -1183,6 +1205,7 @@
 				4C0937D117B1F9CE004EA291 /* Credits.rtf in Resources */,
 				4C961B2317B8949C0028D242 /* CMakeLists.txt in Resources */,
 				4C0937D217B1F9CE004EA291 /* MainMenu.xib in Resources */,
+				4C961B5E17B89DB50028D242 /* CMakeLists.txt in Resources */,
 				4C961B4417B899860028D242 /* CMakeLists.txt in Resources */,
 				4C0937D317B1F9CE004EA291 /* resources in Resources */,
 				4C0937D417B1F9CE004EA291 /* ibex.iconset in Resources */,
@@ -1197,6 +1220,7 @@
 				4C0D58B016AD656A007BC9CD /* Credits.rtf in Resources */,
 				4C961B2117B8949C0028D242 /* CMakeLists.txt in Resources */,
 				4C0D58B116AD656A007BC9CD /* MainMenu.xib in Resources */,
+				4C961B5C17B89DB50028D242 /* CMakeLists.txt in Resources */,
 				4C961B4217B899860028D242 /* CMakeLists.txt in Resources */,
 				4C0D58B216AD656A007BC9CD /* resources in Resources */,
 				4C0D58B316AD656A007BC9CD /* ibex.iconset in Resources */,
@@ -1211,6 +1235,7 @@
 				4C6B99F816F4C17E00C5C725 /* Credits.rtf in Resources */,
 				4C961B2217B8949C0028D242 /* CMakeLists.txt in Resources */,
 				4C6B99F916F4C17E00C5C725 /* MainMenu.xib in Resources */,
+				4C961B5D17B89DB50028D242 /* CMakeLists.txt in Resources */,
 				4C961B4317B899860028D242 /* CMakeLists.txt in Resources */,
 				4C6B99FA16F4C17E00C5C725 /* resources in Resources */,
 				4C6B99FB16F4C17E00C5C725 /* ibex.iconset in Resources */,
@@ -1225,6 +1250,7 @@
 				4CB7987B168AB41E00EF5260 /* Credits.rtf in Resources */,
 				4C961B2017B8949C0028D242 /* CMakeLists.txt in Resources */,
 				4CB79881168AB41E00EF5260 /* MainMenu.xib in Resources */,
+				4C961B5B17B89DB50028D242 /* CMakeLists.txt in Resources */,
 				4C961B4117B899860028D242 /* CMakeLists.txt in Resources */,
 				4CAC8D5E169347AE00341AA0 /* resources in Resources */,
 				4C8758431697E5200022583D /* ibex.iconset in Resources */,
@@ -1317,6 +1343,7 @@
 				4C0937A017B1F9CE004EA291 /* tinyxml.cpp in Sources */,
 				4C0937A117B1F9CE004EA291 /* tinyxmlerror.cpp in Sources */,
 				4C0937A217B1F9CE004EA291 /* tinyxmlparser.cpp in Sources */,
+				4C961B6217B89DB50028D242 /* Rift.cpp in Sources */,
 				4C0937A317B1F9CE004EA291 /* ScreenshotView.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1325,6 +1352,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4C961B6017B89DB50028D242 /* Rift.cpp in Sources */,
 				4C961B5417B89A780028D242 /* SimpleWorldRendererPlugin.cpp in Sources */,
 				4C0D589616AD656A007BC9CD /* main.m in Sources */,
 				4C0D589716AD656A007BC9CD /* AppDelegate.mm in Sources */,
@@ -1378,6 +1406,7 @@
 				4C961B4E17B899F10028D242 /* sixense_controller.cpp in Sources */,
 				4C6F781E16F4D6150089101F /* BaseApplication.cpp in Sources */,
 				4C6F782416F4D6150089101F /* DotSceneLoader.cpp in Sources */,
+				4C961B6117B89DB50028D242 /* Rift.cpp in Sources */,
 				4C6F782716F4D6150089101F /* TutorialApplication.cpp in Sources */,
 				4C6F783616F4DF0B0089101F /* tinystr.cpp in Sources */,
 				4C6F783916F4DF0B0089101F /* tinyxml.cpp in Sources */,
@@ -1395,6 +1424,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4C961B5F17B89DB50028D242 /* Rift.cpp in Sources */,
 				4C961B5317B89A780028D242 /* SimpleWorldRendererPlugin.cpp in Sources */,
 				4CB79877168AB41E00EF5260 /* main.m in Sources */,
 				4C961B2417B8949C0028D242 /* Window.cpp in Sources */,
