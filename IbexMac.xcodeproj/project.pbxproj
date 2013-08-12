@@ -9,6 +9,92 @@
 /* Begin PBXBuildFile section */
 		4C006060169D385100B88329 /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C00605F169D385100B88329 /* ApplicationServices.framework */; };
 		4C006063169D38A000B88329 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C006062169D38A000B88329 /* CoreFoundation.framework */; };
+		4C09378F17B1F9CE004EA291 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CB79876168AB41E00EF5260 /* main.m */; };
+		4C09379017B1F9CE004EA291 /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4CB7987D168AB41E00EF5260 /* AppDelegate.mm */; };
+		4C09379117B1F9CE004EA291 /* ScreenGrabber.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C2DE2FE168B30CC003BEB56 /* ScreenGrabber.m */; };
+		4C09379217B1F9CE004EA291 /* MyOpenGLView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4CF354B8168D0D5000EAA2FE /* MyOpenGLView.mm */; };
+		4C09379317B1F9CE004EA291 /* SimpleWorldRendererPlugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFB0B3C168E5D6A0025AF0F /* SimpleWorldRendererPlugin.cpp */; };
+		4C09379417B1F9CE004EA291 /* distortions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFB0B40168E5D840025AF0F /* distortions.cpp */; };
+		4C09379517B1F9CE004EA291 /* opengl_helpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFB0B41168E5D840025AF0F /* opengl_helpers.cpp */; };
+		4C09379617B1F9CE004EA291 /* RendererPlugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFB0B45168E5D960025AF0F /* RendererPlugin.cpp */; };
+		4C09379717B1F9CE004EA291 /* iphone_orientation_listener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CAC8D531690A26500341AA0 /* iphone_orientation_listener.cpp */; };
+		4C09379817B1F9CE004EA291 /* glew.c in Sources */ = {isa = PBXBuildFile; fileRef = 4CAC8D551690A26F00341AA0 /* glew.c */; };
+		4C09379917B1F9CE004EA291 /* IbexMacUtils.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4C41232016936E4F008F5B15 /* IbexMacUtils.mm */; };
+		4C09379A17B1F9CE004EA291 /* utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CAC8D571690A2C100341AA0 /* utils.cpp */; };
+		4C09379B17B1F9CE004EA291 /* ibex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFB0B49168E5DFA0025AF0F /* ibex.cpp */; };
+		4C09379C17B1F9CE004EA291 /* MyWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4C4C3C091694689400D2285F /* MyWindow.mm */; };
+		4C09379D17B1F9CE004EA291 /* ServerController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CACE17116A236710085DA5E /* ServerController.m */; };
+		4C09379E17B1F9CE004EA291 /* sixense_controller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C46D7CB16F2BB2900B5DD9E /* sixense_controller.cpp */; };
+		4C09379F17B1F9CE004EA291 /* tinystr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C6F782E16F4DF0B0089101F /* tinystr.cpp */; };
+		4C0937A017B1F9CE004EA291 /* tinyxml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C6F783016F4DF0B0089101F /* tinyxml.cpp */; };
+		4C0937A117B1F9CE004EA291 /* tinyxmlerror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C6F783216F4DF0B0089101F /* tinyxmlerror.cpp */; };
+		4C0937A217B1F9CE004EA291 /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C6F783316F4DF0B0089101F /* tinyxmlparser.cpp */; };
+		4C0937A317B1F9CE004EA291 /* ScreenshotView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4C936063172A282100A94980 /* ScreenshotView.mm */; };
+		4C0937A517B1F9CE004EA291 /* IbexVideoPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4C238E1B172C94A7009C22A6 /* IbexVideoPlayer.mm */; };
+		4C0937A617B1F9CE004EA291 /* Filesystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C3CA30C17374B2E00A8DA14 /* Filesystem.cpp */; };
+		4C0937A717B1F9CE004EA291 /* VLCVideoPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CBA518017AEC00B009BBE13 /* VLCVideoPlayer.cpp */; };
+		4C0937A817B1F9CE004EA291 /* Window.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C86A6C91739DAC300A1BDEE /* Window.cpp */; };
+		4C0937AE17B1F9CE004EA291 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6F782816F4D9650089101F /* IOKit.framework */; };
+		4C0937AF17B1F9CE004EA291 /* VideoDecodeAcceleration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C19BFE8172CD56400B7599D /* VideoDecodeAcceleration.framework */; };
+		4C0937B017B1F9CE004EA291 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C006062169D38A000B88329 /* CoreFoundation.framework */; };
+		4C0937B117B1F9CE004EA291 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CAC8D5B169341F500341AA0 /* QuartzCore.framework */; };
+		4C0937B217B1F9CE004EA291 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CAC8D591692A00000341AA0 /* CoreVideo.framework */; };
+		4C0937B317B1F9CE004EA291 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CABF7E91730926900F94A46 /* OpenAL.framework */; };
+		4C0937B417B1F9CE004EA291 /* libsixense_utils_x64.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C46D7C616F2B93D00B5DD9E /* libsixense_utils_x64.dylib */; };
+		4C0937B517B1F9CE004EA291 /* libsixense_x64.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C46D7C716F2B93D00B5DD9E /* libsixense_x64.dylib */; };
+		4C0937B617B1F9CE004EA291 /* libovr.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CA92BC31729FB1F00994379 /* libovr.a */; };
+		4C0937B717B1F9CE004EA291 /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C00605F169D385100B88329 /* ApplicationServices.framework */; };
+		4C0937B817B1F9CE004EA291 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C76498E16965A67009CF2EC /* Carbon.framework */; };
+		4C0937B917B1F9CE004EA291 /* GLUT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CAC8D47168E74FB00341AA0 /* GLUT.framework */; };
+		4C0937BA17B1F9CE004EA291 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CF354BB168D0E1600EAA2FE /* OpenGL.framework */; };
+		4C0937BB17B1F9CE004EA291 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CB7986A168AB41E00EF5260 /* Cocoa.framework */; };
+		4C0937BC17B1F9CE004EA291 /* libopencv_calib3d.2.4.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CEEED45178777830067405F /* libopencv_calib3d.2.4.5.dylib */; };
+		4C0937BD17B1F9CE004EA291 /* libopencv_contrib.2.4.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CEEED46178777830067405F /* libopencv_contrib.2.4.5.dylib */; };
+		4C0937BE17B1F9CE004EA291 /* libopencv_core.2.4.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CEEED47178777830067405F /* libopencv_core.2.4.5.dylib */; };
+		4C0937BF17B1F9CE004EA291 /* libopencv_features2d.2.4.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CEEED48178777830067405F /* libopencv_features2d.2.4.5.dylib */; };
+		4C0937C017B1F9CE004EA291 /* libopencv_flann.2.4.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CEEED49178777830067405F /* libopencv_flann.2.4.5.dylib */; };
+		4C0937C117B1F9CE004EA291 /* libopencv_gpu.2.4.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CEEED4A178777830067405F /* libopencv_gpu.2.4.5.dylib */; };
+		4C0937C217B1F9CE004EA291 /* libopencv_highgui.2.4.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CEEED4B178777830067405F /* libopencv_highgui.2.4.5.dylib */; };
+		4C0937C317B1F9CE004EA291 /* libopencv_imgproc.2.4.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CEEED4C178777830067405F /* libopencv_imgproc.2.4.5.dylib */; };
+		4C0937C417B1F9CE004EA291 /* libopencv_legacy.2.4.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CEEED4D178777830067405F /* libopencv_legacy.2.4.5.dylib */; };
+		4C0937C517B1F9CE004EA291 /* libopencv_ml.2.4.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CEEED4E178777830067405F /* libopencv_ml.2.4.5.dylib */; };
+		4C0937C617B1F9CE004EA291 /* libopencv_nonfree.2.4.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CEEED4F178777830067405F /* libopencv_nonfree.2.4.5.dylib */; };
+		4C0937C717B1F9CE004EA291 /* libopencv_objdetect.2.4.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CEEED50178777830067405F /* libopencv_objdetect.2.4.5.dylib */; };
+		4C0937C817B1F9CE004EA291 /* libopencv_ocl.2.4.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CEEED51178777830067405F /* libopencv_ocl.2.4.5.dylib */; };
+		4C0937C917B1F9CE004EA291 /* libopencv_photo.2.4.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CEEED52178777830067405F /* libopencv_photo.2.4.5.dylib */; };
+		4C0937CA17B1F9CE004EA291 /* libopencv_stitching.2.4.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CEEED53178777830067405F /* libopencv_stitching.2.4.5.dylib */; };
+		4C0937CB17B1F9CE004EA291 /* libopencv_superres.2.4.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CEEED54178777830067405F /* libopencv_superres.2.4.5.dylib */; };
+		4C0937CC17B1F9CE004EA291 /* libopencv_ts.2.4.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CEEED55178777830067405F /* libopencv_ts.2.4.5.dylib */; };
+		4C0937CD17B1F9CE004EA291 /* libopencv_video.2.4.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CEEED56178777830067405F /* libopencv_video.2.4.5.dylib */; };
+		4C0937CE17B1F9CE004EA291 /* libopencv_videostab.2.4.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CEEED57178777830067405F /* libopencv_videostab.2.4.5.dylib */; };
+		4C0937D017B1F9CE004EA291 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4CB79873168AB41E00EF5260 /* InfoPlist.strings */; };
+		4C0937D117B1F9CE004EA291 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 4CB79879168AB41E00EF5260 /* Credits.rtf */; };
+		4C0937D217B1F9CE004EA291 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4CB7987F168AB41E00EF5260 /* MainMenu.xib */; };
+		4C0937D317B1F9CE004EA291 /* resources in Resources */ = {isa = PBXBuildFile; fileRef = 4CAC8D5D169347AE00341AA0 /* resources */; };
+		4C0937D417B1F9CE004EA291 /* ibex.iconset in Resources */ = {isa = PBXBuildFile; fileRef = 4C8758421697E5200022583D /* ibex.iconset */; };
+		4C0937D717B1F9CE004EA291 /* libopencv_calib3d.2.4.5.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4CEEED45178777830067405F /* libopencv_calib3d.2.4.5.dylib */; };
+		4C0937D817B1F9CE004EA291 /* libopencv_contrib.2.4.5.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4CEEED46178777830067405F /* libopencv_contrib.2.4.5.dylib */; };
+		4C0937D917B1F9CE004EA291 /* libopencv_core.2.4.5.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4CEEED47178777830067405F /* libopencv_core.2.4.5.dylib */; };
+		4C0937DA17B1F9CE004EA291 /* libopencv_features2d.2.4.5.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4CEEED48178777830067405F /* libopencv_features2d.2.4.5.dylib */; };
+		4C0937DB17B1F9CE004EA291 /* libopencv_flann.2.4.5.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4CEEED49178777830067405F /* libopencv_flann.2.4.5.dylib */; };
+		4C0937DC17B1F9CE004EA291 /* libopencv_gpu.2.4.5.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4CEEED4A178777830067405F /* libopencv_gpu.2.4.5.dylib */; };
+		4C0937DD17B1F9CE004EA291 /* libopencv_highgui.2.4.5.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4CEEED4B178777830067405F /* libopencv_highgui.2.4.5.dylib */; };
+		4C0937DE17B1F9CE004EA291 /* libopencv_imgproc.2.4.5.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4CEEED4C178777830067405F /* libopencv_imgproc.2.4.5.dylib */; };
+		4C0937DF17B1F9CE004EA291 /* libopencv_legacy.2.4.5.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4CEEED4D178777830067405F /* libopencv_legacy.2.4.5.dylib */; };
+		4C0937E017B1F9CE004EA291 /* libopencv_ml.2.4.5.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4CEEED4E178777830067405F /* libopencv_ml.2.4.5.dylib */; };
+		4C0937E117B1F9CE004EA291 /* libopencv_nonfree.2.4.5.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4CEEED4F178777830067405F /* libopencv_nonfree.2.4.5.dylib */; };
+		4C0937E217B1F9CE004EA291 /* libopencv_objdetect.2.4.5.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4CEEED50178777830067405F /* libopencv_objdetect.2.4.5.dylib */; };
+		4C0937E317B1F9CE004EA291 /* libopencv_ocl.2.4.5.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4CEEED51178777830067405F /* libopencv_ocl.2.4.5.dylib */; };
+		4C0937E417B1F9CE004EA291 /* libopencv_photo.2.4.5.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4CEEED52178777830067405F /* libopencv_photo.2.4.5.dylib */; };
+		4C0937E517B1F9CE004EA291 /* libopencv_stitching.2.4.5.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4CEEED53178777830067405F /* libopencv_stitching.2.4.5.dylib */; };
+		4C0937E617B1F9CE004EA291 /* libopencv_superres.2.4.5.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4CEEED54178777830067405F /* libopencv_superres.2.4.5.dylib */; };
+		4C0937E717B1F9CE004EA291 /* libopencv_ts.2.4.5.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4CEEED55178777830067405F /* libopencv_ts.2.4.5.dylib */; };
+		4C0937E817B1F9CE004EA291 /* libopencv_video.2.4.5.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4CEEED56178777830067405F /* libopencv_video.2.4.5.dylib */; };
+		4C0937E917B1F9CE004EA291 /* libopencv_videostab.2.4.5.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4CEEED57178777830067405F /* libopencv_videostab.2.4.5.dylib */; };
+		4C0937EA17B1F9CE004EA291 /* libx264.125.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4CABF8341730BDEE00F94A46 /* libx264.125.dylib */; };
+		4C0937EB17B1F9CE004EA291 /* libsixense_utils_x64.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C46D7C616F2B93D00B5DD9E /* libsixense_utils_x64.dylib */; };
+		4C0937EC17B1F9CE004EA291 /* libsixense_x64.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C46D7C716F2B93D00B5DD9E /* libsixense_x64.dylib */; };
+		4C0937ED17B1F9CE004EA291 /* libiconv.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4CABF82E1730BBFC00F94A46 /* libiconv.dylib */; };
 		4C0B322A171A3F4E0098F1CE /* libsixense_utils_x64.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C46D7C616F2B93D00B5DD9E /* libsixense_utils_x64.dylib */; };
 		4C0B322B171A3F4E0098F1CE /* libsixense_x64.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C46D7C716F2B93D00B5DD9E /* libsixense_x64.dylib */; };
 		4C0BAB93171B5600001CDC55 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6F782816F4D9650089101F /* IOKit.framework */; };
@@ -185,6 +271,7 @@
 		4CB7987E168AB41E00EF5260 /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4CB7987D168AB41E00EF5260 /* AppDelegate.mm */; };
 		4CB79881168AB41E00EF5260 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4CB7987F168AB41E00EF5260 /* MainMenu.xib */; };
 		4CB8423016FD7FD7009B3DDE /* RenderSystem_GL.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6411A916F4C30200132076 /* RenderSystem_GL.dylib */; };
+		4CBA518217AEC00B009BBE13 /* VLCVideoPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CBA518017AEC00B009BBE13 /* VLCVideoPlayer.cpp */; };
 		4CEEED58178777830067405F /* libopencv_calib3d.2.4.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CEEED45178777830067405F /* libopencv_calib3d.2.4.5.dylib */; };
 		4CEEED59178777830067405F /* libopencv_contrib.2.4.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CEEED46178777830067405F /* libopencv_contrib.2.4.5.dylib */; };
 		4CEEED5A178777830067405F /* libopencv_core.2.4.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CEEED47178777830067405F /* libopencv_core.2.4.5.dylib */; };
@@ -233,6 +320,47 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		4C0937D517B1F9CE004EA291 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 12;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4C0937D617B1F9CE004EA291 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 12;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				4C0937D717B1F9CE004EA291 /* libopencv_calib3d.2.4.5.dylib in CopyFiles */,
+				4C0937D817B1F9CE004EA291 /* libopencv_contrib.2.4.5.dylib in CopyFiles */,
+				4C0937D917B1F9CE004EA291 /* libopencv_core.2.4.5.dylib in CopyFiles */,
+				4C0937DA17B1F9CE004EA291 /* libopencv_features2d.2.4.5.dylib in CopyFiles */,
+				4C0937DB17B1F9CE004EA291 /* libopencv_flann.2.4.5.dylib in CopyFiles */,
+				4C0937DC17B1F9CE004EA291 /* libopencv_gpu.2.4.5.dylib in CopyFiles */,
+				4C0937DD17B1F9CE004EA291 /* libopencv_highgui.2.4.5.dylib in CopyFiles */,
+				4C0937DE17B1F9CE004EA291 /* libopencv_imgproc.2.4.5.dylib in CopyFiles */,
+				4C0937DF17B1F9CE004EA291 /* libopencv_legacy.2.4.5.dylib in CopyFiles */,
+				4C0937E017B1F9CE004EA291 /* libopencv_ml.2.4.5.dylib in CopyFiles */,
+				4C0937E117B1F9CE004EA291 /* libopencv_nonfree.2.4.5.dylib in CopyFiles */,
+				4C0937E217B1F9CE004EA291 /* libopencv_objdetect.2.4.5.dylib in CopyFiles */,
+				4C0937E317B1F9CE004EA291 /* libopencv_ocl.2.4.5.dylib in CopyFiles */,
+				4C0937E417B1F9CE004EA291 /* libopencv_photo.2.4.5.dylib in CopyFiles */,
+				4C0937E517B1F9CE004EA291 /* libopencv_stitching.2.4.5.dylib in CopyFiles */,
+				4C0937E617B1F9CE004EA291 /* libopencv_superres.2.4.5.dylib in CopyFiles */,
+				4C0937E717B1F9CE004EA291 /* libopencv_ts.2.4.5.dylib in CopyFiles */,
+				4C0937E817B1F9CE004EA291 /* libopencv_video.2.4.5.dylib in CopyFiles */,
+				4C0937E917B1F9CE004EA291 /* libopencv_videostab.2.4.5.dylib in CopyFiles */,
+				4C0937EA17B1F9CE004EA291 /* libx264.125.dylib in CopyFiles */,
+				4C0937EB17B1F9CE004EA291 /* libsixense_utils_x64.dylib in CopyFiles */,
+				4C0937EC17B1F9CE004EA291 /* libsixense_x64.dylib in CopyFiles */,
+				4C0937ED17B1F9CE004EA291 /* libiconv.dylib in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4C6411A616F4C2AC00132076 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 12;
@@ -327,6 +455,8 @@
 /* Begin PBXFileReference section */
 		4C00605F169D385100B88329 /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = System/Library/Frameworks/ApplicationServices.framework; sourceTree = SDKROOT; };
 		4C006062169D38A000B88329 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
+		4C0937F317B1F9CE004EA291 /* IbexMacRelease copy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "IbexMacRelease copy.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4C0937F417B1F9CE004EA291 /* IbexMacRelease copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "IbexMacRelease copy-Info.plist"; path = "/Users/hesh/Documents/ibex/IbexMacRelease copy-Info.plist"; sourceTree = "<absolute>"; };
 		4C0D58B716AD656A007BC9CD /* IbexMac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IbexMac.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C13B71316A9E8C80064AE60 /* ibex_mac_utils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ibex_mac_utils.h; sourceTree = "<group>"; };
 		4C19BFE8172CD56400B7599D /* VideoDecodeAcceleration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = VideoDecodeAcceleration.framework; path = System/Library/Frameworks/VideoDecodeAcceleration.framework; sourceTree = SDKROOT; };
@@ -443,6 +573,8 @@
 		4CB7987C168AB41E00EF5260 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		4CB7987D168AB41E00EF5260 /* AppDelegate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AppDelegate.mm; sourceTree = "<group>"; };
 		4CB79880168AB41E00EF5260 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		4CBA518017AEC00B009BBE13 /* VLCVideoPlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VLCVideoPlayer.cpp; sourceTree = "<group>"; };
+		4CBA518117AEC00B009BBE13 /* VLCVideoPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VLCVideoPlayer.h; sourceTree = "<group>"; };
 		4CEEED45178777830067405F /* libopencv_calib3d.2.4.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_calib3d.2.4.5.dylib; path = ../../../../usr/local/Cellar/opencv/2.4.5/lib/libopencv_calib3d.2.4.5.dylib; sourceTree = "<group>"; };
 		4CEEED46178777830067405F /* libopencv_contrib.2.4.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_contrib.2.4.5.dylib; path = ../../../../usr/local/Cellar/opencv/2.4.5/lib/libopencv_contrib.2.4.5.dylib; sourceTree = "<group>"; };
 		4CEEED47178777830067405F /* libopencv_core.2.4.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_core.2.4.5.dylib; path = ../../../../usr/local/Cellar/opencv/2.4.5/lib/libopencv_core.2.4.5.dylib; sourceTree = "<group>"; };
@@ -478,6 +610,46 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		4C0937A917B1F9CE004EA291 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4C0937AE17B1F9CE004EA291 /* IOKit.framework in Frameworks */,
+				4C0937AF17B1F9CE004EA291 /* VideoDecodeAcceleration.framework in Frameworks */,
+				4C0937B017B1F9CE004EA291 /* CoreFoundation.framework in Frameworks */,
+				4C0937B117B1F9CE004EA291 /* QuartzCore.framework in Frameworks */,
+				4C0937B217B1F9CE004EA291 /* CoreVideo.framework in Frameworks */,
+				4C0937B317B1F9CE004EA291 /* OpenAL.framework in Frameworks */,
+				4C0937B417B1F9CE004EA291 /* libsixense_utils_x64.dylib in Frameworks */,
+				4C0937B517B1F9CE004EA291 /* libsixense_x64.dylib in Frameworks */,
+				4C0937B617B1F9CE004EA291 /* libovr.a in Frameworks */,
+				4C0937B717B1F9CE004EA291 /* ApplicationServices.framework in Frameworks */,
+				4C0937B817B1F9CE004EA291 /* Carbon.framework in Frameworks */,
+				4C0937B917B1F9CE004EA291 /* GLUT.framework in Frameworks */,
+				4C0937BA17B1F9CE004EA291 /* OpenGL.framework in Frameworks */,
+				4C0937BB17B1F9CE004EA291 /* Cocoa.framework in Frameworks */,
+				4C0937BC17B1F9CE004EA291 /* libopencv_calib3d.2.4.5.dylib in Frameworks */,
+				4C0937BD17B1F9CE004EA291 /* libopencv_contrib.2.4.5.dylib in Frameworks */,
+				4C0937BE17B1F9CE004EA291 /* libopencv_core.2.4.5.dylib in Frameworks */,
+				4C0937BF17B1F9CE004EA291 /* libopencv_features2d.2.4.5.dylib in Frameworks */,
+				4C0937C017B1F9CE004EA291 /* libopencv_flann.2.4.5.dylib in Frameworks */,
+				4C0937C117B1F9CE004EA291 /* libopencv_gpu.2.4.5.dylib in Frameworks */,
+				4C0937C217B1F9CE004EA291 /* libopencv_highgui.2.4.5.dylib in Frameworks */,
+				4C0937C317B1F9CE004EA291 /* libopencv_imgproc.2.4.5.dylib in Frameworks */,
+				4C0937C417B1F9CE004EA291 /* libopencv_legacy.2.4.5.dylib in Frameworks */,
+				4C0937C517B1F9CE004EA291 /* libopencv_ml.2.4.5.dylib in Frameworks */,
+				4C0937C617B1F9CE004EA291 /* libopencv_nonfree.2.4.5.dylib in Frameworks */,
+				4C0937C717B1F9CE004EA291 /* libopencv_objdetect.2.4.5.dylib in Frameworks */,
+				4C0937C817B1F9CE004EA291 /* libopencv_ocl.2.4.5.dylib in Frameworks */,
+				4C0937C917B1F9CE004EA291 /* libopencv_photo.2.4.5.dylib in Frameworks */,
+				4C0937CA17B1F9CE004EA291 /* libopencv_stitching.2.4.5.dylib in Frameworks */,
+				4C0937CB17B1F9CE004EA291 /* libopencv_superres.2.4.5.dylib in Frameworks */,
+				4C0937CC17B1F9CE004EA291 /* libopencv_ts.2.4.5.dylib in Frameworks */,
+				4C0937CD17B1F9CE004EA291 /* libopencv_video.2.4.5.dylib in Frameworks */,
+				4C0937CE17B1F9CE004EA291 /* libopencv_videostab.2.4.5.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4C0D58A516AD656A007BC9CD /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -590,6 +762,8 @@
 		4C238E19172C9482009C22A6 /* video */ = {
 			isa = PBXGroup;
 			children = (
+				4CBA518017AEC00B009BBE13 /* VLCVideoPlayer.cpp */,
+				4CBA518117AEC00B009BBE13 /* VLCVideoPlayer.h */,
 				4C238E1A172C94A7009C22A6 /* IbexVideoPlayer.h */,
 				4C238E1B172C94A7009C22A6 /* IbexVideoPlayer.mm */,
 				4C64379B172F7B310005504B /* VideoPlayer.h */,
@@ -689,6 +863,7 @@
 				4CB79869168AB41E00EF5260 /* Frameworks */,
 				4CB79867168AB41E00EF5260 /* Products */,
 				4C6B9A0016F4C17E00C5C725 /* IbexMacOgre-Info.plist */,
+				4C0937F417B1F9CE004EA291 /* IbexMacRelease copy-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -698,6 +873,7 @@
 				4CB79866168AB41E00EF5260 /* IbexMac.app */,
 				4C0D58B716AD656A007BC9CD /* IbexMac.app */,
 				4C6B99FF16F4C17E00C5C725 /* IbexMacOgre.app */,
+				4C0937F317B1F9CE004EA291 /* IbexMacRelease copy.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -850,6 +1026,27 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		4C09378D17B1F9CE004EA291 /* IbexMacReleaseVLC */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4C0937F017B1F9CE004EA291 /* Build configuration list for PBXNativeTarget "IbexMacReleaseVLC" */;
+			buildPhases = (
+				4C09378E17B1F9CE004EA291 /* Sources */,
+				4C0937A917B1F9CE004EA291 /* Frameworks */,
+				4C0937CF17B1F9CE004EA291 /* Resources */,
+				4C0937D517B1F9CE004EA291 /* CopyFiles */,
+				4C0937D617B1F9CE004EA291 /* CopyFiles */,
+				4C0937EE17B1F9CE004EA291 /* ShellScript */,
+				4C0937EF17B1F9CE004EA291 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = IbexMacReleaseVLC;
+			productName = IbexMac;
+			productReference = 4C0937F317B1F9CE004EA291 /* IbexMacRelease copy.app */;
+			productType = "com.apple.product-type.application";
+		};
 		4C0D589416AD656A007BC9CD /* IbexMacRelease */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 4C0D58B416AD656A007BC9CD /* Build configuration list for PBXNativeTarget "IbexMacRelease" */;
@@ -940,11 +1137,24 @@
 				4CB79865168AB41E00EF5260 /* IbexMac */,
 				4C0D589416AD656A007BC9CD /* IbexMacRelease */,
 				4C6B99D216F4C17E00C5C725 /* IbexMacOgre3D */,
+				4C09378D17B1F9CE004EA291 /* IbexMacReleaseVLC */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		4C0937CF17B1F9CE004EA291 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4C0937D017B1F9CE004EA291 /* InfoPlist.strings in Resources */,
+				4C0937D117B1F9CE004EA291 /* Credits.rtf in Resources */,
+				4C0937D217B1F9CE004EA291 /* MainMenu.xib in Resources */,
+				4C0937D317B1F9CE004EA291 /* resources in Resources */,
+				4C0937D417B1F9CE004EA291 /* ibex.iconset in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4C0D58AE16AD656A007BC9CD /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -984,9 +1194,9 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		4C4A95A21738708100172F70 /* ShellScript */ = {
+		4C0937EE17B1F9CE004EA291 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
+			buildActionMask = 12;
 			files = (
 			);
 			inputPaths = (
@@ -995,11 +1205,37 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "install_name_tool -change /usr/local/lib/libx264.125.dylib @executable_path/../Frameworks/libx264.125.dylib \"$TARGET_BUILD_DIR/$EXECUTABLE_NAME.app/Contents/MacOS/$PRODUCT_NAME\"\n\ninstall_name_tool -change /usr/local/lib/libsixense_utils_x64.dylib @executable_path/../Frameworks/libsixense_utils_x64.dylib \"$TARGET_BUILD_DIR/$EXECUTABLE_NAME.app/Contents/MacOS/$PRODUCT_NAME\"\n\ninstall_name_tool -change /usr/local/lib/libsixense_x64.dylib @executable_path/../Frameworks/libsixense_x64.dylib \"$TARGET_BUILD_DIR/$EXECUTABLE_NAME.app/Contents/MacOS/$PRODUCT_NAME\"\n\ninstall_name_tool -change /usr/local/lib/libsixense_x64.dylib @executable_path/../Frameworks/libsixense_x64.dylib \"$TARGET_BUILD_DIR/$EXECUTABLE_NAME.app/Contents/Frameworks/libsixense_utils_x64.dylib\"\n\n";
+			shellScript = "install_name_tool -change /usr/local/lib/libx264.125.dylib @executable_path/../Frameworks/libx264.125.dylib \"$TARGET_BUILD_DIR/$EXECUTABLE_NAME.app/Contents/MacOS/$PRODUCT_NAME\"\n\ninstall_name_tool -change /usr/local/lib/libsixense_utils_x64.dylib @executable_path/../Frameworks/libsixense_utils_x64.dylib \"$TARGET_BUILD_DIR/$EXECUTABLE_NAME.app/Contents/MacOS/$PRODUCT_NAME\"\n\ninstall_name_tool -change /usr/local/lib/libsixense_x64.dylib @executable_path/../Frameworks/libsixense_x64.dylib \"$TARGET_BUILD_DIR/$EXECUTABLE_NAME.app/Contents/MacOS/$PRODUCT_NAME\"\n\ninstall_name_tool -change /usr/local/lib/libsixense_x64.dylib @executable_path/../Frameworks/libsixense_x64.dylib \"$TARGET_BUILD_DIR/$EXECUTABLE_NAME.app/Contents/Frameworks/libsixense_utils_x64.dylib\"\n\nmkdir -p \"$TARGET_BUILD_DIR/$EXECUTABLE_NAME.app/Contents/MacOS/lib\"\n#cp /Applications/VLC.app/Contents/MacOS/lib/* \"$TARGET_BUILD_DIR/$EXECUTABLE_NAME.app/Contents/MacOS/lib\"\n                                            \n#cp -Rf /Applications/VLC.app/Contents/MacOS/plugins \"$TARGET_BUILD_DIR/$EXECUTABLE_NAME.app/Contents/MacOS/\"\n                                            \ncp /Users/hesh/Downloads/vlc/build/VLC.app/Contents/MacOS/lib/* \"$TARGET_BUILD_DIR/$EXECUTABLE_NAME.app/Contents/MacOS/lib\"\n\ncp -Rf /Users/hesh/Downloads/vlc/build/VLC.app/Contents/MacOS/plugins \"$TARGET_BUILD_DIR/$EXECUTABLE_NAME.app/Contents/MacOS/plugins\"\n";
+		};
+		4C0937EF17B1F9CE004EA291 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 12;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Sign all frameworks and dylibs\n\n# WARNING: If you've changed CODE_SIGN_IDENTITY project should be cleaned\n\n# Verify that $CODE_SIGN_IDENTITY is set\nif [ -z \"$CODE_SIGN_IDENTITY\" ] ; then\necho \"need a non-empty CODE_SIGN_IDENTITY to sign!\"\n\n#if [ \"$CONFIGURATION\" = \"Release\" ] ; then\n#exit 1\n#else\n## Codesigning isn't required on non-release builds.\n#exit 0\n#fi\nfi\n\nexit 0\n\nSAVEIFS=$IFS\nIFS=$(echo -en \"\\n\\b\")\n\nFRAMEWORKS_DIR=\"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}\"\nLIB_DIR=\"${TARGET_BUILD_DIR}\"\n\n# Loop through all frameworks\nFRAMEWORKS_LIST=`find \"${FRAMEWORKS_DIR}\" -type d -name \"*.framework\" | sed -e \"s/\\(.*\\)/\\1\\/Versions\\/A\\//\"`\nRES=$?\nif [[ $RES != 0 ]] ; then\nexit 1\nfi\n\nLIBS=`find \"${LIB_DIR}\" -type f -name \"*.dylib\"`\nRES=$?\nif [[ $RES != 0 ]] ; then\nexit 1\nfi\n\necho \"Searching: ${LIB_DIR} and ${FRAMEWORK_DIR}\"\necho \"Found:\"\necho \"${LIBS}\"\n\nfor LIB in $LIBS;\ndo\necho \"Signing dylib: '${LIB}'\"\n`codesign -fv -s \"${CODE_SIGN_IDENTITY}\" \"${LIB}\"`\nRES=$?\nif [[ $RES != 0 ]] ; then\nexit 1\nfi\ndone\n\necho \"Found:\"\necho \"${FRAMEWORKS}\"\n\nfor FRAMEWORK in $FRAMEWORKS_LIST;\ndo\necho \"Signing framework: '${FRAMEWORK}'\"\n`codesign -fv -s \"${CODE_SIGN_IDENTITY}\" \"${FRAMEWORK}\"`\nRES=$?\nif [[ $RES != 0 ]] ; then\nexit 1\nfi\ndone\n\n# restore $IFS\nIFS=$SAVEIFS\n";
+		};
+		4C4A95A21738708100172F70 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 12;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "install_name_tool -change /usr/local/lib/libx264.125.dylib @executable_path/../Frameworks/libx264.125.dylib \"$TARGET_BUILD_DIR/$EXECUTABLE_NAME.app/Contents/MacOS/$PRODUCT_NAME\"\n\ninstall_name_tool -change /usr/local/lib/libsixense_utils_x64.dylib @executable_path/../Frameworks/libsixense_utils_x64.dylib \"$TARGET_BUILD_DIR/$EXECUTABLE_NAME.app/Contents/MacOS/$PRODUCT_NAME\"\n\ninstall_name_tool -change /usr/local/lib/libsixense_x64.dylib @executable_path/../Frameworks/libsixense_x64.dylib \"$TARGET_BUILD_DIR/$EXECUTABLE_NAME.app/Contents/MacOS/$PRODUCT_NAME\"\n\ninstall_name_tool -change /usr/local/lib/libsixense_x64.dylib @executable_path/../Frameworks/libsixense_x64.dylib \"$TARGET_BUILD_DIR/$EXECUTABLE_NAME.app/Contents/Frameworks/libsixense_utils_x64.dylib\"\n\nmkdir -p \"$TARGET_BUILD_DIR/$EXECUTABLE_NAME.app/Contents/MacOS/lib\"\n#cp /Applications/VLC.app/Contents/MacOS/lib/* \"$TARGET_BUILD_DIR/$EXECUTABLE_NAME.app/Contents/MacOS/lib\"\ncp /Users/hesh/Downloads/vlc/build/VLC.app/Contents/MacOS/lib/* \"$TARGET_BUILD_DIR/$EXECUTABLE_NAME.app/Contents/MacOS/lib\"\n";
 		};
 		4CD442BF176AA1D5007BC92A /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
+			buildActionMask = 12;
 			files = (
 			);
 			inputPaths = (
@@ -1013,6 +1249,38 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		4C09378E17B1F9CE004EA291 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4C09378F17B1F9CE004EA291 /* main.m in Sources */,
+				4C09379017B1F9CE004EA291 /* AppDelegate.mm in Sources */,
+				4C09379117B1F9CE004EA291 /* ScreenGrabber.m in Sources */,
+				4C09379217B1F9CE004EA291 /* MyOpenGLView.mm in Sources */,
+				4C09379317B1F9CE004EA291 /* SimpleWorldRendererPlugin.cpp in Sources */,
+				4C09379417B1F9CE004EA291 /* distortions.cpp in Sources */,
+				4C09379517B1F9CE004EA291 /* opengl_helpers.cpp in Sources */,
+				4C09379617B1F9CE004EA291 /* RendererPlugin.cpp in Sources */,
+				4C09379717B1F9CE004EA291 /* iphone_orientation_listener.cpp in Sources */,
+				4C09379817B1F9CE004EA291 /* glew.c in Sources */,
+				4C09379917B1F9CE004EA291 /* IbexMacUtils.mm in Sources */,
+				4C09379A17B1F9CE004EA291 /* utils.cpp in Sources */,
+				4C09379B17B1F9CE004EA291 /* ibex.cpp in Sources */,
+				4C09379C17B1F9CE004EA291 /* MyWindow.mm in Sources */,
+				4C09379D17B1F9CE004EA291 /* ServerController.m in Sources */,
+				4C09379E17B1F9CE004EA291 /* sixense_controller.cpp in Sources */,
+				4C09379F17B1F9CE004EA291 /* tinystr.cpp in Sources */,
+				4C0937A017B1F9CE004EA291 /* tinyxml.cpp in Sources */,
+				4C0937A117B1F9CE004EA291 /* tinyxmlerror.cpp in Sources */,
+				4C0937A217B1F9CE004EA291 /* tinyxmlparser.cpp in Sources */,
+				4C0937A317B1F9CE004EA291 /* ScreenshotView.mm in Sources */,
+				4C0937A517B1F9CE004EA291 /* IbexVideoPlayer.mm in Sources */,
+				4C0937A617B1F9CE004EA291 /* Filesystem.cpp in Sources */,
+				4C0937A717B1F9CE004EA291 /* VLCVideoPlayer.cpp in Sources */,
+				4C0937A817B1F9CE004EA291 /* Window.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4C0D589516AD656A007BC9CD /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1041,6 +1309,7 @@
 				4C64379D172F7B310005504B /* VideoPlayer.cpp in Sources */,
 				4C238E1D172C94A7009C22A6 /* IbexVideoPlayer.mm in Sources */,
 				4C3CA30F17374B2E00A8DA14 /* Filesystem.cpp in Sources */,
+				4CBA518217AEC00B009BBE13 /* VLCVideoPlayer.cpp in Sources */,
 				4C86A6CC1739DAC300A1BDEE /* Window.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1064,7 +1333,6 @@
 				4C6B99E016F4C17E00C5C725 /* ibex.cpp in Sources */,
 				4C6B99E116F4C17E00C5C725 /* MyWindow.mm in Sources */,
 				4C6B99E216F4C17E00C5C725 /* ServerController.m in Sources */,
-				4C6B99E316F4C17E00C5C725 /* sixense_controller.cpp in Sources */,
 				4C6F781E16F4D6150089101F /* BaseApplication.cpp in Sources */,
 				4C6F782416F4D6150089101F /* DotSceneLoader.cpp in Sources */,
 				4C6F782716F4D6150089101F /* TutorialApplication.cpp in Sources */,
@@ -1078,6 +1346,7 @@
 				4C64379E172F7B310005504B /* VideoPlayer.cpp in Sources */,
 				4C3CA31017374B2E00A8DA14 /* Filesystem.cpp in Sources */,
 				4C86A6CD1739DAC300A1BDEE /* Window.cpp in Sources */,
+				4C6B99E316F4C17E00C5C725 /* sixense_controller.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1143,9 +1412,142 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		4C0937F117B1F9CE004EA291 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CODE_SIGN_ENTITLEMENTS = IbexMac/IbexMac.entitlements;
+				CODE_SIGN_IDENTITY = "";
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					/Library/Frameworks,
+					"$(PROJECT_DIR)/../sixenseSDK_linux_OSX/lib/osx_x64/release_dll/",
+				);
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				GCC_ENABLE_CPP_RTTI = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "IbexMac/IbexMac-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"_USE_SIXENSE=1",
+					"$(inherited)",
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/IbexMac",
+					"$(PROJECT_DIR)/../bullet-2.81-rev2613/src",
+					"$(PROJECT_DIR)/../OculusSDK/LibOVR/Include",
+					"$(PROJECT_DIR)/../OculusSDK/LibOVR/Src",
+					"$(PROJECT_DIR)/../sixenseSDK_linux_OSX/include",
+					/usr/local/include,
+					/Applications/VLC.app/Contents/MacOS/includee,
+					/Users/hesh/Downloads/vlc/build/VLC.app/Contents/MacOS/include,
+				);
+				INFOPLIST_FILE = "IbexMacRelease copy-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks @rpath/../Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/../OculusSDK/LibOVR/Lib/MacOS/Debug",
+					/usr/lib,
+					/usr/local/Cellar/boost/1.53.0/lib,
+					"$(PROJECT_DIR)/../sixenseSDK_linux_OSX/lib/osx_x64/release_dll",
+					/usr/local/Cellar/opencv/2.4.5/lib,
+					/Applications/VLC.app/Contents/MacOS/pluginss,
+					/Applications/VLC.app/Contents/MacOS/libb,
+					/Users/hesh/Downloads/vlc/build/VLC.app/Contents/MacOS/lib,
+					/Users/hesh/Downloads/vlc/build/VLC.app/Contents/MacOS/pluginss,
+				);
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-L/usr/local/lib",
+				);
+				OTHER_LDFLAGS = (
+					/usr/local/lib/libBulletSoftBody.a,
+					/usr/local/lib/libBulletCollision.a,
+					/usr/local/lib/libMiniCL.a,
+					/usr/local/lib/libLinearMath.a,
+					/usr/local/lib/libBulletSoftBodySolvers_OpenCL_Mini.a,
+					/usr/local/lib/libBulletSoftBodySolvers_OpenCL_Apple.a,
+					/usr/local/lib/libBulletMultiThreaded.a,
+					/usr/local/lib/libBulletDynamics.a,
+					"-lvlc",
+				);
+				PRODUCT_NAME = "IbexMacRelease copy";
+				PROVISIONING_PROFILE = "";
+				STRIP_INSTALLED_PRODUCT = NO;
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		4C0937F217B1F9CE004EA291 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CODE_SIGN_ENTITLEMENTS = IbexMac/IbexMac.entitlements;
+				CODE_SIGN_IDENTITY = "";
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					/Library/Frameworks,
+					"$(PROJECT_DIR)/../sixenseSDK_linux_OSX/lib/osx_x64/release_dll/",
+				);
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				GCC_ENABLE_CPP_RTTI = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "IbexMac/IbexMac-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = "_USE_SIXENSE=1";
+				HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/IbexMac",
+					"$(PROJECT_DIR)/../bullet-2.81-rev2613/src",
+					"$(PROJECT_DIR)/../OculusSDK/LibOVR/Include",
+					"$(PROJECT_DIR)/../OculusSDK/LibOVR/Src",
+					"$(PROJECT_DIR)/../sixenseSDK_linux_OSX/include",
+					/usr/local/include,
+					/Applications/VLC.app/Contents/MacOS/includee,
+					/Users/hesh/Downloads/vlc/build/VLC.app/Contents/MacOS/include,
+				);
+				INFOPLIST_FILE = "IbexMacRelease copy-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks @rpath/../Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/../OculusSDK/LibOVR/Lib/MacOS/Debug",
+					/usr/lib,
+					/usr/local/Cellar/boost/1.53.0/lib,
+					"$(PROJECT_DIR)/../sixenseSDK_linux_OSX/lib/osx_x64/release_dll",
+					/usr/local/Cellar/opencv/2.4.5/lib,
+					/Applications/VLC.app/Contents/MacOS/pluginss,
+					/Applications/VLC.app/Contents/MacOS/libb,
+					/Users/hesh/Downloads/vlc/build/VLC.app/Contents/MacOS/lib,
+					/Users/hesh/Downloads/vlc/build/VLC.app/Contents/MacOS/pluginss,
+				);
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-L/usr/local/lib",
+				);
+				OTHER_LDFLAGS = (
+					/usr/local/lib/libBulletSoftBody.a,
+					/usr/local/lib/libBulletCollision.a,
+					/usr/local/lib/libMiniCL.a,
+					/usr/local/lib/libLinearMath.a,
+					/usr/local/lib/libBulletSoftBodySolvers_OpenCL_Mini.a,
+					/usr/local/lib/libBulletSoftBodySolvers_OpenCL_Apple.a,
+					/usr/local/lib/libBulletMultiThreaded.a,
+					/usr/local/lib/libBulletDynamics.a,
+					"-lvlc",
+				);
+				PRODUCT_NAME = "IbexMacRelease copy";
+				PROVISIONING_PROFILE = "";
+				STRIP_INSTALLED_PRODUCT = NO;
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
 		4C0D58B516AD656A007BC9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CODE_SIGN_ENTITLEMENTS = IbexMac/IbexMac.entitlements;
@@ -1171,6 +1573,8 @@
 					"$(PROJECT_DIR)/../OculusSDK/LibOVR/Src",
 					"$(PROJECT_DIR)/../sixenseSDK_linux_OSX/include",
 					/usr/local/include,
+					/Applications/VLC.app/Contents/MacOS/includee,
+					/Users/hesh/Downloads/vlc/build/VLC.app/Contents/MacOS/include,
 				);
 				INFOPLIST_FILE = "IbexMac/IbexMac-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks @rpath/../Frameworks";
@@ -1186,6 +1590,8 @@
 					/usr/local/Cellar/boost/1.53.0/lib,
 					"$(PROJECT_DIR)/../sixenseSDK_linux_OSX/lib/osx_x64/release_dll",
 					/usr/local/Cellar/opencv/2.4.5/lib,
+					/Applications/VLC.app/Contents/MacOS/libb,
+					/Users/hesh/Downloads/vlc/build/VLC.app/Contents/MacOS/lib,
 				);
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
@@ -1212,9 +1618,12 @@
 					/usr/local/lib/libBulletSoftBodySolvers_OpenCL_Apple.a,
 					/usr/local/lib/libBulletMultiThreaded.a,
 					/usr/local/lib/libBulletDynamics.a,
+					"-lvlc",
+					"-lvlccore",
 				);
 				PRODUCT_NAME = IbexMac;
 				PROVISIONING_PROFILE = "9982F9DD-E37D-426A-AC6F-7448E3750E3B";
+				STRIP_INSTALLED_PRODUCT = NO;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -1222,6 +1631,7 @@
 		4C0D58B616AD656A007BC9CD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CODE_SIGN_ENTITLEMENTS = IbexMac/IbexMac.entitlements;
@@ -1236,7 +1646,6 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "IbexMac/IbexMac-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = "_USE_SIXENSE=1";
-				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/IbexMac",
 					"$(PROJECT_DIR)/../bullet-2.81-rev2613/src",
@@ -1244,6 +1653,8 @@
 					"$(PROJECT_DIR)/../OculusSDK/LibOVR/Src",
 					"$(PROJECT_DIR)/../sixenseSDK_linux_OSX/include",
 					/usr/local/include,
+					/Applications/VLC.app/Contents/MacOS/includee,
+					/Users/hesh/Downloads/vlc/build/VLC.app/Contents/MacOS/include,
 				);
 				INFOPLIST_FILE = "IbexMac/IbexMac-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks @rpath/../Frameworks";
@@ -1259,6 +1670,8 @@
 					/usr/local/Cellar/boost/1.53.0/lib,
 					"$(PROJECT_DIR)/../sixenseSDK_linux_OSX/lib/osx_x64/release_dll",
 					/usr/local/Cellar/opencv/2.4.5/lib,
+					/Applications/VLC.app/Contents/MacOS/libb,
+					/Users/hesh/Downloads/vlc/build/VLC.app/Contents/MacOS/lib,
 				);
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
@@ -1285,9 +1698,12 @@
 					/usr/local/lib/libBulletSoftBodySolvers_OpenCL_Apple.a,
 					/usr/local/lib/libBulletMultiThreaded.a,
 					/usr/local/lib/libBulletDynamics.a,
+					"-lvlc",
+					"-lvlccore",
 				);
 				PRODUCT_NAME = IbexMac;
 				PROVISIONING_PROFILE = "9982F9DD-E37D-426A-AC6F-7448E3750E3B";
+				STRIP_INSTALLED_PRODUCT = NO;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -1308,6 +1724,11 @@
 				GCC_ENABLE_CPP_RTTI = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "IbexMac/IbexMac-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"_USE_SIXENSE=1",
+					"DEBUG=1",
+					"$(inherited)",
+				);
 				HEADER_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/IbexMac",
 					"$(PROJECT_DIR)/../OgreSDK/include/OGRE/RenderSystems/GL",
@@ -1352,6 +1773,7 @@
 				GCC_ENABLE_CPP_RTTI = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "IbexMac/IbexMac-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = "_USE_SIXENSE=1";
 				HEADER_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/IbexMac",
 					"$(PROJECT_DIR)/../OgreSDK/include/OGRE/RenderSystems/GL",
@@ -1508,6 +1930,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		4C0937F017B1F9CE004EA291 /* Build configuration list for PBXNativeTarget "IbexMacReleaseVLC" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4C0937F117B1F9CE004EA291 /* Debug */,
+				4C0937F217B1F9CE004EA291 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		4C0D58B416AD656A007BC9CD /* Build configuration list for PBXNativeTarget "IbexMacRelease" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

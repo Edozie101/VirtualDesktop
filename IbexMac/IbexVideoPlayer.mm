@@ -14,17 +14,17 @@
 #include <OpenGL/glext.h>
 #include <GLUT/glut.h>
 
-#import "VideoPlayer.h"
+#import "VLCVideoPlayer.h"
 
 @implementation IbexVideoPlayer
 
-static Ibex::VideoPlayer *player = 0;
+static Ibex::VLCVideoPlayer *player = 0;
 - (id)init
 {
     self = [super init];
     if (self) {
         _videoTexture = new GLuint[2];
-        player = new Ibex::VideoPlayer();
+        player = new Ibex::VLCVideoPlayer();
     }
     return self;
 }
@@ -36,13 +36,12 @@ static Ibex::VideoPlayer *player = 0;
         isStereo = ((NSNumber*)a[1]).integerValue;
     }
     
-    NSOpenGLContext* newContext = nil;
     newContext = [[NSOpenGLContext alloc] initWithFormat:_pixelFormat shareContext:_share];
     [newContext makeCurrentContext];
     
     _videoTexture = player->videoTexture;
-    player->playVideo(fileName.UTF8String, isStereo);
-    [NSOpenGLContext clearCurrentContext];
+    player->playVideo(fileName.UTF8String, isStereo, 0, 0, (__bridge_retained void*)newContext);//(__bridge_retained void *)self);
+    //[NSOpenGLContext clearCurrentContext];
     
     //delete []player;
     //player = 0;
@@ -57,7 +56,6 @@ static Ibex::VideoPlayer *player = 0;
         isStereo = ((NSNumber*)a[1]).integerValue;
     }
     
-    NSOpenGLContext* newContext = nil;
     newContext = [[NSOpenGLContext alloc] initWithFormat:_pixelFormat shareContext:_share];
     [newContext makeCurrentContext];
     
@@ -73,6 +71,11 @@ static Ibex::VideoPlayer *player = 0;
 }
 - (GLfloat)height {
     return player->height;
+}
+
+void setupVideoGLContext(void *data) {
+    NSOpenGLContext *context = (__bridge_transfer NSOpenGLContext*)data;
+    [context makeCurrentContext];
 }
 
 @end

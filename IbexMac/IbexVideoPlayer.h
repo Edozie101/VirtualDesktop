@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 
 @interface IbexVideoPlayer : NSObject {
+    NSOpenGLContext* newContext;
 }
 
 @property (retain,nonatomic) NSOpenGLPixelFormat *pixelFormat;
@@ -19,5 +20,7 @@
 - (int)loadCamera:(NSNumber*)cameraID andIsStereo:(bool)isStereo;
 - (GLfloat)width;
 - (GLfloat)height;
+
+void setupVideoGLContext(void *data);
 
 @end

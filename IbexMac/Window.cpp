@@ -12,7 +12,7 @@
 #include "ibex.h"
 #include "Filesystem.h"
 #include <algorithm>
-#include "VideoPlayer.h"
+#include "VLCVideoPlayer.h"
 
 #ifdef __APPLE__
 #include <Carbon/Carbon.h>
@@ -120,7 +120,7 @@ void Ibex::Window::renderFileChooser() {
                 }
                 if(!found) {
                     directoryList.erase(i--);
-                    std::cerr << directoryList.size() << std::endl;
+                    //std::cerr << directoryList.size() << std::endl;
                     continue;
                 }
             }
@@ -309,7 +309,7 @@ int Ibex::Window::processKey(unsigned short keyCode, int down) {
                     directoryChanged = true;
                 }
                 visibleWindow = CameraChooser;
-                cameras = VideoPlayer::listCameras();
+                cameras = VLCVideoPlayer::listCameras();
             }
             
             processed = 1;
