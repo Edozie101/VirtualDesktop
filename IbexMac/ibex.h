@@ -8,7 +8,11 @@
 #ifndef IBEX_H_
 #define IBEX_H_
 
-//#include "opengl_setup_x11.h"
+#if !defined(__APPLE__) && !defined(WIN32)
+#include "opengl_setup_x11.h"
+#endif
+
+#include "opengl_helpers.h"
 
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -18,6 +22,8 @@
 #include <OVR.h>
 
 class RendererPlugin;
+
+extern RendererPlugin *renderer;
 
 enum DisplayShape {
   FlatDisplay,SphericalDisplay,CylindricalDisplay
@@ -36,20 +42,24 @@ extern bool					riftConnected;
 extern bool                 lensParametersChanged;
 
 extern char fpsString[32];
+extern char mResourcePath[1024];
 
 extern char RiftMonitorName[33];
 extern int RiftDisplayId;
 extern float EyeDistance;
 extern float DistortionK[4];
 
+#if defined(__APPLE__) or defined(WIN32)
 typedef unsigned int Display;
 typedef unsigned int XVisualInfo;
 typedef bool Bool;
+typedef unsigned long Window;
 
 extern int dpy;
 extern int display;
-extern unsigned long window;
 extern unsigned long context;
+#endif
+extern unsigned long window;
 
 extern bool done;
 extern float physicalWidth,physicalHeight;
@@ -60,8 +70,10 @@ extern float textureWidth,textureHeight;
 
 extern double IOD;
 
+extern Window overlay;
 extern float top, bottom;
 extern unsigned int desktopTexture;
+extern GLuint desktopFBO;
 extern unsigned int videoTexture[2];
 extern bool mouseBlendAlternate;
 extern unsigned int cursor;
@@ -69,6 +81,7 @@ extern int cursorSize;
 
 extern float cursorPosX;
 extern float cursorPosY;
+extern GLuint cursorTexture;
 
 extern unsigned int fbos[2];
 extern unsigned int textures[2];

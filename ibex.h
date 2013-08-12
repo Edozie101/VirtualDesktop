@@ -8,7 +8,11 @@
 #ifndef IBEX_H_
 #define IBEX_H_
 
+#if !defined(__APPLE__) && !defined(WIN32)
 #include "opengl_setup_x11.h"
+#endif
+
+#include "opengl_helpers.h"
 
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -49,6 +53,7 @@ extern float DistortionK[4];
 typedef unsigned int Display;
 typedef unsigned int XVisualInfo;
 typedef bool Bool;
+typedef unsigned long Window;
 
 extern int dpy;
 extern int display;
