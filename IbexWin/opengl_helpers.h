@@ -8,7 +8,7 @@
 #ifndef OPENGL_HELPERS_H_
 #define OPENGL_HELPERS_H_
 
-#include <iostream>
+#include <stdio.h>
 
 // --- OpenGL ----------------------------------------------------------------
 
@@ -113,7 +113,7 @@ inline static bool checkForErrors()
   }
 
   if (!retVal)
-    std::cerr << "OpenGL ERROR: " << errorString << " -- " << error << std::endl;
+      fprintf(stderr, "OpenGL ERROR: %s -- %d\n", errorString, error);
 
   return retVal;
 }

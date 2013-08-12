@@ -36,11 +36,6 @@
 
 #else
 
-#include <X11/Xlib.h>
-#include <X11/Xregion.h>
-#include <X11/Xresource.h>
-#include <X11/X.h>
-
 #include <GL/glew.h>
 #include <GL/glxew.h>
 #include <GL/gl.h>
