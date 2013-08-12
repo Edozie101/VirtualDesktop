@@ -58,7 +58,7 @@ std::vector<std::string> Filesystem::listDirectory(const char *directory) {
     
     if ((dir = opendir(directory)) != NULL) {
         while ((ent = readdir (dir)) != NULL) {
-            printf ("%s\n", ent->d_name);
+            //printf ("%s\n", ent->d_name);
             std::string path = ent->d_name;
             if(ent->d_type == DT_DIR) {
                 path = "*"+path;
