@@ -7,12 +7,13 @@
 //
 
 #include "Window.h"
-#include "opengl_helpers.h"
+#include "../opengl_helpers.h"
 
-#include "ibex.h"
-#include "Filesystem.h"
+#include "../ibex.h"
+#include "../filesystem/Filesystem.h"
 #include <algorithm>
-#include "VLCVideoPlayer.h"
+#include <string>
+#include "../video/VLCVideoPlayer.h"
 
 #ifdef __APPLE__
 #include <Carbon/Carbon.h>
@@ -46,14 +47,11 @@ void renderBitmapString(
                         float y,
                         float z,
                         void *font,
-                        char *string) {
-    
-    char *c;
-    
+                        const char *string) {
     glPushMatrix();
     glRasterPos3f(x, y,z);
     glScaled(0.001/2.0, 0.001/2.0, 0.001/2.0);
-    for (c=string; *c != '\0'; c++) {
+    for (const char *c=string; *c != '\0'; c++) {
         glutBitmapCharacter(font, *c);
     }
     glPopMatrix();
@@ -64,14 +62,12 @@ void renderStrokeFontString(
                             float y,
                             float z,
                             void *font,
-                            char *string) {
-    
-    char *c;
+                            const char *string) {
     glPushMatrix();
     glTranslatef(x, y,z);
     
     glScaled(0.001/20.0, 0.001/20.0, 0.001/20.0);
-    for (c=string; *c != '\0'; c++) {
+    for (const char *c=string; *c != '\0'; c++) {
         glutStrokeCharacter(font, *c);
     }
     
@@ -99,41 +95,48 @@ void Ibex::Window::renderInfoWindow() {
 }
 
 void Ibex::Window::renderFileChooser() {
+#ifdef _WIN32
+	uint listingOffset = 1;
+#else
+	uint listingOffset = 2;
+#endif
     if(directoryChanged) {
         directoryList = Filesystem::listDirectory(currentPath.c_str());
-        int count = 0;
-        for(auto i = directoryList.end()-1; i >= (directoryList.begin()+2); ++count) {
-            if(*i != "..") {
-                bool found = false;
-                for(auto i2 = fileTypes.begin(); i2!= fileTypes.end(); ++i2) {
-                    if(endsWith((*i), *i2)) {
-                        found = true;
-                        break;
-                    }
-                }
-                if((*i).size() && (*i)[0] == '*') {
-                    if((*i).size() > 1 && (*i)[1] == '.') {
-                        directoryList.erase(i--);
-                        continue;
-                    }
-                    found = true;
-                }
-                if(!found) {
-                    directoryList.erase(i--);
-                    //std::cerr << directoryList.size() << std::endl;
-                    continue;
-                }
-            }
-            --i;
-        }
-        std::sort(directoryList.begin()+((directoryList.size() >= 2) ? 2 : 1), directoryList.end(), [](const std::string &a, const std::string &b){
-            bool aa = (a.size()) ? a[0] == '*' : 0;
-            bool bb = (b.size()) ? b[0] == '*' : 0;
-            if(aa == bb) {
-                return a < b;
-            }
-            return bb;
-        });
+        uint count = 0;
+		if(directoryList.size()) {
+			for(auto i = directoryList.end()-1; i >= (directoryList.begin()+listingOffset);++count) {
+				if(*i != "..") {
+					bool found = false;
+					for(auto i2 = fileTypes.begin(); i2!= fileTypes.end(); ++i2) {
+						if(endsWith((*i), *i2)) {
+							found = true;
+							break;
+						}
+					}
+					if((*i).size() && (*i)[0] == '*') {
+						if((*i).size() > 1 && (*i)[1] == '.') {
+							directoryList.erase(i--);
+							continue;
+						}
+						found = true;
+					}
+					if(!found) {
+						directoryList.erase(i--);
+						std::cerr << directoryList.size() << std::endl;
+						continue;
+					}
+				}
+				--i;
+			}
+			std::sort(directoryList.begin()+((directoryList.size() >= 2) ? 2 : 1), directoryList.end(), [](const std::string &a, const std::string &b){
+				bool aa = (a.size()) ? a[0] == '*' : 0;
+				bool bb = (b.size()) ? b[0] == '*' : 0;
+				if(aa == bb) {
+					return a < b;
+				}
+				return bb;
+			});
+		}
         directoryChanged = false;
     }
     glBindTexture(GL_TEXTURE_2D, 0);
@@ -150,14 +153,14 @@ void Ibex::Window::renderFileChooser() {
     renderBitmapString(-0.095, 0.64, -0.25, GLUT_BITMAP_HELVETICA_18, "~/Backspace: Back");
     //    renderBitmapString(-0.045, 0.53, -0.25, GLUT_BITMAP_HELVETICA_18, "2. ");
     char blah[256];
-    int startIndex = (selectedFile > 28/2) ? selectedFile-28/2 : 0;
-    for(int i = startIndex,index = 0; i < startIndex+28 && i < directoryList.size(); ++i,++index) {
+    uint startIndex = (selectedFile > 28/2) ? selectedFile-28/2 : 0;
+    for(uint i = startIndex,index = 0; i < startIndex+28 && i < directoryList.size(); ++i,++index) {
         std::string pathWithoutDir = directoryList[i];
         if(directoryList[i].size() && directoryList[i][0] == '*') {
             pathWithoutDir = pathWithoutDir.substr(1);
         }
         
-        sprintf(blah,"%d. %s",i+1,(i < directoryList.size()) ? pathWithoutDir.c_str() : "---------");
+        sprintf(blah,"%ul. %s",i+1,(i < directoryList.size()) ? pathWithoutDir.c_str() : "---------");
         
         if(directoryList[i].size() && directoryList[i][0] == '*') {
             glColor4f(0.,0.,1,1);
@@ -187,8 +190,8 @@ void Ibex::Window::renderCameraChooser() {
     renderBitmapString(-0.095, 0.64, -0.25, GLUT_BITMAP_HELVETICA_18, "~/Backspace: Back");
     //    renderBitmapString(-0.045, 0.53, -0.25, GLUT_BITMAP_HELVETICA_18, "2. ");
     char blah[256];
-    int startIndex = (selectedFile > 28/2) ? selectedFile-28/2 : 0;
-    for(int i = startIndex,index = 0; i < startIndex+28 && i < cameras.size(); ++i,++index) {
+    uint startIndex = (selectedFile > 28/2) ? selectedFile-28/2 : 0;
+    for(uint i = startIndex,index = 0; i < startIndex+28 && i < cameras.size(); ++i,++index) {
         sprintf(blah,"%d. Camera %d",i+1, cameras[i]);
         
         if(selectedFile == i) {
@@ -199,6 +202,16 @@ void Ibex::Window::renderCameraChooser() {
     }
     renderBitmapString(0.055, 0.36, -0.25, GLUT_BITMAP_HELVETICA_18, fpsString);
     glEnable(GL_DEPTH_TEST);
+}
+
+void Ibex::Window::reset() {
+	directoryChanged = true;
+	directoryList.clear();
+	selectedFile = 0;
+	selectedCamera = 0;
+	isStereoVideo = 0;
+	selectedCameraID = 0;
+	visibleWindow = InfoWindow;
 }
 
 void Ibex::Window::render() {
@@ -322,4 +335,253 @@ int Ibex::Window::processKey(unsigned short keyCode, int down) {
     }
     return processed;
 }
+#else
+#ifdef _WIN32
+int Ibex::Window::processKey(unsigned char key, int down) {
+	int processed = 0;
+    switch(key) {
+		case 'W':
+        case 'w':
+            if(down) {
+                --selectedFile;
+                if(selectedFile < 0 && directoryList.size() > 0) selectedFile += directoryList.size();
+				if(directoryList.size() <= 0 && selectedFile < 0) selectedFile = 0;
+            }
+            processed = 1;
+            break;
+		case 'S':
+		case 's':
+            if(down) {
+                ++selectedFile;
+				if(directoryList.size() > 0) {
+					selectedFile %= directoryList.size();
+				} else {
+					//selectedFile = 0;
+				}
+            }
+            
+            processed = 1;
+            break;
+        case '1':
+        case '2':
+            if(down) {
+                if(visibleWindow == InfoWindow) {
+					reset();
+                    directoryList.clear();
+                    selectedFile = 0;
+                    isStereoVideo = (key == '2');
+                    directoryChanged = true;
+                }
+                visibleWindow = FileChooser;
+            }
+            
+            processed = 1;
+            break;
+        case '3':
+    case '4':
+            if(down) {
+                if(visibleWindow == InfoWindow) {
+					reset();
+                    directoryList.clear();
+                    selectedCamera = 0;
+                    selectedCameraID = -1;
+                    isStereoVideo = (key == '4');
+                    directoryChanged = true;
+                }
+                visibleWindow = CameraChooser;
+                cameras = VLCVideoPlayer::listCameras();
+            }
+            
+            processed = 1;
+            break;
+		case 8: // BACKSPACE
+        case 127: // DELETE
+            visibleWindow = InfoWindow;
+            
+            processed = 1;
+            break;
+        case 13: // ENTER KEY
+			if(down) {
+                switch(visibleWindow) {
+                    case FileChooser:
+                    {
+                        if(selectedFile < directoryList.size() && selectedFile >= 0) {
+                            std::string fullPath = Filesystem::getFullPath(currentPath, directoryList[selectedFile]);
+                            if(Filesystem::isFile(fullPath) && !Filesystem::isDirectory(fullPath)) {
+                                selectedVideo = true;
+                                videoPath = fullPath;
+                                showDialog = false;
+                            } else {
+                                currentPath = Filesystem::navigate(currentPath, directoryList[selectedFile]);
+                            }
+                            directoryChanged = true;
+							directoryList.clear();
+                            selectedFile = 0;
+                        }
+                        break;
+                    }
+                    case CameraChooser:
+                    {
+                        if(selectedFile >= 0 && selectedFile < cameras.size()) {
+							directoryList.clear();
+                            selectedCamera = true;
+                            selectedCameraID = cameras[selectedFile];
+                            showDialog = false;
+                            selectedFile = 0;
+                        } else {
+                            
+                        }
+                        break;
+                    }
+                    default:
+                        break;
+                }
+//            showDialog = false;
+            }
+            
+            processed = 1;
+            break;
+        case 27: // ESCAPE
+            showDialog = false;
+            
+            processed = 1;
+            break;
+    }
+    return processed;
+}
+int Ibex::Window::processSpecialKey(unsigned char key, int down) {
+  int processed = 0;
+    switch(key) {
+        case GLUT_KEY_UP:
+            if(down) {
+                --selectedFile;
+                if(selectedFile < 0 && directoryList.size() > 0) selectedFile += directoryList.size();
+                else if(directoryList.size() <= 0 && selectedFile < 0)selectedFile = 0;
+            }
+            processed = 1;
+            break;
+        case GLUT_KEY_DOWN:
+            if(down) {
+                ++selectedFile;
+                if(directoryList.size() > 0) {
+                    selectedFile %= directoryList.size();
+                }
+            }
+
+            processed = 1;
+            break;
+    }
+    return processed;
+}
+#else
+int Ibex::Window::processKey(XIDeviceEvent *event, bool down) {
+  static KeyCode B = XKeysymToKeycode(dpy, XK_B); // toggle barrel distort
+  static KeyCode G = XKeysymToKeycode(dpy, XK_G); // toggle ground
+
+  static KeyCode KC1 = XKeysymToKeycode(dpy, XK_1);
+  static KeyCode KC2 = XKeysymToKeycode(dpy, XK_2);
+  static KeyCode KC3 = XKeysymToKeycode(dpy, XK_3);
+  static KeyCode KC4 = XKeysymToKeycode(dpy, XK_4);
+  
+  static KeyCode W = XKeysymToKeycode(dpy, XK_W);
+  static KeyCode S = XKeysymToKeycode(dpy, XK_S);
+  static KeyCode A = XKeysymToKeycode(dpy, XK_A);
+  static KeyCode D = XKeysymToKeycode(dpy, XK_D);
+  static KeyCode Q = XKeysymToKeycode(dpy, XK_Q);
+  static KeyCode E = XKeysymToKeycode(dpy, XK_E);
+  static KeyCode R = XKeysymToKeycode(dpy, XK_R);
+  static KeyCode FORWARD_SLASH = XKeysymToKeycode(dpy, XK_slash);
+  static KeyCode SPACE = XKeysymToKeycode(dpy, XK_space);
+  static KeyCode ENTER = XKeysymToKeycode(dpy, XK_Return);
+
+  KeyCode key = event->detail;
+  int processed = 0;
+  if(key == W) {
+    if(down) {
+      --selectedFile;
+      if(selectedFile < 0 && directoryList.size() > 0) selectedFile += directoryList.size();
+      else if(directoryList.size() <= 0 && selectedFile < 0)selectedFile = 0;
+    }
+    processed = 1;
+  } else if(key == S) {
+    if(down) {
+      ++selectedFile;
+      if(directoryList.size() > 0) {
+	selectedFile %= directoryList.size();
+      }
+    }
+    processed = 1;
+  } else if(key == ENTER) {
+    if(down) {
+      switch(visibleWindow) {
+      case FileChooser:
+	{
+	  if(selectedFile < directoryList.size() && selectedFile >= 0) {
+	    std::string fullPath = Filesystem::getFullPath(currentPath, directoryList[selectedFile]);
+	    if(Filesystem::isFile(fullPath) && !Filesystem::isDirectory(fullPath)) {
+	      selectedVideo = true;
+	      videoPath = fullPath;
+	      showDialog = false;
+	    } else {
+	      currentPath = Filesystem::navigate(currentPath, directoryList[selectedFile]);
+	    }
+	    directoryChanged = true;
+	    directoryList.clear();
+	    selectedFile = 0;
+	  }
+	  break;
+	}
+      case CameraChooser:
+	{
+	  if(selectedFile >= 0 && selectedFile < cameras.size()) {
+	    directoryList.clear();
+	    selectedCamera = true;
+	    selectedCameraID = cameras[selectedFile];
+	    showDialog = false;
+	    selectedFile = 0;
+	  } else {
+                            
+	  }
+	  break;
+	}
+      default:
+	break;
+      }
+      //            showDialog = false;
+    }
+    processed = 1;
+  } else if(key == KC1 || key == KC2) {
+    if(down) {
+      if(visibleWindow == InfoWindow) {
+	reset();
+	directoryList.clear();
+	selectedFile = 0;
+	isStereoVideo = (key == KC2);
+	directoryChanged = true;
+      }
+      visibleWindow = FileChooser;
+    }
+    
+    processed = 1;
+  } else if(key == KC3 || key == KC4) {
+    /*
+    if(down) {
+      if(visibleWindow == InfoWindow) {
+	reset();
+	directoryList.clear();
+	selectedCamera = 0;
+	selectedCameraID = -1;
+	isStereoVideo = (key == KC4);
+	directoryChanged = true;
+      }
+      visibleWindow = CameraChooser;
+      cameras = VLCVideoPlayer::listCameras();
+    }
+    */
+    processed = 1;
+  }
+
+  return processed;
+}
+#endif
 #endif

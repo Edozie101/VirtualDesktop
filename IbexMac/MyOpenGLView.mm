@@ -38,7 +38,7 @@
 
 #include "sixense_controller.h"
 
-#include "Window.h"
+#include "windows/Window.h"
 
 #include "RendererPlugin.h"
 

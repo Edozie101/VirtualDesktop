@@ -9,7 +9,7 @@
 #define RENDERERPLUGIN_H_
 
 #include "ibex.h"
-#include "Window.h"
+#include "windows/Window.h"
 
 typedef unsigned long Window;
 typedef unsigned long GLXContext;

@@ -13,7 +13,6 @@
 		4C09379017B1F9CE004EA291 /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4CB7987D168AB41E00EF5260 /* AppDelegate.mm */; };
 		4C09379117B1F9CE004EA291 /* ScreenGrabber.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C2DE2FE168B30CC003BEB56 /* ScreenGrabber.m */; };
 		4C09379217B1F9CE004EA291 /* MyOpenGLView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4CF354B8168D0D5000EAA2FE /* MyOpenGLView.mm */; };
-		4C09379317B1F9CE004EA291 /* SimpleWorldRendererPlugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFB0B3C168E5D6A0025AF0F /* SimpleWorldRendererPlugin.cpp */; };
 		4C09379417B1F9CE004EA291 /* distortions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFB0B40168E5D840025AF0F /* distortions.cpp */; };
 		4C09379517B1F9CE004EA291 /* opengl_helpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFB0B41168E5D840025AF0F /* opengl_helpers.cpp */; };
 		4C09379617B1F9CE004EA291 /* RendererPlugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFB0B45168E5D960025AF0F /* RendererPlugin.cpp */; };
@@ -24,16 +23,11 @@
 		4C09379B17B1F9CE004EA291 /* ibex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFB0B49168E5DFA0025AF0F /* ibex.cpp */; };
 		4C09379C17B1F9CE004EA291 /* MyWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4C4C3C091694689400D2285F /* MyWindow.mm */; };
 		4C09379D17B1F9CE004EA291 /* ServerController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CACE17116A236710085DA5E /* ServerController.m */; };
-		4C09379E17B1F9CE004EA291 /* sixense_controller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C46D7CB16F2BB2900B5DD9E /* sixense_controller.cpp */; };
 		4C09379F17B1F9CE004EA291 /* tinystr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C6F782E16F4DF0B0089101F /* tinystr.cpp */; };
 		4C0937A017B1F9CE004EA291 /* tinyxml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C6F783016F4DF0B0089101F /* tinyxml.cpp */; };
 		4C0937A117B1F9CE004EA291 /* tinyxmlerror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C6F783216F4DF0B0089101F /* tinyxmlerror.cpp */; };
 		4C0937A217B1F9CE004EA291 /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C6F783316F4DF0B0089101F /* tinyxmlparser.cpp */; };
 		4C0937A317B1F9CE004EA291 /* ScreenshotView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4C936063172A282100A94980 /* ScreenshotView.mm */; };
-		4C0937A517B1F9CE004EA291 /* IbexVideoPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4C238E1B172C94A7009C22A6 /* IbexVideoPlayer.mm */; };
-		4C0937A617B1F9CE004EA291 /* Filesystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C3CA30C17374B2E00A8DA14 /* Filesystem.cpp */; };
-		4C0937A717B1F9CE004EA291 /* VLCVideoPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CBA518017AEC00B009BBE13 /* VLCVideoPlayer.cpp */; };
-		4C0937A817B1F9CE004EA291 /* Window.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C86A6C91739DAC300A1BDEE /* Window.cpp */; };
 		4C0937AE17B1F9CE004EA291 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6F782816F4D9650089101F /* IOKit.framework */; };
 		4C0937AF17B1F9CE004EA291 /* VideoDecodeAcceleration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C19BFE8172CD56400B7599D /* VideoDecodeAcceleration.framework */; };
 		4C0937B017B1F9CE004EA291 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C006062169D38A000B88329 /* CoreFoundation.framework */; };
@@ -103,7 +97,6 @@
 		4C0D589716AD656A007BC9CD /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4CB7987D168AB41E00EF5260 /* AppDelegate.mm */; };
 		4C0D589816AD656A007BC9CD /* ScreenGrabber.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C2DE2FE168B30CC003BEB56 /* ScreenGrabber.m */; };
 		4C0D589916AD656A007BC9CD /* MyOpenGLView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4CF354B8168D0D5000EAA2FE /* MyOpenGLView.mm */; };
-		4C0D589A16AD656A007BC9CD /* SimpleWorldRendererPlugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFB0B3C168E5D6A0025AF0F /* SimpleWorldRendererPlugin.cpp */; };
 		4C0D589B16AD656A007BC9CD /* distortions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFB0B40168E5D840025AF0F /* distortions.cpp */; };
 		4C0D589C16AD656A007BC9CD /* opengl_helpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFB0B41168E5D840025AF0F /* opengl_helpers.cpp */; };
 		4C0D589D16AD656A007BC9CD /* RendererPlugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFB0B45168E5D960025AF0F /* RendererPlugin.cpp */; };
@@ -135,18 +128,10 @@
 		4C1DD39016F4F95300302EFA /* Plugin_OctreeSceneManager.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6411B116F4C30200132076 /* Plugin_OctreeSceneManager.dylib */; };
 		4C1DD39116F4F96000302EFA /* Plugin_OctreeSceneManager.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C6411B116F4C30200132076 /* Plugin_OctreeSceneManager.dylib */; };
 		4C238E18172C6BAD009C22A6 /* libovr.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CA92BC31729FB1F00994379 /* libovr.a */; };
-		4C238E1C172C94A7009C22A6 /* IbexVideoPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4C238E1B172C94A7009C22A6 /* IbexVideoPlayer.mm */; };
-		4C238E1D172C94A7009C22A6 /* IbexVideoPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4C238E1B172C94A7009C22A6 /* IbexVideoPlayer.mm */; };
-		4C238E1E172C94A7009C22A6 /* IbexVideoPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4C238E1B172C94A7009C22A6 /* IbexVideoPlayer.mm */; };
 		4C2DE2FF168B30CC003BEB56 /* ScreenGrabber.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C2DE2FE168B30CC003BEB56 /* ScreenGrabber.m */; };
-		4C3CA30E17374B2E00A8DA14 /* Filesystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C3CA30C17374B2E00A8DA14 /* Filesystem.cpp */; };
-		4C3CA30F17374B2E00A8DA14 /* Filesystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C3CA30C17374B2E00A8DA14 /* Filesystem.cpp */; };
-		4C3CA31017374B2E00A8DA14 /* Filesystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C3CA30C17374B2E00A8DA14 /* Filesystem.cpp */; };
 		4C41232116936E4F008F5B15 /* IbexMacUtils.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4C41232016936E4F008F5B15 /* IbexMacUtils.mm */; };
 		4C46D7C816F2B93D00B5DD9E /* libsixense_utils_x64.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C46D7C616F2B93D00B5DD9E /* libsixense_utils_x64.dylib */; };
 		4C46D7C916F2B93D00B5DD9E /* libsixense_x64.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C46D7C716F2B93D00B5DD9E /* libsixense_x64.dylib */; };
-		4C46D7CC16F2BB2900B5DD9E /* sixense_controller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C46D7CB16F2BB2900B5DD9E /* sixense_controller.cpp */; };
-		4C46D7CD16F2BB2900B5DD9E /* sixense_controller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C46D7CB16F2BB2900B5DD9E /* sixense_controller.cpp */; };
 		4C4A959E17386F4300172F70 /* libx264.125.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4CABF8341730BDEE00F94A46 /* libx264.125.dylib */; };
 		4C4A959F17386F4900172F70 /* libsixense_utils_x64.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C46D7C616F2B93D00B5DD9E /* libsixense_utils_x64.dylib */; };
 		4C4A95A017386F4B00172F70 /* libsixense_x64.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C46D7C716F2B93D00B5DD9E /* libsixense_x64.dylib */; };
@@ -157,14 +142,10 @@
 		4C61AC3916F9272000F98776 /* MyOgreView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4C61AC3816F9272000F98776 /* MyOgreView.mm */; };
 		4C6411A716F4C2D700132076 /* libsixense_utils_x64.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C46D7C616F2B93D00B5DD9E /* libsixense_utils_x64.dylib */; };
 		4C6411A816F4C2D700132076 /* libsixense_x64.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C46D7C716F2B93D00B5DD9E /* libsixense_x64.dylib */; };
-		4C64379C172F7B310005504B /* VideoPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C64379A172F7B310005504B /* VideoPlayer.cpp */; };
-		4C64379D172F7B310005504B /* VideoPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C64379A172F7B310005504B /* VideoPlayer.cpp */; };
-		4C64379E172F7B310005504B /* VideoPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C64379A172F7B310005504B /* VideoPlayer.cpp */; };
 		4C6B99D416F4C17E00C5C725 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CB79876168AB41E00EF5260 /* main.m */; };
 		4C6B99D516F4C17E00C5C725 /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4CB7987D168AB41E00EF5260 /* AppDelegate.mm */; };
 		4C6B99D616F4C17E00C5C725 /* ScreenGrabber.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C2DE2FE168B30CC003BEB56 /* ScreenGrabber.m */; };
 		4C6B99D716F4C17E00C5C725 /* MyOpenGLView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4CF354B8168D0D5000EAA2FE /* MyOpenGLView.mm */; };
-		4C6B99D816F4C17E00C5C725 /* SimpleWorldRendererPlugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFB0B3C168E5D6A0025AF0F /* SimpleWorldRendererPlugin.cpp */; };
 		4C6B99D916F4C17E00C5C725 /* distortions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFB0B40168E5D840025AF0F /* distortions.cpp */; };
 		4C6B99DA16F4C17E00C5C725 /* opengl_helpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFB0B41168E5D840025AF0F /* opengl_helpers.cpp */; };
 		4C6B99DB16F4C17E00C5C725 /* RendererPlugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFB0B45168E5D960025AF0F /* RendererPlugin.cpp */; };
@@ -175,7 +156,6 @@
 		4C6B99E016F4C17E00C5C725 /* ibex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFB0B49168E5DFA0025AF0F /* ibex.cpp */; };
 		4C6B99E116F4C17E00C5C725 /* MyWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4C4C3C091694689400D2285F /* MyWindow.mm */; };
 		4C6B99E216F4C17E00C5C725 /* ServerController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CACE17116A236710085DA5E /* ServerController.m */; };
-		4C6B99E316F4C17E00C5C725 /* sixense_controller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C46D7CB16F2BB2900B5DD9E /* sixense_controller.cpp */; };
 		4C6B99E516F4C17E00C5C725 /* BulletCollision.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6D8CBF16F401B100C4638B /* BulletCollision.framework */; };
 		4C6B99E616F4C17E00C5C725 /* BulletDynamics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6D8CC016F401B100C4638B /* BulletDynamics.framework */; };
 		4C6B99E716F4C17E00C5C725 /* BulletMultiThreaded.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6D8CC116F401B100C4638B /* BulletMultiThreaded.framework */; };
@@ -243,13 +223,45 @@
 		4C707C5A172C487200309642 /* libOIS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C707C58172C487200309642 /* libOIS.a */; };
 		4C707C5E172C493000309642 /* Ogre.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C707C5D172C493000309642 /* Ogre.framework */; };
 		4C76498F16965A67009CF2EC /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C76498E16965A67009CF2EC /* Carbon.framework */; };
-		4C86A6CB1739DAC300A1BDEE /* Window.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C86A6C91739DAC300A1BDEE /* Window.cpp */; };
-		4C86A6CC1739DAC300A1BDEE /* Window.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C86A6C91739DAC300A1BDEE /* Window.cpp */; };
-		4C86A6CD1739DAC300A1BDEE /* Window.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C86A6C91739DAC300A1BDEE /* Window.cpp */; };
 		4C8758431697E5200022583D /* ibex.iconset in Resources */ = {isa = PBXBuildFile; fileRef = 4C8758421697E5200022583D /* ibex.iconset */; };
 		4C936064172A282100A94980 /* ScreenshotView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4C936063172A282100A94980 /* ScreenshotView.mm */; };
 		4C936065172A282100A94980 /* ScreenshotView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4C936063172A282100A94980 /* ScreenshotView.mm */; };
 		4C936066172A282100A94980 /* ScreenshotView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4C936063172A282100A94980 /* ScreenshotView.mm */; };
+		4C961B2017B8949C0028D242 /* CMakeLists.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4C961B1D17B8949C0028D242 /* CMakeLists.txt */; };
+		4C961B2117B8949C0028D242 /* CMakeLists.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4C961B1D17B8949C0028D242 /* CMakeLists.txt */; };
+		4C961B2217B8949C0028D242 /* CMakeLists.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4C961B1D17B8949C0028D242 /* CMakeLists.txt */; };
+		4C961B2317B8949C0028D242 /* CMakeLists.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4C961B1D17B8949C0028D242 /* CMakeLists.txt */; };
+		4C961B2417B8949C0028D242 /* Window.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C961B1E17B8949C0028D242 /* Window.cpp */; };
+		4C961B2517B8949C0028D242 /* Window.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C961B1E17B8949C0028D242 /* Window.cpp */; };
+		4C961B2617B8949C0028D242 /* Window.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C961B1E17B8949C0028D242 /* Window.cpp */; };
+		4C961B2717B8949C0028D242 /* Window.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C961B1E17B8949C0028D242 /* Window.cpp */; };
+		4C961B2F17B895330028D242 /* IbexVideoPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4C961B2A17B895330028D242 /* IbexVideoPlayer.mm */; };
+		4C961B3017B895330028D242 /* IbexVideoPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4C961B2A17B895330028D242 /* IbexVideoPlayer.mm */; };
+		4C961B3117B895330028D242 /* IbexVideoPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4C961B2A17B895330028D242 /* IbexVideoPlayer.mm */; };
+		4C961B3217B895330028D242 /* IbexVideoPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4C961B2A17B895330028D242 /* IbexVideoPlayer.mm */; };
+		4C961B3317B895330028D242 /* VideoPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C961B2B17B895330028D242 /* VideoPlayer.cpp */; };
+		4C961B3417B895330028D242 /* VideoPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C961B2B17B895330028D242 /* VideoPlayer.cpp */; };
+		4C961B3517B895330028D242 /* VideoPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C961B2B17B895330028D242 /* VideoPlayer.cpp */; };
+		4C961B3717B895330028D242 /* VLCVideoPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C961B2D17B895330028D242 /* VLCVideoPlayer.cpp */; };
+		4C961B3817B895330028D242 /* VLCVideoPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C961B2D17B895330028D242 /* VLCVideoPlayer.cpp */; };
+		4C961B3917B895330028D242 /* VLCVideoPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C961B2D17B895330028D242 /* VLCVideoPlayer.cpp */; };
+		4C961B3A17B895330028D242 /* VLCVideoPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C961B2D17B895330028D242 /* VLCVideoPlayer.cpp */; };
+		4C961B4117B899860028D242 /* CMakeLists.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4C961B3E17B899860028D242 /* CMakeLists.txt */; };
+		4C961B4217B899860028D242 /* CMakeLists.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4C961B3E17B899860028D242 /* CMakeLists.txt */; };
+		4C961B4317B899860028D242 /* CMakeLists.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4C961B3E17B899860028D242 /* CMakeLists.txt */; };
+		4C961B4417B899860028D242 /* CMakeLists.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4C961B3E17B899860028D242 /* CMakeLists.txt */; };
+		4C961B4517B899860028D242 /* Filesystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C961B3F17B899860028D242 /* Filesystem.cpp */; };
+		4C961B4617B899860028D242 /* Filesystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C961B3F17B899860028D242 /* Filesystem.cpp */; };
+		4C961B4717B899860028D242 /* Filesystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C961B3F17B899860028D242 /* Filesystem.cpp */; };
+		4C961B4817B899860028D242 /* Filesystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C961B3F17B899860028D242 /* Filesystem.cpp */; };
+		4C961B4C17B899F10028D242 /* sixense_controller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C961B4A17B899F10028D242 /* sixense_controller.cpp */; };
+		4C961B4D17B899F10028D242 /* sixense_controller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C961B4A17B899F10028D242 /* sixense_controller.cpp */; };
+		4C961B4E17B899F10028D242 /* sixense_controller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C961B4A17B899F10028D242 /* sixense_controller.cpp */; };
+		4C961B4F17B899F10028D242 /* sixense_controller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C961B4A17B899F10028D242 /* sixense_controller.cpp */; };
+		4C961B5317B89A780028D242 /* SimpleWorldRendererPlugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C961B5117B89A780028D242 /* SimpleWorldRendererPlugin.cpp */; };
+		4C961B5417B89A780028D242 /* SimpleWorldRendererPlugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C961B5117B89A780028D242 /* SimpleWorldRendererPlugin.cpp */; };
+		4C961B5517B89A780028D242 /* SimpleWorldRendererPlugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C961B5117B89A780028D242 /* SimpleWorldRendererPlugin.cpp */; };
+		4C961B5617B89A780028D242 /* SimpleWorldRendererPlugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C961B5117B89A780028D242 /* SimpleWorldRendererPlugin.cpp */; };
 		4CA92BC41729FB1F00994379 /* libovr.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CA92BC31729FB1F00994379 /* libovr.a */; };
 		4CABF7EA1730926900F94A46 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CABF7E91730926900F94A46 /* OpenAL.framework */; };
 		4CABF7EB1730927500F94A46 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CABF7E91730926900F94A46 /* OpenAL.framework */; };
@@ -271,7 +283,6 @@
 		4CB7987E168AB41E00EF5260 /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4CB7987D168AB41E00EF5260 /* AppDelegate.mm */; };
 		4CB79881168AB41E00EF5260 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4CB7987F168AB41E00EF5260 /* MainMenu.xib */; };
 		4CB8423016FD7FD7009B3DDE /* RenderSystem_GL.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6411A916F4C30200132076 /* RenderSystem_GL.dylib */; };
-		4CBA518217AEC00B009BBE13 /* VLCVideoPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CBA518017AEC00B009BBE13 /* VLCVideoPlayer.cpp */; };
 		4CEEED58178777830067405F /* libopencv_calib3d.2.4.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CEEED45178777830067405F /* libopencv_calib3d.2.4.5.dylib */; };
 		4CEEED59178777830067405F /* libopencv_contrib.2.4.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CEEED46178777830067405F /* libopencv_contrib.2.4.5.dylib */; };
 		4CEEED5A178777830067405F /* libopencv_core.2.4.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CEEED47178777830067405F /* libopencv_core.2.4.5.dylib */; };
@@ -312,7 +323,6 @@
 		4CEEED7D17877DCB0067405F /* libopencv_videostab.2.4.5.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4CEEED57178777830067405F /* libopencv_videostab.2.4.5.dylib */; };
 		4CF354B9168D0D5000EAA2FE /* MyOpenGLView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4CF354B8168D0D5000EAA2FE /* MyOpenGLView.mm */; };
 		4CF354BC168D0E1600EAA2FE /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CF354BB168D0E1600EAA2FE /* OpenGL.framework */; };
-		4CFB0B3E168E5D6A0025AF0F /* SimpleWorldRendererPlugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFB0B3C168E5D6A0025AF0F /* SimpleWorldRendererPlugin.cpp */; };
 		4CFB0B43168E5D840025AF0F /* distortions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFB0B40168E5D840025AF0F /* distortions.cpp */; };
 		4CFB0B44168E5D840025AF0F /* opengl_helpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFB0B41168E5D840025AF0F /* opengl_helpers.cpp */; };
 		4CFB0B48168E5D960025AF0F /* RendererPlugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFB0B45168E5D960025AF0F /* RendererPlugin.cpp */; };
@@ -460,13 +470,9 @@
 		4C0D58B716AD656A007BC9CD /* IbexMac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IbexMac.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C13B71316A9E8C80064AE60 /* ibex_mac_utils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ibex_mac_utils.h; sourceTree = "<group>"; };
 		4C19BFE8172CD56400B7599D /* VideoDecodeAcceleration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = VideoDecodeAcceleration.framework; path = System/Library/Frameworks/VideoDecodeAcceleration.framework; sourceTree = SDKROOT; };
-		4C238E1A172C94A7009C22A6 /* IbexVideoPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IbexVideoPlayer.h; sourceTree = "<group>"; };
-		4C238E1B172C94A7009C22A6 /* IbexVideoPlayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IbexVideoPlayer.mm; sourceTree = "<group>"; };
 		4C2DE2FD168B30CC003BEB56 /* ScreenGrabber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScreenGrabber.h; sourceTree = "<group>"; };
 		4C2DE2FE168B30CC003BEB56 /* ScreenGrabber.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScreenGrabber.m; sourceTree = "<group>"; };
 		4C33AA3316970C3B001A1EFC /* IbexMac.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = IbexMac.entitlements; sourceTree = "<group>"; };
-		4C3CA30C17374B2E00A8DA14 /* Filesystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Filesystem.cpp; sourceTree = "<group>"; };
-		4C3CA30D17374B2E00A8DA14 /* Filesystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Filesystem.h; sourceTree = "<group>"; };
 		4C41231F16936E4F008F5B15 /* IbexMacUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IbexMacUtils.h; sourceTree = "<group>"; };
 		4C41232016936E4F008F5B15 /* IbexMacUtils.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IbexMacUtils.mm; sourceTree = "<group>"; };
 		4C46D7B316F2AED900B5DD9E /* sixense_math.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = sixense_math.cpp; path = ../sixense_math.cpp; sourceTree = "<group>"; };
@@ -486,8 +492,6 @@
 		4C46D7C316F2AED900B5DD9E /* sixense.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sixense.h; sourceTree = "<group>"; };
 		4C46D7C616F2B93D00B5DD9E /* libsixense_utils_x64.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsixense_utils_x64.dylib; path = /usr/local/lib/libsixense_utils_x64.dylib; sourceTree = "<absolute>"; };
 		4C46D7C716F2B93D00B5DD9E /* libsixense_x64.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsixense_x64.dylib; path = /usr/local/lib/libsixense_x64.dylib; sourceTree = "<absolute>"; };
-		4C46D7CA16F2BB2900B5DD9E /* sixense_controller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sixense_controller.h; sourceTree = "<group>"; };
-		4C46D7CB16F2BB2900B5DD9E /* sixense_controller.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sixense_controller.cpp; sourceTree = "<group>"; };
 		4C4A95A31738738A00172F70 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		4C4A95A5173873AC00172F70 /* libbz2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libbz2.dylib; path = usr/lib/libbz2.dylib; sourceTree = SDKROOT; };
 		4C4C3C081694689400D2285F /* MyWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyWindow.h; sourceTree = "<group>"; };
@@ -505,8 +509,6 @@
 		4C6411B116F4C30200132076 /* Plugin_OctreeSceneManager.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = Plugin_OctreeSceneManager.dylib; sourceTree = "<group>"; };
 		4C6411B216F4C30200132076 /* libOgrePaging.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libOgrePaging.dylib; sourceTree = "<group>"; };
 		4C6411B316F4C30200132076 /* Plugin_BSPSceneManager.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = Plugin_BSPSceneManager.dylib; sourceTree = "<group>"; };
-		4C64379A172F7B310005504B /* VideoPlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VideoPlayer.cpp; sourceTree = "<group>"; };
-		4C64379B172F7B310005504B /* VideoPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoPlayer.h; sourceTree = "<group>"; };
 		4C6B99FF16F4C17E00C5C725 /* IbexMacOgre.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IbexMacOgre.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C6B9A0016F4C17E00C5C725 /* IbexMacOgre-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "IbexMacOgre-Info.plist"; path = "/Users/hesh/Documents/ibex/ibex/IbexMacOgre-Info.plist"; sourceTree = "<absolute>"; };
 		4C6D8CBF16F401B100C4638B /* BulletCollision.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BulletCollision.framework; path = /Library/Frameworks/BulletCollision.framework; sourceTree = "<absolute>"; };
@@ -536,11 +538,26 @@
 		4C707C58172C487200309642 /* libOIS.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libOIS.a; path = ../OgreSDK/lib/release/libOIS.a; sourceTree = "<group>"; };
 		4C707C5D172C493000309642 /* Ogre.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Ogre.framework; path = ../OgreSDK/lib/release/Ogre.framework; sourceTree = "<group>"; };
 		4C76498E16965A67009CF2EC /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
-		4C86A6C91739DAC300A1BDEE /* Window.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Window.cpp; sourceTree = "<group>"; };
-		4C86A6CA1739DAC300A1BDEE /* Window.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Window.h; sourceTree = "<group>"; };
 		4C8758421697E5200022583D /* ibex.iconset */ = {isa = PBXFileReference; lastKnownFileType = folder.iconset; path = ibex.iconset; sourceTree = "<group>"; };
 		4C936062172A282100A94980 /* ScreenshotView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScreenshotView.h; sourceTree = "<group>"; };
 		4C936063172A282100A94980 /* ScreenshotView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScreenshotView.mm; sourceTree = "<group>"; };
+		4C961B1D17B8949C0028D242 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		4C961B1E17B8949C0028D242 /* Window.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Window.cpp; sourceTree = "<group>"; };
+		4C961B1F17B8949C0028D242 /* Window.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Window.h; sourceTree = "<group>"; };
+		4C961B2917B895330028D242 /* IbexVideoPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IbexVideoPlayer.h; sourceTree = "<group>"; };
+		4C961B2A17B895330028D242 /* IbexVideoPlayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IbexVideoPlayer.mm; sourceTree = "<group>"; };
+		4C961B2B17B895330028D242 /* VideoPlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VideoPlayer.cpp; sourceTree = "<group>"; };
+		4C961B2C17B895330028D242 /* VideoPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoPlayer.h; sourceTree = "<group>"; };
+		4C961B2D17B895330028D242 /* VLCVideoPlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VLCVideoPlayer.cpp; sourceTree = "<group>"; };
+		4C961B2E17B895330028D242 /* VLCVideoPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VLCVideoPlayer.h; sourceTree = "<group>"; };
+		4C961B3C17B897490028D242 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = CMakeLists.txt; path = IbexMac/CMakeLists.txt; sourceTree = "<group>"; };
+		4C961B3E17B899860028D242 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		4C961B3F17B899860028D242 /* Filesystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Filesystem.cpp; sourceTree = "<group>"; };
+		4C961B4017B899860028D242 /* Filesystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Filesystem.h; sourceTree = "<group>"; };
+		4C961B4A17B899F10028D242 /* sixense_controller.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sixense_controller.cpp; sourceTree = "<group>"; };
+		4C961B4B17B899F10028D242 /* sixense_controller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sixense_controller.h; sourceTree = "<group>"; };
+		4C961B5117B89A780028D242 /* SimpleWorldRendererPlugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleWorldRendererPlugin.cpp; sourceTree = "<group>"; };
+		4C961B5217B89A780028D242 /* SimpleWorldRendererPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleWorldRendererPlugin.h; sourceTree = "<group>"; };
 		4CA92BC31729FB1F00994379 /* libovr.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libovr.a; path = ../OculusSDK/LibOVR/Lib/MacOS/Debug/libovr.a; sourceTree = "<group>"; };
 		4CABF7E91730926900F94A46 /* OpenAL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenAL.framework; path = System/Library/Frameworks/OpenAL.framework; sourceTree = SDKROOT; };
 		4CABF81F1730BAF600F94A46 /* libxvidcore.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libxvidcore.a; path = /usr/local/Cellar/xvid/1.3.2/lib/libxvidcore.a; sourceTree = "<absolute>"; };
@@ -573,8 +590,6 @@
 		4CB7987C168AB41E00EF5260 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		4CB7987D168AB41E00EF5260 /* AppDelegate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AppDelegate.mm; sourceTree = "<group>"; };
 		4CB79880168AB41E00EF5260 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
-		4CBA518017AEC00B009BBE13 /* VLCVideoPlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VLCVideoPlayer.cpp; sourceTree = "<group>"; };
-		4CBA518117AEC00B009BBE13 /* VLCVideoPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VLCVideoPlayer.h; sourceTree = "<group>"; };
 		4CEEED45178777830067405F /* libopencv_calib3d.2.4.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_calib3d.2.4.5.dylib; path = ../../../../usr/local/Cellar/opencv/2.4.5/lib/libopencv_calib3d.2.4.5.dylib; sourceTree = "<group>"; };
 		4CEEED46178777830067405F /* libopencv_contrib.2.4.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_contrib.2.4.5.dylib; path = ../../../../usr/local/Cellar/opencv/2.4.5/lib/libopencv_contrib.2.4.5.dylib; sourceTree = "<group>"; };
 		4CEEED47178777830067405F /* libopencv_core.2.4.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_core.2.4.5.dylib; path = ../../../../usr/local/Cellar/opencv/2.4.5/lib/libopencv_core.2.4.5.dylib; sourceTree = "<group>"; };
@@ -597,8 +612,6 @@
 		4CF354B7168D0D5000EAA2FE /* MyOpenGLView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyOpenGLView.h; sourceTree = "<group>"; };
 		4CF354B8168D0D5000EAA2FE /* MyOpenGLView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MyOpenGLView.mm; sourceTree = "<group>"; };
 		4CF354BB168D0E1600EAA2FE /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
-		4CFB0B3C168E5D6A0025AF0F /* SimpleWorldRendererPlugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleWorldRendererPlugin.cpp; sourceTree = "<group>"; };
-		4CFB0B3D168E5D6A0025AF0F /* SimpleWorldRendererPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleWorldRendererPlugin.h; sourceTree = "<group>"; };
 		4CFB0B40168E5D840025AF0F /* distortions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = distortions.cpp; sourceTree = "<group>"; };
 		4CFB0B41168E5D840025AF0F /* opengl_helpers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = opengl_helpers.cpp; sourceTree = "<group>"; };
 		4CFB0B42168E5D840025AF0F /* opengl_helpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = opengl_helpers.h; sourceTree = "<group>"; };
@@ -759,28 +772,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		4C238E19172C9482009C22A6 /* video */ = {
-			isa = PBXGroup;
-			children = (
-				4CBA518017AEC00B009BBE13 /* VLCVideoPlayer.cpp */,
-				4CBA518117AEC00B009BBE13 /* VLCVideoPlayer.h */,
-				4C238E1A172C94A7009C22A6 /* IbexVideoPlayer.h */,
-				4C238E1B172C94A7009C22A6 /* IbexVideoPlayer.mm */,
-				4C64379B172F7B310005504B /* VideoPlayer.h */,
-				4C64379A172F7B310005504B /* VideoPlayer.cpp */,
-			);
-			name = video;
-			sourceTree = "<group>";
-		};
-		4C3CA30B17374B1900A8DA14 /* filesystem */ = {
-			isa = PBXGroup;
-			children = (
-				4C3CA30C17374B2E00A8DA14 /* Filesystem.cpp */,
-				4C3CA30D17374B2E00A8DA14 /* Filesystem.h */,
-			);
-			name = filesystem;
-			sourceTree = "<group>";
-		};
 		4C46D7B216F2AEBA00B5DD9E /* sixsense_headers */ = {
 			isa = PBXGroup;
 			children = (
@@ -847,18 +838,61 @@
 			name = tinyxml;
 			sourceTree = "<group>";
 		};
-		4C86A6C81739DAA600A1BDEE /* ibexwindows */ = {
+		4C961B1C17B8949C0028D242 /* windows */ = {
 			isa = PBXGroup;
 			children = (
-				4C86A6C91739DAC300A1BDEE /* Window.cpp */,
-				4C86A6CA1739DAC300A1BDEE /* Window.h */,
+				4C961B1D17B8949C0028D242 /* CMakeLists.txt */,
+				4C961B1E17B8949C0028D242 /* Window.cpp */,
+				4C961B1F17B8949C0028D242 /* Window.h */,
 			);
-			name = ibexwindows;
+			path = windows;
+			sourceTree = "<group>";
+		};
+		4C961B2817B895330028D242 /* video */ = {
+			isa = PBXGroup;
+			children = (
+				4C961B2917B895330028D242 /* IbexVideoPlayer.h */,
+				4C961B2A17B895330028D242 /* IbexVideoPlayer.mm */,
+				4C961B2B17B895330028D242 /* VideoPlayer.cpp */,
+				4C961B2C17B895330028D242 /* VideoPlayer.h */,
+				4C961B2D17B895330028D242 /* VLCVideoPlayer.cpp */,
+				4C961B2E17B895330028D242 /* VLCVideoPlayer.h */,
+			);
+			path = video;
+			sourceTree = "<group>";
+		};
+		4C961B3D17B899860028D242 /* filesystem */ = {
+			isa = PBXGroup;
+			children = (
+				4C961B3E17B899860028D242 /* CMakeLists.txt */,
+				4C961B3F17B899860028D242 /* Filesystem.cpp */,
+				4C961B4017B899860028D242 /* Filesystem.h */,
+			);
+			path = filesystem;
+			sourceTree = "<group>";
+		};
+		4C961B4917B899F10028D242 /* sixense */ = {
+			isa = PBXGroup;
+			children = (
+				4C961B4A17B899F10028D242 /* sixense_controller.cpp */,
+				4C961B4B17B899F10028D242 /* sixense_controller.h */,
+			);
+			path = sixense;
+			sourceTree = "<group>";
+		};
+		4C961B5017B89A780028D242 /* simpleworld_plugin */ = {
+			isa = PBXGroup;
+			children = (
+				4C961B5117B89A780028D242 /* SimpleWorldRendererPlugin.cpp */,
+				4C961B5217B89A780028D242 /* SimpleWorldRendererPlugin.h */,
+			);
+			path = simpleworld_plugin;
 			sourceTree = "<group>";
 		};
 		4CB7985B168AB41E00EF5260 = {
 			isa = PBXGroup;
 			children = (
+				4C961B3C17B897490028D242 /* CMakeLists.txt */,
 				4CB79870168AB41E00EF5260 /* IbexMac */,
 				4CB79869168AB41E00EF5260 /* Frameworks */,
 				4CB79867168AB41E00EF5260 /* Products */,
@@ -961,10 +995,12 @@
 		4CB79870168AB41E00EF5260 /* IbexMac */ = {
 			isa = PBXGroup;
 			children = (
-				4C86A6C81739DAA600A1BDEE /* ibexwindows */,
+				4C961B5017B89A780028D242 /* simpleworld_plugin */,
+				4C961B4917B899F10028D242 /* sixense */,
+				4C961B2817B895330028D242 /* video */,
+				4C961B1C17B8949C0028D242 /* windows */,
+				4C961B3D17B899860028D242 /* filesystem */,
 				4CB79871168AB41E00EF5260 /* Supporting Files */,
-				4C3CA30B17374B1900A8DA14 /* filesystem */,
-				4C238E19172C9482009C22A6 /* video */,
 				4C6F782D16F4DEA60089101F /* tinyxml */,
 				4C46D7B216F2AEBA00B5DD9E /* sixsense_headers */,
 				4CAC8D5D169347AE00341AA0 /* resources */,
@@ -975,8 +1011,6 @@
 				4CB7987D168AB41E00EF5260 /* AppDelegate.mm */,
 				4C4C3C081694689400D2285F /* MyWindow.h */,
 				4C4C3C091694689400D2285F /* MyWindow.mm */,
-				4C46D7CA16F2BB2900B5DD9E /* sixense_controller.h */,
-				4C46D7CB16F2BB2900B5DD9E /* sixense_controller.cpp */,
 				4CF354B7168D0D5000EAA2FE /* MyOpenGLView.h */,
 				4CF354B8168D0D5000EAA2FE /* MyOpenGLView.mm */,
 				4C936062172A282100A94980 /* ScreenshotView.h */,
@@ -991,8 +1025,6 @@
 				4C41232016936E4F008F5B15 /* IbexMacUtils.mm */,
 				4CAC8D551690A26F00341AA0 /* glew.c */,
 				4CAC8D531690A26500341AA0 /* iphone_orientation_listener.cpp */,
-				4CFB0B3D168E5D6A0025AF0F /* SimpleWorldRendererPlugin.h */,
-				4CFB0B3C168E5D6A0025AF0F /* SimpleWorldRendererPlugin.cpp */,
 				4CAC8D46168E5F2F00341AA0 /* distortions.h */,
 				4CFB0B40168E5D840025AF0F /* distortions.cpp */,
 				4CFB0B41168E5D840025AF0F /* opengl_helpers.cpp */,
@@ -1149,7 +1181,9 @@
 			files = (
 				4C0937D017B1F9CE004EA291 /* InfoPlist.strings in Resources */,
 				4C0937D117B1F9CE004EA291 /* Credits.rtf in Resources */,
+				4C961B2317B8949C0028D242 /* CMakeLists.txt in Resources */,
 				4C0937D217B1F9CE004EA291 /* MainMenu.xib in Resources */,
+				4C961B4417B899860028D242 /* CMakeLists.txt in Resources */,
 				4C0937D317B1F9CE004EA291 /* resources in Resources */,
 				4C0937D417B1F9CE004EA291 /* ibex.iconset in Resources */,
 			);
@@ -1161,7 +1195,9 @@
 			files = (
 				4C0D58AF16AD656A007BC9CD /* InfoPlist.strings in Resources */,
 				4C0D58B016AD656A007BC9CD /* Credits.rtf in Resources */,
+				4C961B2117B8949C0028D242 /* CMakeLists.txt in Resources */,
 				4C0D58B116AD656A007BC9CD /* MainMenu.xib in Resources */,
+				4C961B4217B899860028D242 /* CMakeLists.txt in Resources */,
 				4C0D58B216AD656A007BC9CD /* resources in Resources */,
 				4C0D58B316AD656A007BC9CD /* ibex.iconset in Resources */,
 			);
@@ -1173,7 +1209,9 @@
 			files = (
 				4C6B99F716F4C17E00C5C725 /* InfoPlist.strings in Resources */,
 				4C6B99F816F4C17E00C5C725 /* Credits.rtf in Resources */,
+				4C961B2217B8949C0028D242 /* CMakeLists.txt in Resources */,
 				4C6B99F916F4C17E00C5C725 /* MainMenu.xib in Resources */,
+				4C961B4317B899860028D242 /* CMakeLists.txt in Resources */,
 				4C6B99FA16F4C17E00C5C725 /* resources in Resources */,
 				4C6B99FB16F4C17E00C5C725 /* ibex.iconset in Resources */,
 			);
@@ -1185,7 +1223,9 @@
 			files = (
 				4CB79875168AB41E00EF5260 /* InfoPlist.strings in Resources */,
 				4CB7987B168AB41E00EF5260 /* Credits.rtf in Resources */,
+				4C961B2017B8949C0028D242 /* CMakeLists.txt in Resources */,
 				4CB79881168AB41E00EF5260 /* MainMenu.xib in Resources */,
+				4C961B4117B899860028D242 /* CMakeLists.txt in Resources */,
 				4CAC8D5E169347AE00341AA0 /* resources in Resources */,
 				4C8758431697E5200022583D /* ibex.iconset in Resources */,
 			);
@@ -1254,30 +1294,30 @@
 			buildActionMask = 2147483647;
 			files = (
 				4C09378F17B1F9CE004EA291 /* main.m in Sources */,
+				4C961B2717B8949C0028D242 /* Window.cpp in Sources */,
+				4C961B4F17B899F10028D242 /* sixense_controller.cpp in Sources */,
 				4C09379017B1F9CE004EA291 /* AppDelegate.mm in Sources */,
+				4C961B3217B895330028D242 /* IbexVideoPlayer.mm in Sources */,
 				4C09379117B1F9CE004EA291 /* ScreenGrabber.m in Sources */,
 				4C09379217B1F9CE004EA291 /* MyOpenGLView.mm in Sources */,
-				4C09379317B1F9CE004EA291 /* SimpleWorldRendererPlugin.cpp in Sources */,
 				4C09379417B1F9CE004EA291 /* distortions.cpp in Sources */,
 				4C09379517B1F9CE004EA291 /* opengl_helpers.cpp in Sources */,
 				4C09379617B1F9CE004EA291 /* RendererPlugin.cpp in Sources */,
+				4C961B5617B89A780028D242 /* SimpleWorldRendererPlugin.cpp in Sources */,
 				4C09379717B1F9CE004EA291 /* iphone_orientation_listener.cpp in Sources */,
 				4C09379817B1F9CE004EA291 /* glew.c in Sources */,
+				4C961B3A17B895330028D242 /* VLCVideoPlayer.cpp in Sources */,
 				4C09379917B1F9CE004EA291 /* IbexMacUtils.mm in Sources */,
 				4C09379A17B1F9CE004EA291 /* utils.cpp in Sources */,
 				4C09379B17B1F9CE004EA291 /* ibex.cpp in Sources */,
 				4C09379C17B1F9CE004EA291 /* MyWindow.mm in Sources */,
 				4C09379D17B1F9CE004EA291 /* ServerController.m in Sources */,
-				4C09379E17B1F9CE004EA291 /* sixense_controller.cpp in Sources */,
+				4C961B4817B899860028D242 /* Filesystem.cpp in Sources */,
 				4C09379F17B1F9CE004EA291 /* tinystr.cpp in Sources */,
 				4C0937A017B1F9CE004EA291 /* tinyxml.cpp in Sources */,
 				4C0937A117B1F9CE004EA291 /* tinyxmlerror.cpp in Sources */,
 				4C0937A217B1F9CE004EA291 /* tinyxmlparser.cpp in Sources */,
 				4C0937A317B1F9CE004EA291 /* ScreenshotView.mm in Sources */,
-				4C0937A517B1F9CE004EA291 /* IbexVideoPlayer.mm in Sources */,
-				4C0937A617B1F9CE004EA291 /* Filesystem.cpp in Sources */,
-				4C0937A717B1F9CE004EA291 /* VLCVideoPlayer.cpp in Sources */,
-				4C0937A817B1F9CE004EA291 /* Window.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1285,32 +1325,32 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4C961B5417B89A780028D242 /* SimpleWorldRendererPlugin.cpp in Sources */,
 				4C0D589616AD656A007BC9CD /* main.m in Sources */,
 				4C0D589716AD656A007BC9CD /* AppDelegate.mm in Sources */,
 				4C0D589816AD656A007BC9CD /* ScreenGrabber.m in Sources */,
+				4C961B3017B895330028D242 /* IbexVideoPlayer.mm in Sources */,
 				4C0D589916AD656A007BC9CD /* MyOpenGLView.mm in Sources */,
-				4C0D589A16AD656A007BC9CD /* SimpleWorldRendererPlugin.cpp in Sources */,
+				4C961B2517B8949C0028D242 /* Window.cpp in Sources */,
 				4C0D589B16AD656A007BC9CD /* distortions.cpp in Sources */,
 				4C0D589C16AD656A007BC9CD /* opengl_helpers.cpp in Sources */,
 				4C0D589D16AD656A007BC9CD /* RendererPlugin.cpp in Sources */,
+				4C961B4617B899860028D242 /* Filesystem.cpp in Sources */,
 				4C0D589E16AD656A007BC9CD /* iphone_orientation_listener.cpp in Sources */,
 				4C0D589F16AD656A007BC9CD /* glew.c in Sources */,
+				4C961B3817B895330028D242 /* VLCVideoPlayer.cpp in Sources */,
+				4C961B3417B895330028D242 /* VideoPlayer.cpp in Sources */,
 				4C0D58A016AD656A007BC9CD /* IbexMacUtils.mm in Sources */,
 				4C0D58A116AD656A007BC9CD /* utils.cpp in Sources */,
+				4C961B4D17B899F10028D242 /* sixense_controller.cpp in Sources */,
 				4C0D58A216AD656A007BC9CD /* ibex.cpp in Sources */,
 				4C0D58A316AD656A007BC9CD /* MyWindow.mm in Sources */,
 				4C0D58A416AD656A007BC9CD /* ServerController.m in Sources */,
-				4C46D7CD16F2BB2900B5DD9E /* sixense_controller.cpp in Sources */,
 				4C6F783516F4DF0B0089101F /* tinystr.cpp in Sources */,
 				4C6F783816F4DF0B0089101F /* tinyxml.cpp in Sources */,
 				4C6F783B16F4DF0B0089101F /* tinyxmlerror.cpp in Sources */,
 				4C6F783E16F4DF0B0089101F /* tinyxmlparser.cpp in Sources */,
 				4C936065172A282100A94980 /* ScreenshotView.mm in Sources */,
-				4C64379D172F7B310005504B /* VideoPlayer.cpp in Sources */,
-				4C238E1D172C94A7009C22A6 /* IbexVideoPlayer.mm in Sources */,
-				4C3CA30F17374B2E00A8DA14 /* Filesystem.cpp in Sources */,
-				4CBA518217AEC00B009BBE13 /* VLCVideoPlayer.cpp in Sources */,
-				4C86A6CC1739DAC300A1BDEE /* Window.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1318,11 +1358,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4C961B5517B89A780028D242 /* SimpleWorldRendererPlugin.cpp in Sources */,
 				4C6B99D416F4C17E00C5C725 /* main.m in Sources */,
 				4C6B99D516F4C17E00C5C725 /* AppDelegate.mm in Sources */,
 				4C6B99D616F4C17E00C5C725 /* ScreenGrabber.m in Sources */,
 				4C6B99D716F4C17E00C5C725 /* MyOpenGLView.mm in Sources */,
-				4C6B99D816F4C17E00C5C725 /* SimpleWorldRendererPlugin.cpp in Sources */,
 				4C6B99D916F4C17E00C5C725 /* distortions.cpp in Sources */,
 				4C6B99DA16F4C17E00C5C725 /* opengl_helpers.cpp in Sources */,
 				4C6B99DB16F4C17E00C5C725 /* RendererPlugin.cpp in Sources */,
@@ -1330,23 +1370,24 @@
 				4C6B99DD16F4C17E00C5C725 /* glew.c in Sources */,
 				4C6B99DE16F4C17E00C5C725 /* IbexMacUtils.mm in Sources */,
 				4C6B99DF16F4C17E00C5C725 /* utils.cpp in Sources */,
+				4C961B3517B895330028D242 /* VideoPlayer.cpp in Sources */,
 				4C6B99E016F4C17E00C5C725 /* ibex.cpp in Sources */,
 				4C6B99E116F4C17E00C5C725 /* MyWindow.mm in Sources */,
 				4C6B99E216F4C17E00C5C725 /* ServerController.m in Sources */,
+				4C961B3117B895330028D242 /* IbexVideoPlayer.mm in Sources */,
+				4C961B4E17B899F10028D242 /* sixense_controller.cpp in Sources */,
 				4C6F781E16F4D6150089101F /* BaseApplication.cpp in Sources */,
 				4C6F782416F4D6150089101F /* DotSceneLoader.cpp in Sources */,
 				4C6F782716F4D6150089101F /* TutorialApplication.cpp in Sources */,
 				4C6F783616F4DF0B0089101F /* tinystr.cpp in Sources */,
 				4C6F783916F4DF0B0089101F /* tinyxml.cpp in Sources */,
+				4C961B2617B8949C0028D242 /* Window.cpp in Sources */,
+				4C961B3917B895330028D242 /* VLCVideoPlayer.cpp in Sources */,
+				4C961B4717B899860028D242 /* Filesystem.cpp in Sources */,
 				4C6F783C16F4DF0B0089101F /* tinyxmlerror.cpp in Sources */,
 				4C6F783F16F4DF0B0089101F /* tinyxmlparser.cpp in Sources */,
 				4C61AC3916F9272000F98776 /* MyOgreView.mm in Sources */,
 				4C936066172A282100A94980 /* ScreenshotView.mm in Sources */,
-				4C238E1E172C94A7009C22A6 /* IbexVideoPlayer.mm in Sources */,
-				4C64379E172F7B310005504B /* VideoPlayer.cpp in Sources */,
-				4C3CA31017374B2E00A8DA14 /* Filesystem.cpp in Sources */,
-				4C86A6CD1739DAC300A1BDEE /* Window.cpp in Sources */,
-				4C6B99E316F4C17E00C5C725 /* sixense_controller.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1354,31 +1395,32 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4C961B5317B89A780028D242 /* SimpleWorldRendererPlugin.cpp in Sources */,
 				4CB79877168AB41E00EF5260 /* main.m in Sources */,
+				4C961B2417B8949C0028D242 /* Window.cpp in Sources */,
 				4CB7987E168AB41E00EF5260 /* AppDelegate.mm in Sources */,
+				4C961B2F17B895330028D242 /* IbexVideoPlayer.mm in Sources */,
 				4C2DE2FF168B30CC003BEB56 /* ScreenGrabber.m in Sources */,
 				4CF354B9168D0D5000EAA2FE /* MyOpenGLView.mm in Sources */,
-				4CFB0B3E168E5D6A0025AF0F /* SimpleWorldRendererPlugin.cpp in Sources */,
 				4CFB0B43168E5D840025AF0F /* distortions.cpp in Sources */,
 				4CFB0B44168E5D840025AF0F /* opengl_helpers.cpp in Sources */,
 				4CFB0B48168E5D960025AF0F /* RendererPlugin.cpp in Sources */,
+				4C961B4517B899860028D242 /* Filesystem.cpp in Sources */,
 				4CAC8D541690A26500341AA0 /* iphone_orientation_listener.cpp in Sources */,
 				4CAC8D561690A26F00341AA0 /* glew.c in Sources */,
+				4C961B3717B895330028D242 /* VLCVideoPlayer.cpp in Sources */,
+				4C961B3317B895330028D242 /* VideoPlayer.cpp in Sources */,
 				4C41232116936E4F008F5B15 /* IbexMacUtils.mm in Sources */,
 				4CAC8D581690A2C100341AA0 /* utils.cpp in Sources */,
+				4C961B4C17B899F10028D242 /* sixense_controller.cpp in Sources */,
 				4CFB0B4B168E5DFA0025AF0F /* ibex.cpp in Sources */,
 				4C4C3C0A1694689400D2285F /* MyWindow.mm in Sources */,
 				4CACE17216A236710085DA5E /* ServerController.m in Sources */,
-				4C46D7CC16F2BB2900B5DD9E /* sixense_controller.cpp in Sources */,
 				4C6F783416F4DF0B0089101F /* tinystr.cpp in Sources */,
 				4C6F783716F4DF0B0089101F /* tinyxml.cpp in Sources */,
 				4C6F783A16F4DF0B0089101F /* tinyxmlerror.cpp in Sources */,
 				4C6F783D16F4DF0B0089101F /* tinyxmlparser.cpp in Sources */,
 				4C936064172A282100A94980 /* ScreenshotView.mm in Sources */,
-				4C238E1C172C94A7009C22A6 /* IbexVideoPlayer.mm in Sources */,
-				4C64379C172F7B310005504B /* VideoPlayer.cpp in Sources */,
-				4C3CA30E17374B2E00A8DA14 /* Filesystem.cpp in Sources */,
-				4C86A6CB1739DAC300A1BDEE /* Window.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
