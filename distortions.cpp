@@ -23,6 +23,10 @@
 #else
 #ifdef __APPLE__
 #include "ibex_mac_utils.h"
+
+#define glGenVertexArrays glGenVertexArraysAPPLE
+#define glBindVertexArray glBindVertexArrayAPPLE
+
 #endif
 #endif
 
