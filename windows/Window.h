@@ -9,7 +9,10 @@
 #ifndef __IbexMac__Window__
 #define __IbexMac__Window__
 
+#if !defined(__APPLE__) && !defined(WIN32)
 #include "../x11/x11.h"
+#endif
+
 #include <iostream>
 #include <vector>
 #include <string>
