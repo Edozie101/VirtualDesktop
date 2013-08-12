@@ -455,8 +455,8 @@
 /* Begin PBXFileReference section */
 		4C00605F169D385100B88329 /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = System/Library/Frameworks/ApplicationServices.framework; sourceTree = SDKROOT; };
 		4C006062169D38A000B88329 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
-		4C0937F317B1F9CE004EA291 /* IbexMacRelease copy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "IbexMacRelease copy.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		4C0937F417B1F9CE004EA291 /* IbexMacRelease copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "IbexMacRelease copy-Info.plist"; path = "/Users/hesh/Documents/ibex/IbexMacRelease copy-Info.plist"; sourceTree = "<absolute>"; };
+		4C0937F317B1F9CE004EA291 /* IbexMacReleaseVLC.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IbexMacReleaseVLC.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4C0937F417B1F9CE004EA291 /* IbexMacReleaseVLC-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "IbexMacReleaseVLC-Info.plist"; path = "/Users/hesh/Documents/ibex/IbexMacReleaseVLC-Info.plist"; sourceTree = "<absolute>"; };
 		4C0D58B716AD656A007BC9CD /* IbexMac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IbexMac.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C13B71316A9E8C80064AE60 /* ibex_mac_utils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ibex_mac_utils.h; sourceTree = "<group>"; };
 		4C19BFE8172CD56400B7599D /* VideoDecodeAcceleration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = VideoDecodeAcceleration.framework; path = System/Library/Frameworks/VideoDecodeAcceleration.framework; sourceTree = SDKROOT; };
@@ -863,7 +863,7 @@
 				4CB79869168AB41E00EF5260 /* Frameworks */,
 				4CB79867168AB41E00EF5260 /* Products */,
 				4C6B9A0016F4C17E00C5C725 /* IbexMacOgre-Info.plist */,
-				4C0937F417B1F9CE004EA291 /* IbexMacRelease copy-Info.plist */,
+				4C0937F417B1F9CE004EA291 /* IbexMacReleaseVLC-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -873,7 +873,7 @@
 				4CB79866168AB41E00EF5260 /* IbexMac.app */,
 				4C0D58B716AD656A007BC9CD /* IbexMac.app */,
 				4C6B99FF16F4C17E00C5C725 /* IbexMacOgre.app */,
-				4C0937F317B1F9CE004EA291 /* IbexMacRelease copy.app */,
+				4C0937F317B1F9CE004EA291 /* IbexMacReleaseVLC.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1044,7 +1044,7 @@
 			);
 			name = IbexMacReleaseVLC;
 			productName = IbexMac;
-			productReference = 4C0937F317B1F9CE004EA291 /* IbexMacRelease copy.app */;
+			productReference = 4C0937F317B1F9CE004EA291 /* IbexMacReleaseVLC.app */;
 			productType = "com.apple.product-type.application";
 		};
 		4C0D589416AD656A007BC9CD /* IbexMacRelease */ = {
@@ -1444,7 +1444,7 @@
 					/Applications/VLC.app/Contents/MacOS/includee,
 					/Users/hesh/Downloads/vlc/build/VLC.app/Contents/MacOS/include,
 				);
-				INFOPLIST_FILE = "IbexMacRelease copy-Info.plist";
+				INFOPLIST_FILE = "IbexMacReleaseVLC-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks @rpath/../Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1473,7 +1473,7 @@
 					/usr/local/lib/libBulletDynamics.a,
 					"-lvlc",
 				);
-				PRODUCT_NAME = "IbexMacRelease copy";
+				PRODUCT_NAME = IbexMacReleaseVLC;
 				PROVISIONING_PROFILE = "";
 				STRIP_INSTALLED_PRODUCT = NO;
 				WRAPPER_EXTENSION = app;
@@ -1508,7 +1508,7 @@
 					/Applications/VLC.app/Contents/MacOS/includee,
 					/Users/hesh/Downloads/vlc/build/VLC.app/Contents/MacOS/include,
 				);
-				INFOPLIST_FILE = "IbexMacRelease copy-Info.plist";
+				INFOPLIST_FILE = "IbexMacReleaseVLC-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks @rpath/../Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1537,7 +1537,7 @@
 					/usr/local/lib/libBulletDynamics.a,
 					"-lvlc",
 				);
-				PRODUCT_NAME = "IbexMacRelease copy";
+				PRODUCT_NAME = IbexMacReleaseVLC;
 				PROVISIONING_PROFILE = "";
 				STRIP_INSTALLED_PRODUCT = NO;
 				WRAPPER_EXTENSION = app;
