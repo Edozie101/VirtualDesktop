@@ -24,7 +24,7 @@ vec2 Distort(vec2 p)
 // based off of: http://paulbourke.net/miscellaneous/lenscorrection/
 vec2 Distort2(vec2 p)
 {
-	p = (p - 0.5) * 2;
+	p = (p - 0.45) * 2.0;
 	// these factors range from 0 to 0.1 for a wide-angle lens
 	const float ax = 0.1;
 	const float ay = 0.1;
@@ -40,6 +40,8 @@ vec2 Distort2(vec2 p)
 
 void main()
 {
-    gl_FragColor = texture2D(myTexture, clamp(Distort2(texcoord.xy), 0.0, 1.0));
+    // divide by 1.1 to help fill the screen better, should get proper scale passed in
+    gl_FragColor = texture2D(myTexture, clamp(Distort2(texcoord.xy/1.1), 0.0, 1.0));
+    //gl_FragColor = texture2D(myTexture, clamp(Distort2(texcoord.xy), 0.0, 1.0));
     //gl_FragColor = vec4(texcoord.x+0.5, texcoord.y, 0, 1);
 }
