@@ -5,8 +5,15 @@ SET(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 SET(CMAKE_MODULE_PATH "/usr/share/OGRE/cmake/modules" ${CMAKE_MODULE_PATH})
 
 find_package(OpenGL REQUIRED)
-
+find_package(OpenCV)
+find_package(VLC)
 find_package(OculusSDK)
+
+include_directories( ${OCULUS_INCLUDE_DIRS} ${VLC_INCLUDE_DIRS} )
+
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -g -O0 -ggdb -DHAVE_LIBJPEG=1 ${OCULUS_INCLUDE_FLAGS} ${VLC_INCLUDE_FLAGS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -g  -O0 -ggdb -DHAVE_LIBJPEG=1 ${OCULUS_INCLUDE_FLAGS} ${VLC_INCLUDE_FLAGS}")
+
 IF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     # Linux specific code
     SET(OperatingSystem "Linux")
@@ -32,18 +39,14 @@ if( OGRE_FOUND AND OGRE )
 )
 endif( OGRE_FOUND AND OGRE )
 
-if( OCULUS_FOUND )
-  include_directories( ${OCULUS_INCLUDE_DIRS} )
-endif( OCULUS_FOUND )
-
 if( IRRLICHT_FOUND AND IRRLICHT )  
   add_definitions( -DENABLE_IRRLICHT )
   set(IRRLICHT_INCLUDE_FLAGS "-I${IRRLICHT_INCLUDE_DIRS}")
   set(IRRLICHT_PLUGIN_FILES "irrlicht_plugin/irrlicht_plugin.cpp")
 endif( IRRLICHT_FOUND AND IRRLICHT )
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -g -O0 -ggdb -DHAVE_LIBJPEG=1 ${IRRLICHT_INCLUDE_FLAGS} ${OGRE_INCLUDE_FLAGS} ${OCULUS_INCLUDE_FLAGS}")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -g  -O0 -ggdb -DHAVE_LIBJPEG=1 ${IRRLICHT_INCLUDE_FLAGS} ${OGRE_INCLUDE_FLAGS} ${OCULUS_INCLUDE_FLAGS}")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${IRRLICHT_INCLUDE_FLAGS} ${OGRE_INCLUDE_FLAGS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${IRRLICHT_INCLUDE_FLAGS} ${OGRE_INCLUDE_FLAGS}")
 ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 
 #add_subdirectory(glm)
@@ -58,7 +61,7 @@ include_directories(
  ${CMAKE_CURRENT_SOURCE_DIR}
  ${Boost_INCLUDE_DIR}
  )
-link_directories(${Boost_LIBRARY_DIR} ${OCULUS_LIBRARY_DIR})
+link_directories(${Boost_LIBRARY_DIR} ${OCULUS_LIBRARY_DIR} ${VLC_LIBRARY_DIR})
 
 set(SRC 
 RendererPlugin.cpp RendererPlugin.h 

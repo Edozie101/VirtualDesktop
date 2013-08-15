@@ -80,11 +80,11 @@
 #include "irrlicht_plugin/irrlicht_plugin.h"
 #endif
 
-#include "SimpleWorldRendererPlugin.h"
+#include "simpleworld_plugin/SimpleWorldRendererPlugin.h"
 
 #include "ibex.h"
 
-#include "sixense_controller.h"
+#include "sixense/sixense_controller.h"
 
 GLfloat top, bottom;
 
