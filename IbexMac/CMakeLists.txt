@@ -200,8 +200,8 @@ IF(APPLE)
   SET(APPS "\${CMAKE_INSTALL_PREFIX}/ibex.app")
   
   install (DIRECTORY resources DESTINATION "${CMAKE_INSTALL_PREFIX}/ibex.app/Contents/Resources/")
-    install (DIRECTORY ${VLC_LIBRARY_DIR}/../plugins DESTINATION "${CMAKE_INSTALL_PREFIX}/ibex.app/Contents/MacOS/")
-        install (DIRECTORY ${VLC_LIBRARY_DIR} DESTINATION "${CMAKE_INSTALL_PREFIX}/ibex.app/Contents/MacOS/")
+  install (DIRECTORY ${VLC_LIBRARY_DIR}/../plugins DESTINATION "${CMAKE_INSTALL_PREFIX}/ibex.app/Contents/")
+  #install (DIRECTORY ${VLC_LIBRARY_DIR} DESTINATION "${CMAKE_INSTALL_PREFIX}/ibex.app/Contents/MacOS/")
 
 file(GLOB VLC_FILES "${VLC_LIBRARY_DIR}/*")
 file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/ibex.app/Contents/MacOS/"
@@ -249,6 +249,17 @@ INSTALL(CODE "
   
   
   
+
+#install_name_tool -change "@loader_path/../lib/libvlccore.5.dylib" "@loader_path/../MacOS/libvlccore.5.dylib"   liblibbluray_plugin.dylib
+INSTALL(CODE "
+    file(GLOB VLC_PLUGINS \"${CMAKE_INSTALL_PREFIX}/ibex.app/Contents/plugins/*.dylib\")
+    foreach(f \${VLC_PLUGINS})
+        execute_process(COMMAND \"install_name_tool\" -change \"@loader_path/../lib/libvlccore.5.dylib\" \"@loader_path/../MacOS/libvlccore.5.dylib\" \${f})
+    endforeach(f)
+" COMPONENT Runtime)
+
+
+
 # these are the OS X Interface Builder Files
 set (ibex_XIBS
   MainMenu
@@ -272,6 +283,7 @@ foreach(xib ${ibex_XIBS})
                       COMMAND ${IBTOOL} --errors --warnings --notices --output-format human-readable-text
                               --compile "${CMAKE_INSTALL_PREFIX}/ibex.app/Contents/Resources/${xib}.nib"
                              ${PROJECT_SOURCE_DIR}/en.lproj/${xib}.xib
+                      DEPENDS ${xib}
                       COMMENT "Compiling ${PROJECT_SOURCE_DIR}/en.lproj/${xib}.xib")
 endforeach()
 
