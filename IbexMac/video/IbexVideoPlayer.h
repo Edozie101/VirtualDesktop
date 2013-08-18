@@ -7,6 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <OpenGL/OpenGL.h>
+#import <AppKit/AppKit.h>
 
 @interface IbexVideoPlayer : NSObject {
     NSOpenGLContext* newContext;

@@ -8,7 +8,7 @@
 
 #import "opengl_helpers.h"
 
-#import "IbexVideoPlayer.h"
+#import "video/IbexVideoPlayer.h"
 
 //#include "opengl_helpers.h"
 #include <iostream>
@@ -36,7 +36,7 @@
 
 #import "ScreenshotView.h"
 
-#include "sixense_controller.h"
+#include "sixense/sixense_controller.h"
 
 #include "windows/Window.h"
 

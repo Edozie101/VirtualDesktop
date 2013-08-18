@@ -1,10 +1,10 @@
-# - Try to find OculusSDK
+# - Try to find VLC
 # Once done this will define
 #
-# VLC_FOUND - system has OculusSDK
-# VLC_INCLUDE_DIRS - the OculusSDK include directory
-# VLC_LIBRARIES - Link these to use OculusSDK
-# VLC_DEFINITIONS - Compiler switches required for using OculusSDK
+# VLC_FOUND - system has VLC
+# VLC_INCLUDE_DIRS - the VLC include directory
+# VLC_LIBRARIES - Link these to use VLC
+# VLC_DEFINITIONS - Compiler switches required for using VLC
 #
 # Copyright (c) 2006 Andreas Schneider <mail@cynapses.org>
 #
@@ -25,38 +25,43 @@ else (VLC_LIBRARIES AND VLC_INCLUDE_DIRS AND VLC_LIBRARY_DIR)
       /usr/local/include
       /opt/local/include
       /sw/include
-      /Applications/VLC.app/Contents/MacOS/include
-      ~/Applications/VLC.app/Contents/MacOS/include
       ~/Downloads/vlc/build/VLC.app/Contents/MacOS/include
       ~/Documents/vlc/build/VLC.app/Contents/MacOS/include
+      ~/Downloads/vlc/build//vlc_install_dir/include
+      /Applications/VLC.app/Contents/MacOS/include
+      ~/Applications/VLC.app/Contents/MacOS/include
   )
 
 find_path(VLC_LIBRARY_DIR
     NAMES
-      libvlc.dylib
+	libvlc.5.dylib libvlccore.5.dylib
+#      libvlc.dylib libvlccore.dylib
     PATHS
       /usr/lib
       /usr/local/lib
       /opt/local/lib
       /sw/lib
-      /Applications/VLC.app/Contents/MacOS/lib
-      ~/Applications/VLC.app/Contents/MacOS/lib
       ~/Downloads/vlc/build/VLC.app/Contents/MacOS/lib
       ~/Documents/vlc/build/VLC.app/Contents/MacOS/lib
+      ~/Downloads/vlc/build//vlc_install_dir/lib/
+      /Applications/VLC.app/Contents/MacOS/lib
+      ~/Applications/VLC.app/Contents/MacOS/lib
   )
 
   find_library(VLC_LIBRARY
     NAMES
-        libvlc.dylib
+        libvlc.5.dylib libvlccore.5.dylib
+#	libvlc.dylib libvlccore.dylib
     PATHS
       /usr/lib
       /usr/local/lib
       /opt/local/lib
       /sw/lib
-      /Applications/VLC.app/Contents/MacOS/lib
-      ~/Applications/VLC.app/Contents/MacOS/lib
       ~/Downloads/vlc/build/VLC.app/Contents/MacOS/lib
       ~/Documents/vlc/build/VLC.app/Contents/MacOS/lib
+      ~/Downloads/vlc/build//vlc_install_dir/lib/
+      /Applications/VLC.app/Contents/MacOS/lib
+      ~/Applications/VLC.app/Contents/MacOS/lib
   )
 
   if (VLC_LIBRARY)
@@ -80,11 +85,11 @@ find_path(VLC_LIBRARY_DIR
 
   if (VLC_FOUND)
     if (NOT VLC_FIND_QUIETLY)
-      message(STATUS "Found OculusSDK: ${VLC_LIBRARIES}")
+      message(STATUS "Found VLC: ${VLC_LIBRARIES}")
     endif (NOT VLC_FIND_QUIETLY)
   else (VLC_FOUND)
     if (VLC_FIND_REQUIRED)
-      message(FATAL_ERROR "Could not find OculusSDK")
+      message(FATAL_ERROR "Could not find VLC")
     endif (VLC_FIND_REQUIRED)
   endif (VLC_FOUND)
 
