@@ -12,6 +12,11 @@ find_package(VLC)
 find_package(OculusSDK)
 
 IF(APPLE)
+    SET (CMAKE_C_COMPILER             "/usr/bin/clang")
+    SET (CMAKE_CXX_COMPILER             "/usr/bin/clang++")
+
+   SET(CMAKE_OSX_DEPLOYMENT_TARGET "10.8" CACHE STRING "Deployment target for OSX" FORCE)
+
    INCLUDE_DIRECTORIES ( /System/Library/Frameworks )
    FIND_LIBRARY(COCOA_LIBRARY Cocoa)
    FIND_LIBRARY(APPLICATIONSERVICES_LIBRARY ApplicationServices)
@@ -54,8 +59,9 @@ ENDIF (APPLE)
 
 include_directories( ${OCULUS_INCLUDE_DIRS} ${VLC_INCLUDE_DIRS} )
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -g -O0 -ggdb -fobjc-arc -DHAVE_LIBJPEG=1 ${OCULUS_INCLUDE_FLAGS} ${VLC_INCLUDE_FLAGS}")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -g  -O0 -ggdb -fobjc-arc -DHAVE_LIBJPEG=1 ${OCULUS_INCLUDE_FLAGS} ${VLC_INCLUDE_FLAGS}")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -fvisibility-inlines-hidden -Wno-sign-conversion -arch x86_64 -Wall -g -O0 -ggdb -fobjc-arc -DHAVE_LIBJPEG=1 ${OCULUS_INCLUDE_FLAGS} ${VLC_INCLUDE_FLAGS}  -mmacosx-version-min=10.8")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -fvisibility-inlines-hidden -Wno-sign-conversion -arch x86_64 -std=c++11 -stdlib=libc++ -Wall -g  -O0 -ggdb -fobjc-arc -DHAVE_LIBJPEG=1 ${OCULUS_INCLUDE_FLAGS} ${VLC_INCLUDE_FLAGS}  -mmacosx-version-min=10.8")
+set(ibex PROPERTIES LINK_FLAGS  -fobjc-link-runtime -mmacosx-version-min=10.8)
 
 IF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     # Linux specific code
@@ -171,12 +177,12 @@ set_target_properties( ibex PROPERTIES RESOURCE "${RESOURCES}" )
 # For Apple set the icns file containing icons
 IF(APPLE)
   # set how it shows up in the Info.plist file
-  #SET(MACOSX_BUNDLE_ICON_FILE QtTest.icns)
-  # set where in the bundle to put the icns file
-  #SET_SOURCE_FILES_PROPERTIES(${CMAKE_CURRENT_SOURCE_DIR}/QtTest.icns PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
-  # include the icns file in the target
-  #SET(QTTEST_SRCS ${QTTEST_SRCS} ${CMAKE_CURRENT_SOURCE_DIR}/QtTest.icns)
+  SET(MACOSX_BUNDLE_ICON_FILE ibex)
 
+  # set where in the bundle to put the icns file
+#  SET_SOURCE_FILES_PROPERTIES(${CMAKE_CURRENT_SOURCE_DIR}/ibex.icns PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
+  # include the icns file in the target
+#  SET(SRC ${SRC} ibex.iconset)
 
 # These variables are specific to our plist and are NOT standard CMake variables
 #configure_file("${PROJECT_SOURCE_DIR}/MacOSXBundleInfo.plist.in" "${CMAKE_CURRENT_BINARY_DIR}/Info.plist")
@@ -220,6 +226,11 @@ INSTALL(TARGETS ibex
     BUNDLE DESTINATION . COMPONENT Runtime
     RUNTIME DESTINATION bin COMPONENT Runtime
     )
+    
+INSTALL(CODE "
+    execute_process(COMMAND \"iconutil\" --convert icns --output \"${CMAKE_INSTALL_PREFIX}/ibex.app/Contents/Resources/ibex.icns\" \"${PROJECT_SOURCE_DIR}/ibex.iconset\")
+    execute_process(COMMAND rm \"${CMAKE_INSTALL_PREFIX}/ibex.app/Contents/Resources/ibex.iconset\")
+")
 
 
 install (DIRECTORY resources DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
@@ -287,9 +298,8 @@ foreach(xib ${ibex_XIBS})
                       COMMENT "Compiling ${PROJECT_SOURCE_DIR}/en.lproj/${xib}.xib")
 endforeach()
 
-
 # To Create a package, one can run "cpack -G DragNDrop CPackConfig.cmake" on Mac OS X
 # where CPackConfig.cmake is created by including CPack
 # And then there's ways to customize this as well
-#set(CPACK_BINARY_DRAGNDROP ON)
-#include(CPack)
+set(CPACK_BINARY_DRAGNDROP ON)
+include(CPack)
