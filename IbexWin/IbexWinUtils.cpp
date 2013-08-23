@@ -44,6 +44,7 @@
 
 #include <string.h>
 
+bool doubleBuffered = true;
 char mResourcePath[1024];
 
 GLuint loadTexture(const char *path_) {

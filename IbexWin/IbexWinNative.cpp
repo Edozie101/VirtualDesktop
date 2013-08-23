@@ -11,7 +11,7 @@
 #include "opengl_helpers.h"
 
 #if _USE_SIXENSE
-#include "sixense_controller.h"
+#include "sixense/sixense_controller.h"
 #endif
 
 // add if you will call: dwmapi.lib

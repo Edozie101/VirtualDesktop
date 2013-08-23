@@ -13,6 +13,10 @@
 #include "../x11/x11.h"
 #endif
 
+#ifdef WIN32
+typedef unsigned int uint;
+#endif
+
 #include <iostream>
 #include <vector>
 #include <string>
@@ -41,7 +45,7 @@ public:
 #ifdef __APPLE__
     int processKey(unsigned short keyCode, int down);
 #else
-#ifdef _WIN32
+#ifdef WIN32
     int processKey(unsigned char key, int down);
     int processSpecialKey(unsigned char key, int down);
 #else

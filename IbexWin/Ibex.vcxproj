@@ -97,8 +97,8 @@
     <ClInclude Include="RendererPlugin.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="ServerController.h" />
-    <ClInclude Include="SimpleWorldRendererPlugin.h" />
-    <ClInclude Include="sixense_controller.h" />
+    <ClInclude Include="simpleworld_plugin\SimpleWorldRendererPlugin.h" />
+    <ClInclude Include="sixense\sixense_controller.h" />
     <ClInclude Include="SOIL\image_DXT.h" />
     <ClInclude Include="SOIL\image_helper.h" />
     <ClInclude Include="SOIL\SOIL.h" />
@@ -108,7 +108,7 @@
     <ClInclude Include="tinystr.h" />
     <ClInclude Include="tinyxml.h" />
     <ClInclude Include="utils.h" />
-    <ClInclude Include="video\VideoPlayer.h" />
+    <ClInclude Include="video\VLCVideoPlayer.h" />
     <ClInclude Include="windows\Window.h" />
   </ItemGroup>
   <ItemGroup>
@@ -121,8 +121,8 @@
     <ClCompile Include="iphone_orientation_plugin\iphone_orientation_listener.cpp" />
     <ClCompile Include="opengl_helpers.cpp" />
     <ClCompile Include="RendererPlugin.cpp" />
-    <ClCompile Include="SimpleWorldRendererPlugin.cpp" />
-    <ClCompile Include="sixense_controller.cpp" />
+    <ClCompile Include="simpleworld_plugin\SimpleWorldRendererPlugin.cpp" />
+    <ClCompile Include="sixense\sixense_controller.cpp" />
     <ClCompile Include="SOIL\image_DXT.c" />
     <ClCompile Include="SOIL\image_helper.c" />
     <ClCompile Include="SOIL\SOIL.c" />
@@ -133,7 +133,7 @@
     <ClCompile Include="tinyxmlerror.cpp" />
     <ClCompile Include="tinyxmlparser.cpp" />
     <ClCompile Include="utils.cpp" />
-    <ClCompile Include="video\VideoPlayer.cpp" />
+    <ClCompile Include="video\VLCVideoPlayer.cpp" />
     <ClCompile Include="windows\Window.cpp" />
   </ItemGroup>
   <ItemGroup>

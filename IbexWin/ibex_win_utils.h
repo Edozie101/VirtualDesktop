@@ -40,6 +40,7 @@
 #endif
 #endif
 
+extern bool doubleBuffered;
 extern char mResourcePath[1024];
 
 GLuint loadTexture(const char *path_);
