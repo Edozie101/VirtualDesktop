@@ -455,12 +455,16 @@ static void loopScreenshot() {
 
 HGLRC videoPlayerContext = NULL;
 Ibex::VLCVideoPlayer *_ibexVideoPlayer = NULL;
-static void playVideo() {
+void makeCurrentGL() {
 	bool success = wglMakeCurrent(hdc, videoPlayerContext);
 	std::cerr << "Video playing wglMakeCurrent: " << success << std::endl;
+}
+static void playVideo() {
+	//bool success = wglMakeCurrent(hdc, videoPlayerContext);
+	//std::cerr << "Video playing wglMakeCurrent: " << success << std::endl;
 
 	_ibexVideoPlayer = new Ibex::VLCVideoPlayer();
-	_ibexVideoPlayer->playVideo(ibex->renderer->window.getSelectedVideoPath().c_str(),ibex->renderer->window.getIsStereoVideo(), 0, 0, 0);
+	_ibexVideoPlayer->playVideo(ibex->renderer->window.getSelectedVideoPath().c_str(),ibex->renderer->window.getIsStereoVideo(), 0, 0, &makeCurrentGL);
 	//_ibexVideoPlayer->openCamera(ibex->renderer->window.getIsStereoVideo(), -1);
 }
 static void playCamera() {
