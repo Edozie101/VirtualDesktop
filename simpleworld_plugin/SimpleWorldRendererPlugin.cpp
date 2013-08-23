@@ -18,7 +18,7 @@
 #include "../iphone_orientation_plugin/iphone_orientation_listener.h"
 
 #ifdef _WIN32
-#include "ibex_win_utils.h"
+#include "../ibex_win_utils.h"
 #else
 #ifdef __APPLE__
 #include "ibex_mac_utils.h"

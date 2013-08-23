@@ -452,7 +452,7 @@ Ibex::Ibex::Ibex(int argc, char ** argv) {
     unsigned int visinfo = 0;
     unsigned int dpy2 = 0;
     //        createWindow(dpy, root);
-#if defined(WIN32) OR defined(__APPLE__)
+#if defined(WIN32) || defined(__APPLE__)
     renderer = new Ogre3DRendererPlugin(&dpy2, screen, window, &visinfo, (unsigned long)context);
 #else
     renderer = new Ogre3DRendererPlugin(dpy, screen, window, visinfo, (unsigned long)context);
@@ -478,7 +478,7 @@ Ibex::Ibex::Ibex(int argc, char ** argv) {
     
     std::cerr << "Physical Width x Height: " << physicalWidth << "x" << physicalHeight << std::endl;
     
-#ifndef __APPLE__
+#ifdef __APPLE__
     glutInit(&argc, argv);
 #endif
     

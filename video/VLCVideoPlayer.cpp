@@ -184,7 +184,7 @@ int Ibex::VLCVideoPlayer::playVLCVideo(const char *fileName, Display *dpy, GLXDr
         //"--reset-plugins-cache",
         //"--reset-config"
       //"--no-audio", // Don't play audio.
-      // "--no-xlib" // Don't use Xlib.
+       "--no-xlib" // Don't use Xlib.
 
         // Apply a video filter.
         //"--video-filter", "sepia",

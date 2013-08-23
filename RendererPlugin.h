@@ -11,7 +11,7 @@
 #include "ibex.h"
 #include "windows/Window.h"
 
-#if defined(__APPLE__) or defined(WIN32)
+#if defined(__APPLE__) || defined(WIN32)
 
 typedef unsigned long Window;
 typedef unsigned long GLXContext;
