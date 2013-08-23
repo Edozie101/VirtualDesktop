@@ -5,20 +5,28 @@
  *      Author: Hesham Wahba
  */
 
-#include "filesystem\Filesystem.h"
+//#include <bullet/btBulletDynamicsCommon.h>
+
+#include "../filesystem/Filesystem.h"
 
 #include <iostream>
 #include <math.h>
 #include <stdio.h>
 
-#include "distortions.h"
-#include "opengl_helpers.h"
-#include "iphone_orientation_plugin/iphone_orientation_listener.h"
+#include "../distortions.h"
+#include "../opengl_helpers.h"
+#include "../iphone_orientation_plugin/iphone_orientation_listener.h"
 
 #ifdef _WIN32
 #include "ibex_win_utils.h"
 #else
+#ifdef __APPLE__
 #include "ibex_mac_utils.h"
+#else
+#define HAVE_LIBJPEG 1
+#include <jpeglib.h>
+#include "../glm/glm.h"
+#endif
 #endif
 
 #include "SimpleWorldRendererPlugin.h"
@@ -29,34 +37,104 @@ using namespace OVR;
 void renderSphericalDisplay(double r, double numHorizontalLines, double numVerticalLines, double width, double height) {
     glPushMatrix();
     glRotated(90, 0, 1, 0);
+    
     glPushMatrix();
     for(double i = 0; i <= numHorizontalLines; i++) {
-        const double latitude0 = M_PI * (-0.5 + (double) (i - 1) / numHorizontalLines) *(width/360.0);
+        const double latitude0 = M_PI * (-0.5 + (i-1.0)/numHorizontalLines) *(width/360.0)-(width*M_2_PI/360/2);
         const double depth0  = sin(latitude0);
         const double depthXY0 =  cos(latitude0);
         
-        const double latitude1 = M_PI * (-0.5 + (double) i / numHorizontalLines) *(width/360.0);
+        const double latitude1 = M_PI * (-0.5 + i / numHorizontalLines) *(width/360.0)-(width*M_2_PI/360/2);
         const double depth1 = sin(latitude1);
         const double depthXY1 = cos(latitude1);
         
         glBegin(GL_QUAD_STRIP);
         for(double j = 0; j <= numVerticalLines; j++) {
-            const double longitude = 2 * M_PI * (double) (j - 1) / numVerticalLines *(height/360.0)-M_PI_4;
+            const double longitude = 2 * M_PI * (j-1.0)/numVerticalLines *(height/360.0) -4*(height*M_2_PI/360);
             const double x = cos(longitude);
             const double y = sin(longitude);
             
-            
-            glTexCoord2d(latitude0/(M_PI*width/360.0)+0.5 +M_PI*+0.25/numHorizontalLines*(width/360.0), 0.5*longitude/(M_PI*height/360.0)+0.5 +M_PI*-1.25/(numVerticalLines-1.0)*(height/360.0));
+            glTexCoord2d(i/(numHorizontalLines+1.0), j/numVerticalLines);
             glNormal3f(x * depthXY0, y * depthXY0, depth0);
             glVertex3f(x * depthXY0, y * depthXY0, depth0);
             
-            glTexCoord2d(latitude1/(M_PI*width/360.0)+0.5 +M_PI*+0.25/numHorizontalLines*(width/360.0), 0.5*longitude/(M_PI*height/360.0)+0.5 +M_PI*-1.25/(numVerticalLines-1.0)*(height/360.0));
+            glTexCoord2d((i+1.0)/(numHorizontalLines+1.0), j/numVerticalLines);
             glNormal3f(x * depthXY1, y * depthXY1, depth1);
             glVertex3f(x * depthXY1, y * depthXY1, depth1);
         }
         glEnd();
     }
     glPopMatrix();
+    
+    glPopMatrix();
+}
+void renderSphericalMouse(double r, double numHorizontalLines, double numVerticalLines, double width, double height, double x, double y, double sizeX, double sizeY) {
+    glPushMatrix();
+    glRotated(90, 0, 1, 0);
+    
+    glPushMatrix();
+    for(double i = 0; i <= numHorizontalLines; i++) {
+        const double latitude0 = M_PI * (-0.5 + (i-1.0)/numHorizontalLines) *(width/360.0)-(width*M_2_PI/360/2);
+        const double depth0  = sin(latitude0);
+        const double depthXY0 =  cos(latitude0);
+        
+        const double latitude1 = M_PI * (-0.5 + i / numHorizontalLines) *(width/360.0)-(width*M_2_PI/360/2);
+        const double depth1 = sin(latitude1);
+        const double depthXY1 = cos(latitude1);
+        
+        glBegin(GL_QUAD_STRIP);
+        for(double j = 0; j <= numVerticalLines; j++) {
+            const double longitude = 2 * M_PI * (j-1.0)/numVerticalLines *(height/360.0) -4*(height*M_2_PI/360);
+            const double x = cos(longitude);
+            const double y = sin(longitude);
+            
+            glTexCoord2d(i/(numHorizontalLines+1.0), j/numVerticalLines);
+            glNormal3f(x * depthXY0, y * depthXY0, depth0);
+            glVertex3f(x * depthXY0, y * depthXY0, depth0);
+            
+            glTexCoord2d((i+1.0)/(numHorizontalLines+1.0), j/numVerticalLines);
+            glNormal3f(x * depthXY1, y * depthXY1, depth1);
+            glVertex3f(x * depthXY1, y * depthXY1, depth1);
+        }
+        glEnd();
+    }
+    glPopMatrix();
+    
+    glPopMatrix();
+}
+
+void renderCylindricalDisplay(double r, double numHorizontalLines, double numVerticalLines, double width, double height) {
+    glPushMatrix();
+//    glRotated(90, 1, 0, 0);
+    
+    glPushMatrix();
+    for(double i = 0; i <= numHorizontalLines; i++) {
+        const double latitude0 = 2*M_PI * (-0.5 + (i-1.0)/numHorizontalLines) *(width/360.0);
+        const double depth0  = sin(latitude0);
+        const double depthXY0 =  cos(latitude0);
+        
+        const double latitude1 = 2*M_PI * (-0.5 + i / numHorizontalLines) *(width/360.0);
+        const double depth1 = sin(latitude1);
+        const double depthXY1 = cos(latitude1);
+        
+        glBegin(GL_QUAD_STRIP);
+        for(double j = 0; j <= numVerticalLines; j++) {
+            const double longitude = 2 * M_PI * (j-1.0)/numVerticalLines *(height/360.0);
+            const double x = cos(longitude);
+            const double y = sin(longitude);
+            
+            glTexCoord2d(1-i/(numHorizontalLines+1.0), j/numVerticalLines);
+            glNormal3f(x * depthXY0, depthXY0, y * depthXY0);
+            glVertex3f(depth0*r, (j/numVerticalLines)*2*r-r, depthXY0*r);
+            
+            glTexCoord2d(1-(i+1.0)/(numHorizontalLines+1.0), j/numVerticalLines);
+            glNormal3f(x * depthXY1, y * depthXY1, depthXY1);
+            glVertex3f(depth1*r, (j/numVerticalLines)*2*r-r,depthXY1*r);
+        }
+        glEnd();
+    }
+    glPopMatrix();
+    
     glPopMatrix();
 }
 
@@ -81,12 +159,29 @@ void SimpleWorldRendererPlugin::loadSkybox()
     _skybox[4] = loadTexture("\\resources\\humus-skybox\\posy.jpg");
     _skybox[5] = loadTexture("\\resources\\humus-skybox\\negy.jpg");
 #else
-    _skybox[0] = loadTexture("/resources/humus-skybox/negz.jpg");
-    _skybox[1] = loadTexture("/resources/humus-skybox/posx.jpg");
-    _skybox[2] = loadTexture("/resources/humus-skybox/posz.jpg");
-    _skybox[3] = loadTexture("/resources/humus-skybox/negx.jpg");
-    _skybox[4] = loadTexture("/resources/humus-skybox/posy.jpg");
-    _skybox[5] = loadTexture("/resources/humus-skybox/negy.jpg");
+#ifdef __APPLE__
+  _skybox[0] = loadTexture("/resources/humus-skybox/negz.jpg");
+  _skybox[1] = loadTexture("/resources/humus-skybox/posx.jpg");
+  _skybox[2] = loadTexture("/resources/humus-skybox/posz.jpg");
+  _skybox[3] = loadTexture("/resources/humus-skybox/negx.jpg");
+  _skybox[4] = loadTexture("/resources/humus-skybox/posy.jpg");
+  _skybox[5] = loadTexture("/resources/humus-skybox/negy.jpg");
+#else
+  float sizeX = 2048;
+  float sizeY = 2048;
+  _skybox[0] = glmLoadTexture("./resources/humus-skybox/negz.jpg", GL_TRUE, GL_FALSE,
+                              GL_TRUE, GL_FALSE, &sizeX, &sizeY);
+  _skybox[1] = glmLoadTexture("./resources/humus-skybox/posx.jpg", GL_TRUE, GL_FALSE,
+                              GL_TRUE, GL_FALSE, &sizeX, &sizeY);
+  _skybox[2] = glmLoadTexture("./resources/humus-skybox/posz.jpg", GL_TRUE, GL_FALSE,
+                              GL_TRUE, GL_FALSE, &sizeX, &sizeY);
+  _skybox[3] = glmLoadTexture("./resources/humus-skybox/negx.jpg", GL_TRUE, GL_FALSE,
+                              GL_TRUE, GL_FALSE, &sizeX, &sizeY);
+  _skybox[4] = glmLoadTexture("./resources/humus-skybox/posy.jpg", GL_TRUE, GL_FALSE,
+                              GL_TRUE, GL_FALSE, &sizeX, &sizeY);
+  _skybox[5] = glmLoadTexture("./resources/humus-skybox/negy.jpg", GL_TRUE, GL_FALSE,
+                              GL_TRUE, GL_FALSE, &sizeX, &sizeY);
+#endif
 #endif
   for(int i = 0; i < 6; ++i) {
     glBindTexture(GL_TEXTURE_2D, _skybox[i]);
@@ -94,6 +189,7 @@ void SimpleWorldRendererPlugin::loadSkybox()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
   }
   glBindTexture(GL_TEXTURE_2D, 0);
+  std::cout << _skybox[5] << std::endl;
 }
 
 
@@ -103,7 +199,7 @@ void SimpleWorldRendererPlugin::loadSkybox()
 // Purpose:
 // Updated:  Sep 10, 2012
 // ---------------------------------------------------------------------------
-inline void SimpleWorldRendererPlugin::renderSkybox()
+void SimpleWorldRendererPlugin::renderSkybox()
 {
   static const double skyboxScale = 1000;
   // Store the current matrix
@@ -189,10 +285,13 @@ void SimpleWorldRendererPlugin::init() {
   loadSkybox();
 }
 
-double orientationRift[16];
+double orientationRift[16] = {1, 0, 0, 0,
+                              0, 1, 0, 0,
+                              0, 0, 1, 0,
+                              0, 0, 0, 1};
 double *getRiftOrientation() {
-	
-  Quatf quaternion = FusionResult.GetPredictedOrientation(); //FusionResult.GetOrientation();
+    if(!FusionResult.IsAttachedToSensor()) return orientationRift;
+        Quatf quaternion = FusionResult.GetPredictedOrientation();//FusionResult.GetOrientation();
 
 		//float yaw, pitch, roll;
 		//quaternion.GetEulerAngles<Axis_Y, Axis_X, Axis_Z>(&yaw, &pitch, &roll);
@@ -219,10 +318,10 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
         glBindFramebuffer(GL_FRAMEBUFFER, fbos[0]);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		//if (!checkForErrors()) {
-			//std::cerr << "GL ISSUE -- SimpleWorldRendererPlugin::step" << std::endl;
+		if (!checkForErrors()) {
+			std::cerr << "GL ISSUE -- SimpleWorldRendererPlugin::step" << std::endl;
 			//exit(EXIT_FAILURE);
-		//}
+		}
     }
 
 	glViewport(0,0, textureWidth/2.0, textureHeight);
@@ -232,8 +331,14 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
 		static const GLuint groundTexture = loadTexture("\\resources\\humus-skybox\\negy.jpg");
 //        orientation = getRiftOrientation();
 #else
-		static const GLuint groundTexture = loadTexture("/resources/humus-skybox/negy.jpg");
-//        gluInvertMatrix(get_orientation(), orientation);
+#ifdef __APPLE__
+  static const GLuint groundTexture = loadTexture("/resources/humus-skybox/negy.jpg");
+#else
+  static float sizeX = 64;
+  static float sizeY = 64;
+  static const GLuint groundTexture = glmLoadTexture("./resources/humus-skybox/negy.jpg", GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE, &sizeX, &sizeY);
+#endif
+  //        gluInvertMatrix(get_orientation(), orientation);
 #endif
   for (int i2 = 0; i2 < 2; ++i2) {
 //      checkForErrors();
@@ -324,7 +429,10 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
                 
                 switch(displayShape) {
                     case SphericalDisplay:
-                        renderSphericalDisplay(0.5, 25, 25, 180, 110);
+                        renderSphericalDisplay(0.5, 100, 100,180,135);//25, 25, 180, 90);
+                        break;
+                    case CylindricalDisplay:
+                        renderCylindricalDisplay(0.5, 100,100,180,180);//25, 25, 180, 90);
                         break;
                     case FlatDisplay:
                     default:
@@ -370,6 +478,7 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
 				}
 				
 
+                ySize = ((double)height / (double)width) / 2.0;
 				glBindTexture( GL_TEXTURE_2D, cursor );
 				glBegin(GL_TRIANGLE_STRIP);
 				{
@@ -452,8 +561,28 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
 
         render_both_frames(textures[0]);
     } else {
-      for (int i = 0; i < 2; ++i) {
-        if (ortho) {
+        if(!SBS) {
+            glViewport(0,0, windowWidth, windowHeight);
+            glBindTexture(GL_TEXTURE_2D, textures[0]);
+            //glPushMatrix();
+            glColor4f(1, 1, 1, 1);
+            glBegin(GL_TRIANGLE_STRIP);
+            glTexCoord2d(0, bottom);
+            glVertex3f(0, 0, 0);
+            
+            glTexCoord2d(0.5, bottom);
+            glVertex3f(1, 0, 0);
+            
+            glTexCoord2d(0, top);
+            glVertex3f(0, 1, 0);
+            
+            glTexCoord2d(0.5, top);
+            glVertex3f(1, 1, 0);
+            glEnd();
+            
+        } else {
+            for (int i = 0; i < 2; ++i) {
+          if (ortho) {
           double originX = (i == 0) ? 0 : 0.5;
           glBindTexture(GL_TEXTURE_2D, textures[i]);
           //glPushMatrix();
@@ -493,6 +622,7 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
           glPopMatrix();
         }
       }
+        }
     }
 
     //if (ortho) {
@@ -507,9 +637,9 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
 }
 
 Window SimpleWorldRendererPlugin::getWindowID() {
-    return 0;
+  return ::window;
 }
 
 bool SimpleWorldRendererPlugin::needsSwapBuffers() {
-    return true;
+  return doubleBuffered;
 }

@@ -285,10 +285,13 @@ void SimpleWorldRendererPlugin::init() {
   loadSkybox();
 }
 
-double orientationRift[16];
+double orientationRift[16] = {1, 0, 0, 0,
+                              0, 1, 0, 0,
+                              0, 0, 1, 0,
+                              0, 0, 0, 1};
 double *getRiftOrientation() {
-	
-  Quatf quaternion = FusionResult.GetPredictedOrientation(); //FusionResult.GetOrientation();
+    if(!FusionResult.IsAttachedToSensor()) return orientationRift;
+        Quatf quaternion = FusionResult.GetPredictedOrientation();//FusionResult.GetOrientation();
 
   //float yaw, pitch, roll;
   //quaternion.GetEulerAngles<Axis_Y, Axis_X, Axis_Z>(&yaw, &pitch, &roll);

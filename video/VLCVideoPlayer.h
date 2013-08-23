@@ -17,21 +17,14 @@
 #include <mutex>
 #include <condition_variable>
 
-// --- OpenGL ----------------------------------------------------------------
-#define GLX_GLXEXT_PROTOTYPES
-#include <X11/Xlib.h>
-#include <X11/Xregion.h>
-#include <X11/Xresource.h>
-#include <X11/X.h>
+#if defined(__APPLE__) || defined(WIN32)
+typedef unsigned int Display;
+typedef unsigned int GLXDrawable;
+#endif
 
-#include <GL/glew.h>
-#include <GL/glxew.h>
-#include <GL/gl.h>
-#include <GL/glx.h>
-#include <GL/glext.h>
-#include <GL/glxext.h>
-#include <GL/glut.h>
-#include <GL/glu.h>
+#if !defined(__APPLE__) && !defined(WIN32)
+#include "opengl_helpers.h"
+#endif
 
 struct CvCapture;
 
@@ -43,7 +36,7 @@ public:
     VLCVideoPlayer();
     ~VLCVideoPlayer();
     
-    int playVideo(const char *fileName, bool isStereo, Display *dpy, GLXDrawable root);
+    int playVideo(const char *fileName, bool isStereo, Display *dpy, GLXDrawable root, const void *data);
 
     int openCamera(bool isStereo, int cameraId);
     static std::vector<int> listCameras();
@@ -63,6 +56,7 @@ private:
     bool isStereo;
     bool videoDone;
     bool audioDone;
+    void *data;
 
     
 private:

@@ -11,7 +11,6 @@
 #include "VLCVideoPlayer.h"
 
 #include "../opengl_helpers.h"
-//#include "opengl_helpers.h"
 
 #include <iostream>
 #include <chrono>
@@ -179,10 +178,6 @@ int Ibex::VLCVideoPlayer::playVLCVideo(const char *fileName, Display *dpy, GLXDr
     libvlc_instance_t *libvlc;
     libvlc_media_t *m;
     libvlc_media_player_t *mp;
-    
-//    putenv("VLC_PLUGIN_PATH=/Applications/VLC.app/Contents/MacOS/plugins/");
-//    putenv("VLC_PLUGIN_PATH=/Users/hesh/Downloads/vlc/build/VLC.app/Contents/MacOS/plugins");
-    
     char const *vlc_argv[] = {
         //"-H"
 //        "--text-renderer","none"

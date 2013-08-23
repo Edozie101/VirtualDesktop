@@ -8,8 +8,8 @@
 #ifndef SIMPLEWORLDRENDERERPLUGIN_H_
 #define SIMPLEWORLDRENDERERPLUGIN_H_
 
-#include "RendererPlugin.h"
-#include "ibex.h"
+#include "../RendererPlugin.h"
+#include "../ibex.h"
 
 class SimpleWorldRendererPlugin : public RendererPlugin {
 public:

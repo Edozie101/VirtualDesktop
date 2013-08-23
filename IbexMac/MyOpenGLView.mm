@@ -42,6 +42,7 @@
 
 #include "RendererPlugin.h"
 
+bool doubleBuffered = true;
 char mResourcePath[1024];
 
 @implementation MyOpenGLView

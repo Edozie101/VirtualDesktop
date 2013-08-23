@@ -9,6 +9,10 @@
 #ifndef __IbexMac__Window__
 #define __IbexMac__Window__
 
+#if !defined(__APPLE__) && !defined(WIN32)
+#include "../x11/x11.h"
+#endif
+
 #include <iostream>
 #include <vector>
 #include <string>
@@ -32,14 +36,16 @@ public:
     bool setSelectedVideo(bool selectedVideo_) { selectedVideo = selectedVideo_; return selectedVideo; }
     bool setSelectedCamera(bool selectedCamera_) { selectedCamera = selectedCamera_; return selectedCamera; }
     std::string getSelectedVideoPath() { return videoPath; }
-    int getSelectedCameraID() { return selectedCameraID; }
+    uint getSelectedCameraID() { return selectedCameraID; }
 
 #ifdef __APPLE__
     int processKey(unsigned short keyCode, int down);
 #else
 #ifdef _WIN32
-	int processKey(unsigned char key, int down);
-	int processSpecialKey(unsigned char key, int down);
+    int processKey(unsigned char key, int down);
+    int processSpecialKey(unsigned char key, int down);
+#else
+    int processKey(XIDeviceEvent *event, bool pressed);
 #endif
 #endif
     
@@ -58,9 +64,9 @@ private:
     VisibleWindow visibleWindow;
     std::string currentPath;
     bool directoryChanged;
-    int selectedFile;
-    int selectedCamera;
-    int selectedCameraID;
+    uint selectedFile;
+    uint selectedCamera;
+    uint selectedCameraID;
     std::vector<std::string> directoryList;
     std::vector<int> cameras;
     std::set<std::string> fileTypes;

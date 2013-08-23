@@ -447,15 +447,19 @@ Ibex::Ibex::Ibex(int argc, char ** argv) {
     
     if(OGRE3D) {
 #ifdef ENABLE_OGRE3D
-//        unsigned long root = 0;
-        unsigned long screen = 0;
-        unsigned int visinfo = 0;
-        unsigned int dpy2 = 0;
-//        createWindow(dpy, root);
-        renderer = new Ogre3DRendererPlugin(&dpy2, screen, window, &visinfo, (unsigned long)context);
-        renderer->init();
-        renderer->processEvents();
-        return;
+    //        unsigned long root = 0;
+    unsigned long screen = 0;
+    unsigned int visinfo = 0;
+    unsigned int dpy2 = 0;
+    //        createWindow(dpy, root);
+#if defined(WIN32) OR defined(__APPLE__)
+    renderer = new Ogre3DRendererPlugin(&dpy2, screen, window, &visinfo, (unsigned long)context);
+#else
+    renderer = new Ogre3DRendererPlugin(dpy, screen, window, visinfo, (unsigned long)context);
+#endif
+    renderer->init();
+    renderer->processEvents();
+    return;
         
 #endif
     } else if(IRRLICHT) {
@@ -474,7 +478,9 @@ Ibex::Ibex::Ibex(int argc, char ** argv) {
     
     std::cerr << "Physical Width x Height: " << physicalWidth << "x" << physicalHeight << std::endl;
     
+#ifndef __APPLE__
     glutInit(&argc, argv);
+#endif
     
     //  prep_overlay();
     if(renderer->getWindowID()) {

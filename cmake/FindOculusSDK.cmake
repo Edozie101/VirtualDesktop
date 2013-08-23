@@ -43,6 +43,10 @@ find_path(OCULUS_LIBRARY_DIR
       ~/Downloads/OculusSDK/LibOVR/Lib/Linux/Release/x86_64
       ../OculusSDK/LibOVR/Lib/Linux/Release/x86_64
       ../../OculusSDK/LibOVR/Lib/Linux/Release/x86_64
+      ../OculusSDK/LibOVR/Lib/MacOS/Release
+      ../OculusSDK/LibOVR/Lib/MacOS/Debug
+      ../../OculusSDK/LibOVR/Lib/MacOS/Release
+      ../../OculusSDK/LibOVR/Lib/MacOS/Debug
   )
 
   find_library(OCULUS_LIBRARY
@@ -57,6 +61,10 @@ find_path(OCULUS_LIBRARY_DIR
       ~/Downloads/OculusSDK/LibOVR/Lib/Linux/Release/x86_64
       ../OculusSDK/LibOVR/Lib/Linux/Release/x86_64
       ../../OculusSDK/LibOVR/Lib/Linux/Release/x86_64
+      ../OculusSDK/LibOVR/Lib/MacOS/Release
+      ../OculusSDK/LibOVR/Lib/MacOS/Debug
+      ../../OculusSDK/LibOVR/Lib/MacOS/Release
+      ../../OculusSDK/LibOVR/Lib/MacOS/Debug
   )
 
   if (OCULUS_LIBRARY)

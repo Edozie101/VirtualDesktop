@@ -85,7 +85,6 @@
 		4C0937E717B1F9CE004EA291 /* libopencv_ts.2.4.5.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4CEEED55178777830067405F /* libopencv_ts.2.4.5.dylib */; };
 		4C0937E817B1F9CE004EA291 /* libopencv_video.2.4.5.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4CEEED56178777830067405F /* libopencv_video.2.4.5.dylib */; };
 		4C0937E917B1F9CE004EA291 /* libopencv_videostab.2.4.5.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4CEEED57178777830067405F /* libopencv_videostab.2.4.5.dylib */; };
-		4C0937EA17B1F9CE004EA291 /* libx264.125.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4CABF8341730BDEE00F94A46 /* libx264.125.dylib */; };
 		4C0937EB17B1F9CE004EA291 /* libsixense_utils_x64.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C46D7C616F2B93D00B5DD9E /* libsixense_utils_x64.dylib */; };
 		4C0937EC17B1F9CE004EA291 /* libsixense_x64.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C46D7C716F2B93D00B5DD9E /* libsixense_x64.dylib */; };
 		4C0937ED17B1F9CE004EA291 /* libiconv.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4CABF82E1730BBFC00F94A46 /* libiconv.dylib */; };
@@ -372,7 +371,6 @@
 				4C0937E717B1F9CE004EA291 /* libopencv_ts.2.4.5.dylib in CopyFiles */,
 				4C0937E817B1F9CE004EA291 /* libopencv_video.2.4.5.dylib in CopyFiles */,
 				4C0937E917B1F9CE004EA291 /* libopencv_videostab.2.4.5.dylib in CopyFiles */,
-				4C0937EA17B1F9CE004EA291 /* libx264.125.dylib in CopyFiles */,
 				4C0937EB17B1F9CE004EA291 /* libsixense_utils_x64.dylib in CopyFiles */,
 				4C0937EC17B1F9CE004EA291 /* libsixense_x64.dylib in CopyFiles */,
 				4C0937ED17B1F9CE004EA291 /* libiconv.dylib in CopyFiles */,

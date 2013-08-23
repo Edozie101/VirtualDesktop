@@ -10,7 +10,8 @@
 
 #include <opencv/cv.h>
 #include <opencv/highgui.h>
-#include "opengl_helpers.h"
+
+#include "../opengl_helpers.h"
 
 #include <iostream>
 #include <chrono>
@@ -379,7 +380,7 @@ void ibex_release_buffer(struct AVCodecContext *c, AVFrame *pic) {
     avcodec_default_release_buffer(c, pic);
 }
 
-Ibex::VideoPlayer::VideoPlayer() :  videoTexture(new unsigned int[2]{0,0}),
+Ibex::VideoPlayer::VideoPlayer() :  videoTexture(new unsigned int[2]),
                                     width(0),
                                     height(0),
                                     done(true),
@@ -393,11 +394,18 @@ Ibex::VideoPlayer::VideoPlayer() :  videoTexture(new unsigned int[2]{0,0}),
                                     avAudioCodecCtx(NULL),
                                     avAudioCodec(NULL),
 									openCVInited(false),
+									captureVideo(false),
 									cvCapture(0) {
+	videoTexture[0] = videoTexture[1] = 0;
+
     avcodec_register_all();
     av_register_all();
     avfilter_register_all();
 	//avdevice_register_all();
+}
+Ibex::VideoPlayer::~VideoPlayer() {
+	stopCapturing();
+	stopPlaying();
 }
 
 void Ibex::VideoPlayer::savePPMFrame(const AVFrame *avFrame, int width, int height, int iFrame) const {

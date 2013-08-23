@@ -590,7 +590,7 @@ int Ibex::VideoPlayer::playAudio(AVCodecContext *avAudioCodecCtx) {
                 
                 if(alGetError() != AL_NO_ERROR)
                 {
-                    fprintf(stderr, "Error loading buffers[%d] :(\n", count);
+                    fprintf(stderr, "Error loading buffers[%lu] :(\n", count);
                     exit(1);
                     return 1;
                 }

@@ -108,7 +108,7 @@ private:
     VideoSyncMode videoSyncMode;
     
 	bool openCVInited;
-    bool captureVideo = false;
+    bool captureVideo;
 	CvCapture *cvCapture;
 
     bool done;

@@ -21,7 +21,13 @@
 #ifdef _WIN32
 #include "ibex_win_utils.h"
 #else
+#ifdef __APPLE__
 #include "ibex_mac_utils.h"
+
+#define glGenVertexArrays glGenVertexArraysAPPLE
+#define glBindVertexArray glBindVertexArrayAPPLE
+
+#endif
 #endif
 
 bool lensParametersChanged = true;
@@ -106,36 +112,39 @@ float DistortionK[4] = {1.00000000, 0.219999999, 0.239999995, 0.000000000};
 
 static GLuint make_program(GLuint vertex_shader, GLuint fragment_shader)
 {
-    checkForErrors();
-    std::cerr << "make_program" << std::endl;
-    GLint program_ok;
-    
-    program = glCreateProgram();
-    glAttachShader(program, vertex_shader);
-    glAttachShader(program, fragment_shader);
-    glLinkProgram(program);
-    
-    glGetProgramiv(program, GL_LINK_STATUS, &program_ok);
-    checkForErrors();
-    if (!program_ok) {
-        fprintf(stderr, "Failed to link shader program:\n");
-        show_info_log(program, glGetProgramiv, glGetProgramInfoLog);
-        glDeleteProgram(program);
-        return 0;
-    } else {
-        std::cerr << "Linked program" << std::endl;
-    }
-    
-    a_position = glGetAttribLocation(program, "a_position");
-    a_texCoord = glGetAttribLocation(program, "a_texCoord");
-    
-    textureUniform = glGetUniformLocation(program, "texture");
-    glUniform1i(textureUniform, 0);
-    lensTextureUniform = glGetUniformLocation(program, "lensTexture");
-    glUniform1i(lensTextureUniform, 1);
-    
-    checkForErrors();
-    std::cerr << "make_program end" << std::endl;
+  checkForErrors();
+  std::cerr << "make_program" << std::endl;
+  GLint program_ok;
+
+  program = glCreateProgram();
+  glAttachShader(program, vertex_shader);
+  glAttachShader(program, fragment_shader);
+  glLinkProgram(program);
+  checkForErrors();
+
+  glGetProgramiv(program, GL_LINK_STATUS, &program_ok);
+  checkForErrors();
+  if (!program_ok) {
+    fprintf(stderr, "Failed to link shader program:\n");
+    show_info_log(program, glGetProgramiv, glGetProgramInfoLog);
+    glDeleteProgram(program);
+    return 0;
+  } else {
+    std::cerr << "Linked program" << std::endl;
+  }
+
+  a_position = glGetAttribLocation(program, "a_position");
+  a_texCoord = glGetAttribLocation(program, "a_texCoord");
+
+  textureUniform = glGetUniformLocation(program, "texture");
+  lensTextureUniform = glGetUniformLocation(program, "lensTexture");
+
+  glUseProgram(program);
+  glUniform1i(textureUniform, 0);
+  glUniform1i(lensTextureUniform, 1);
+
+  checkForErrors();
+  std::cerr << "make_program end" << std::endl;
     
     return program;
 }
@@ -341,6 +350,7 @@ int init_distortion_shader()
     char path[2048];
     strcpy(path, mResourcePath);
     strcat(path, "\\resources\\shaders\\distortions.v.glsl");
+  std::cerr << "loading shader: " << path << std::endl;
         distortion_shader.vertex_shader = make_shader(
                 GL_VERTEX_SHADER,
                 path
@@ -350,6 +360,7 @@ int init_distortion_shader()
 
     strcpy(path, mResourcePath);
     strcat(path, "\\resources\\shaders\\distortions.f.glsl");
+  std::cerr << "loading shader: " << path << std::endl;
         distortion_shader.fragment_shader = make_shader(
                 GL_FRAGMENT_SHADER,
                 path
@@ -412,6 +423,7 @@ int init_distortion_shader_cache()
     char path[2048];
     strcpy(path, mResourcePath);
     strcat(path, "\\resources\\shaders\\distortions.v.glsl");
+  std::cerr << "loading shader: " << path << std::endl;
     distortion_shader_cache.vertex_shader = make_shader(
                                                   GL_VERTEX_SHADER,
                                                   path
@@ -421,6 +433,7 @@ int init_distortion_shader_cache()
     
     strcpy(path, mResourcePath);
     strcat(path, "\\resources\\shaders\\distortions_cache.f.glsl");
+  std::cerr << "loading shader: " << path << std::endl;
     distortion_shader_cache.fragment_shader = make_shader(
                                                     GL_FRAGMENT_SHADER,
                                                     path

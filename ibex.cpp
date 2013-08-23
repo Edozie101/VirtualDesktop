@@ -62,7 +62,6 @@
 
 #include "opengl_helpers.h"
 #include "iphone_orientation_plugin/iphone_orientation_listener.h"
-#include "sixense/sixense_controller.h"
 #include "distortions.h"
 
 #define HAVE_LIBJPEG 1
@@ -86,7 +85,7 @@
 
 #include "ibex.h"
 
-RendererPlugin *renderer;
+#include "sixense/sixense_controller.h"
 
 GLfloat top, bottom;
 
@@ -443,28 +442,28 @@ double relativeMouseY = 0;
 static bool jump = false;
 
 Ibex::Ibex::Ibex(int argc, char ** argv) {
+    int c;
 #ifndef _WIN32
-  int c;
-  while (argc > 0 && (c = getopt(argc, argv, "oihm")) != -1)
-    switch (c) {
-    case 'o':
-      OGRE3D = true;
-      break;
-    case 'i':
-      IRRLICHT = true;
-      break;
-    case 'm':
-      SBS = false;
-      break;
-    case 'h':
-    case '?':
-    default:
-      if (isprint(optopt))
-	fprintf(stderr, "Unknown option `-%c'.\n", optopt);
-      else
-	fprintf(stderr, "Unknown option character `\\x%x'.\n", optopt);
-      return;// 1;
-    }
+    while (argc > 0 && (c = getopt(argc, argv, "oihm")) != -1)
+        switch (c) {
+            case 'o':
+                OGRE3D = true;
+                break;
+            case 'i':
+                IRRLICHT = true;
+                break;
+            case 'm':
+                SBS = false;
+                break;
+            case 'h':
+            case '?':
+            default:
+                if (isprint(optopt))
+                    fprintf(stderr, "Unknown option `-%c'.\n", optopt);
+                else
+                    fprintf(stderr, "Unknown option character `\\x%x'.\n", optopt);
+                return;// 1;
+        }
 #endif
     
   //  prep_root();
@@ -509,7 +508,9 @@ Ibex::Ibex::Ibex(int argc, char ** argv) {
     
   std::cerr << "Physical Width x Height: " << physicalWidth << "x" << physicalHeight << std::endl;
     
-  //glutInit(&argc, argv);
+#ifndef __APPLE__
+    glutInit(&argc, argv);
+#endif
     
   //  prep_overlay();
   if(renderer->getWindowID()) {

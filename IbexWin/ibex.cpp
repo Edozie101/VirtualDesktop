@@ -69,7 +69,7 @@
 
 #include "RendererPlugin.h"
 
-//#define ENABLE_OGRE3D 0
+//#define ENABLE_OGRE3D 1
 //#define ENABLE_IRRLICHT 1
 
 #ifdef ENABLE_OGRE3D
@@ -80,11 +80,11 @@
 #include "irrlicht_plugin/irrlicht_plugin.h"
 #endif
 
-#include "SimpleWorldRendererPlugin.h"
+#include "simpleworld_plugin/SimpleWorldRendererPlugin.h"
 
 #include "ibex.h"
 
-#include "sixense_controller.h"
+#include "sixense/sixense_controller.h"
 
 GLfloat top, bottom;
 
@@ -101,7 +101,11 @@ bool barrelDistort          = 1;
 bool ortho                  = 1;
 bool renderToTexture        = 1;
 bool USE_FBO                = 1;
+#ifdef ENABLE_OGRE3D
+bool OGRE3D                 = 1;
+#else
 bool OGRE3D                 = 0;
+#endif
 bool IRRLICHT               = 0;
 bool SBS                    = 1;
 
@@ -125,9 +129,6 @@ GLfloat cursorPosX(0);
 GLfloat cursorPosY(0);
 
 GLuint cursorTexture(0);
-
-static int xi_opcode;
-static int xfixes_event_base;
 
 double walkForward = 0;
 double strafeRight = 0;
@@ -446,15 +447,19 @@ Ibex::Ibex::Ibex(int argc, char ** argv) {
     
     if(OGRE3D) {
 #ifdef ENABLE_OGRE3D
-//        unsigned long root = 0;
-        unsigned long screen = 0;
-        unsigned int visinfo = 0;
-        unsigned int dpy2 = 0;
-//        createWindow(dpy, root);
-        renderer = new Ogre3DRendererPlugin(&dpy2, screen, window, &visinfo, (unsigned long)context);
-        renderer->init();
-        renderer->processEvents();
-        return;
+    //        unsigned long root = 0;
+    unsigned long screen = 0;
+    unsigned int visinfo = 0;
+    unsigned int dpy2 = 0;
+    //        createWindow(dpy, root);
+#if defined(WIN32) OR defined(__APPLE__)
+    renderer = new Ogre3DRendererPlugin(&dpy2, screen, window, &visinfo, (unsigned long)context);
+#else
+    renderer = new Ogre3DRendererPlugin(dpy, screen, window, visinfo, (unsigned long)context);
+#endif
+    renderer->init();
+    renderer->processEvents();
+    return;
         
 #endif
     } else if(IRRLICHT) {
@@ -473,14 +478,16 @@ Ibex::Ibex::Ibex(int argc, char ** argv) {
     
     std::cerr << "Physical Width x Height: " << physicalWidth << "x" << physicalHeight << std::endl;
     
-//    glutInit(&argc, argv);
+#ifndef __APPLE__
+    glutInit(&argc, argv);
+#endif
     
     //  prep_overlay();
     if(renderer->getWindowID()) {
         window = renderer->getWindowID();
     }
     
-    //std::cerr << "dpy: " << dpy << ", display: " << display << ", " << window << std::endl;
+    std::cerr << "dpy: " << dpy << ", display: " << display << ", " << window << std::endl;
 }
 
 void processRawMotion(double relativeMouseXDelta, double relativeMouseYDelta, Desktop3DLocation& loc)

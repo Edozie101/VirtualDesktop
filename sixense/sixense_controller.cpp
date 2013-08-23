@@ -26,7 +26,7 @@ double sixenseWalkForward = 0;
 #include <iostream>
 #include <deque>
 
-#include "ibex.h"
+#include "../ibex.h"
 
 static int sixenseInited = 0;
 

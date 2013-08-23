@@ -14,6 +14,7 @@
 
 #include <OpenGL/gl.h>
 
+extern bool doubleBuffered;
 extern char mResourcePath[1024];
 
 extern "C" GLuint loadTexture(const char *path_);

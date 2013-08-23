@@ -7,20 +7,26 @@
 
 //#include <bullet/btBulletDynamicsCommon.h>
 
-#include "filesystem/Filesystem.h"
+#include "../filesystem/Filesystem.h"
 
 #include <iostream>
 #include <math.h>
 #include <stdio.h>
 
-#include "distortions.h"
-#include "opengl_helpers.h"
-#include "iphone_orientation_plugin/iphone_orientation_listener.h"
+#include "../distortions.h"
+#include "../opengl_helpers.h"
+#include "../iphone_orientation_plugin/iphone_orientation_listener.h"
 
 #ifdef _WIN32
 #include "ibex_win_utils.h"
 #else
+#ifdef __APPLE__
 #include "ibex_mac_utils.h"
+#else
+#define HAVE_LIBJPEG 1
+#include <jpeglib.h>
+#include "../glm/glm.h"
+#endif
 #endif
 
 #include "SimpleWorldRendererPlugin.h"
@@ -153,12 +159,29 @@ void SimpleWorldRendererPlugin::loadSkybox()
     _skybox[4] = loadTexture("\\resources\\humus-skybox\\posy.jpg");
     _skybox[5] = loadTexture("\\resources\\humus-skybox\\negy.jpg");
 #else
-    _skybox[0] = loadTexture("/resources/humus-skybox/negz.jpg");
-    _skybox[1] = loadTexture("/resources/humus-skybox/posx.jpg");
-    _skybox[2] = loadTexture("/resources/humus-skybox/posz.jpg");
-    _skybox[3] = loadTexture("/resources/humus-skybox/negx.jpg");
-    _skybox[4] = loadTexture("/resources/humus-skybox/posy.jpg");
-    _skybox[5] = loadTexture("/resources/humus-skybox/negy.jpg");
+#ifdef __APPLE__
+  _skybox[0] = loadTexture("/resources/humus-skybox/negz.jpg");
+  _skybox[1] = loadTexture("/resources/humus-skybox/posx.jpg");
+  _skybox[2] = loadTexture("/resources/humus-skybox/posz.jpg");
+  _skybox[3] = loadTexture("/resources/humus-skybox/negx.jpg");
+  _skybox[4] = loadTexture("/resources/humus-skybox/posy.jpg");
+  _skybox[5] = loadTexture("/resources/humus-skybox/negy.jpg");
+#else
+  float sizeX = 2048;
+  float sizeY = 2048;
+  _skybox[0] = glmLoadTexture("./resources/humus-skybox/negz.jpg", GL_TRUE, GL_FALSE,
+                              GL_TRUE, GL_FALSE, &sizeX, &sizeY);
+  _skybox[1] = glmLoadTexture("./resources/humus-skybox/posx.jpg", GL_TRUE, GL_FALSE,
+                              GL_TRUE, GL_FALSE, &sizeX, &sizeY);
+  _skybox[2] = glmLoadTexture("./resources/humus-skybox/posz.jpg", GL_TRUE, GL_FALSE,
+                              GL_TRUE, GL_FALSE, &sizeX, &sizeY);
+  _skybox[3] = glmLoadTexture("./resources/humus-skybox/negx.jpg", GL_TRUE, GL_FALSE,
+                              GL_TRUE, GL_FALSE, &sizeX, &sizeY);
+  _skybox[4] = glmLoadTexture("./resources/humus-skybox/posy.jpg", GL_TRUE, GL_FALSE,
+                              GL_TRUE, GL_FALSE, &sizeX, &sizeY);
+  _skybox[5] = glmLoadTexture("./resources/humus-skybox/negy.jpg", GL_TRUE, GL_FALSE,
+                              GL_TRUE, GL_FALSE, &sizeX, &sizeY);
+#endif
 #endif
   for(int i = 0; i < 6; ++i) {
     glBindTexture(GL_TEXTURE_2D, _skybox[i]);
@@ -166,6 +189,7 @@ void SimpleWorldRendererPlugin::loadSkybox()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
   }
   glBindTexture(GL_TEXTURE_2D, 0);
+  std::cout << _skybox[5] << std::endl;
 }
 
 
@@ -261,10 +285,13 @@ void SimpleWorldRendererPlugin::init() {
   loadSkybox();
 }
 
-double orientationRift[16];
+double orientationRift[16] = {1, 0, 0, 0,
+                              0, 1, 0, 0,
+                              0, 0, 1, 0,
+                              0, 0, 0, 1};
 double *getRiftOrientation() {
-	
-  Quatf quaternion = FusionResult.GetPredictedOrientation();//FusionResult.GetOrientation();
+    if(!FusionResult.IsAttachedToSensor()) return orientationRift;
+        Quatf quaternion = FusionResult.GetPredictedOrientation();//FusionResult.GetOrientation();
 
 		//float yaw, pitch, roll;
 		//quaternion.GetEulerAngles<Axis_Y, Axis_X, Axis_Z>(&yaw, &pitch, &roll);
@@ -304,8 +331,14 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
 		static const GLuint groundTexture = loadTexture("\\resources\\humus-skybox\\negy.jpg");
 //        orientation = getRiftOrientation();
 #else
-		static const GLuint groundTexture = loadTexture("/resources/humus-skybox/negy.jpg");
-//        gluInvertMatrix(get_orientation(), orientation);
+#ifdef __APPLE__
+  static const GLuint groundTexture = loadTexture("/resources/humus-skybox/negy.jpg");
+#else
+  static float sizeX = 64;
+  static float sizeY = 64;
+  static const GLuint groundTexture = glmLoadTexture("./resources/humus-skybox/negy.jpg", GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE, &sizeX, &sizeY);
+#endif
+  //        gluInvertMatrix(get_orientation(), orientation);
 #endif
   for (int i2 = 0; i2 < 2; ++i2) {
 //      checkForErrors();
@@ -604,9 +637,9 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
 }
 
 Window SimpleWorldRendererPlugin::getWindowID() {
-    return 0;
+  return ::window;
 }
 
 bool SimpleWorldRendererPlugin::needsSwapBuffers() {
-    return true;
+  return doubleBuffered;
 }
