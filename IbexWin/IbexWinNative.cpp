@@ -2,7 +2,7 @@
 //
 
 #ifdef _WIN32
-#include "video/VideoPlayer.h"
+#include "video/VLCVideoPlayer.h"
 #endif
 
 #include "stdafx.h"
@@ -51,7 +51,7 @@ typedef unsigned long GLXContext;
 #else
 #ifdef _WIN32
 
-#include "video/VideoPlayer.h"
+#include "video/VLCVideoPlayer.h"
 
 #include "GL/glew.h"
 #include <GL/gl.h>
@@ -454,20 +454,20 @@ static void loopScreenshot() {
 }
 
 HGLRC videoPlayerContext = NULL;
-Ibex::VideoPlayer *_ibexVideoPlayer = NULL;
+Ibex::VLCVideoPlayer *_ibexVideoPlayer = NULL;
 static void playVideo() {
 	bool success = wglMakeCurrent(hdc, videoPlayerContext);
 	std::cerr << "Video playing wglMakeCurrent: " << success << std::endl;
 
-	_ibexVideoPlayer = new Ibex::VideoPlayer();
-	_ibexVideoPlayer->playVideo(ibex->renderer->window.getSelectedVideoPath().c_str(),ibex->renderer->window.getIsStereoVideo());
+	_ibexVideoPlayer = new Ibex::VLCVideoPlayer();
+	_ibexVideoPlayer->playVideo(ibex->renderer->window.getSelectedVideoPath().c_str(),ibex->renderer->window.getIsStereoVideo(), 0, 0, 0);
 	//_ibexVideoPlayer->openCamera(ibex->renderer->window.getIsStereoVideo(), -1);
 }
 static void playCamera() {
 	bool success = wglMakeCurrent(hdc, videoPlayerContext);
 	std::cerr << "Video playing wglMakeCurrent: " << success << std::endl;
 
-	_ibexVideoPlayer = new Ibex::VideoPlayer();
+	_ibexVideoPlayer = new Ibex::VLCVideoPlayer();
 	_ibexVideoPlayer->openCamera(ibex->renderer->window.getIsStereoVideo(), ibex->renderer->window.getSelectedCameraID());
 }
 
