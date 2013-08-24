@@ -1532,6 +1532,7 @@
 					/Users/hesh/Downloads/vlc/build/VLC.app/Contents/MacOS/lib,
 					/Users/hesh/Downloads/vlc/build/VLC.app/Contents/MacOS/pluginss,
 				);
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
 					"-L/usr/local/lib",
@@ -1596,6 +1597,7 @@
 					/Users/hesh/Downloads/vlc/build/VLC.app/Contents/MacOS/lib,
 					/Users/hesh/Downloads/vlc/build/VLC.app/Contents/MacOS/pluginss,
 				);
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
 					"-L/usr/local/lib",
