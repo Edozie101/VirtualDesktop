@@ -30,6 +30,10 @@
 #include "../opengl_setup_x11.h"
 #endif
 
+#ifdef WIN32
+void(*makeCurrentGL)();
+#endif
+
 static unsigned int VIDEOWIDTH=1280;
 static unsigned int VIDEOHEIGHT=720;
 
@@ -103,6 +107,8 @@ static void vlcdisplay(void *data, void *id) {
     }
 #else
 #ifdef WIN32
+  makeCurrentGL = (void(*)())c->data;
+  makeCurrentGL();
 #else
  // Create the pixmap, where one designs the scene
   static Pixmap pix = XCreatePixmap(c->dpy, c->root, VIDEOWIDTH, VIDEOHEIGHT, vi->depth);
@@ -180,11 +186,11 @@ int Ibex::VLCVideoPlayer::playVLCVideo(const char *fileName, Display *dpy, GLXDr
     libvlc_media_player_t *mp;
     char const *vlc_argv[] = {
         //"-H"
-//        "--text-renderer","none"
+        "--text-renderer","none"
         //"--reset-plugins-cache",
         //"--reset-config"
       //"--no-audio", // Don't play audio.
-       "--no-xlib" // Don't use Xlib.
+       //"--no-xlib" // Don't use Xlib.
 
         // Apply a video filter.
         //"--video-filter", "sepia",

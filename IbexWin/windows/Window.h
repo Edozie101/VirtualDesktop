@@ -20,6 +20,7 @@ typedef unsigned int uint;
 #include <iostream>
 #include <vector>
 #include <string>
+#include <unordered_set>
 #include <set>
 
 namespace Ibex {
@@ -73,8 +74,7 @@ private:
     uint selectedCameraID;
     std::vector<std::string> directoryList;
     std::vector<int> cameras;
-    std::set<std::string> fileTypes;
-    
+    std::unordered_set<std::string> fileTypes;
 };
     
 }

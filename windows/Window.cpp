@@ -36,12 +36,116 @@ Ibex::Window::Window() : visibleWindow(InfoWindow) {
     selectedCamera = 0;
     selectedCameraID = 0;
     
+    fileTypes.insert("3gp");
+    fileTypes.insert("3iv2");
+    fileTypes.insert("3ivd");
+    fileTypes.insert("a52");
+    fileTypes.insert("aac");
+    fileTypes.insert("asf");
+    fileTypes.insert("asv1");
+    fileTypes.insert("asv2");
+    fileTypes.insert("au");
     fileTypes.insert("avi");
+    fileTypes.insert("bbcd");
+    fileTypes.insert("col0");
+    fileTypes.insert("col1");
+    fileTypes.insert("cvid");
+    fileTypes.insert("div1");
+    fileTypes.insert("div2");
+    fileTypes.insert("div3");
+    fileTypes.insert("div4");
+    fileTypes.insert("div5");
+    fileTypes.insert("div6");
+    fileTypes.insert("divx");
+    fileTypes.insert("dts");
+    fileTypes.insert("dv");
+    fileTypes.insert("flac");
+    fileTypes.insert("flv");
+    fileTypes.insert("fmp4");
+    fileTypes.insert("fourcc");
+    fileTypes.insert("fsv1");
+    fileTypes.insert("h261");
+    fileTypes.insert("h262");
+    fileTypes.insert("h263");
+    fileTypes.insert("hdv1");
+    fileTypes.insert("hdv2");
+    fileTypes.insert("hdv3");
+    fileTypes.insert("iv31");
+    fileTypes.insert("iv32");
+    fileTypes.insert("iv41");
+    fileTypes.insert("iv51");
+    fileTypes.insert("m4s2");
+    fileTypes.insert("mka");
+    fileTypes.insert("mkv");
     fileTypes.insert("mov");
-    fileTypes.insert(".qt");
+    fileTypes.insert("mp1v");
+    fileTypes.insert("mp2");
+    fileTypes.insert("mp2v");
+    fileTypes.insert("mp3");
     fileTypes.insert("mp4");
+    fileTypes.insert("mp41");
+    fileTypes.insert("mp42");
+    fileTypes.insert("mp4s");
+    fileTypes.insert("mp4v");
+    fileTypes.insert("mpeg");
     fileTypes.insert("mpg");
+    fileTypes.insert("mpg1");
+    fileTypes.insert("mpg2");
+    fileTypes.insert("mpg3");
+    fileTypes.insert("mpg4");
+    fileTypes.insert("nsc");
+    fileTypes.insert("nsv");
+    fileTypes.insert("nut");
+    fileTypes.insert("ogg");
+    fileTypes.insert("ogm");
+    fileTypes.insert("pim1");
+    fileTypes.insert("qdrw");
+    fileTypes.insert("ra");
+    fileTypes.insert("ram");
+    fileTypes.insert("rle");
+    fileTypes.insert("rm");
+    fileTypes.insert("rmbv");
+    fileTypes.insert("rpza");
+    fileTypes.insert("rv");
+    fileTypes.insert("rv10");
+    fileTypes.insert("rv13");
+    fileTypes.insert("rv20");
+    fileTypes.insert("rv30");
+    fileTypes.insert("rv40");
+    fileTypes.insert("smc");
+    fileTypes.insert("smp4");
+    fileTypes.insert("svq1");
+    fileTypes.insert("svq3");
+    fileTypes.insert("tac");
+    fileTypes.insert("thra");
+    fileTypes.insert("ts");
+    fileTypes.insert("tta");
+    fileTypes.insert("ty");
+    fileTypes.insert("vcr2");
+    fileTypes.insert("vid");
+    fileTypes.insert("vp3");
+    fileTypes.insert("vp30");
+    fileTypes.insert("vp31");
+    fileTypes.insert("vp5");
+    fileTypes.insert("vp50");
+    fileTypes.insert("vp51");
+    fileTypes.insert("vp60");
+    fileTypes.insert("vp61");
+    fileTypes.insert("vp62");
+    fileTypes.insert("vp6a");
+    fileTypes.insert("vp6f");
+    fileTypes.insert("vp7");
+    fileTypes.insert("wav");
+    fileTypes.insert("wmv");
+    fileTypes.insert("wmv1");
+    fileTypes.insert("wmv2");
+    fileTypes.insert("wmv3");
+    fileTypes.insert("wmva");
+    fileTypes.insert("wvc1");
+    fileTypes.insert("xa");
+    fileTypes.insert("xvid");
 }
+
 void renderBitmapString(
                         float x,
                         float y,
@@ -107,12 +211,11 @@ void Ibex::Window::renderFileChooser() {
 			for(auto i = directoryList.end()-1; i >= (directoryList.begin()+listingOffset);++count) {
 				if(*i != "..") {
 					bool found = false;
-					for(auto i2 = fileTypes.begin(); i2!= fileTypes.end(); ++i2) {
-						if(endsWith((*i), *i2)) {
-							found = true;
-							break;
-						}
-					}
+                    const unsigned long len = (*i).length();
+                    const std::string last3 = (len >= 3) ? (*i).substr(len-3,3) : "";
+                    const std::string last4 = (len >= 4) ? (*i).substr(len,4) : "";
+                    if(fileTypes.find(last3)!=fileTypes.end() || fileTypes.find(last4)!=fileTypes.end()) found = true;
+                    
 					if((*i).size() && (*i)[0] == '*') {
 						if((*i).size() > 1 && (*i)[1] == '.') {
 							directoryList.erase(i--);
@@ -160,7 +263,7 @@ void Ibex::Window::renderFileChooser() {
             pathWithoutDir = pathWithoutDir.substr(1);
         }
         
-        sprintf(blah,"%ul. %s",i+1,(i < directoryList.size()) ? pathWithoutDir.c_str() : "---------");
+        sprintf(blah,"%u. %s",i+1,(i < directoryList.size()) ? pathWithoutDir.c_str() : "---------");
         
         if(directoryList[i].size() && directoryList[i][0] == '*') {
             glColor4f(0.,0.,1,1);
