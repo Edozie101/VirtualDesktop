@@ -47,7 +47,7 @@ public:
   virtual bool needsSwapBuffers() { return false; }
     
 public:
-  Ibex::Window window;
+    ::Ibex::Window window;
 };
 
 #endif /* RENDERERPLUGIN_H_ */
