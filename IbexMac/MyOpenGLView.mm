@@ -415,8 +415,10 @@ static CGPoint cursorPos;
         frame = 0;
         fpsTime = 0;
     }
-    
+
+#if _USE_SIXENSE
     mySixenseRefresh();
+#endif
     
     //    NSLog(@"Start");
     static NSOpenGLContext* glContext;

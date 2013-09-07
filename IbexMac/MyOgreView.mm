@@ -7,14 +7,17 @@
 //
 
 #ifndef GLX_GLXEXT_PROTOTYPES
-#define GLX_GLXEXT_PROTOTYPES
+#define GLX_GLXEXT_PROTOTYPESx
 #endif
+
+#include <OgreRoot.h>
+
+#include "ibex.h"
 
 #import "MyOgreView.h"
 #import "ScreenshotView.h"
 
-#include "ibex.h"
-#include "sixense_controller.h"
+#include "sixense/sixense_controller.h"
 
 #include <ApplicationServices/ApplicationServices.h>
 #import <QuartzCore/QuartzCore.h>
@@ -37,81 +40,19 @@
 
 #include <OgreRoot.h>
 #include <OgreRenderSystem.h>
-#include <OgreGLRenderSystem.h>
-#include <OSX/OgreOSXCocoaContext.h>
+#define __glew_h__
+#include <RenderSystems/GL/OgreGLRenderSystem.h>
+#include <RenderSystems/GL/OSX/OgreOSXCocoaContext.h>
 
 #include <iostream>
 
 @implementation MyOgreView
 
-static Ibex *ibex = nil;
+static Ibex::Ibex *ibex = nil;
 
 static EventHandlerUPP hotKeyFunction;
 
 //static NSCondition *cocoaCondition;
-
-// ---------------------------------------------------------------------------
-// Function: checkForErrors
-// Design:   Belongs to OpenGL component
-// Purpose:  Prints OpenGL errors
-// Updated:  Sep 10, 2012
-// ---------------------------------------------------------------------------
-inline static bool checkForErrors()
-{
-    static bool doCheck = true;
-    
-    if (!doCheck)
-        return false;
-    
-    const char* errorString = 0;
-    bool retVal = false;
-    GLenum error = glGetError();
-    switch(error) {
-        case GL_NO_ERROR:
-            retVal = true;
-            break;
-            
-        case GL_INVALID_ENUM:
-            errorString = "GL_INVALID_ENUM";
-            break;
-            
-        case GL_INVALID_VALUE:
-            errorString = "GL_INVALID_VALUE";
-            break;
-            
-        case GL_INVALID_OPERATION:
-            errorString = "GL_INVALID_OPERATION";
-            break;
-            
-        case GL_INVALID_FRAMEBUFFER_OPERATION:
-            errorString = "GL_INVALID_FRAMEBUFFER_OPERATION";
-            break;
-            
-            // OpenGLES Specific Errors
-#ifdef ATHENA_OPENGLES
-        case GL_STACK_OVERFLOW:
-            errorString = "GL_STACK_OVERFLOW";
-            break;
-            
-        case GL_STACK_UNDERFLOW:
-            errorString = "GL_STACK_UNDERFLOW";
-            break;
-#endif
-            
-        case GL_OUT_OF_MEMORY:
-            errorString = "GL_OUT_OF_MEMORY";
-            break;
-            
-        default:
-            errorString = "UNKNOWN";
-            break;
-    }
-    
-    if (!retVal)
-        std::cerr << "OpenGL ERROR: " << errorString << " -- " << error << std::endl;
-    
-    return retVal;
-}
 
 // hides cursor in the background!
 extern "C" void CGSSetConnectionProperty(int, int, CFStringRef, CFBooleanRef);
@@ -179,7 +120,10 @@ static OSStatus hotKeyHandler(EventHandlerCallRef nextHandler,EventRef theEvent,
 {
     self = [super initWithFrame:frame];
     if (self) {
+#if _USE_SIXENSE
         myInitSixense();
+#endif
+        myOgreView = self;
         
         window = (unsigned long)self;
     }
@@ -505,7 +449,12 @@ void startDesktopCapture(void *c, void *p) {
         
         currentContext = [NSOpenGLContext currentContext];
         
-        ibex = new Ibex(0,nil);
+        NSLog(@"currentContext: %@", currentContext);
+        NSLog(@"NSScreen.mainScreen: %@", NSStringFromRect(NSScreen.mainScreen.frame));
+        NSLog(@"self.window.frame: %@", NSStringFromRect(self.window.frame));
+        NSLog(@"self.frame: %@", NSStringFromRect(self.frame));
+        NSLog(@"self.bounds: %@", NSStringFromRect(self.bounds));
+        ibex = new Ibex::Ibex(0,nil);
         ibex->render(0);
         
 //        currentContext = [NSOpenGLContext currentContext];
