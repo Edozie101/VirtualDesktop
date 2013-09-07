@@ -14,7 +14,7 @@ This source file is part of the
       http://www.ogre3d.org/tikiwiki/
 -----------------------------------------------------------------------------
 */
-#define OGRE_CONTAINERS_USE_CUSTOM_MEMORY_ALLOCATOR 0
+//#define OGRE_CONTAINERS_USE_CUSTOM_MEMORY_ALLOCATOR 0
 
 #ifndef __BaseApplication_h_
 #define __BaseApplication_h_
@@ -55,7 +55,7 @@ This source file is part of the
 
 #include "../ibex.h"
 
-#define Window unsigned long
+typedef unsigned long Window;
 
 #else
 

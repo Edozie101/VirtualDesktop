@@ -174,7 +174,6 @@ public:
     if (!clearPass)
       {
         MaterialPtr clearMat = MaterialManager::getSingleton().getByName(
-            "BaseWhite");
         clearPass = clearMat->getTechnique(0)->getPass(0);
       }
     //Set a clear pass to give the renderer a clear renderstate
