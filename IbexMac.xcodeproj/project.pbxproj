@@ -23,10 +23,6 @@
 		4C09379B17B1F9CE004EA291 /* ibex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFB0B49168E5DFA0025AF0F /* ibex.cpp */; };
 		4C09379C17B1F9CE004EA291 /* MyWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4C4C3C091694689400D2285F /* MyWindow.mm */; };
 		4C09379D17B1F9CE004EA291 /* ServerController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4CACE17116A236710085DA5E /* ServerController.mm */; };
-		4C09379F17B1F9CE004EA291 /* tinystr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C6F782E16F4DF0B0089101F /* tinystr.cpp */; };
-		4C0937A017B1F9CE004EA291 /* tinyxml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C6F783016F4DF0B0089101F /* tinyxml.cpp */; };
-		4C0937A117B1F9CE004EA291 /* tinyxmlerror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C6F783216F4DF0B0089101F /* tinyxmlerror.cpp */; };
-		4C0937A217B1F9CE004EA291 /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C6F783316F4DF0B0089101F /* tinyxmlparser.cpp */; };
 		4C0937A317B1F9CE004EA291 /* ScreenshotView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4C936063172A282100A94980 /* ScreenshotView.mm */; };
 		4C0937AE17B1F9CE004EA291 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6F782816F4D9650089101F /* IOKit.framework */; };
 		4C0937AF17B1F9CE004EA291 /* VideoDecodeAcceleration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C19BFE8172CD56400B7599D /* VideoDecodeAcceleration.framework */; };
@@ -131,6 +127,10 @@
 		4C41232116936E4F008F5B15 /* IbexMacUtils.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4C41232016936E4F008F5B15 /* IbexMacUtils.mm */; };
 		4C46D7C816F2B93D00B5DD9E /* libsixense_utils_x64.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C46D7C616F2B93D00B5DD9E /* libsixense_utils_x64.dylib */; };
 		4C46D7C916F2B93D00B5DD9E /* libsixense_x64.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C46D7C716F2B93D00B5DD9E /* libsixense_x64.dylib */; };
+		4C49791317CCC6A0008DC26E /* tinystr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C49790D17CCC6A0008DC26E /* tinystr.cpp */; };
+		4C49791417CCC6A0008DC26E /* tinyxml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C49790F17CCC6A0008DC26E /* tinyxml.cpp */; };
+		4C49791517CCC6A0008DC26E /* tinyxmlerror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C49791117CCC6A0008DC26E /* tinyxmlerror.cpp */; };
+		4C49791617CCC6A0008DC26E /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C49791217CCC6A0008DC26E /* tinyxmlparser.cpp */; };
 		4C4A959E17386F4300172F70 /* libx264.125.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4CABF8341730BDEE00F94A46 /* libx264.125.dylib */; };
 		4C4A959F17386F4900172F70 /* libsixense_utils_x64.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C46D7C616F2B93D00B5DD9E /* libsixense_utils_x64.dylib */; };
 		4C4A95A017386F4B00172F70 /* libsixense_x64.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C46D7C716F2B93D00B5DD9E /* libsixense_x64.dylib */; };
@@ -197,18 +197,6 @@
 		4C6F782716F4D6150089101F /* TutorialApplication.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C6F781A16F4D6150089101F /* TutorialApplication.cpp */; };
 		4C6F782916F4D9650089101F /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6F782816F4D9650089101F /* IOKit.framework */; };
 		4C6F782B16F4D97B0089101F /* AGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6F782A16F4D97B0089101F /* AGL.framework */; };
-		4C6F783416F4DF0B0089101F /* tinystr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C6F782E16F4DF0B0089101F /* tinystr.cpp */; };
-		4C6F783516F4DF0B0089101F /* tinystr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C6F782E16F4DF0B0089101F /* tinystr.cpp */; };
-		4C6F783616F4DF0B0089101F /* tinystr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C6F782E16F4DF0B0089101F /* tinystr.cpp */; };
-		4C6F783716F4DF0B0089101F /* tinyxml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C6F783016F4DF0B0089101F /* tinyxml.cpp */; };
-		4C6F783816F4DF0B0089101F /* tinyxml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C6F783016F4DF0B0089101F /* tinyxml.cpp */; };
-		4C6F783916F4DF0B0089101F /* tinyxml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C6F783016F4DF0B0089101F /* tinyxml.cpp */; };
-		4C6F783A16F4DF0B0089101F /* tinyxmlerror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C6F783216F4DF0B0089101F /* tinyxmlerror.cpp */; };
-		4C6F783B16F4DF0B0089101F /* tinyxmlerror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C6F783216F4DF0B0089101F /* tinyxmlerror.cpp */; };
-		4C6F783C16F4DF0B0089101F /* tinyxmlerror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C6F783216F4DF0B0089101F /* tinyxmlerror.cpp */; };
-		4C6F783D16F4DF0B0089101F /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C6F783316F4DF0B0089101F /* tinyxmlparser.cpp */; };
-		4C6F783E16F4DF0B0089101F /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C6F783316F4DF0B0089101F /* tinyxmlparser.cpp */; };
-		4C6F783F16F4DF0B0089101F /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C6F783316F4DF0B0089101F /* tinyxmlparser.cpp */; };
 		4C6F784916F4EFD40089101F /* Plugin_CgProgramManager.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C6411AE16F4C30200132076 /* Plugin_CgProgramManager.dylib */; };
 		4C6F784A16F4EFD70089101F /* Plugin_BSPSceneManager.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C6411B316F4C30200132076 /* Plugin_BSPSceneManager.dylib */; };
 		4C6F784B16F4EFDF0089101F /* Plugin_OctreeZone.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C6411AA16F4C30200132076 /* Plugin_OctreeZone.dylib */; };
@@ -498,6 +486,12 @@
 		4C46D7C316F2AED900B5DD9E /* sixense.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sixense.h; sourceTree = "<group>"; };
 		4C46D7C616F2B93D00B5DD9E /* libsixense_utils_x64.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsixense_utils_x64.dylib; path = /usr/local/lib/libsixense_utils_x64.dylib; sourceTree = "<absolute>"; };
 		4C46D7C716F2B93D00B5DD9E /* libsixense_x64.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsixense_x64.dylib; path = /usr/local/lib/libsixense_x64.dylib; sourceTree = "<absolute>"; };
+		4C49790D17CCC6A0008DC26E /* tinystr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tinystr.cpp; sourceTree = "<group>"; };
+		4C49790E17CCC6A0008DC26E /* tinystr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tinystr.h; sourceTree = "<group>"; };
+		4C49790F17CCC6A0008DC26E /* tinyxml.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tinyxml.cpp; sourceTree = "<group>"; };
+		4C49791017CCC6A0008DC26E /* tinyxml.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tinyxml.h; sourceTree = "<group>"; };
+		4C49791117CCC6A0008DC26E /* tinyxmlerror.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tinyxmlerror.cpp; sourceTree = "<group>"; };
+		4C49791217CCC6A0008DC26E /* tinyxmlparser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tinyxmlparser.cpp; sourceTree = "<group>"; };
 		4C4A95A31738738A00172F70 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		4C4A95A5173873AC00172F70 /* libbz2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libbz2.dylib; path = usr/lib/libbz2.dylib; sourceTree = SDKROOT; };
 		4C4C3C081694689400D2285F /* MyWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyWindow.h; sourceTree = "<group>"; };
@@ -534,12 +528,6 @@
 		4C6F781B16F4D6150089101F /* TutorialApplication.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TutorialApplication.h; sourceTree = "<group>"; };
 		4C6F782816F4D9650089101F /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
 		4C6F782A16F4D97B0089101F /* AGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AGL.framework; path = System/Library/Frameworks/AGL.framework; sourceTree = SDKROOT; };
-		4C6F782E16F4DF0B0089101F /* tinystr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tinystr.cpp; sourceTree = "<group>"; };
-		4C6F782F16F4DF0B0089101F /* tinystr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tinystr.h; sourceTree = "<group>"; };
-		4C6F783016F4DF0B0089101F /* tinyxml.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tinyxml.cpp; sourceTree = "<group>"; };
-		4C6F783116F4DF0B0089101F /* tinyxml.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tinyxml.h; sourceTree = "<group>"; };
-		4C6F783216F4DF0B0089101F /* tinyxmlerror.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tinyxmlerror.cpp; sourceTree = "<group>"; };
-		4C6F783316F4DF0B0089101F /* tinyxmlparser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tinyxmlparser.cpp; sourceTree = "<group>"; };
 		4C707C57172C487200309642 /* Ogre.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Ogre.framework; path = ../OgreSDK/lib/release/Ogre.framework; sourceTree = "<group>"; };
 		4C707C58172C487200309642 /* libOIS.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libOIS.a; path = ../OgreSDK/lib/release/libOIS.a; sourceTree = "<group>"; };
 		4C707C5D172C493000309642 /* Ogre.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Ogre.framework; path = ../OgreSDK/lib/release/Ogre.framework; sourceTree = "<group>"; };
@@ -601,6 +589,10 @@
 		4CB7987C168AB41E00EF5260 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		4CB7987D168AB41E00EF5260 /* AppDelegate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AppDelegate.mm; sourceTree = "<group>"; };
 		4CB79880168AB41E00EF5260 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		4CD81A4117C98C1200C94D83 /* FindIrrlicht.cmake */ = {isa = PBXFileReference; lastKnownFileType = text; path = FindIrrlicht.cmake; sourceTree = "<group>"; };
+		4CD81A4217C98C1200C94D83 /* FindOculusSDK.cmake */ = {isa = PBXFileReference; lastKnownFileType = text; path = FindOculusSDK.cmake; sourceTree = "<group>"; };
+		4CD81A4317C98C1200C94D83 /* FindOgre.cmake */ = {isa = PBXFileReference; lastKnownFileType = text; path = FindOgre.cmake; sourceTree = "<group>"; };
+		4CD81A4417C98C1200C94D83 /* FindVLC.cmake */ = {isa = PBXFileReference; lastKnownFileType = text; path = FindVLC.cmake; sourceTree = "<group>"; };
 		4CEEED45178777830067405F /* libopencv_calib3d.2.4.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_calib3d.2.4.5.dylib; path = ../../../../usr/local/Cellar/opencv/2.4.5/lib/libopencv_calib3d.2.4.5.dylib; sourceTree = "<group>"; };
 		4CEEED46178777830067405F /* libopencv_contrib.2.4.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_contrib.2.4.5.dylib; path = ../../../../usr/local/Cellar/opencv/2.4.5/lib/libopencv_contrib.2.4.5.dylib; sourceTree = "<group>"; };
 		4CEEED47178777830067405F /* libopencv_core.2.4.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_core.2.4.5.dylib; path = ../../../../usr/local/Cellar/opencv/2.4.5/lib/libopencv_core.2.4.5.dylib; sourceTree = "<group>"; };
@@ -821,6 +813,19 @@
 			path = controller_manager;
 			sourceTree = "<group>";
 		};
+		4C49790C17CCC6A0008DC26E /* tinyxml */ = {
+			isa = PBXGroup;
+			children = (
+				4C49790D17CCC6A0008DC26E /* tinystr.cpp */,
+				4C49790E17CCC6A0008DC26E /* tinystr.h */,
+				4C49790F17CCC6A0008DC26E /* tinyxml.cpp */,
+				4C49791017CCC6A0008DC26E /* tinyxml.h */,
+				4C49791117CCC6A0008DC26E /* tinyxmlerror.cpp */,
+				4C49791217CCC6A0008DC26E /* tinyxmlparser.cpp */,
+			);
+			path = tinyxml;
+			sourceTree = "<group>";
+		};
 		4C6F781316F4D6150089101F /* ogre3d_plugin */ = {
 			isa = PBXGroup;
 			children = (
@@ -834,19 +839,6 @@
 				4C6F781B16F4D6150089101F /* TutorialApplication.h */,
 			);
 			path = ogre3d_plugin;
-			sourceTree = "<group>";
-		};
-		4C6F782D16F4DEA60089101F /* tinyxml */ = {
-			isa = PBXGroup;
-			children = (
-				4C6F782E16F4DF0B0089101F /* tinystr.cpp */,
-				4C6F782F16F4DF0B0089101F /* tinystr.h */,
-				4C6F783016F4DF0B0089101F /* tinyxml.cpp */,
-				4C6F783116F4DF0B0089101F /* tinyxml.h */,
-				4C6F783216F4DF0B0089101F /* tinyxmlerror.cpp */,
-				4C6F783316F4DF0B0089101F /* tinyxmlparser.cpp */,
-			);
-			name = tinyxml;
 			sourceTree = "<group>";
 		};
 		4C961B1C17B8949C0028D242 /* windows */ = {
@@ -916,6 +908,7 @@
 			isa = PBXGroup;
 			children = (
 				4C961B3C17B897490028D242 /* CMakeLists.txt */,
+				4CD81A3F17C98C1200C94D83 /* cmake */,
 				4CB79870168AB41E00EF5260 /* IbexMac */,
 				4CB79869168AB41E00EF5260 /* Frameworks */,
 				4CB79867168AB41E00EF5260 /* Products */,
@@ -1018,6 +1011,7 @@
 		4CB79870168AB41E00EF5260 /* IbexMac */ = {
 			isa = PBXGroup;
 			children = (
+				4C49790C17CCC6A0008DC26E /* tinyxml */,
 				4C961B5717B89DB50028D242 /* oculus */,
 				4C961B5017B89A780028D242 /* simpleworld_plugin */,
 				4C961B4917B899F10028D242 /* sixense */,
@@ -1025,7 +1019,6 @@
 				4C961B1C17B8949C0028D242 /* windows */,
 				4C961B3D17B899860028D242 /* filesystem */,
 				4CB79871168AB41E00EF5260 /* Supporting Files */,
-				4C6F782D16F4DEA60089101F /* tinyxml */,
 				4C46D7B216F2AEBA00B5DD9E /* sixsense_headers */,
 				4CAC8D5D169347AE00341AA0 /* resources */,
 				4CAC8D43168E5F1900341AA0 /* iphone_orientation_plugin */,
@@ -1077,6 +1070,18 @@
 				4CB79879168AB41E00EF5260 /* Credits.rtf */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		4CD81A3F17C98C1200C94D83 /* cmake */ = {
+			isa = PBXGroup;
+			children = (
+				4CD81A4117C98C1200C94D83 /* FindIrrlicht.cmake */,
+				4CD81A4217C98C1200C94D83 /* FindOculusSDK.cmake */,
+				4CD81A4317C98C1200C94D83 /* FindOgre.cmake */,
+				4CD81A4417C98C1200C94D83 /* FindVLC.cmake */,
+			);
+			name = cmake;
+			path = IbexMac/cmake;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1341,10 +1346,6 @@
 				4C09379C17B1F9CE004EA291 /* MyWindow.mm in Sources */,
 				4C09379D17B1F9CE004EA291 /* ServerController.mm in Sources */,
 				4C961B4817B899860028D242 /* Filesystem.cpp in Sources */,
-				4C09379F17B1F9CE004EA291 /* tinystr.cpp in Sources */,
-				4C0937A017B1F9CE004EA291 /* tinyxml.cpp in Sources */,
-				4C0937A117B1F9CE004EA291 /* tinyxmlerror.cpp in Sources */,
-				4C0937A217B1F9CE004EA291 /* tinyxmlparser.cpp in Sources */,
 				4C961B6217B89DB50028D242 /* Rift.cpp in Sources */,
 				4C0937A317B1F9CE004EA291 /* ScreenshotView.mm in Sources */,
 			);
@@ -1376,10 +1377,6 @@
 				4C0D58A216AD656A007BC9CD /* ibex.cpp in Sources */,
 				4C0D58A316AD656A007BC9CD /* MyWindow.mm in Sources */,
 				4C0D58A416AD656A007BC9CD /* ServerController.mm in Sources */,
-				4C6F783516F4DF0B0089101F /* tinystr.cpp in Sources */,
-				4C6F783816F4DF0B0089101F /* tinyxml.cpp in Sources */,
-				4C6F783B16F4DF0B0089101F /* tinyxmlerror.cpp in Sources */,
-				4C6F783E16F4DF0B0089101F /* tinyxmlparser.cpp in Sources */,
 				4C936065172A282100A94980 /* ScreenshotView.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1399,6 +1396,7 @@
 				4C6B99DC16F4C17E00C5C725 /* iphone_orientation_listener.cpp in Sources */,
 				4C6B99DD16F4C17E00C5C725 /* glew.c in Sources */,
 				4C6B99DE16F4C17E00C5C725 /* IbexMacUtils.mm in Sources */,
+				4C49791617CCC6A0008DC26E /* tinyxmlparser.cpp in Sources */,
 				4C6B99DF16F4C17E00C5C725 /* utils.cpp in Sources */,
 				4C961B3517B895330028D242 /* VideoPlayer.cpp in Sources */,
 				4C6B99E016F4C17E00C5C725 /* ibex.cpp in Sources */,
@@ -1406,17 +1404,16 @@
 				4C6B99E216F4C17E00C5C725 /* ServerController.mm in Sources */,
 				4C961B3117B895330028D242 /* IbexVideoPlayer.mm in Sources */,
 				4C961B4E17B899F10028D242 /* sixense_controller.cpp in Sources */,
+				4C49791517CCC6A0008DC26E /* tinyxmlerror.cpp in Sources */,
 				4C6F781E16F4D6150089101F /* BaseApplication.cpp in Sources */,
 				4C6F782416F4D6150089101F /* DotSceneLoader.cpp in Sources */,
+				4C49791417CCC6A0008DC26E /* tinyxml.cpp in Sources */,
 				4C961B6117B89DB50028D242 /* Rift.cpp in Sources */,
 				4C6F782716F4D6150089101F /* TutorialApplication.cpp in Sources */,
-				4C6F783616F4DF0B0089101F /* tinystr.cpp in Sources */,
-				4C6F783916F4DF0B0089101F /* tinyxml.cpp in Sources */,
 				4C961B2617B8949C0028D242 /* Window.cpp in Sources */,
 				4C961B3917B895330028D242 /* VLCVideoPlayer.cpp in Sources */,
 				4C961B4717B899860028D242 /* Filesystem.cpp in Sources */,
-				4C6F783C16F4DF0B0089101F /* tinyxmlerror.cpp in Sources */,
-				4C6F783F16F4DF0B0089101F /* tinyxmlparser.cpp in Sources */,
+				4C49791317CCC6A0008DC26E /* tinystr.cpp in Sources */,
 				4C61AC3916F9272000F98776 /* MyOgreView.mm in Sources */,
 				4C936066172A282100A94980 /* ScreenshotView.mm in Sources */,
 			);
@@ -1448,10 +1445,6 @@
 				4CFB0B4B168E5DFA0025AF0F /* ibex.cpp in Sources */,
 				4C4C3C0A1694689400D2285F /* MyWindow.mm in Sources */,
 				4CACE17216A236710085DA5E /* ServerController.mm in Sources */,
-				4C6F783416F4DF0B0089101F /* tinystr.cpp in Sources */,
-				4C6F783716F4DF0B0089101F /* tinyxml.cpp in Sources */,
-				4C6F783A16F4DF0B0089101F /* tinyxmlerror.cpp in Sources */,
-				4C6F783D16F4DF0B0089101F /* tinyxmlparser.cpp in Sources */,
 				4C936064172A282100A94980 /* ScreenshotView.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
