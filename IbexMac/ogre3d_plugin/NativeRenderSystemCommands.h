@@ -18,7 +18,7 @@
  A sample demonstrating how to add render system specific native code to an existing scene.
  I based this sample on the SkyDome sample, just added a FrameListener
  */
-#define OGRE_CONTAINERS_USE_CUSTOM_MEMORY_ALLOCATOR 0
+//#define OGRE_CONTAINERS_USE_CUSTOM_MEMORY_ALLOCATOR 0
 
 #ifndef __NativeRenderSystemCommands_h_
 #define __NativeRenderSystemCommands_h_
@@ -174,6 +174,7 @@ public:
     if (!clearPass)
       {
         MaterialPtr clearMat = MaterialManager::getSingleton().getByName(
+                                                                         "BaseWhite");//.staticCast<Material>();
         clearPass = clearMat->getTechnique(0)->getPass(0);
       }
     //Set a clear pass to give the renderer a clear renderstate
