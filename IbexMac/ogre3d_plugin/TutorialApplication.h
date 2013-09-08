@@ -14,7 +14,7 @@ This source file is part of the
       http://www.ogre3d.org/tikiwiki/
 -----------------------------------------------------------------------------
 */
-#define OGRE_CONTAINERS_USE_CUSTOM_MEMORY_ALLOCATOR 0
+//#define OGRE_CONTAINERS_USE_CUSTOM_MEMORY_ALLOCATOR 0
 
 #ifndef __TutorialApplication_h_
 #define __TutorialApplication_h_
@@ -22,6 +22,7 @@ This source file is part of the
 #include "BaseApplication.h"
 #include "NativeRenderSystemCommands.h"
 
+#include "../ibex.h"
 #include "../RendererPlugin.h"
 
 #include <Terrain/OgreTerrain.h>
@@ -54,16 +55,14 @@ public:
     Ogre3DRendererPlugin(Display *dpy, unsigned long screen, Window window, XVisualInfo *visualinfo, unsigned long context);
     virtual ~Ogre3DRendererPlugin();
 
-    void init() {
-      go();
-//      mCamera->lookAt(-100, 0, 0);
-    }
+    virtual void init();
+    
     void setDesktopTexture(GLuint desktopTexture_);
 
     Window getWindowID() {
       return this->windowId;
     }
-    void render(double timeDiff_);
+    virtual void render(double timeDiff_);
     void step(const Desktop3DLocation &loc_, double timeDiff_) {
       Ogre::FrameEvent f;
       f.timeSinceLastEvent = timeDiff_;

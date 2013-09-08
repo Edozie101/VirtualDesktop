@@ -14,7 +14,7 @@ This source file is part of the
       http://www.ogre3d.org/tikiwiki/
 -----------------------------------------------------------------------------
 */
-#define OGRE_CONTAINERS_USE_CUSTOM_MEMORY_ALLOCATOR 0
+//#define OGRE_CONTAINERS_USE_CUSTOM_MEMORY_ALLOCATOR 0
 
 #include "TutorialApplication.h"
 
@@ -38,6 +38,11 @@ Ogre3DRendererPlugin::Ogre3DRendererPlugin(Display *dpy, unsigned long screen, W
 //-------------------------------------------------------------------------------------
 Ogre3DRendererPlugin::~Ogre3DRendererPlugin()
 {
+}
+
+void Ogre3DRendererPlugin::init() {
+    go();
+    //      mCamera->lookAt(-100, 0, 0);
 }
 
 void Ogre3DRendererPlugin::setDesktopTexture(unsigned int desktopTexture_) {
@@ -74,7 +79,7 @@ void Ogre3DRendererPlugin::createDesktopObject() {
         MIP_DEFAULT,//0,                // number of mipmaps
         Ogre::PF_BYTE_RGBA,     // pixel format
         Ogre::TU_DYNAMIC_WRITE_ONLY_DISCARDABLE,
-        0);//TU_DEFAULT);
+        0).staticCast<GLTexture>();//TU_DEFAULT);
 
   t->_fireLoadingComplete(true);
   std::cerr << "**** DESKTOP TEXTURE: " << this->desktopTexture << std::endl;
@@ -84,7 +89,7 @@ void Ogre3DRendererPlugin::createDesktopObject() {
 // Create a material using the texture
  /*Ogre::MaterialPtr */material = Ogre::MaterialManager::getSingleton().create(
      "DynamicTextureMaterial", // name
-     Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+                                                                               Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);//.staticCast<Material>();;
 
  material->getTechnique(0)->getPass(0)->createTextureUnitState("DynamicTexture");
  material->getTechnique(0)->getPass(0)->setSceneBlending(Ogre::SBT_REPLACE);//SBT_TRANSPARENT_ALPHA);
@@ -92,7 +97,7 @@ void Ogre3DRendererPlugin::createDesktopObject() {
 //  ogreHead->setMaterial(material);
 
  Ogre::ManualObject* manual = mSceneMgr->createManualObject("manual");
-//  manual->begin("DynamicTextureMaterial", Ogre::RenderOperation::OT_TRIANGLE_STRIP, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+ //manual->begin("DynamicTextureMaterial", Ogre::RenderOperation::OT_TRIANGLE_STRIP, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
  manual->begin("BlankWhiteMaterial", Ogre::RenderOperation::OT_TRIANGLE_STRIP, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
 
  manual->textureCoord(0, 0);
@@ -128,10 +133,15 @@ void Ogre3DRendererPlugin::createDesktopObject() {
 }
 
 void Ogre3DRendererPlugin::setupRTT() {
+    std::cerr << "setupRTT... start" << std::endl;
   if(!SBS) return;
+    
+    std::cerr << "setupRTT... sbs " << mWindow->getWidth() << "x" << mWindow->getHeight() << std::endl;
 
   rtt_texture = Ogre::TextureManager::getSingleton().createManual("RttTex", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, Ogre::TEX_TYPE_2D, mWindow->getWidth(), mWindow->getHeight(), 0, Ogre::PF_R8G8B8, Ogre::TU_RENDERTARGET);
+    std::cerr << "setupRTT... loaded material RttTex" << std::endl;
   renderTexture = rtt_texture->getBuffer()->getRenderTarget();
+    std::cerr << "setupRTT... getRenderTarget()" << std::endl;
 
   renderTexture->addViewport(mCamera2);
   renderTexture->getViewport(0)->setClearEveryFrame(true);
@@ -153,7 +163,7 @@ void Ogre3DRendererPlugin::setupRTT() {
 
   Ogre::SceneNode* miniScreenNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("MiniScreenNode");
   miniScreenNode->attachObject(mMiniScreen);
-  Ogre::MaterialPtr material = Ogre::MaterialManager::getSingleton().getByName("BarrelDistort");
+    Ogre::MaterialPtr material = Ogre::MaterialManager::getSingleton().getByName("BarrelDistort");//.staticCast<Material>();;
   material->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName("RttTex");
   mMiniScreen->setMaterial("BarrelDistort");
     
@@ -165,9 +175,11 @@ void Ogre3DRendererPlugin::setupRTT() {
   mMiniScreen2->setBoundingBox(Ogre::AxisAlignedBox(-100000.0f * Ogre::Vector3::UNIT_SCALE, 100000.0f * Ogre::Vector3::UNIT_SCALE));
   Ogre::SceneNode* miniScreenNode2 = mSceneMgr->getRootSceneNode()->createChildSceneNode("MiniScreenNode2");
   miniScreenNode2->attachObject(mMiniScreen2);
-  Ogre::MaterialPtr material2 = Ogre::MaterialManager::getSingleton().getByName("BarrelDistort");
+    Ogre::MaterialPtr material2 = Ogre::MaterialManager::getSingleton().getByName("BarrelDistort");//.staticCast<Material>();;
   material2->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName("RttTex2");
   mMiniScreen2->setMaterial("BarrelDistort");
+    
+    std::cerr << "setupRTT... done" << std::endl;
 }
 
 void Ogre3DRendererPlugin::createScene()
