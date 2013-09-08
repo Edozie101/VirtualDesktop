@@ -262,7 +262,7 @@ INSTALL(TARGETS ibex
     
 INSTALL(CODE "
     execute_process(COMMAND \"iconutil\" --convert icns --output \"${CMAKE_INSTALL_PREFIX}/ibex.app/Contents/Resources/ibex.icns\" \"${PROJECT_SOURCE_DIR}/ibex.iconset\")
-    execute_process(COMMAND rm \"${CMAKE_INSTALL_PREFIX}/ibex.app/Contents/Resources/ibex.iconset\")
+    #execute_process(COMMAND rm \"${CMAKE_INSTALL_PREFIX}/ibex.app/Contents/Resources/ibex.iconset\")
 ")
 
 install (DIRECTORY resources DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
@@ -347,4 +347,6 @@ IF(APPLE)
     # And then there's ways to customize this as well
     set(CPACK_BINARY_DRAGNDROP ON)
     include(CPack)
+    
+  add_custom_target(ibex_run COMMAND open ./ibex.app DEPENDS install)
 ENDIF(APPLE)
