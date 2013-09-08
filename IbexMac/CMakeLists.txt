@@ -275,9 +275,9 @@ IF(APPLE)
     # Note that the image plugins depend on QtSvg and QtXml, and it got those copied
     # over.
     if(OGRE)
-    INSTALL(CODE "
-        execute_process(COMMAND \"rm -rf ${CMAKE_INSTALL_PREFIX}/ibex.app/Contents/Frameworks/*.framework\")
-        " COMPONENT Runtime)
+        INSTALL(CODE "
+            execute_process(COMMAND \"rm -rf ${CMAKE_INSTALL_PREFIX}/ibex.app/Contents/Frameworks/*.framework\")
+            " COMPONENT Runtime)
     endif(OGRE)
 
     INSTALL(CODE "
@@ -293,11 +293,6 @@ IF(APPLE)
         " COMPONENT Runtime)
         execute_process(COMMAND /usr/bin/mkdir \"-p ${CMAKE_INSTALL_PREFIX}/ibex.app/Contents/Frameworks/\")
     execute_process(COMMAND /usr/bin/cp -fR \"~/Downloads/OgreSDK/lib/macosx/Release/*\" \"${CMAKE_INSTALL_PREFIX}/ibex.app/Contents/Frameworks/\")
-    #INSTALL(CODE "
-    #    file(GLOB_RECURSE IBEX_LIBS \"\${CMAKE_INSTALL_PREFIX}/*\")
-     #   include(BundleUtilities)
-       # fixup_bundle(\"${APPS}\" \"\" \"\")
-      #  " COMPONENT Runtime)
 
     #install_name_tool -change "@loader_path/../lib/libvlccore.5.dylib" "@loader_path/../MacOS/libvlccore.5.dylib"   liblibbluray_plugin.dylib
     INSTALL(CODE "
@@ -306,8 +301,6 @@ IF(APPLE)
             execute_process(COMMAND \"install_name_tool\" -change \"@loader_path/../lib/libvlccore.5.dylib\" \"@loader_path/../MacOS/libvlccore.5.dylib\" ${CMAKE_INSTALL_PREFIX}/\${f})
         endforeach(f)
     " COMPONENT Runtime)
-
-
 
     # these are the OS X Interface Builder Files
     set (ibex_XIBS
@@ -343,15 +336,15 @@ IF(APPLE)
                                  " COMPONENT Runtime)
     endforeach()
 
-    #if(OGRE)
-    INSTALL(CODE "
-        execute_process(COMMAND bash -c \"cp -fR ~/Downloads/OgreSDK/lib/macosx/Release/* ${CMAKE_INSTALL_PREFIX}/ibex.app/Contents/Frameworks/\")
-        " COMPONENT Runtime)
-    #endif(OGRE)
+    if(OGRE)
+        INSTALL(CODE "
+            execute_process(COMMAND bash -c \"cp -fR ~/Downloads/OgreSDK/lib/macosx/Release/* ${CMAKE_INSTALL_PREFIX}/ibex.app/Contents/Frameworks/\")
+            " COMPONENT Runtime)
+    endif(OGRE)
 
     # To Create a package, one can run "cpack -G DragNDrop CPackConfig.cmake" on Mac OS X
     # where CPackConfig.cmake is created by including CPack
     # And then there's ways to customize this as well
-    #set(CPACK_BINARY_DRAGNDROP ON)
-    #include(CPack)
+    set(CPACK_BINARY_DRAGNDROP ON)
+    include(CPack)
 ENDIF(APPLE)
