@@ -83,12 +83,12 @@ protected:
 
   void NativeRender()
   {
-      static bool init = false;
-      if(!init) {
-          init = true;
-          startDesktopCapture(0, 0);
-      }
-    const double s = (double)width/(double)height;
+    static bool init = false;
+    if(!init) {
+      init = true;
+      startDesktopCapture(0, 0);
+    }
+    const double s = (physicalHeight != 0) ? (double)physicalWidth/(double)physicalHeight : (double)width/(double)height;
 
     glEnable(GL_DEPTH_TEST);
     glDisable(GL_CULL_FACE);

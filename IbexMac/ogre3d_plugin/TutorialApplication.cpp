@@ -24,6 +24,7 @@ This source file is part of the
 #include <RenderSystems/GL/OgreGLTextureManager.h>
 
 #include "DotSceneLoader.h"
+#include "../ibex.h"
 
 using namespace Ogre;
 
@@ -74,7 +75,7 @@ void Ogre3DRendererPlugin::createDesktopObject() {
     GLTexturePtr t = GLTextureManager::getSingleton().createManual("DynamicTexture", // name
         Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
         Ogre::TEX_TYPE_2D,      // type
-        1280, 800,         // width & height
+        physicalWidth, physicalHeight,         // width & height
         1, //depth
         MIP_DEFAULT,//0,                // number of mipmaps
         Ogre::PF_BYTE_RGBA,     // pixel format
@@ -208,7 +209,7 @@ void Ogre3DRendererPlugin::createScene()
   Ogre::MeshManager::getSingleton().createPlane("OceanSurface",
           Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
           oceanSurface,
-          5000, 5000, 50, 50, true, 1, 1, 1, Ogre::Vector3::UNIT_Z);
+          3000, 3000, 40, 40, true, 1, 1, 1, Ogre::Vector3::UNIT_Z);
 
   Entity *pWaterEntity = mSceneMgr->createEntity( "OceanSurface", "OceanSurface" );
   mSceneMgr->getRootSceneNode()->createChildSceneNode()->attachObject(pWaterEntity);

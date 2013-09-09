@@ -73,6 +73,19 @@ bullet physics how to build:
     cmake .. -G "Unix Makefiles" -DINSTALL_LIBS=ON #-DBUILD_SHARED_LIBS=ON                                                                                                                   
     make -j4
     sudo make install
+    
+Updated cmake install method:
+
+	# at the same level as the ibex checkout directory
+    mkdir build
+    cmake -DCMAKE_INSTALL_PREFIX:PATH=`pwd` ../ibex/IbexMac
+    make install
+or
+
+	# at the same level as the ibex checkout directory
+	mkdir build
+    cmake -DCMAKE_INSTALL_PREFIX:PATH=`pwd` ../ibex/IbexMac -G Xcode
+    # switch to the ibex_run target and hit Command+B
 
 ### Windows
 Visual Studio 2012 - Build and run from Visual Studio, Rift SDK must be at same level as ibex folder and named: OculusSDK.

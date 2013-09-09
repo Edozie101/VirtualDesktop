@@ -263,7 +263,7 @@ void BaseApplication::loadResources(void)
 //-------------------------------------------------------------------------------------
 void BaseApplication::go(void)
 {
-    Ogre::String workingDir = Ogre::macBundlePath()+"/Contents/Resources";
+    Ogre::String workingDir = Ogre::macBundlePath()+"/Contents/Resources/";
     chdir(workingDir.c_str());
     std::cout << "working directory: "+workingDir+"\n";
     

@@ -112,7 +112,10 @@ if(OGRE)
     if( OGRE_FOUND  )
       add_definitions( -DENABLE_OGRE3D )
       #set(OGRE_INCLUDE_FLAGS "-I${OGRE_INCLUDE_DIRS}")
-      set(OGRE_PLUGIN_FILES "ogre3d_plugin/BaseApplication.cpp" "ogre3d_plugin/TutorialApplication.cpp" "ogre3d_plugin/DotSceneLoader.cpp")
+      set(OGRE_PLUGIN_FILES "ogre3d_plugin/BaseApplication.cpp" "ogre3d_plugin/TutorialApplication.cpp" "ogre3d_plugin/DotSceneLoader.cpp"
+      "ogre3d_plugin/BaseApplication.h" "ogre3d_plugin/TutorialApplication.h" "ogre3d_plugin/DotSceneLoader.h"
+      "ogre3d_plugin/NativeRenderSystemCommands.h"
+         )
 
       include_directories( ${OIS_INCLUDE_DIRS}
             ${OGRE_INCLUDE_DIRS}
