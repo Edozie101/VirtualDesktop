@@ -23,7 +23,9 @@ This source file is part of the
 
 //-------------------------------------------------------------------------------------
 BaseApplication::BaseApplication(Display *dpy_, unsigned long screen_, Window window_, XVisualInfo *visualinfo_, unsigned long context_)
-    : mRoot(0),
+    :
+    windowId(0),
+    mRoot(0),
     mCamera(0),
     mCamera2(0),
     mSceneMgr(0),
@@ -42,8 +44,7 @@ BaseApplication::BaseApplication(Display *dpy_, unsigned long screen_, Window wi
     screen(screen_),
     window(window_),
     visualinfo(visualinfo_),
-    context(context_),
-    windowId(0)
+    context(context_)
 {
 }
 
@@ -62,31 +63,34 @@ BaseApplication::~BaseApplication(void)
 //-------------------------------------------------------------------------------------
 bool BaseApplication::configure()
 {
-//   mRoot->loadPlugin("/usr/lib/x86_64-linux-gnu/OGRE-1.8.0/RenderSystem_GL");
-//  mRoot->loadPlugin("/usr/lib/x86_64-linux-gnu/OGRE-1.8.0/Plugin_OctreeSceneManager");
-//  mRoot->loadPlugin("/usr/lib/x86_64-linux-gnu/OGRE-1.8.0/Plugin_OctreeZone");
-//  mRoot->loadPlugin("/usr/lib/x86_64-linux-gnu/OGRE-1.8.0/Plugin_BSPSceneManager");
-//  mRoot->loadPlugin("/usr/lib/x86_64-linux-gnu/OGRE-1.8.0/Plugin_ParticleFX");
-//  mRoot->loadPlugin("/usr/lib/x86_64-linux-gnu/OGRE-1.8.0/Plugin_PCZSceneManager");
-
+    std::cerr << "configure(), mRoot: " << mRoot << std::endl;
    const Ogre::RenderSystemList &rs = mRoot->getAvailableRenderers();
+    std::cerr << "configure() got available renderers" << rs.size() << std::endl;
+    std::cerr << "configure() got available renderers" << rs.at(0) << std::endl;
+    std::cerr << "configure() got available renderers" << rs.at(0)->getName() << std::endl;
    if(rs.size()&&rs.at(0)->getName().compare("RenderSystem_GL")){
+       std::cerr << "found renderGL" << std::endl;
            Ogre::RenderSystem * r=rs.at(0);
+            std::cerr << "configure() got rendersystem, about to set on mRoot: " << mRoot << std::endl;
            mRoot->setRenderSystem(r);
+       std::cerr << "setRender system for mRoot" << std::endl;
            r->setConfigOption("Full Screen","Yes");
-//           r->setConfigOption("Video Mode","1440 x 900 @ 32-bit colour");
+           r->setConfigOption("Video Mode","1440 x 900 @ 32-bit colour");
    }else{
+       std::cerr << "exiting" << std::endl;
            exit(1);
    }
+    std::cerr << "configure()... got renderer" << std::endl;
 
-  std::ostringstream out;
+    // essential due to localle support
+    Ogre::String out;
 #ifdef __APPLE__
-    out << (unsigned long)window;
+    out = Ogre::StringConverter::toString((unsigned long)window);
 #else
-  out << (unsigned long)dpy << ":";
-  out << (unsigned long)screen << ":";
-  out << (unsigned long)window << ":";
-  out << (unsigned long)visualinfo;
+    out = Ogre::StringConverter::toString((unsigned long)dpy)+Ogre::String(":");
+    out += Ogre::StringConverter::toString((unsigned long)screen)+Ogre::String(":");
+    out += Ogre::StringConverter::toString((unsigned long)window)+Ogre::String(":");
+    out += Ogre::StringConverter::toString((unsigned long)visualinfo);
 #endif
     
 
@@ -95,32 +99,22 @@ bool BaseApplication::configure()
   Ogre::NameValuePairList params;
   params[Ogre::String("macAPI")] = "cocoa";
   params[Ogre::String("macAPICocoaUseNSView")] = "true";
-  params[Ogre::String("externalWindowHandle")] = out.str();
-//  params[Ogre::String("parentWindowHandle")] = out.str();
-//  params[Ogre::String("externalGLControl")]    = "true";
-//  params[Ogre::String("externalGLContext")]    = out2.str();
-//  params[Ogre::String("currentGLContext")] = "true";
+  params[Ogre::String("externalWindowHandle")] = out;
 
-  mWindow = mRoot->initialise(false);//, "TutorialApplication Render Window");
-  mWindow = mRoot->createRenderWindow( "Ibex", 1440, 900, true, &params);
-
-//    Ogre::String name = "Ibex";
-//        mWindow = mRoot->createRenderWindow( "ibex", width, height, true);//, &params);
-    // Show a configure box and exit if user clicked cancel
-//    if(!mRoot->showConfigDialog())
-//        return true;
-//    mWindow = mRoot->initialise(true, "ibex");//true, "ibex");
-    mWindow->getCustomAttribute("WINDOW",&windowId);
-
-//    Ogre::OSXCocoaWindow* videoOutputCocoa = static_cast<Ogre::OSXCocoaWindow*>(mWindow);
-//    NSOpenGLContext* mGLContext = videoOutputCocoa->nsopenGLContext();
-//    GLRenderSystem *rs = static_cast<GLRenderSystem*>(Root::getSingleton().getRenderSystem());
-//    OSXCocoaContext *mainContext = (OSXCocoaContext*)rs->_getMainContext();
-//    void *shareContext = mainContext == 0 ? 0 : mainContext->getContext();
-//    void *mGLPixelFormat = mainContext == 0 ? 0 : mainContext->getPixelFormat();
-////    mGLContext = [[NSOpenGLContext alloc] initWithFormat:mGLPixelFormat shareContext:shareContext];
+    std::cerr << "initializing window... using external handle: " << window << std::endl;
+//    mWindow = mRoot->initialise(true, "TutorialApplication Render Window");
+    mWindow = mRoot->initialise(false);
+    mWindow = mRoot->createRenderWindow( "Ibex", 1440, 900, true, &params);
+    std::cerr << "initializing window done" << std::endl;
+    if(mWindow->getWidth() == 0 || mWindow->getHeight() == 0) {
+        std::cerr << "abort: error with mWindow dimensions: " << mWindow->getWidth() << "x" << mWindow->getHeight() << std::endl;
+        abort();
+    }
     
-    std::cerr << "Ogre Window ID: " << windowId << ", input windowId: " << out.str() << std::endl;
+    mRoot->getRenderSystem()->setConfigOption("RTT Preferred Mode", "PBuffer");
+    mWindow->getCustomAttribute("WINDOW",&windowId);
+    
+    std::cerr << "Ogre Window ID: " << windowId << ", input windowId: " << out << std::endl;
     return true;
 }
 
@@ -184,7 +178,13 @@ void BaseApplication::createFrameListener(void)
     //Register as a Window listener
     Ogre::WindowEventUtilities::addWindowEventListener(mWindow, this);
 
-    mTrayMgr = new OgreBites::SdkTrayManager("InterfaceName", mWindow, mMouse, this);
+    OgreBites::InputContext input;
+    input.mAccelerometer = NULL;
+    input.mKeyboard = mKeyboard;
+    input.mMouse = mMouse;
+    input.mMultiTouch = NULL;
+    
+    mTrayMgr = new OgreBites::SdkTrayManager(Ogre::String("InterfaceName"), mWindow, input, this);
     mTrayMgr->showFrameStats(OgreBites::TL_BOTTOMLEFT);
     mTrayMgr->showLogo(OgreBites::TL_BOTTOMRIGHT);
     mTrayMgr->hideCursor();
@@ -244,6 +244,7 @@ void BaseApplication::setupResources(void)
         {
             typeName = i->first;
             archName = i->second;
+            std::cerr << "Ogre::ResourceGroupManager::getSingleton().addResourceLocation(" << archName << ", " << typeName << ", " << secName << ")" << std::endl;
             Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
                 archName, typeName, secName);
         }
@@ -262,7 +263,7 @@ void BaseApplication::loadResources(void)
 //-------------------------------------------------------------------------------------
 void BaseApplication::go(void)
 {
-    Ogre::String workingDir = Ogre::macBundlePath()+"/Contents/Resources/";
+    Ogre::String workingDir = Ogre::macBundlePath()+"/Contents/Resources";
     chdir(workingDir.c_str());
     std::cout << "working directory: "+workingDir+"\n";
     
@@ -295,9 +296,11 @@ void BaseApplication::render() {
 //-------------------------------------------------------------------------------------
 bool BaseApplication::setup(void)
 {
+    std::cerr << "mPluginsCfg: " << mPluginsCfg << std::endl;
     mRoot = new Ogre::Root(mPluginsCfg);
-
-    setupResources();
+    if(mRoot == 0) {
+        std::cerr << "Couldn't create root!" << std::endl;
+    }
 
     bool carryOn = configure();
     if (!carryOn) return false;
@@ -311,7 +314,9 @@ bool BaseApplication::setup(void)
 
     // Create any resource listeners (for loading screens)
     createResourceListener();
+    
     // Load resources
+    setupResources();
     loadResources();
 
     // Create the scene
