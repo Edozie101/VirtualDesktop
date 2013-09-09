@@ -74,17 +74,21 @@ bullet physics how to build:
     make -j4
     sudo make install
     
-Updated cmake install method:
+Updated cmake install method for regular build:
 
 	# at the same level as the ibex checkout directory
     mkdir build
     cmake -DCMAKE_INSTALL_PREFIX:PATH=`pwd` ../ibex/IbexMac
+    # or with Ogre
+    # cmake -DCMAKE_INSTALL_PREFIX:PATH=`pwd` ../ibex/IbexMac -DOGRE=1
     make install
 or
 
 	# at the same level as the ibex checkout directory
 	mkdir build
     cmake -DCMAKE_INSTALL_PREFIX:PATH=`pwd` ../ibex/IbexMac -G Xcode
+    # or with Ogre
+    # cmake -DCMAKE_INSTALL_PREFIX:PATH=`pwd` ../ibex/IbexMac -DOGRE=1 -G Xcode
     # switch to the ibex_run target and hit Command+B
 
 ### Windows
