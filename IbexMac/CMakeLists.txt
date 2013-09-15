@@ -132,6 +132,10 @@ if(OGRE)
     
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OGRE_INCLUDE_FLAGS}")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OGRE_INCLUDE_FLAGS}")
+    
+    add_subdirectory(Dependencies/Hydrax)
+    add_subdirectory(Dependencies/SkyX)
+    set(OGRE_LIBS ${OGRE_LIBS} ibex_hydrax ibex_skyx)
 endif(OGRE)
 
 add_subdirectory(windows)
@@ -155,6 +159,7 @@ IF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 
 include_directories(
+  ${CMAKE_CURRENT_SOURCE_DIR}/Dependencies
      ${CMAKE_CURRENT_SOURCE_DIR}
      ${Boost_INCLUDE_DIR}
  )
@@ -215,7 +220,7 @@ target_link_libraries(ibex
     ${OSX_LIBS}
 )
  
-set_target_properties( ibex PROPERTIES RESOURCE "${RESOURCES}" )
+set_target_properties( ibex PROPERTIES RESOURCE "${RESOURCES}")
 
 #--------------------------------------------------------------------------------
 # For Apple set the icns file containing icons

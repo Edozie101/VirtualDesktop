@@ -5,19 +5,19 @@
 	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
 	<false/>
 	<key>IDESourceControlProjectIdentifier</key>
-	<string>15DF6C8D-3701-4AF4-B865-F3A1895FBD10</string>
+	<string>848AE314-1C06-40FD-93D4-AA8BC486C928</string>
 	<key>IDESourceControlProjectName</key>
 	<string>IbexMac</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
-		<key>CB8B2B19-5996-4C9E-B481-63EF657BDE1B</key>
+		<key>99FFCA8A-8C76-466E-90CD-B257642FF0AE</key>
 		<string>https://bitbucket.org/druidsbane/ibex.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
 	<string>IbexMac.xcodeproj/project.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
-		<key>CB8B2B19-5996-4C9E-B481-63EF657BDE1B</key>
+		<key>99FFCA8A-8C76-466E-90CD-B257642FF0AE</key>
 		<string>../..</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
@@ -25,14 +25,14 @@
 	<key>IDESourceControlProjectVersion</key>
 	<integer>110</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>CB8B2B19-5996-4C9E-B481-63EF657BDE1B</string>
+	<string>99FFCA8A-8C76-466E-90CD-B257642FF0AE</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>CB8B2B19-5996-4C9E-B481-63EF657BDE1B</string>
+			<string>99FFCA8A-8C76-466E-90CD-B257642FF0AE</string>
 			<key>IDESourceControlWCCName</key>
 			<string>ibex</string>
 		</dict>
