@@ -22,7 +22,7 @@ http://www.gnu.org/copyleft/lesser.txt.
 --------------------------------------------------------------------------------
 */
 
-#include "Module.h"
+#include <Modules/Module.h>
 
 namespace Hydrax{namespace Module
 {

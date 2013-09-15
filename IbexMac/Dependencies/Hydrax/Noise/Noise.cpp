@@ -22,7 +22,7 @@ http://www.gnu.org/copyleft/lesser.txt.
 --------------------------------------------------------------------------------
 */
 
-#include "Noise.h"
+#include <Noise/Noise.h>
 
 namespace Hydrax{namespace Noise
 {

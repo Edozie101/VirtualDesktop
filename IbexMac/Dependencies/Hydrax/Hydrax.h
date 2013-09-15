@@ -125,17 +125,7 @@ namespace Hydrax
 			return mCfgFileManager->save(File, Path);
 		}
 
-		/** Save hydrax config to a string
-		    @param Data String to contain the output
-			@return false if an error has been ocurred(Check the log file in this case).
-			@remarks If module isn't set, module/noise options won't be saved.
-		 */
-		inline const bool saveCfg(Ogre::String &Data) const
-		{
-			return mCfgFileManager->getSaveString(Data);
-		}
-
-        /** Load config from file
+		/** Load config from file
 		    @param File File name
 			@return false if an error has been ocurred(Check the log file in this case).
 			@remarks The file must be registred in Hydrax resource group.
