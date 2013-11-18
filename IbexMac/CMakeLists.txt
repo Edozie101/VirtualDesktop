@@ -23,7 +23,7 @@ IF(APPLE)
     SET (CMAKE_C_COMPILER             "/usr/bin/clang")
     SET (CMAKE_CXX_COMPILER             "/usr/bin/clang++")
 
-   SET(CMAKE_OSX_DEPLOYMENT_TARGET "10.8" CACHE STRING "Deployment target for OSX" FORCE)
+   SET(CMAKE_OSX_DEPLOYMENT_TARGET "10.9" CACHE STRING "Deployment target for OSX" FORCE)
 
    INCLUDE_DIRECTORIES ( /System/Library/Frameworks )
    FIND_LIBRARY(COCOA_LIBRARY Cocoa)
@@ -160,6 +160,7 @@ ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/Dependencies
+  ${CMAKE_CURRENT_SOURCE_DIR}/Dependencies/SkyX
      ${CMAKE_CURRENT_SOURCE_DIR}
      ${Boost_INCLUDE_DIR}
  )
