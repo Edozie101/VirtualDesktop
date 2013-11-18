@@ -31,8 +31,7 @@
 
 #include "SimpleWorldRendererPlugin.h"
 
-#include "OVR.h"
-using namespace OVR;
+#include <oculus/Rift.h>
 
 void renderSphericalDisplay(double r, double numHorizontalLines, double numVerticalLines, double width, double height) {
     glPushMatrix();
@@ -285,35 +284,10 @@ void SimpleWorldRendererPlugin::init() {
   loadSkybox();
 }
 
-double orientationRift[16] = {1, 0, 0, 0,
-                              0, 1, 0, 0,
-                              0, 0, 1, 0,
-                              0, 0, 0, 1};
-double *getRiftOrientation() {
-    if(!FusionResult.IsAttachedToSensor()) return orientationRift;
-        Quatf quaternion = FusionResult.GetPredictedOrientation();//FusionResult.GetOrientation();
-
-		//float yaw, pitch, roll;
-		//quaternion.GetEulerAngles<Axis_Y, Axis_X, Axis_Z>(&yaw, &pitch, &roll);
-
-		//std::cout << " Yaw: " << RadToDegree(yaw) << 
-		//	", Pitch: " << RadToDegree(pitch) << 
-		//	", Roll: " << RadToDegree(roll) << std::endl;
-
-		Matrix4f hmdMat(quaternion);
-		for(int i = 0; i < 16; ++i) {
-			orientationRift[i] = ((float*)hmdMat.M)[i];
-		}
-		return orientationRift;
-}
-
 void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDiff_) {
-    if (USE_FBO) {
-		//glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	    //glClearColor(0, 0, 0, 1);
-//        glColor4f(1, 1, 1, 1);
-	    glClear(/*GL_COLOR_BUFFER_BIT |*/ GL_DEPTH_BUFFER_BIT);
-	    //glColor4f(1, 1, 1, 1);
+    const bool renderCachedShader = false;
+    if (USE_FBO && renderCachedShader) {
+	    glClear(GL_DEPTH_BUFFER_BIT);
 
         glBindFramebuffer(GL_FRAMEBUFFER, fbos[0]);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -323,8 +297,10 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
 			//exit(EXIT_FAILURE);
 		}
     }
-
-	glViewport(0,0, textureWidth/2.0, textureHeight);
+    
+    if(renderCachedShader) {
+        glViewport(0,0, textureWidth/2.0, textureHeight);
+    }
 
     static double *orientation;
 #ifdef _WIN32
@@ -340,10 +316,19 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
 #endif
   //        gluInvertMatrix(get_orientation(), orientation);
 #endif
+    
+    
   for (int i2 = 0; i2 < 2; ++i2) {
+      if(!renderCachedShader) {
+          glViewport(i2*textureWidth/2.0,0, textureWidth/2.0, textureHeight);
+      }
 //      checkForErrors();
     if (USE_FBO) {
-      //glBindFramebuffer(GL_FRAMEBUFFER, fbos[i2]);
+        if(!renderCachedShader) {
+            glBindFramebuffer(GL_FRAMEBUFFER, fbos[i2]);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            glPushMatrix();
+        }
 		//glBindFramebuffer(GL_FRAMEBUFFER, fbos[0]);
       //glPushMatrix();
     } else {
@@ -351,12 +336,14 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
         break;
     }
 
-	//glEnable (GL_SCISSOR_TEST);
-	if(i2 == 0) {
-		//glViewport(0,0, textureWidth/2.0, textureHeight);
-	} else {
-		glViewport(textureWidth/2.0,0, textureWidth/2.0, textureHeight);
-	}
+      if(renderCachedShader) {
+        //glEnable (GL_SCISSOR_TEST);
+        if(i2 == 0) {
+            //glViewport(0,0, textureWidth/2.0, textureHeight);
+        } else {
+            glViewport(textureWidth/2.0,0, textureWidth/2.0, textureHeight);
+        }
+      }
 
 	//glScissor((i2 == 0)? 0 : textureWidth/2.0, 0, textureWidth/2.0, textureHeight);
 
@@ -536,15 +523,21 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
     //if (USE_FBO) {
     //  glPopMatrix();
     //}
+      
+      if(USE_FBO && !renderCachedShader) {
+          glPopMatrix();
+      }
+
   }
 
     glViewport(0,0, windowWidth, windowHeight);
   if (USE_FBO) {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    //glClearColor(0, 0, 0, 1);
-	//glColor4f(1, 1, 1, 1);
-    //glClear(/*GL_COLOR_BUFFER_BIT | */GL_DEPTH_BUFFER_BIT);
-    //glColor4f(1, 1, 1, 1);
+      if(!renderCachedShader) {
+        glClearColor(0, 0, 0, 1);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glColor4f(1, 1, 1, 1);
+      }
 
     if (ortho) {
       glMatrixMode(GL_PROJECTION);
@@ -555,11 +548,16 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
     }
       
     if(barrelDistort) {
-		if(lensParametersChanged) {
-			render_distortion_lenses();
-		}
+        if(renderCachedShader) {
+            if(lensParametersChanged) {
+                render_distortion_lenses();
+            }
 
-        render_both_frames(textures[0]);
+            render_both_frames(textures[0]);
+        } else {
+            render_distorted_frame(true, textures[0]);
+            render_distorted_frame(false, textures[1]);
+        }
     } else {
         if(!SBS) {
             glViewport(0,0, windowWidth, windowHeight);
@@ -624,7 +622,6 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
       }
         }
     }
-
     //if (ortho) {
     //  glMatrixMode(GL_PROJECTION);
     //  glLoadIdentity();
@@ -632,7 +629,6 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
 
     //  glMatrixMode(GL_MODELVIEW);
     //}
-    //glViewport(0,0, width, height);
   }
 }
 

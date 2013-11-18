@@ -48,6 +48,7 @@ extern char RiftMonitorName[33];
 extern int RiftDisplayId;
 extern float EyeDistance;
 extern float DistortionK[4];
+extern float DistortionChromaticAberration[4];
 
 #if defined(__APPLE__) || defined(WIN32)
 typedef unsigned int Display;

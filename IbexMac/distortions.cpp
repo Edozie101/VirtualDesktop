@@ -98,18 +98,22 @@ GLuint a_position;
 GLuint a_texCoord;
 GLuint textureUniform;
 GLuint lensTextureUniform;
+GLuint ScaleUniformCachedShader;
+GLuint LensCenterUniformCachedShader;
+GLuint ScreenCenterUniformCachedShader;
 
 GLuint ScreenCenterUniform;
 GLuint LensCenterUniform;
 GLuint ScaleUniform;
 GLuint ScaleInUniform;
 GLuint HmdWarpParamUniform;
+GLuint ChromAbParamUniform;
 
 char RiftMonitorName[33];
 int RiftDisplayId;
 float EyeDistance = 0.0640000030;
-float DistortionK[4] = {1.00000000, 0.219999999, 0.239999995, 0.000000000};
-
+float DistortionK[4] = {1.00000000, 0.22, 0.24, 0.000000000};
+float DistortionChromaticAberration[4] = {0.996f, -0.004f, 1.014f, 0.0f};
 static GLuint make_program(GLuint vertex_shader, GLuint fragment_shader)
 {
   checkForErrors();
@@ -136,12 +140,17 @@ static GLuint make_program(GLuint vertex_shader, GLuint fragment_shader)
   a_position = glGetAttribLocation(program, "a_position");
   a_texCoord = glGetAttribLocation(program, "a_texCoord");
 
-  textureUniform = glGetUniformLocation(program, "texture");
-  lensTextureUniform = glGetUniformLocation(program, "lensTexture");
-
+  LensCenterUniform = glGetUniformLocation(program, "LensCenter");
+  ScreenCenterUniform = glGetUniformLocation(program, "ScreenCenter");
+  ScaleUniform = glGetUniformLocation(program, "Scale");
+  ScaleInUniform = glGetUniformLocation(program, "ScaleIn");
+  HmdWarpParamUniform = glGetUniformLocation(program, "HmdWarpParam");
+  ChromAbParamUniform = glGetUniformLocation(program, "ChromAbParam");
+  textureUniform = glGetUniformLocation(program, "Texture0");
+    
   glUseProgram(program);
   glUniform1i(textureUniform, 0);
-  glUniform1i(lensTextureUniform, 1);
+//  glUniform1i(lensTextureUniform, 1);
 
   checkForErrors();
   std::cerr << "make_program end" << std::endl;
@@ -320,71 +329,94 @@ void render_both_frames(const GLuint textureId)
 
 void render_distorted_frame(const bool left, const GLuint textureId)
 {
-  glUseProgram(distortion_shader.program);
-
-  if(left)
-    glBindVertexArray(vao1);
-  else
-    glBindVertexArray(vao2);
-
-  glActiveTexture(GL_TEXTURE0);
-  glUniform1i(textureUniform, 0);
-  glBindTexture(GL_TEXTURE_2D, textureId);
-  glActiveTexture(GL_TEXTURE1);
-  glUniform1i(lensTextureUniform, 1);
-  glBindTexture(GL_TEXTURE_2D, lensTexture);
-
-  glDrawElements(GL_TRIANGLES, sizeof(indices)/sizeof(indices[0]), GL_UNSIGNED_SHORT, 0);
+    glUseProgram(distortion_shader.program);
     
-  glActiveTexture(GL_TEXTURE1);
-  glBindTexture(GL_TEXTURE_2D, 0);
-  glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D, 0);
-  glBindVertexArray(0);
-
-  glUseProgram(0);
+	if(left)
+		glBindVertexArray(vao1);
+	else
+		glBindVertexArray(vao2);
+    
+    glActiveTexture(GL_TEXTURE0);
+    glUniform1i(textureUniform, 0);
+    glBindTexture(GL_TEXTURE_2D, textureId);
+    
+    GLfloat scaleFactor = 0.8;
+	GLfloat DistortionXCenterOffset;
+    if (left) {
+        DistortionXCenterOffset = 0.25f;
+    }
+    else {
+        DistortionXCenterOffset = -0.25f;
+    }
+	GLfloat x = (left) ? 0 : 0.5;
+	GLfloat y = 0;
+	GLfloat w = 0.5;
+	GLfloat h = 1;
+	GLfloat as = width/2.0/height;//w/h;
+	glUniform2f(LensCenterUniform, x + (w + DistortionXCenterOffset * 0.5f)*0.5f, y + h*0.5f);
+    glUniform2f(ScreenCenterUniform, x + w*0.5f, y + h*0.5f);
+    glUniform2f(ScaleUniform, (w/2.0f) * scaleFactor, (h/2.0f) * scaleFactor * as);;
+    glUniform2f(ScaleInUniform, (2.0f/w), (2.0f/h) / as);
+    glUniform4fv(HmdWarpParamUniform, 1, DistortionK);
+	glUniform4fv(ChromAbParamUniform, 1, DistortionChromaticAberration);
+    
+    
+    glDrawElements(GL_TRIANGLES, sizeof(indices)/sizeof(indices[0]), GL_UNSIGNED_SHORT, 0);
+    //    checkForErrors();
+    
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glBindVertexArrayAPPLE(0);
+    
+    glUseProgram(0);
 }
+
 
 int init_distortion_shader()
 {
-  char path[2048];
-  strcpy(path, mResourcePath);
-  strcat(path, "/resources/shaders/distortions.v.glsl");
-  std::cerr << "loading shader: " << path << std::endl;
-  distortion_shader.vertex_shader = make_shader(
-						GL_VERTEX_SHADER,
-						path
-						);
-  if (distortion_shader.vertex_shader == 0)
-    return 0;
-
-  strcpy(path, mResourcePath);
-  strcat(path, "/resources/shaders/distortions.f.glsl");
-  std::cerr << "loading shader: " << path << std::endl;
-  distortion_shader.fragment_shader = make_shader(
-						  GL_FRAGMENT_SHADER,
-						  path
-						  );
-  if (distortion_shader.fragment_shader == 0)
-    return 0;
-
-  distortion_shader.program = make_program(
-					   distortion_shader.vertex_shader,
-					   distortion_shader.fragment_shader
-					   );
-  if (distortion_shader.program == 0)
-    return 0;
-
-  if(!IRRLICHT && !OGRE3D) {
-    bool success = setup_buffers();
-    if(!success) {
-      std::cerr << "init_distortion_shader: failure" << std::endl;
-      return 0;
+    char path[2048];
+    strcpy(path, mResourcePath);
+    strcat(path, "/resources/shaders/distortions.v.glsl");
+    std::cerr << "loading shader: " << path << std::endl;
+    distortion_shader.vertex_shader = make_shader(
+                                                  GL_VERTEX_SHADER,
+                                                  path
+                                                  );
+    if (distortion_shader.vertex_shader == 0)
+        return 0;
+    
+    strcpy(path, mResourcePath);
+    
+    bool isCachedShader = false;
+    if(isCachedShader) {
+        strcat(path, "/resources/shaders/distortions.f.glsl");
+    } else {
+        strcat(path, "/resources/shaders/distortions_full.f.glsl");
     }
-  }
-  std::cerr << "init_distortion_shader: success" << std::endl;
-
-  return 1;
+    std::cerr << "loading shader: " << path << std::endl;
+    distortion_shader.fragment_shader = make_shader(
+                                                    GL_FRAGMENT_SHADER,
+                                                    path
+                                                    );
+    if (distortion_shader.fragment_shader == 0)
+        return 0;
+    
+    distortion_shader.program = make_program(
+                                             distortion_shader.vertex_shader,
+                                             distortion_shader.fragment_shader
+                                             );
+    if (distortion_shader.program == 0)
+        return 0;
+    
+    if(!IRRLICHT && !OGRE3D) {
+        bool success = setup_buffers();
+        if(!success) {
+            std::cerr << "init_distortion_shader: failure" << std::endl;
+            return 0;
+        }
+    }
+    std::cerr << "init_distortion_shader: success" << std::endl;
+    
+    return 1;
 }
 
 //--------------
@@ -441,12 +473,15 @@ int init_distortion_shader_cache()
   if (distortion_shader_cache.fragment_shader == 0)
     return 0;
     
-  distortion_shader_cache.program = make_program_lens(
-						      distortion_shader_cache.vertex_shader,
-						      distortion_shader_cache.fragment_shader
-						      );
-  if (distortion_shader_cache.program == 0)
-    return 0;
+    bool isCachedShader = false;
+    if(isCachedShader) {
+      distortion_shader_cache.program = make_program_lens(
+                                  distortion_shader_cache.vertex_shader,
+                                  distortion_shader_cache.fragment_shader
+                                  );
+      if (distortion_shader_cache.program == 0)
+        return 0;
+    }
     
   if(!IRRLICHT && !OGRE3D) {
     bool success = setup_lens_fbo();

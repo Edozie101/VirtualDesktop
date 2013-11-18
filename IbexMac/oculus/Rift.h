@@ -26,4 +26,6 @@ extern int riftResolutionY;
 void initRift();
 void cleanUpRift();
 
+double *getRiftOrientation();
+
 #endif /* Rift_H_ */

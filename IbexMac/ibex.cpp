@@ -253,20 +253,21 @@ void prep_framebuffers()
   glGenRenderbuffers(1, &depthBuffer);
   glGenTextures(2, textures);
 
-    for (int i = 0; i < 1; ++i) {//2; ++i) {
-    glBindFramebuffer(GL_FRAMEBUFFER, fbos[i]);
-    glBindTexture(GL_TEXTURE_2D, textures[i]);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, textureWidth, textureHeight, 0,
-                 GL_RGBA, GL_UNSIGNED_BYTE, 0);
-    glFramebufferTexture2D (GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-                            GL_TEXTURE_2D, textures[i], 0);
+    bool isCachedShader = false;
+    for (int i = 0; i < ((isCachedShader) ? 1 : 2); ++i) {
+        glBindFramebuffer(GL_FRAMEBUFFER, fbos[i]);
+        glBindTexture(GL_TEXTURE_2D, textures[i]);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, textureWidth, textureHeight, 0,
+                     GL_RGBA, GL_UNSIGNED_BYTE, 0);
+        glFramebufferTexture2D (GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                                GL_TEXTURE_2D, textures[i], 0);
 
-    glBindRenderbuffer(GL_RENDERBUFFER, depthBuffer);
-    if (i == 0) {
-      glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24,
-                            textureWidth, textureHeight);
+        glBindRenderbuffer(GL_RENDERBUFFER, depthBuffer);
+        if (i == 0) {
+          glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24,
+                                textureWidth, textureHeight);
     }
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
                               GL_RENDERBUFFER, depthBuffer);
