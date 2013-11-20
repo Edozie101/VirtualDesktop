@@ -45,7 +45,7 @@ extern char fpsString[32];
 extern char mResourcePath[1024];
 
 extern char RiftMonitorName[33];
-extern int RiftDisplayId;
+extern long RiftDisplayId;
 extern float EyeDistance;
 extern float DistortionK[4];
 extern float DistortionChromaticAberration[4];

@@ -18,6 +18,8 @@
 
 #include "opengl_helpers.h"
 
+#include "oculus/Rift.h"
+
 #ifdef _WIN32
 #include "ibex_win_utils.h"
 #else
@@ -110,7 +112,7 @@ GLuint HmdWarpParamUniform;
 GLuint ChromAbParamUniform;
 
 char RiftMonitorName[33];
-int RiftDisplayId;
+long RiftDisplayId;
 float EyeDistance = 0.0640000030;
 float DistortionK[4] = {1.00000000, 0.22, 0.24, 0.000000000};
 float DistortionChromaticAberration[4] = {0.996f, -0.004f, 1.014f, 0.0f};
@@ -340,25 +342,29 @@ void render_distorted_frame(const bool left, const GLuint textureId)
     glUniform1i(textureUniform, 0);
     glBindTexture(GL_TEXTURE_2D, textureId);
     
-    GLfloat scaleFactor = 0.8;
-	GLfloat DistortionXCenterOffset;
-    if (left) {
-        DistortionXCenterOffset = 0.25f;
-    }
-    else {
-        DistortionXCenterOffset = -0.25f;
-    }
-	GLfloat x = (left) ? 0 : 0.5;
-	GLfloat y = 0;
-	GLfloat w = 0.5;
-	GLfloat h = 1;
-	GLfloat as = width/2.0/height;//w/h;
+    
+    const OVR::Util::Render::DistortionConfig *pDistortion = ((left) ? leftEye : rightEye).pDistortion;
+    const OVR::Util::Render::Viewport VP = ((left) ? leftEye : rightEye).VP;
+    
+    // MA: This is more correct but we would need higher-res texture vertically; we should adopt this
+    // once we have asymmetric input texture scale.
+    const float scaleFactor = 1.0f / pDistortion->Scale;
+    
+	const GLfloat DistortionXCenterOffset = ((left)?1.0:-1.0)*pDistortion->XCenterOffset;
+    
+    const float w = float(VP.w) / float(windowWidth),
+    h = float(VP.h) / float(windowHeight),
+    x = float(VP.x) / float(windowWidth),
+    y = float(VP.y) / float(windowHeight);
+    
+    const float as = float(VP.w) / float(VP.h);
+    
 	glUniform2f(LensCenterUniform, x + (w + DistortionXCenterOffset * 0.5f)*0.5f, y + h*0.5f);
     glUniform2f(ScreenCenterUniform, x + w*0.5f, y + h*0.5f);
     glUniform2f(ScaleUniform, (w/2.0f) * scaleFactor, (h/2.0f) * scaleFactor * as);;
     glUniform2f(ScaleInUniform, (2.0f/w), (2.0f/h) / as);
-    glUniform4fv(HmdWarpParamUniform, 1, DistortionK);
-	glUniform4fv(ChromAbParamUniform, 1, DistortionChromaticAberration);
+    glUniform4fv(HmdWarpParamUniform, 1, pDistortion->K);
+	glUniform4fv(ChromAbParamUniform, 1, pDistortion->ChromaticAberration);
     
     
     glDrawElements(GL_TRIANGLES, sizeof(indices)/sizeof(indices[0]), GL_UNSIGNED_SHORT, 0);

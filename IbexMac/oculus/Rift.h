@@ -17,6 +17,10 @@ extern OVR::SensorFusion FusionResult;
 extern OVR::HMDInfo Info;
 extern bool InfoLoaded;
 extern bool riftConnected;
+extern float renderScale;
+
+extern OVR::Util::Render::StereoEyeParams  leftEye;
+extern OVR::Util::Render::StereoEyeParams  rightEye;
 
 extern int riftX;
 extern int riftY;

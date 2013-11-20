@@ -4,11 +4,27 @@
 
 OVR::Ptr<OVR::DeviceManager>	pManager;
 OVR::Ptr<OVR::HMDDevice>	pHMD;
+OVR::Util::Render::StereoConfig stereo;
 OVR::Ptr<OVR::SensorDevice>	pSensor;
 OVR::SensorFusion*		pFusionResult = 0;
 OVR::HMDInfo			Info;
 bool				InfoLoaded = false;
 bool				riftConnected = false;
+float               renderScale;
+
+OVR::Util::Render::StereoEyeParams  leftEye  = stereo.GetEyeRenderParams(OVR::Util::Render::StereoEye_Left);
+OVR::Util::Render::StereoEyeParams  rightEye = stereo.GetEyeRenderParams(OVR::Util::Render::StereoEye_Right);
+
+// Left eye rendering parameters
+OVR::Util::Render::Viewport         leftVP         = leftEye.VP;
+OVR::Matrix4f                       leftProjection = leftEye.Projection;
+OVR::Matrix4f                       leftViewAdjust = leftEye.ViewAdjust;
+
+// Right eye rendering parameters
+OVR::Util::Render::Viewport         rightVP         = leftEye.VP;
+OVR::Matrix4f                       rightProjection = leftEye.Projection;
+OVR::Matrix4f                       rightViewAdjust = leftEye.ViewAdjust;
+
 
 int riftX = 0;
 int riftY = 0;
@@ -25,6 +41,11 @@ void initRift() {
 
   pHMD = *pManager->EnumerateDevices<OVR::HMDDevice>().CreateDevice();
 
+    stereo.SetFullViewport(OVR::Util::Render::Viewport(0,0, width, height));
+    stereo.SetStereoMode(OVR::Util::Render::Stereo_LeftRight_Multipass);
+    stereo.SetDistortionFitPointVP(-1.0f, 0.0f);
+    renderScale = stereo.GetDistortionScale();
+    
   if (pHMD)
     {
       pSensor = *pHMD->GetSensor();
@@ -40,11 +61,33 @@ void initRift() {
             DistortionK[i] = Info.DistortionK[i];
             DistortionChromaticAberration[i] = Info.ChromaAbCorrection[i];
         }
+        
+        stereo.SetHMDInfo(Info);
+        stereo.SetDistortionFitPointVP(-1.0f, 0.0f);
+        renderScale = stereo.GetDistortionScale();
     }
   else
     {
       pSensor = *pManager->EnumerateDevices<OVR::SensorDevice>().CreateDevice();
     }
+    
+    textureWidth = width * renderScale;
+    textureHeight = height * renderScale;
+    
+    
+    
+leftEye  = stereo.GetEyeRenderParams(OVR::Util::Render::StereoEye_Left);
+rightEye = stereo.GetEyeRenderParams(OVR::Util::Render::StereoEye_Right);
+    
+    // Left eye rendering parameters
+leftVP         = leftEye.VP;
+leftProjection = leftEye.Projection;
+leftViewAdjust = leftEye.ViewAdjust;
+    
+    // Right eye rendering parameters
+rightVP         = leftEye.VP;
+rightProjection = leftEye.Projection;
+rightViewAdjust = leftEye.ViewAdjust;
 
   if (pSensor)
     {
