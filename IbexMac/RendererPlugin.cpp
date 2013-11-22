@@ -11,7 +11,6 @@
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
 #include <OpenGL/glext.h>
-#include <GLUT/glut.h>
 #endif
 
 typedef unsigned long Window;
@@ -24,7 +23,6 @@ typedef unsigned long GLXContext;
 #include <GL/gl.h>
 #include <GL/glu.h>
 //#include <GL/glext.h>
-#include <GL/glut.h>
 
 typedef unsigned long Window;
 typedef unsigned long GLXContext;
@@ -37,7 +35,6 @@ typedef unsigned long GLXContext;
 #include <GL/glx.h>
 #include <GL/glext.h>
 #include <GL/glxext.h>
-#include <GL/glut.h>
 #include <GL/glu.h>
 
 #endif

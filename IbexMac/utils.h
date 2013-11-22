@@ -18,7 +18,6 @@
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
 #include <OpenGL/glext.h>
-#include <GLUT/glut.h>
 
 #else
 #ifdef _WIN32
@@ -27,7 +26,6 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 //#include <GL/glext.h>
-#include <GL/glut.h>
 
 #else
 
@@ -37,7 +35,6 @@
 #include <GL/glx.h>
 #include <GL/glext.h>
 #include <GL/glxext.h>
-#include <GL/glut.h>
 #include <GL/glu.h>
 
 #endif

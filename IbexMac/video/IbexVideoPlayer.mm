@@ -12,7 +12,6 @@
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
 #include <OpenGL/glext.h>
-#include <GLUT/glut.h>
 
 #import "VLCVideoPlayer.h"
 
