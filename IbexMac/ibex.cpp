@@ -108,6 +108,7 @@ bool OGRE3D                 = 0;
 #endif
 bool IRRLICHT               = 0;
 bool SBS                    = 1;
+bool CACHED_SHADER          = 0;
 
 GLuint fbos[2];
 GLuint textures[2];
@@ -253,8 +254,7 @@ void prep_framebuffers()
   glGenRenderbuffers(1, &depthBuffer);
   glGenTextures(2, textures);
 
-    bool isCachedShader = false;
-    for (int i = 0; i < ((isCachedShader) ? 1 : 2); ++i) {
+    for (int i = 0; i < ((CACHED_SHADER) ? 1 : 2); ++i) {
         glBindFramebuffer(GL_FRAMEBUFFER, fbos[i]);
         glBindTexture(GL_TEXTURE_2D, textures[i]);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);

@@ -9,6 +9,8 @@ uniform vec4 ChromAbParam;
 uniform sampler2D Texture0;
 varying vec2 oTexCoord;
 
+//out vec4 FragData[2];
+
 // Scales input texture coordinates for distortion.
 // ScaleIn maps texture coordinates to Scales to ([-1, 1]), although top/bottom will be
 // larger due to aspect ratio.
@@ -24,21 +26,20 @@ void main()
    vec2 tcBlue = LensCenter + Scale * thetaBlue;
    if (!all(equal(clamp(tcBlue, ScreenCenter-vec2(0.25,0.5), ScreenCenter+vec2(0.25,0.5)), tcBlue)))
    {
-       gl_FragColor = vec4(0);
+       gl_FragData[0] = vec4(0);
+       gl_FragData[1] = vec4(0);
        return;
    }
    
-   // Now do blue texture lookup.
-   float blue = texture2D(Texture0, tcBlue).b;
-   
    // Do green lookup (no scaling).
    vec2  tcGreen = LensCenter + Scale * theta1;
-   vec4  center = texture2D(Texture0, tcGreen);
    
    // Do red scale and lookup.
    vec2  thetaRed = theta1 * (ChromAbParam.x + ChromAbParam.y * rSq);
    vec2  tcRed = LensCenter + Scale * thetaRed;
-   float red = texture2D(Texture0, tcRed).r;
    
-   gl_FragColor = vec4(red, center.g, blue, center.a);
+    //gl_FragColor = vec4(0);//red, center.g, blue, center.a);
+    gl_FragData[0] = vec4(tcRed, tcGreen);
+    gl_FragData[1] = vec4(tcBlue, 0.0, 0.0);
 }
+

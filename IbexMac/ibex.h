@@ -96,6 +96,7 @@ extern bool USE_FBO;
 extern bool OGRE3D;
 extern bool IRRLICHT;
 extern bool SBS;
+extern bool CACHED_SHADER;
 
 extern bool controlDesktop;
 extern bool showDialog;
