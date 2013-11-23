@@ -370,9 +370,7 @@ void resizeGL(unsigned int width, unsigned int height)
     glViewport(0, 0, width, height);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    //    gluPerspective(45.0f, 1, 0.1f, 100.0f);//(GLfloat)width / (GLfloat)height, 0.1f, 100.0f);
-    gluPerspective(110.0f, 0.81818181, 0.01f, 1000.0f);
-    //    gluPerspective(120.0f, 0.75, 0.1f, 100.0f);//(GLfloat)width / (GLfloat)height, 0.1f, 100.0f);
+//    gluPerspective(110.0f, 0.81818181, 0.01f, 1000.0f);
     glMatrixMode(GL_MODELVIEW);
 }
 

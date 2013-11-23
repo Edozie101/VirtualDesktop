@@ -340,8 +340,9 @@ int Ibex::Window::processKey(unsigned short keyCode, int down) {
         case kVK_ANSI_W:
             if(down) {
                 --selectedFile;
-                if(selectedFile < 0 && directoryList.size()) selectedFile += directoryList.size();
-                else if(!directoryList.size())selectedFile = 0;
+                if(directoryList.size() < 1)selectedFile = 0;
+                else selectedFile %= directoryList.size();
+                
             }
             processed = 1;
             break;
@@ -351,6 +352,8 @@ int Ibex::Window::processKey(unsigned short keyCode, int down) {
                 ++selectedFile;
                 if(directoryList.size()) {
                     selectedFile %= directoryList.size();
+                } else {
+                    selectedFile = 0;
                 }
             }
             
@@ -366,7 +369,7 @@ int Ibex::Window::processKey(unsigned short keyCode, int down) {
                 switch(visibleWindow) {
                     case FileChooser:
                     {
-                        if(selectedFile < directoryList.size() && selectedFile >= 0) {
+                        if(selectedFile < directoryList.size()) {
                             std::string fullPath = Filesystem::getFullPath(currentPath, directoryList[selectedFile]);
                             if(Filesystem::isFile(fullPath) && !Filesystem::isDirectory(fullPath)) {
                                 selectedVideo = true;
@@ -382,7 +385,7 @@ int Ibex::Window::processKey(unsigned short keyCode, int down) {
                     }
                     case CameraChooser:
                     {
-                        if(selectedFile >= 0 && selectedFile < cameras.size()) {
+                        if(selectedFile < cameras.size()) {
                             selectedCamera = true;
                             selectedCameraID = cameras[selectedFile];
                             showDialog = false;
