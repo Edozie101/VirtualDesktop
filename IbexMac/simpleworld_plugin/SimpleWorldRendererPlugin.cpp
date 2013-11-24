@@ -220,7 +220,7 @@ void SimpleWorldRendererPlugin::loadSkybox()
 
 /////////////////////
 
-void SimpleWorldRendererPlugin::renderIbexDisplayFlat(const glm::mat4 &modelView, const glm::mat4 &proj)
+void SimpleWorldRendererPlugin::renderIbexDisplayFlat(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M)
 {
     checkForErrors();
 //    std::cerr << "start IbexDisplayFlat" << std::endl;
@@ -228,7 +228,7 @@ void SimpleWorldRendererPlugin::renderIbexDisplayFlat(const glm::mat4 &modelView
     static GLuint vaoIbexDisplayFlat = 0;
     static const GLfloat IbexDisplayFlatScale = 10;
     
-    static GLuint IbexDisplayFlatUniformLocations[3] = { 0, 0, 0};
+    static GLuint IbexDisplayFlatUniformLocations[5] = { 0, 0, 0, 0, 0};
     static GLuint IbexDisplayFlatAttribLocations[3] = { 0, 0, 0 };
     
     static GLfloat IbexDisplayFlatVertices[] = {
@@ -260,9 +260,11 @@ void SimpleWorldRendererPlugin::renderIbexDisplayFlat(const glm::mat4 &modelView
         glUseProgram(standardShaderProgram.shader.program);
         
         
-        IbexDisplayFlatUniformLocations[0] = glGetUniformLocation(standardShaderProgram.shader.program, "modelViewMatrix");
-        IbexDisplayFlatUniformLocations[1] = glGetUniformLocation(standardShaderProgram.shader.program, "projectionMatrix");
-        IbexDisplayFlatUniformLocations[2] = glGetUniformLocation(standardShaderProgram.shader.program, "textureIn");
+        IbexDisplayFlatUniformLocations[0] = glGetUniformLocation(standardShaderProgram.shader.program, "MVP");
+        IbexDisplayFlatUniformLocations[1] = glGetUniformLocation(standardShaderProgram.shader.program, "V");
+        IbexDisplayFlatUniformLocations[2] = glGetUniformLocation(standardShaderProgram.shader.program, "M");
+        IbexDisplayFlatUniformLocations[3] = glGetUniformLocation(standardShaderProgram.shader.program, "textureIn");
+        IbexDisplayFlatUniformLocations[4] = glGetUniformLocation(standardShaderProgram.shader.program, "MV");
         
         IbexDisplayFlatAttribLocations[0] = glGetAttribLocation(standardShaderProgram.shader.program, "vertexPosition_modelspace");
         IbexDisplayFlatAttribLocations[1] = glGetAttribLocation(standardShaderProgram.shader.program, "vertexNormal_modelspace");
@@ -296,12 +298,14 @@ void SimpleWorldRendererPlugin::renderIbexDisplayFlat(const glm::mat4 &modelView
     }
     
     glUseProgram(standardShaderProgram.shader.program);
-    glUniformMatrix4fv(IbexDisplayFlatUniformLocations[0], 1, GL_FALSE, &modelView[0][0]);
-    glUniformMatrix4fv(IbexDisplayFlatUniformLocations[1], 1, GL_FALSE, &proj[0][0]);
+    glUniformMatrix4fv(IbexDisplayFlatUniformLocations[0], 1, GL_FALSE, &MVP[0][0]);
+    glUniformMatrix4fv(IbexDisplayFlatUniformLocations[1], 1, GL_FALSE, &V[0][0]);
+    glUniformMatrix4fv(IbexDisplayFlatUniformLocations[2], 1, GL_FALSE, &M[0][0]);
+    glUniformMatrix4fv(IbexDisplayFlatUniformLocations[4], 1, GL_FALSE, &(M*V)[0][0]);
     
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, desktopTexture);
-    glUniform1i(IbexDisplayFlatUniformLocations[2], 0);
+    glUniform1i(IbexDisplayFlatUniformLocations[3], 0);
     
     glBindVertexArray(vaoIbexDisplayFlat);
     glDrawElements(GL_TRIANGLES, sizeof(IbexDisplayFlatIndices)/sizeof(GLushort), GL_UNSIGNED_SHORT, 0);
@@ -437,7 +441,7 @@ void SimpleWorldRendererPlugin::renderSkybox(const glm::mat4 &modelView, const g
 //    std::cerr << "Done skybox" << std::endl;
 }
 
-void SimpleWorldRendererPlugin::renderGround(const glm::mat4 &modelView, const glm::mat4 &proj)
+void SimpleWorldRendererPlugin::renderGround(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M)
 {
     checkForErrors();
 //    std::cerr << "Loading ground texture" << std::endl;
@@ -461,7 +465,7 @@ void SimpleWorldRendererPlugin::renderGround(const glm::mat4 &modelView, const g
     static GLuint vaoGround = 0;
     static const GLfloat GroundScale = 1000;
     
-    static GLuint GroundUniformLocations[3] = { 0, 0, 0};
+    static GLuint GroundUniformLocations[5] = { 0, 0, 0, 0, 0};
     static GLuint GroundAttribLocations[3] = { 0, 0, 0 };
     
     static GLfloat GroundVertices[] = {
@@ -493,9 +497,11 @@ void SimpleWorldRendererPlugin::renderGround(const glm::mat4 &modelView, const g
         glUseProgram(groundShaderProgram.shader.program);
         
         
-        GroundUniformLocations[0] = glGetUniformLocation(groundShaderProgram.shader.program, "modelViewMatrix");
-        GroundUniformLocations[1] = glGetUniformLocation(groundShaderProgram.shader.program, "projectionMatrix");
-        GroundUniformLocations[2] = glGetUniformLocation(groundShaderProgram.shader.program, "textureIn");
+        GroundUniformLocations[0] = glGetUniformLocation(groundShaderProgram.shader.program, "MVP");
+        GroundUniformLocations[1] = glGetUniformLocation(groundShaderProgram.shader.program, "V");
+        GroundUniformLocations[2] = glGetUniformLocation(groundShaderProgram.shader.program, "M");
+        GroundUniformLocations[3] = glGetUniformLocation(groundShaderProgram.shader.program, "textureIn");
+        GroundUniformLocations[4] = glGetUniformLocation(groundShaderProgram.shader.program, "MV");
         
         GroundAttribLocations[0] = glGetAttribLocation(groundShaderProgram.shader.program, "vertexPosition_modelspace");
         GroundAttribLocations[1] = glGetAttribLocation(groundShaderProgram.shader.program, "vertexNormal_modelspace");
@@ -528,12 +534,14 @@ void SimpleWorldRendererPlugin::renderGround(const glm::mat4 &modelView, const g
     }
     
     glUseProgram(groundShaderProgram.shader.program);
-    glUniformMatrix4fv(GroundUniformLocations[0], 1, GL_FALSE, &modelView[0][0]);
-    glUniformMatrix4fv(GroundUniformLocations[1], 1, GL_FALSE, &proj[0][0]);
+    glUniformMatrix4fv(GroundUniformLocations[0], 1, GL_FALSE, &MVP[0][0]);
+    glUniformMatrix4fv(GroundUniformLocations[1], 1, GL_FALSE, &V[0][0]);
+    glUniformMatrix4fv(GroundUniformLocations[2], 1, GL_FALSE, &M[0][0]);
+    glUniformMatrix4fv(GroundUniformLocations[4], 1, GL_FALSE, &(M*V)[0][0]);
     
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, groundTexture);
-    glUniform1i(GroundUniformLocations[2], 0);
+    glUniform1i(GroundUniformLocations[3], 0);
     
     glBindVertexArray(vaoGround);
     glDrawElements(GL_TRIANGLES, sizeof(GroundIndices)/sizeof(GLushort), GL_UNSIGNED_SHORT, 0);
@@ -603,8 +611,10 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
         //            glLoadMatrixf((const float*)stereo.ViewAdjust.M);
         
         glm::mat4 modelView;
+        glm::mat4 view;
+        glm::mat4 model;
         glm::mat4 proj;
-        copyMatrix(modelView,stereo.ViewAdjust.Transposed().M);
+        copyMatrix(view,stereo.ViewAdjust.Transposed().M);
         copyMatrix(proj, (getRiftOrientationNative()*stereo.Projection.Transposed()).M);
         
         
@@ -613,13 +623,17 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
         glm::mat4 playerCamera(glm::translate(playerRotation, glm::vec3((float)loc.getXPosition(), (float)loc.getYPosition(), (float)loc.getZPosition())));
         
         glDepthMask(GL_FALSE);
-        renderSkybox(modelView*playerRotation, proj);
+        renderSkybox(view*playerRotation, proj);
         
         glDepthMask(GL_TRUE);
-        modelView *= playerCamera;
-        renderIbexDisplayFlat(glm::translate(modelView, glm::vec3(0.0f, 0.0f, -10.0f)), proj);
+        view *= playerCamera;
+        
+        model = glm::translate(model, glm::vec3(0.0f, 0.0f, -10.0f));
+        renderIbexDisplayFlat(proj*view*model, view, model);
+        
         if(showGround) {
-            renderGround(modelView, proj);
+            model = glm::mat4();
+            renderGround(proj*view*model, view, model);
         }
         
         if(false) {
