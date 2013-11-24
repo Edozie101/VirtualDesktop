@@ -5,12 +5,10 @@
 //  Created by Hesham Wahba on 12/27/12.
 //  Copyright (c) 2012 Hesham Wahba. All rights reserved.
 //
-
-#import "opengl_helpers.h"
+#import "MyOpenGLView.h"
 
 #import "video/IbexVideoPlayer.h"
 
-//#include "opengl_helpers.h"
 #include <iostream>
 
 #import <QuartzCore/QuartzCore.h>
@@ -23,14 +21,9 @@
 #import <mach/mach_time.h>
 #import <libkern/OSAtomic.h>
 
-//#import <OpenGL/glext.h>
-#import "MyOpenGLView.h"
-
 #import <Carbon/Carbon.h>
 
 #include "ibex.h"
-
-//#import <OpenGL/OpenGL.h>
 
 #include <ApplicationServices/ApplicationServices.h>
 

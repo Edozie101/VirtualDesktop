@@ -2,12 +2,10 @@
 // Prefix header for all source files of the 'IbexMac' target in the 'IbexMac' project
 //
 
-#ifdef ENABLE_OGRE3D
-#include <GL/glew.h>
-#else
-
-#endif
+#define GL3_PROTOTYPES
 
 #ifdef __OBJC__
+    #include <GL/glew.h>
+
     #import <Cocoa/Cocoa.h>
 #endif
