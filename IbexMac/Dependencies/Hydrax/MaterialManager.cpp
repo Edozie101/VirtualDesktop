@@ -1063,7 +1063,7 @@ namespace Hydrax
                                 if (cSmooth)
                                 {
                                     FragmentProgramData +=
-                                        "gl_FragColor.xyz = mix(texture2D(uRefractionMap,ProjectionCoord.xy).xyz,gl_FragColor.xyz,clamp((1-texture2D(uDepthMap,ProjectionCoord.xy).x)*uSmoothPower, 0.0, 1.0));\n";
+                                        "gl_FragColor.xyz = mix(texture2D(uRefractionMap,ProjectionCoord.xy).xyz,gl_FragColor.xyz,clamp((1.0-texture2D(uDepthMap,ProjectionCoord.xy).x)*uSmoothPower, 0.0, 1.0));\n";
                                 }
                             FragmentProgramData +=
 							"}\n";
@@ -1867,7 +1867,7 @@ namespace Hydrax
                             VertexProgramData += Ogre::String(
                             "gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;\n") +
                             "mat4 scalemat = mat4(  1.0,  0.0,  0.0,  0.0,\n" +
-                                                "   0.0, -1.0,  0.0,  0.0,\n" +
+                                                "   0.0, -1.0,  0.0,  0.0,\n" + // TODO: think bug, was 0, -1, 0
                                                 "   0.0,  0.0,  1.0,  0.0,\n" +
                                                 "   0.0,  0.0,  0.0,  1.0);\n" +
                             "UVProjection = scalemat * gl_Position;\n" +
@@ -1950,7 +1950,7 @@ namespace Hydrax
                             VertexProgramData += Ogre::String(
                             "gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;\n") +
                             "mat4 scalemat = mat4(  1.0,  0.0,  0.0,  0.0,\n" +
-                                                "   0.0, -1.0,  0.0,  0.0,\n" +
+                                                "   0.0, -1.0,  0.0,  0.0,\n" + // TODO: bug, was 0, -1, 0
                                                 "   0.0,  0.0,  1.0,  0.0,\n" +
                                                 "   0.0,  0.0,  0.0,  1.0);\n" +
                             "UVProjection = scalemat * gl_Position;\n" +
