@@ -35,8 +35,8 @@
 	CGContextRef spriteContext;
 	GLuint imgW, imgH, texW, texH;
     
-	imgW = CGImageGetWidth(img);
-	imgH = CGImageGetHeight(img);
+	imgW = (GLuint)CGImageGetWidth(img);
+	imgH = (GLuint)CGImageGetHeight(img);
     texW = imgW;
     texH = imgH;
 	
@@ -94,8 +94,8 @@
 	CGContextRef spriteContext;
 	GLuint imgW, imgH, texW, texH;
     
-	imgW = CGImageGetWidth(img);
-	imgH = CGImageGetHeight(img);
+	imgW = (GLuint)CGImageGetWidth(img);
+	imgH = (GLuint)CGImageGetHeight(img);
     texW = imgW;
     texH = imgH;
     
