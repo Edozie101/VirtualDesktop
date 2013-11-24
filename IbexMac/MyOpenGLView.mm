@@ -128,6 +128,14 @@ static NSTimer *t;
 - (id)initWithFrame:(NSRect)frameRect pixelFormat:(NSOpenGLPixelFormat *)format {
     self = [super initWithFrame:frameRect pixelFormat:format];
     if (self) {
+        NSOpenGLContext* openGLContext = [[NSOpenGLContext alloc] initWithFormat:format shareContext:nil];
+        [self setOpenGLContext:openGLContext];
+        [openGLContext makeCurrentContext];
+        [openGLContext setView:self];
+        
+        NSLog(@"OpenGL Version: %s", glGetString(GL_VERSION));
+        
+        
 #if _USE_SIXENSE
         myInitSixense();
 #endif
@@ -263,8 +271,8 @@ static GLuint desktopTextures[2] = {NULL, NULL};
 	CGContextRef spriteContext;
 	GLuint imgW, imgH, texW, texH;
     
-	imgW = CGImageGetWidth(img);
-	imgH = CGImageGetHeight(img);
+	imgW = (GLuint)CGImageGetWidth(img);
+	imgH = (GLuint)CGImageGetHeight(img);
     texW = imgW;
     texH = imgH;
 	
@@ -321,8 +329,8 @@ static GLuint desktopTextures[2] = {NULL, NULL};
 	CGContextRef spriteContext;
 	GLuint imgW, imgH, texW, texH;
 
-	imgW = CGImageGetWidth(img);
-	imgH = CGImageGetHeight(img);
+	imgW = (GLuint)CGImageGetWidth(img);
+	imgH = (GLuint)CGImageGetHeight(img);
     texW = imgW;
     texH = imgH;
     
