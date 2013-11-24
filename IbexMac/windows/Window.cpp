@@ -152,13 +152,13 @@ void renderBitmapString(
                         float z,
                         void *font,
                         const char *string) {
-    glPushMatrix();
-    glRasterPos3f(x, y,z);
-    glScaled(0.001/2.0, 0.001/2.0, 0.001/2.0);
-    for (const char *c=string; *c != '\0'; c++) {
-        glutBitmapCharacter(font, *c);
-    }
-    glPopMatrix();
+//    glPushMatrix();
+//    glRasterPos3f(x, y,z);
+//    glScaled(0.001/2.0, 0.001/2.0, 0.001/2.0);
+//    for (const char *c=string; *c != '\0'; c++) {
+//        glutBitmapCharacter(font, *c);
+//    }
+//    glPopMatrix();
 }
 
 void renderStrokeFontString(
@@ -167,35 +167,35 @@ void renderStrokeFontString(
                             float z,
                             void *font,
                             const char *string) {
-    glPushMatrix();
-    glTranslatef(x, y,z);
-    
-    glScaled(0.001/20.0, 0.001/20.0, 0.001/20.0);
-    for (const char *c=string; *c != '\0'; c++) {
-        glutStrokeCharacter(font, *c);
-    }
-    
-    glPopMatrix();
+//    glPushMatrix();
+//    glTranslatef(x, y,z);
+//    
+//    glScaled(0.001/20.0, 0.001/20.0, 0.001/20.0);
+//    for (const char *c=string; *c != '\0'; c++) {
+//        glutStrokeCharacter(font, *c);
+//    }
+//    
+//    glPopMatrix();
 }
 
 void Ibex::Window::renderInfoWindow() {
-    glBindTexture(GL_TEXTURE_2D, 0);
-    glDisable(GL_DEPTH_TEST);
-    glColor4f(0,0.1,0,0.5);
-    glBegin(GL_QUADS);
-    glVertex3d(-0.05, 0.45, -0.25);
-    glVertex3d(0.05, 0.45, -0.25);
-    glVertex3d(0.05, 0.55, -0.25);
-    glVertex3d(-0.05, 0.55, -0.25);
-    glEnd();
-    glColor4f(1,1,1,1);
-    renderBitmapString(-0.045, 0.54, -0.25, GLUT_BITMAP_HELVETICA_18, "1. Load Video");
-    renderBitmapString(-0.045, 0.53, -0.25, GLUT_BITMAP_HELVETICA_18, "2. Load Stereo Video");
-    renderBitmapString(-0.045, 0.52, -0.25, GLUT_BITMAP_HELVETICA_18, "3. Camera");
-    renderBitmapString(-0.045, 0.51, -0.25, GLUT_BITMAP_HELVETICA_18, "4. Stereo Camera");
-    //    renderStrokeFontString(0, 0.5, -0.25, GLUT_STROKE_ROMAN, fpsString);
-    renderBitmapString(0.005, 0.465, -0.25, GLUT_BITMAP_HELVETICA_18, fpsString);
-    glEnable(GL_DEPTH_TEST);
+//    glBindTexture(GL_TEXTURE_2D, 0);
+//    glDisable(GL_DEPTH_TEST);
+//    glColor4f(0,0.1,0,0.5);
+//    glBegin(GL_QUADS);
+//    glVertex3d(-0.05, 0.45, -0.25);
+//    glVertex3d(0.05, 0.45, -0.25);
+//    glVertex3d(0.05, 0.55, -0.25);
+//    glVertex3d(-0.05, 0.55, -0.25);
+//    glEnd();
+//    glColor4f(1,1,1,1);
+//    renderBitmapString(-0.045, 0.54, -0.25, GLUT_BITMAP_HELVETICA_18, "1. Load Video");
+//    renderBitmapString(-0.045, 0.53, -0.25, GLUT_BITMAP_HELVETICA_18, "2. Load Stereo Video");
+//    renderBitmapString(-0.045, 0.52, -0.25, GLUT_BITMAP_HELVETICA_18, "3. Camera");
+//    renderBitmapString(-0.045, 0.51, -0.25, GLUT_BITMAP_HELVETICA_18, "4. Stereo Camera");
+//    //    renderStrokeFontString(0, 0.5, -0.25, GLUT_STROKE_ROMAN, fpsString);
+//    renderBitmapString(0.005, 0.465, -0.25, GLUT_BITMAP_HELVETICA_18, fpsString);
+//    glEnable(GL_DEPTH_TEST);
 }
 
 void Ibex::Window::renderFileChooser() {
@@ -252,9 +252,7 @@ void Ibex::Window::renderFileChooser() {
     glVertex3d(-0.1, 0.65, -0.25);
     glEnd();
     glColor4f(1,1,1,1);
-    //    renderStrokeFontString(0, 0.5, -0.25, GLUT_STROKE_ROMAN, fpsString);
-    renderBitmapString(-0.095, 0.64, -0.25, GLUT_BITMAP_HELVETICA_18, "~/Backspace: Back");
-    //    renderBitmapString(-0.045, 0.53, -0.25, GLUT_BITMAP_HELVETICA_18, "2. ");
+//    renderBitmapString(-0.095, 0.64, -0.25, GLUT_BITMAP_HELVETICA_18, "~/Backspace: Back");
     char blah[256];
     uint startIndex = (selectedFile > 28/2) ? selectedFile-28/2 : 0;
     for(uint i = startIndex,index = 0; i < startIndex+28 && i < directoryList.size(); ++i,++index) {
@@ -271,10 +269,10 @@ void Ibex::Window::renderFileChooser() {
         if(selectedFile == i) {
             glColor4f(1,1,0,1);
         }
-        renderBitmapString(-0.095, 0.63-index*0.01, -0.25, GLUT_BITMAP_HELVETICA_18, blah);
+//        renderBitmapString(-0.095, 0.63-index*0.01, -0.25, GLUT_BITMAP_HELVETICA_18, blah);
         glColor4f(1,1,1,1);
     }
-    renderBitmapString(0.055, 0.36, -0.25, GLUT_BITMAP_HELVETICA_18, fpsString);
+//    renderBitmapString(0.055, 0.36, -0.25, GLUT_BITMAP_HELVETICA_18, fpsString);
     glEnable(GL_DEPTH_TEST);
 }
 
@@ -289,9 +287,7 @@ void Ibex::Window::renderCameraChooser() {
     glVertex3d(-0.1, 0.65, -0.25);
     glEnd();
     glColor4f(1,1,1,1);
-    //    renderStrokeFontString(0, 0.5, -0.25, GLUT_STROKE_ROMAN, fpsString);
-    renderBitmapString(-0.095, 0.64, -0.25, GLUT_BITMAP_HELVETICA_18, "~/Backspace: Back");
-    //    renderBitmapString(-0.045, 0.53, -0.25, GLUT_BITMAP_HELVETICA_18, "2. ");
+//    renderBitmapString(-0.095, 0.64, -0.25, GLUT_BITMAP_HELVETICA_18, "~/Backspace: Back");
     char blah[256];
     uint startIndex = (selectedFile > 28/2) ? selectedFile-28/2 : 0;
     for(uint i = startIndex,index = 0; i < startIndex+28 && i < cameras.size(); ++i,++index) {
@@ -300,10 +296,10 @@ void Ibex::Window::renderCameraChooser() {
         if(selectedFile == i) {
             glColor4f(1,1,0,1);
         }
-        renderBitmapString(-0.095, 0.63-index*0.01, -0.25, GLUT_BITMAP_HELVETICA_18, blah);
+//        renderBitmapString(-0.095, 0.63-index*0.01, -0.25, GLUT_BITMAP_HELVETICA_18, blah);
         glColor4f(1,1,1,1);
     }
-    renderBitmapString(0.055, 0.36, -0.25, GLUT_BITMAP_HELVETICA_18, fpsString);
+//    renderBitmapString(0.055, 0.36, -0.25, GLUT_BITMAP_HELVETICA_18, fpsString);
     glEnable(GL_DEPTH_TEST);
 }
 

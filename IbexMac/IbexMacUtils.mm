@@ -5,7 +5,6 @@
 //  Created by Hesham Wahba on 1/1/13.
 //  Copyright (c) 2013 Hesham Wahba. All rights reserved.
 //
-
 #import "IbexMacUtils.h"
 
 #include <objc/objc.h>
@@ -14,30 +13,29 @@
 
 #import <Cocoa/Cocoa.h>
 #import <QuartzCore/QuartzCore.h>
-#import <OpenGL/gl.h>
 #import <Foundation/Foundation.h>
 
+
+#import "opengl_helpers.h"
 #import "ibex_mac_utils.h"
 
 #include "string.h"
 
-extern "C" GLuint loadTexture(const char *path_) {
-    GLuint myTextureName;
+static void *getImageData(const char *path_, size_t &width, size_t &height) {
     char path[2048];
     strcpy(path, mResourcePath);
     strcat(path, path_);
     
     
-//    NSLog(@"%s", path);
+    //    NSLog(@"%s", path);
     NSURL *URL = [NSURL fileURLWithPath:[NSString stringWithCString:path encoding:NSASCIIStringEncoding]];
     NSLog(@"%@", URL);
     CFURLRef url = (__bridge CFURLRef)URL;
     CGImageSourceRef myImageSourceRef = CGImageSourceCreateWithURL(url, NULL);
     CGImageRef myImageRef = CGImageSourceCreateImageAtIndex (myImageSourceRef, 0, NULL);
     
-
-    size_t width = CGImageGetWidth(myImageRef);
-    size_t height = CGImageGetHeight(myImageRef);
+    width = CGImageGetWidth(myImageRef);
+    height = CGImageGetHeight(myImageRef);
     CGRect rect = CGRectMake(0, 0, width, height);
     void * myData = calloc(width * 4, height);
     CGColorSpaceRef space = CGColorSpaceCreateDeviceRGB();
@@ -56,8 +54,15 @@ extern "C" GLuint loadTexture(const char *path_) {
     CGImageRelease(myImageRef);
     CFRelease(myImageSourceRef);
     
-    glPushClientAttrib(GL_UNPACK_ROW_LENGTH);
-    glPushClientAttrib(GL_UNPACK_ALIGNMENT);
+    return myData;
+}
+
+extern "C" GLuint loadTexture(const char *path_) {
+    GLuint myTextureName;
+    
+    size_t width = 0;
+    size_t height = 0;
+    void *myData = getImageData(path_, width, height);
     
     glPixelStorei(GL_UNPACK_ROW_LENGTH, (GLint)width);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -73,8 +78,38 @@ extern "C" GLuint loadTexture(const char *path_) {
     free(myData);
     glBindTexture(GL_TEXTURE_2D, 0);
     
-    glPopClientAttrib();
-    glPopClientAttrib();
+    return myTextureName;
+}
+
+extern "C" GLuint loadCubemapTextures(const char *path_[6]) {
+    GLuint myTextureName = 0;
+    
+    glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+    
+    glGenTextures(1, &myTextureName);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, myTextureName);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP,GL_TEXTURE_WRAP_R,GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_BASE_LEVEL, 0);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAX_LEVEL, 0);
+    
+    for(int i = 0; i < 6; ++i) {
+        size_t width = 0;
+        size_t height = 0;
+        void *myData = getImageData(path_[i], width, height);
+        
+        glPixelStorei(GL_UNPACK_ROW_LENGTH, (GLint)width);
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+        
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X+i, 0, GL_RGBA8, (GLint)width, (GLint)height,
+                     0, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, myData);
+        
+        free(myData);
+    }
+    glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
     
     return myTextureName;
 }

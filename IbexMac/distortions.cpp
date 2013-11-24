@@ -26,9 +26,6 @@
 #ifdef __APPLE__
 #include "ibex_mac_utils.h"
 
-#define glGenVertexArrays glGenVertexArraysAPPLE
-#define glBindVertexArray glBindVertexArrayAPPLE
-
 #endif
 #endif
 
@@ -246,17 +243,10 @@ static GLuint vaoBoth;
 static GLuint _vertexBufferBoth;
 static GLuint _indexBufferBoth;
 int setup_buffers() {
-  if(!GL_ARB_vertex_array_object)
-    {
-      std::cerr << "CAN'T GEN VAO!" << std::endl;
-      exit(1);
-    }
   std::cerr << "setup_buffers" << std::endl;
-  checkForErrors();
   glGenVertexArrays(1,&vao1);
   glGenVertexArrays(1,&vao2);
     
-  //    std::cerr << "gen vao1: __glewGenVertexArrays: " << __glewGenVertexArrays << std::endl;
   checkForErrors();
   std::cerr << "gen vao1 done" << std::endl;
     
@@ -314,9 +304,6 @@ int setup_buffers() {
   glEnableVertexAttribArray(a_texCoord);
   glVertexAttribPointer(a_texCoord, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*7, (GLvoid*) (sizeof(GLfloat) * 4));
 
-  //  glEnableVertexAttribArray(0);
-  //  glBindBuffer(GL_ARRAY_BUFFER, 0);
-  //  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
   glBindVertexArray(0);
 
   return 1;
@@ -396,7 +383,7 @@ void render_distorted_frame(const bool left, const GLuint textureId)
     //    checkForErrors();
     
     glBindTexture(GL_TEXTURE_2D, 0);
-    glBindVertexArrayAPPLE(0);
+    glBindVertexArray(0);
     
     glUseProgram(0);
 }
@@ -434,6 +421,7 @@ int init_distortion_shader()
                                              distortion_shader.vertex_shader,
                                              distortion_shader.fragment_shader
                                              );
+    
     if (distortion_shader.program == 0)
         return 0;
     
@@ -444,6 +432,7 @@ int init_distortion_shader()
             return 0;
         }
     }
+    checkForErrors();
     std::cerr << "init_distortion_shader: success" << std::endl;
     
     return 1;
@@ -452,16 +441,15 @@ int init_distortion_shader()
 //--------------
 bool setup_lens_fbo() {
     glGenFramebuffers(1, &lensFBO);
+    glBindFramebuffer(GL_FRAMEBUFFER, lensFBO);
     
     for(int i = 0; i < 2; ++i) {
         glGenTextures(1, &(lensTexture[i]));
-        glBindFramebuffer(GL_FRAMEBUFFER, lensFBO);
         glBindTexture(GL_TEXTURE_2D, lensTexture[i]);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, height,0, GL_RGBA, GL_FLOAT, 0);
-//        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height,0, GL_RGBA, GL_FLOAT, 0);
-        glFramebufferTexture2D (GL_FRAMEBUFFER, (i==0)?GL_COLOR_ATTACHMENT0:GL_COLOR_ATTACHMENT1,GL_TEXTURE_2D, lensTexture[i], 0);
+        glFramebufferTexture(GL_FRAMEBUFFER, (i==0)?GL_COLOR_ATTACHMENT0:GL_COLOR_ATTACHMENT1, lensTexture[i], 0);
         if (!checkForErrors()) {
             std::cerr << "Stage 1 - Problem generating lens FBO" << std::endl;
             exit(EXIT_FAILURE);

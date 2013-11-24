@@ -8,8 +8,6 @@
 #ifndef OPENGL_HELPERS_H_
 #define OPENGL_HELPERS_H_
 
-#include <stdio.h>
-
 // --- OpenGL ----------------------------------------------------------------
 
 #ifndef GLX_GLXEXT_PROTOTYPES
@@ -19,10 +17,8 @@
 #ifdef __APPLE__
 
 #include "GL/glew.h"
-#include <OpenGL/gl.h>
-#include <OpenGL/glu.h>
-#include <OpenGL/glext.h>
-#include <GLUT/glut.h>
+#include <OpenGL/gl3.h>
+#include <OpenGL/gl3ext.h>
 
 #else
 #ifdef _WIN32
@@ -31,7 +27,6 @@
 #include "GL/wglew.h"
 #include <GL/gl.h>
 #include <GL/glu.h>
-//#include <GL/glext.h>
 #include <GL/glut.h>
 
 #else
@@ -54,6 +49,8 @@
 #endif
 
 #endif
+
+#include <stdio.h>
 
 bool gluInvertMatrix(const double m[16], double invOut[16]);
 double distort2ShaderScaleFactor(double ax, double ay);

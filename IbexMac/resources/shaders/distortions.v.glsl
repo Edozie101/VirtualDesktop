@@ -1,9 +1,9 @@
-#version 120
+#version 330
 
-attribute vec4 a_position;
-attribute vec2 a_texCoord;
+layout (location = 0) in vec4 a_position;
+in vec2 a_texCoord;
 
-varying vec2 oTexCoord;
+out vec2 oTexCoord;
 
 void main()
 {

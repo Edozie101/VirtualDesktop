@@ -42,8 +42,7 @@ around from there.
 
 ## Requirements
 ### Mac
-XCode 4.5, OSX 10.8 (Mountain Lion) - Build and run from XCode, check the project dependencies
-to find out where the bullet3d physics library and sixense SDK need to go to build properly.  OculusSDK needs to be placed at the same level as your checked-out git repo for ibex and it must be version 0.2.1 or later.  You'll need to rebuild the libovr.a library with C++ RTTI and Exceptions enabled or else it won't link properly with ibex.
+XCode 5.0.2+, OSX 10.9 (Mavericks), Intel HD3000 or better (OpenGL 3.3+) - Build and run from XCode, check the project dependencies to find out where the bullet3d physics library and sixense SDK need to go to build properly.  OculusSDK needs to be placed at the same level as your checked-out git repo for ibex and it must be version 0.2.5 or later.  You'll need to rebuild the libovr.a library with C++ RTTI and Exceptions enabled or else it won't link properly with ibex.
 
 The [Oculus SDK](https://developer.oculusvr.com) and [sixense SDK](http://sixense.com/developers) must be installed at the same level as the ibex repository directory:
 
@@ -58,8 +57,10 @@ The [Oculus SDK](https://developer.oculusvr.com) and [sixense SDK](http://sixens
     |
     |->OculusSDK
 
-For video support you need to install the following:
+For math and video support you need to install the following:
 
+    brew install glm
+    
     brew install x264 xvid yasm faac
     brew install ffmpeg --use-clang
     brew tap homebrew/science

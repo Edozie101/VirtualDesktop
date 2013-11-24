@@ -22,36 +22,7 @@
 #include <map>
 #include <vector>
 
-// --- OpenGL ----------------------------------------------------------------
-#define GLX_GLXEXT_PROTOTYPES
-#ifdef __APPLE__
-
-#include "GL/glew.h"
-#include <OpenGL/gl.h>
-#include <OpenGL/glu.h>
-#include <OpenGL/glext.h>
-
-#else
-#ifdef _WIN32
-
-#include "GL/glew.h"
-#include "GL/wglew.h"
-#include <GL/gl.h>
-#include <GL/glu.h>
-//#include <GL/glext.h>
-
-#else
-
-#include <GL/glew.h>
-#include <GL/glxew.h>
-#include <GL/gl.h>
-#include <GL/glx.h>
-#include <GL/glext.h>
-#include <GL/glxext.h>
-#include <GL/glu.h>
-
-#endif
-#endif
+#include "opengl_helpers.h"
 
 // --- X11 -------------------------------------------------------------------
 //#include "opengl_setup_x11.h"
@@ -187,18 +158,18 @@ glTranslatef(eye * parallax_factor * convergence_distance, 0, 0);
 // ---------------------------------------------------------------------------
 void prep_framebuffers()
 {
-  if (!GL_ARB_framebuffer_object ||
-      !glewGetExtension("GL_ARB_framebuffer_object")) {
-    std::cerr << "NO FBO SUPPORT" << std::endl;
-    exit(EXIT_FAILURE);
-  } else {
-    std::cout << "GL_ARB_framebuffer_object SUPPORT" << std::endl;
-  }
+//  if (!GL_ARB_framebuffer_object ||
+//      !glewGetExtension("GL_ARB_framebuffer_object")) {
+//    std::cerr << "NO FBO SUPPORT" << std::endl;
+//    exit(EXIT_FAILURE);
+//  } else {
+//    std::cout << "GL_ARB_framebuffer_object SUPPORT" << std::endl;
+//  }
 
-//    if (!checkForErrors()) {
-//        std::cerr << "Stage 0w - Problem generating desktop FBO" << std::endl;
-//        exit(EXIT_FAILURE);
-//    }
+    if (!checkForErrors()) {
+        std::cerr << "Stage 0w - Problem generating desktop FBO" << std::endl;
+        exit(EXIT_FAILURE);
+    }
     checkForErrors();
     
   glGenFramebuffers(1, &desktopFBO);
@@ -225,8 +196,8 @@ void prep_framebuffers()
         exit(EXIT_FAILURE);
     }
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     if (!checkForErrors()) {
         std::cerr << "Stage 0c - Problem generating desktop FBO" << std::endl;
         exit(EXIT_FAILURE);
@@ -251,7 +222,7 @@ void prep_framebuffers()
   glGenRenderbuffers(1, &depthBuffer);
   glGenTextures(2, textures);
 
-    for (int i = 0; i < ((CACHED_SHADER) ? 1 : 2); ++i) {
+    for (int i = 0; i < 1; ++i) {
         glBindFramebuffer(GL_FRAMEBUFFER, fbos[i]);
         glBindTexture(GL_TEXTURE_2D, textures[i]);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -322,12 +293,14 @@ void renderGL(Desktop3DLocation& loc, double timeDiff_, RendererPlugin *renderer
 {
   if (!initedOpenGL) {
     initedOpenGL = true;
-
+      
     if(renderer->getWindowID()) window = renderer->getWindowID();
 //    if (OGRE3D || IRRLICHT) {
-      glewExperimental = true;
+      glewExperimental = GL_TRUE;
       GLenum err = glewInit();
       std::cerr << "Inited GLEW: " << err << std::endl;
+      checkForErrors();
+      std::cerr << "Inited GLEW, may have invalid enum above, that's alright" << std::endl;
       if (GLEW_OK != err) {
         // GLEW failed!
         exit(1);
@@ -340,8 +313,12 @@ void renderGL(Desktop3DLocation& loc, double timeDiff_, RendererPlugin *renderer
       
       if(!OGRE3D) {
           checkForErrors();
+          std::cerr << "checked errors 2" << std::endl;
+          
           std::cerr << "init_distortion_shader" << std::endl;
           bool success = init_distortion_shader();
+          checkForErrors();
+          std::cerr << "checked errors 3" << std::endl;
           if (!success) {
               std::cerr << "Failed to init distortion shader!" << std::endl;
               exit(1);
@@ -368,6 +345,10 @@ void resizeGL(unsigned int width, unsigned int height)
     if (height == 0)
         height = 1;
     glViewport(0, 0, width, height);
+    
+    return;
+    
+    // gone in OpenGL 3.3+
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
 //    gluPerspective(110.0f, 0.81818181, 0.01f, 1000.0f);
@@ -382,13 +363,13 @@ void resizeGL(unsigned int width, unsigned int height)
 // ---------------------------------------------------------------------------
 void initGL()
 {
-  glShadeModel(GL_SMOOTH);
+  //glShadeModel(GL_SMOOTH);
   glClearColor(0.0f, 0.1f, 0.0f, 1.0f);
   glClearDepth(1.0f);
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LEQUAL);
-  glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
-
+  //glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+    
   // We use resizeGL once to set up our initial perspective
   resizeGL(windowWidth, windowHeight);//physicalWidth,physicalHeight);//width, height);
 
@@ -435,7 +416,7 @@ Ibex::Ibex::Ibex(int argc, char ** argv) {
     //  prep_root();
     
     std::cerr << "Virtual width: " << width << " height: " << height << std::endl;
-    
+
     if(!OGRE3D)
         initGL();
     
@@ -525,6 +506,9 @@ void Ibex::Ibex::render(double timeDiff) {
     renderer->processEvents();
     
     renderGL(desktop3DLocation, timeDiff, renderer);
+    
+    checkForErrors();
+//    std::cerr << "checked errors FRAME DONE!" << std::endl;
     
 //    ts_start = ts_current;
 }

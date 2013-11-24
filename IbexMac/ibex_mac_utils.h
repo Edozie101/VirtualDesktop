@@ -12,11 +12,12 @@
 #include <objc/objc.h>
 #include <objc/message.h>
 
-#include <OpenGL/gl.h>
+#include "opengl_helpers.h"
 
 extern bool doubleBuffered;
 extern char mResourcePath[1024];
 
 extern "C" GLuint loadTexture(const char *path_);
+extern "C" GLuint loadCubemapTextures(const char *path_[6]);
 
 #endif

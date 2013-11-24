@@ -11,21 +11,27 @@
 #include "../RendererPlugin.h"
 #include "../ibex.h"
 
+#include <glm/glm.hpp>
+#include <glm/ext.hpp>
+
 class SimpleWorldRendererPlugin : public RendererPlugin {
 public:
-  SimpleWorldRendererPlugin();
-  ~SimpleWorldRendererPlugin();
-
-  void loadSkybox();
-  void renderSkybox();
-
-  void init();
-  void step(const Desktop3DLocation &loc_, double timeDiff_);
-  bool needsSwapBuffers();
-
-  Window getWindowID();
+    SimpleWorldRendererPlugin();
+    ~SimpleWorldRendererPlugin();
+    
+    void loadSkybox();
+    void renderSkybox(const glm::mat4 &modelView, const glm::mat4 &proj);
+    void renderGround(const glm::mat4 &modelView, const glm::mat4 &proj);
+    void renderIbexDisplayFlat(const glm::mat4 &modelView, const glm::mat4 &proj);
+    
+    void init();
+    void step(const Desktop3DLocation &loc_, double timeDiff_);
+    bool needsSwapBuffers();
+    
+    Window getWindowID();
 private:
-  GLuint _skybox[6];
+    GLuint _skybox[6];
+    GLuint _skycube;
 };
 
 #endif /* SIMPLEWORLDRENDERERPLUGIN_H_ */

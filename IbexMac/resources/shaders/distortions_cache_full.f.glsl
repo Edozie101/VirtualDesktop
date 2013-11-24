@@ -1,4 +1,4 @@
-#version 120
+#version 330
 
 uniform vec2 LensCenter;
 uniform vec2 ScreenCenter;
@@ -7,9 +7,10 @@ uniform vec2 ScaleIn;
 uniform vec4 HmdWarpParam;
 uniform vec4 ChromAbParam;
 uniform sampler2D Texture0;
-varying vec2 oTexCoord;
+in vec2 oTexCoord;
 
-//out vec4 FragData[2];
+//layout (location = 0)
+out vec4 fragData[2];
 
 // Scales input texture coordinates for distortion.
 // ScaleIn maps texture coordinates to Scales to ([-1, 1]), although top/bottom will be
@@ -26,8 +27,8 @@ void main()
    vec2 tcBlue = LensCenter + Scale * thetaBlue;
    if (!all(equal(clamp(tcBlue, ScreenCenter-vec2(0.25,0.5), ScreenCenter+vec2(0.25,0.5)), tcBlue)))
    {
-       gl_FragData[0] = vec4(0);
-       gl_FragData[1] = vec4(0);
+       fragData[0] = vec4(0);
+       fragData[1] = vec4(0);
        return;
    }
    
@@ -39,7 +40,7 @@ void main()
    vec2  tcRed = LensCenter + Scale * thetaRed;
    
     //gl_FragColor = vec4(0);//red, center.g, blue, center.a);
-    gl_FragData[0] = vec4(tcRed, tcGreen);
-    gl_FragData[1] = vec4(tcBlue, 0.0, 0.0);
+    fragData[0] = vec4(tcRed, tcGreen);
+    fragData[1] = vec4(tcBlue, 0.0, 0.0);
 }
 

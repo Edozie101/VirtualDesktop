@@ -1,12 +1,14 @@
-#version 120
+#version 150
 
 #define highp
 
 uniform sampler2D texture;
 
-varying vec2 oTexCoord;
+in vec2 oTexCoord;
+
+layout (location = 0) out vec4 fragColor;
 
 void main()
 {
-    gl_FragColor = texture2D(texture, oTexCoord);
+    fragColor = texture2D(texture, oTexCoord);
 }

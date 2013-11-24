@@ -1,4 +1,4 @@
-#version 120
+#version 330
 
 #define highp
 
@@ -12,7 +12,9 @@ uniform vec2 Scale;
 uniform vec2 ScaleIn;
 uniform vec4 HmdWarpParam;
 
-varying vec2 oTexCoord;
+in vec2 oTexCoord;
+
+out vec3 fragColor;
 
 vec3 HmdWarp(vec2 texIn)
 { 
@@ -27,7 +29,7 @@ void main()
 {
    vec3 tc = HmdWarp(oTexCoord);
    if (any(notEqual(clamp(tc.rg, ScreenCenter-vec2(0.25,0.5), ScreenCenter+vec2(0.25, 0.5)) - tc.rg, vec2(0.0, 0.0))))
-       gl_FragColor.rgb = vec3(-1.0, -1.0, 0.0);
+       fragColor.rgb = vec3(-1.0, -1.0, 0.0);
    else
-       gl_FragColor.rgb = vec3(tc.r, tc.g, tc.b); //texture2D(texture, tc);
+       fragColor.rgb = vec3(tc.r, tc.g, tc.b); //texture2D(texture, tc);
 }

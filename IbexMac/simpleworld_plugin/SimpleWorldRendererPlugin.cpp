@@ -31,7 +31,19 @@
 
 #include "SimpleWorldRendererPlugin.h"
 
-#include <oculus/Rift.h>
+#include "oculus/Rift.h"
+
+#include "../GLSLShaderProgram.h"
+
+
+void copyMatrix(glm::mat4 &modelView, float M[4][4]) {
+    for(int i = 0; i < 4; ++i) {
+        for(int i2 = 0; i2 < 4; ++i2) {
+            modelView[i][i2] = M[i][i2];
+        }
+    }
+}
+//////
 
 void renderSphericalDisplay(double r, double numHorizontalLines, double numVerticalLines, double width, double height) {
     glPushMatrix();
@@ -104,7 +116,7 @@ void renderSphericalMouse(double r, double numHorizontalLines, double numVertica
 
 void renderCylindricalDisplay(double r, double numHorizontalLines, double numVerticalLines, double width, double height) {
     glPushMatrix();
-//    glRotated(90, 1, 0, 0);
+    //    glRotated(90, 1, 0, 0);
     
     glPushMatrix();
     for(double i = 0; i <= numHorizontalLines; i++) {
@@ -148,8 +160,22 @@ SimpleWorldRendererPlugin::~SimpleWorldRendererPlugin() {
 // Purpose:
 // Updated:  Sep 10, 2012
 // ---------------------------------------------------------------------------
+void updateResourcePath(char *path_) {
+    char path[1024];
+    
+    strcpy(path, mResourcePath);
+    strcat(path, path_);
+    strcpy(path_, path);
+}
+
+GLSLShaderProgram skyboxShaderProgram;
+GLSLShaderProgram groundShaderProgram;
+GLSLShaderProgram standardShaderProgram;
+
 void SimpleWorldRendererPlugin::loadSkybox()
 {
+    return;
+    
 #ifdef _WIN32
     _skybox[0] = loadTexture("\\resources\\humus-skybox\\negz.jpg");
     _skybox[1] = loadTexture("\\resources\\humus-skybox\\posx.jpg");
@@ -159,38 +185,138 @@ void SimpleWorldRendererPlugin::loadSkybox()
     _skybox[5] = loadTexture("\\resources\\humus-skybox\\negy.jpg");
 #else
 #ifdef __APPLE__
-  _skybox[0] = loadTexture("/resources/humus-skybox/negz.jpg");
-  _skybox[1] = loadTexture("/resources/humus-skybox/posx.jpg");
-  _skybox[2] = loadTexture("/resources/humus-skybox/posz.jpg");
-  _skybox[3] = loadTexture("/resources/humus-skybox/negx.jpg");
-  _skybox[4] = loadTexture("/resources/humus-skybox/posy.jpg");
-  _skybox[5] = loadTexture("/resources/humus-skybox/negy.jpg");
+    _skybox[0] = loadTexture("/resources/humus-skybox/negz.jpg");
+    _skybox[1] = loadTexture("/resources/humus-skybox/posx.jpg");
+    _skybox[2] = loadTexture("/resources/humus-skybox/posz.jpg");
+    _skybox[3] = loadTexture("/resources/humus-skybox/negx.jpg");
+    _skybox[4] = loadTexture("/resources/humus-skybox/posy.jpg");
+    _skybox[5] = loadTexture("/resources/humus-skybox/negy.jpg");
 #else
-  float sizeX = 2048;
-  float sizeY = 2048;
-  _skybox[0] = glmLoadTexture("./resources/humus-skybox/negz.jpg", GL_TRUE, GL_FALSE,
-                              GL_TRUE, GL_FALSE, &sizeX, &sizeY);
-  _skybox[1] = glmLoadTexture("./resources/humus-skybox/posx.jpg", GL_TRUE, GL_FALSE,
-                              GL_TRUE, GL_FALSE, &sizeX, &sizeY);
-  _skybox[2] = glmLoadTexture("./resources/humus-skybox/posz.jpg", GL_TRUE, GL_FALSE,
-                              GL_TRUE, GL_FALSE, &sizeX, &sizeY);
-  _skybox[3] = glmLoadTexture("./resources/humus-skybox/negx.jpg", GL_TRUE, GL_FALSE,
-                              GL_TRUE, GL_FALSE, &sizeX, &sizeY);
-  _skybox[4] = glmLoadTexture("./resources/humus-skybox/posy.jpg", GL_TRUE, GL_FALSE,
-                              GL_TRUE, GL_FALSE, &sizeX, &sizeY);
-  _skybox[5] = glmLoadTexture("./resources/humus-skybox/negy.jpg", GL_TRUE, GL_FALSE,
-                              GL_TRUE, GL_FALSE, &sizeX, &sizeY);
+    float sizeX = 2048;
+    float sizeY = 2048;
+    
+    _skybox[0] = glmLoadTexture("./resources/humus-skybox/negz.jpg", GL_TRUE, GL_FALSE,
+                                GL_TRUE, GL_FALSE, &sizeX, &sizeY);
+    _skybox[1] = glmLoadTexture("./resources/humus-skybox/posx.jpg", GL_TRUE, GL_FALSE,
+                                GL_TRUE, GL_FALSE, &sizeX, &sizeY);
+    _skybox[2] = glmLoadTexture("./resources/humus-skybox/posz.jpg", GL_TRUE, GL_FALSE,
+                                GL_TRUE, GL_FALSE, &sizeX, &sizeY);
+    _skybox[3] = glmLoadTexture("./resources/humus-skybox/negx.jpg", GL_TRUE, GL_FALSE,
+                                GL_TRUE, GL_FALSE, &sizeX, &sizeY);
+    _skybox[4] = glmLoadTexture("./resources/humus-skybox/posy.jpg", GL_TRUE, GL_FALSE,
+                                GL_TRUE, GL_FALSE, &sizeX, &sizeY);
+    _skybox[5] = glmLoadTexture("./resources/humus-skybox/negy.jpg", GL_TRUE, GL_FALSE,
+                                GL_TRUE, GL_FALSE, &sizeX, &sizeY);
 #endif
 #endif
-  for(int i = 0; i < 6; ++i) {
-    glBindTexture(GL_TEXTURE_2D, _skybox[i]);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-  }
-  glBindTexture(GL_TEXTURE_2D, 0);
-  std::cout << _skybox[5] << std::endl;
+    for(int i = 0; i < 6; ++i) {
+        glBindTexture(GL_TEXTURE_2D, _skybox[i]);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    }
+    glBindTexture(GL_TEXTURE_2D, 0);
+    std::cout << _skybox[5] << std::endl;
 }
 
+/////////////////////
+
+void SimpleWorldRendererPlugin::renderIbexDisplayFlat(const glm::mat4 &modelView, const glm::mat4 &proj)
+{
+    checkForErrors();
+//    std::cerr << "start IbexDisplayFlat" << std::endl;
+    
+    static GLuint vaoIbexDisplayFlat = 0;
+    static const GLfloat IbexDisplayFlatScale = 10;
+    
+    static GLuint IbexDisplayFlatUniformLocations[3] = { 0, 0, 0};
+    static GLuint IbexDisplayFlatAttribLocations[3] = { 0, 0, 0 };
+    
+    static GLfloat IbexDisplayFlatVertices[] = {
+        -1.0,  -1, 0.0, 0, 0, -1, 0, 0,
+        1.0, -1.0, 0.0, 0, 0, -1, 1, 0,
+        1.0, 1.0, 0.0, 0, 0, -1, 1, 1,
+        -1.0, 1.0, 0.0, 0, 0, -1, 0, 1,
+    };
+    static GLuint vboIbexDisplayFlatVertices = 0;
+    
+    static GLushort IbexDisplayFlatIndices[] = {
+        0, 1, 2,
+        0, 2, 3
+    };
+    static GLuint vboIbexDisplayFlatIndices = 0;
+    
+    static bool first = true;
+    if(first) {
+        first = false;
+        
+        for(int i = 0; i < sizeof(IbexDisplayFlatVertices)/sizeof(GLfloat); ++i) {
+            if(i%8 < 3)
+                IbexDisplayFlatVertices[i] *= IbexDisplayFlatScale;
+            if(i%8 == 1)
+                IbexDisplayFlatVertices[i] *= height/width;
+        }
+        
+        standardShaderProgram.loadShaderProgram(mResourcePath, "/resources/shaders/standard.v.glsl", "/resources/shaders/standard.f.glsl");
+        glUseProgram(standardShaderProgram.shader.program);
+        
+        
+        IbexDisplayFlatUniformLocations[0] = glGetUniformLocation(standardShaderProgram.shader.program, "modelViewMatrix");
+        IbexDisplayFlatUniformLocations[1] = glGetUniformLocation(standardShaderProgram.shader.program, "projectionMatrix");
+        IbexDisplayFlatUniformLocations[2] = glGetUniformLocation(standardShaderProgram.shader.program, "textureIn");
+        
+        IbexDisplayFlatAttribLocations[0] = glGetAttribLocation(standardShaderProgram.shader.program, "vertexPosition_modelspace");
+        IbexDisplayFlatAttribLocations[1] = glGetAttribLocation(standardShaderProgram.shader.program, "vertexNormal_modelspace");
+        IbexDisplayFlatAttribLocations[2] = glGetAttribLocation(standardShaderProgram.shader.program, "vertexUV");
+        
+        glUseProgram(0);
+        
+        std::cerr << "setup_buffers" << std::endl;
+        checkForErrors();
+        glGenVertexArrays(1,&vaoIbexDisplayFlat);
+        
+        checkForErrors();
+        std::cerr << "gen vaoIbexDisplayFlat done" << std::endl;
+        
+        glBindVertexArray(vaoIbexDisplayFlat);
+        glGenBuffers(1, &vboIbexDisplayFlatVertices);
+        glBindBuffer(GL_ARRAY_BUFFER, vboIbexDisplayFlatVertices);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(IbexDisplayFlatVertices), IbexDisplayFlatVertices, GL_STATIC_DRAW);
+        
+        glEnableVertexAttribArray(IbexDisplayFlatAttribLocations[0]);
+        glVertexAttribPointer(IbexDisplayFlatAttribLocations[0], 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*8, 0);
+        glEnableVertexAttribArray(IbexDisplayFlatAttribLocations[1]);
+        glVertexAttribPointer(IbexDisplayFlatAttribLocations[1], 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*8, (GLvoid*) (sizeof(GLfloat) * 3));
+        glEnableVertexAttribArray(IbexDisplayFlatAttribLocations[2]);
+        glVertexAttribPointer(IbexDisplayFlatAttribLocations[2], 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*8, (GLvoid*) (sizeof(GLfloat) * 6));
+        
+        
+        glGenBuffers(1, &vboIbexDisplayFlatIndices);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboIbexDisplayFlatIndices);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(IbexDisplayFlatIndices), IbexDisplayFlatIndices, GL_STATIC_DRAW);
+    }
+    
+    glUseProgram(standardShaderProgram.shader.program);
+    glUniformMatrix4fv(IbexDisplayFlatUniformLocations[0], 1, GL_FALSE, &modelView[0][0]);
+    glUniformMatrix4fv(IbexDisplayFlatUniformLocations[1], 1, GL_FALSE, &proj[0][0]);
+    
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, desktopTexture);
+    glUniform1i(IbexDisplayFlatUniformLocations[2], 0);
+    
+    glBindVertexArray(vaoIbexDisplayFlat);
+    glDrawElements(GL_TRIANGLES, sizeof(IbexDisplayFlatIndices)/sizeof(GLushort), GL_UNSIGNED_SHORT, 0);
+    glBindVertexArray(0);
+    
+    glBindTexture(GL_TEXTURE_2D, 0);
+    
+    glUseProgram(0);
+    
+    if(!checkForErrors()) {
+        std::cerr << "IbexDisplayFlat failed, exiting" << std::endl;
+        exit(0);
+    }
+//    std::cerr << "Done IbexDisplayFlat" << std::endl;
+}
 
 // ---------------------------------------------------------------------------
 // Function: renderSkybox
@@ -198,411 +324,556 @@ void SimpleWorldRendererPlugin::loadSkybox()
 // Purpose:
 // Updated:  Sep 10, 2012
 // ---------------------------------------------------------------------------
-void SimpleWorldRendererPlugin::renderSkybox()
+void SimpleWorldRendererPlugin::renderSkybox(const glm::mat4 &modelView, const glm::mat4 &proj)
 {
-  static const double skyboxScale = 30;
-  // Store the current matrix
-  glPushMatrix();
-  glScaled(skyboxScale, skyboxScale, skyboxScale);
-
-  // Enable/Disable features
-  glPushAttrib(GL_ENABLE_BIT);
-  glEnable(GL_TEXTURE_2D);
-  glDisable(GL_DEPTH_TEST);
-  glDisable(GL_LIGHTING);
-  glDisable(GL_BLEND);
+    checkForErrors();
+//    std::cerr << "start skybox" << std::endl;
     
-  // Just in case we set all vertices to white.
-  glColor4f(1, 1, 1, 1);
-
-  // Render the front quad
-//    checkForErrors();
-//    std::cerr << "bind texture... " << _skybox[1] << std::endl;
-  glBindTexture(GL_TEXTURE_2D, _skybox[0]);
-//    checkForErrors();
-//        std::cerr << "bind texture... done" << std::endl;
-  glBegin(GL_QUADS);
-    glTexCoord2f(0, 0); glVertex3f(  0.5f, -0.5f, -0.5f );
-    glTexCoord2f(1, 0); glVertex3f( -0.5f, -0.5f, -0.5f );
-    glTexCoord2f(1, 1); glVertex3f( -0.5f,  0.5f, -0.5f );
-    glTexCoord2f(0, 1); glVertex3f(  0.5f,  0.5f, -0.5f );
-  glEnd();
+    static GLuint vaoSkybox = 0;
+    static const GLfloat skyboxScale = 1000;
     
-  // Render the left quad
-  glBindTexture(GL_TEXTURE_2D, _skybox[1]);
-  glBegin(GL_QUADS);
-    glTexCoord2f(0, 0); glVertex3f(  0.5f, -0.5f,  0.5f );
-    glTexCoord2f(1, 0); glVertex3f(  0.5f, -0.5f, -0.5f );
-    glTexCoord2f(1, 1); glVertex3f(  0.5f,  0.5f, -0.5f );
-    glTexCoord2f(0, 1); glVertex3f(  0.5f,  0.5f,  0.5f );
-  glEnd();
+    static GLuint SkyBoxUniformLocations[3] = { 0, 0, 0};
+    static GLuint SkyBoxAttribLocations[1] = { 0 };
+    
+    static GLfloat skyboxVertices[] = {
+        -1.0,  1.0,  1.0,
+        -1.0, -1.0,  1.0,
+        1.0, -1.0,  1.0,
+        1.0,  1.0,  1.0,
+        -1.0,  1.0, -1.0,
+        -1.0, -1.0, -1.0,
+        1.0, -1.0, -1.0,
+        1.0,  1.0, -1.0
+    };
+    static GLuint vboSkyboxVertices = 0;
+    
+    static GLushort skyboxIndices[] = {
+        0, 1, 2,
+        0, 2, 3,
+        3, 2, 6,
+        3, 6, 7,
+        7, 6, 5,
+        7, 5, 4,
+        4, 5, 1,
+        4, 1, 0,
+        0, 3, 7,
+        0, 7, 4,
+        1, 2, 6,
+        1, 6, 5
+    };
+    static GLuint vboSkyboxIndices = 0;
+    
+    static bool first = true;
+    if(first) {
+        first = false;
+        
+        for(int i = 0; i < sizeof(skyboxVertices)/sizeof(GLfloat); ++i) {
+            skyboxVertices[i] *= skyboxScale;
+        }
+        
+        _skycube = 0;
+        skyboxShaderProgram.loadShaderProgram(mResourcePath, "/resources/shaders/skybox.v.glsl", "/resources/shaders/skybox.f.glsl");
+        glUseProgram(skyboxShaderProgram.shader.program);
+        
+        
+        SkyBoxUniformLocations[0] = glGetUniformLocation(skyboxShaderProgram.shader.program, "modelViewMatrix");
+        SkyBoxUniformLocations[1] = glGetUniformLocation(skyboxShaderProgram.shader.program, "projectionMatrix");
+        SkyBoxUniformLocations[2] = glGetUniformLocation(skyboxShaderProgram.shader.program, "cubemap");
+        
+        SkyBoxAttribLocations[0] = glGetAttribLocation(skyboxShaderProgram.shader.program, "vertexPosition_modelspace");
+        
+        glUseProgram(0);
+        
+        std::cerr << "setup_buffers" << std::endl;
+        checkForErrors();
+        glGenVertexArrays(1,&vaoSkybox);
+        
+        checkForErrors();
+        std::cerr << "gen vaoSkybox done" << std::endl;
+        
+        glBindVertexArray(vaoSkybox);
+        glGenBuffers(1, &vboSkyboxVertices);
+        glBindBuffer(GL_ARRAY_BUFFER, vboSkyboxVertices);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), skyboxVertices, GL_STATIC_DRAW);
+        
+        glGenBuffers(1, &vboSkyboxIndices);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboSkyboxIndices);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(skyboxIndices), skyboxIndices, GL_STATIC_DRAW);
+        
+        glEnableVertexAttribArray(SkyBoxAttribLocations[0]);
+        glVertexAttribPointer(SkyBoxAttribLocations[0], 3, GL_FLOAT, GL_FALSE, 0, 0);
+        
+        const char *paths[6] = {
+            "/resources/humus-skybox/posx.jpg",
+            "/resources/humus-skybox/negx.jpg",
+            "/resources/humus-skybox/posy.jpg",
+            "/resources/humus-skybox/negy.jpg",
+            "/resources/humus-skybox/posz.jpg",
+            "/resources/humus-skybox/negz.jpg"
+        };
+        _skycube = loadCubemapTextures(paths);
+    }
+    
+    glUseProgram(skyboxShaderProgram.shader.program);
+    glUniformMatrix4fv(SkyBoxUniformLocations[0], 1, GL_FALSE, &modelView[0][0]);
+    glUniformMatrix4fv(SkyBoxUniformLocations[1], 1, GL_FALSE, &proj[0][0]);
+    
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, _skycube);
+    glUniform1i(SkyBoxUniformLocations[2], 0);
+    
+    glBindVertexArray(vaoSkybox);
+    glDrawElements(GL_TRIANGLES, sizeof(skyboxIndices)/sizeof(GLushort), GL_UNSIGNED_SHORT, 0);
+    glBindVertexArray(0);
+    
+    glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+    
+    glUseProgram(0);
+    
+    if(!checkForErrors()) {
+        std::cerr << "skybox failed, exiting" << std::endl;
+        exit(0);
+    }
+//    std::cerr << "Done skybox" << std::endl;
+}
 
-  // Render the back quad
-  glBindTexture(GL_TEXTURE_2D, _skybox[2]);
-  glBegin(GL_QUADS);
-    glTexCoord2f(0, 0); glVertex3f( -0.5f, -0.5f,  0.5f );
-    glTexCoord2f(1, 0); glVertex3f(  0.5f, -0.5f,  0.5f );
-    glTexCoord2f(1, 1); glVertex3f(  0.5f,  0.5f,  0.5f );
-    glTexCoord2f(0, 1); glVertex3f( -0.5f,  0.5f,  0.5f );
-  glEnd();
-
-  // Render the right quad
-  glBindTexture(GL_TEXTURE_2D, _skybox[3]);
-  glBegin(GL_QUADS);
-    glTexCoord2f(0, 0); glVertex3f( -0.5f, -0.5f, -0.5f );
-    glTexCoord2f(1, 0); glVertex3f( -0.5f, -0.5f,  0.5f );
-    glTexCoord2f(1, 1); glVertex3f( -0.5f,  0.5f,  0.5f );
-    glTexCoord2f(0, 1); glVertex3f( -0.5f,  0.5f, -0.5f );
-  glEnd();
-
-  // Render the top quad
-  glBindTexture(GL_TEXTURE_2D, _skybox[4]);
-  glBegin(GL_QUADS);
-    glTexCoord2f(0, 1); glVertex3f( -0.5f,  0.5f, -0.5f );
-    glTexCoord2f(0, 0); glVertex3f( -0.5f,  0.5f,  0.5f );
-    glTexCoord2f(1, 0); glVertex3f(  0.5f,  0.5f,  0.5f );
-    glTexCoord2f(1, 1); glVertex3f(  0.5f,  0.5f, -0.5f );
-  glEnd();
-
-  // Render the bottom quad
-  glBindTexture(GL_TEXTURE_2D, _skybox[5]);
-  glBegin(GL_QUADS);
-    glTexCoord2f(0, 0); glVertex3f( -0.5f, -0.5f, -0.5f );
-    glTexCoord2f(0, 1); glVertex3f( -0.5f, -0.5f,  0.5f );
-    glTexCoord2f(1, 1); glVertex3f(  0.5f, -0.5f,  0.5f );
-    glTexCoord2f(1, 0); glVertex3f(  0.5f, -0.5f, -0.5f );
-  glEnd();
-
-  // Restore enable bits and matrix
-  glPopAttrib();
-  glPopMatrix();
-
-//  glBindTexture(GL_TEXTURE_2D, 0);
+void SimpleWorldRendererPlugin::renderGround(const glm::mat4 &modelView, const glm::mat4 &proj)
+{
+    checkForErrors();
+//    std::cerr << "Loading ground texture" << std::endl;
+#ifdef _WIN32
+    static const GLuint groundTexture = loadTexture("\\resources\\humus-skybox\\negy.jpg");
+    //        orientation = getRiftOrientation();
+#else
+#ifdef __APPLE__
+    static const GLuint groundTexture = loadTexture("/resources/humus-skybox/negy.jpg");
+#else
+    static float sizeX = 64;
+    static float sizeY = 64;
+    static const GLuint groundTexture = glmLoadTexture("./resources/humus-skybox/negy.jpg", GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE, &sizeX, &sizeY);
+#endif
+    // gluInvertMatrix(get_orientation(), orientation);
+#endif
+    
+    checkForErrors();
+//    std::cerr << "start Ground" << std::endl;
+    
+    static GLuint vaoGround = 0;
+    static const GLfloat GroundScale = 1000;
+    
+    static GLuint GroundUniformLocations[3] = { 0, 0, 0};
+    static GLuint GroundAttribLocations[3] = { 0, 0, 0 };
+    
+    static GLfloat GroundVertices[] = {
+        -1.0,  -10.0, -1.0, 0, 1, 0, 0, 0,
+        1.0, -10.0, -1.0, 0, 1, 0, 1, 0,
+        1.0, -10.0, 1.0, 0, 1, 0, 1, 1,
+        -1.0, -10.0, 1.0, 0, 1, 0, 0, 1
+    };
+    static GLuint vboGroundVertices = 0;
+    
+    static GLushort GroundIndices[] = {
+        0, 1, 2,
+        0, 2, 3
+    };
+    static GLuint vboGroundIndices = 0;
+    
+    static bool first = true;
+    if(first) {
+        first = false;
+        
+        for(int i = 0; i < sizeof(GroundVertices)/sizeof(GLfloat); ++i) {
+            if(i%8 != 1 && (i%8 < 3 || i%8 > 5)) {
+                GroundVertices[i] *= GroundScale;
+            }
+        }
+        
+//        groundShaderProgram.loadShaderProgram(mResourcePath, "/resources/shaders/ground.v.glsl", "/resources/shaders/ground.f.glsl");
+        groundShaderProgram.loadShaderProgram(mResourcePath, "/resources/shaders/standard.v.glsl", "/resources/shaders/standard.f.glsl");
+        glUseProgram(groundShaderProgram.shader.program);
+        
+        
+        GroundUniformLocations[0] = glGetUniformLocation(groundShaderProgram.shader.program, "modelViewMatrix");
+        GroundUniformLocations[1] = glGetUniformLocation(groundShaderProgram.shader.program, "projectionMatrix");
+        GroundUniformLocations[2] = glGetUniformLocation(groundShaderProgram.shader.program, "textureIn");
+        
+        GroundAttribLocations[0] = glGetAttribLocation(groundShaderProgram.shader.program, "vertexPosition_modelspace");
+        GroundAttribLocations[1] = glGetAttribLocation(groundShaderProgram.shader.program, "vertexNormal_modelspace");
+        GroundAttribLocations[2] = glGetAttribLocation(groundShaderProgram.shader.program, "vertexUV");
+        
+        glUseProgram(0);
+        
+        std::cerr << "setup_buffers" << std::endl;
+        checkForErrors();
+        glGenVertexArrays(1,&vaoGround);
+        
+        checkForErrors();
+        std::cerr << "gen vaoGround done" << std::endl;
+        
+        glBindVertexArray(vaoGround);
+        glGenBuffers(1, &vboGroundVertices);
+        glBindBuffer(GL_ARRAY_BUFFER, vboGroundVertices);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(GroundVertices), GroundVertices, GL_STATIC_DRAW);
+        
+        glGenBuffers(1, &vboGroundIndices);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboGroundIndices);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GroundIndices), GroundIndices, GL_STATIC_DRAW);
+        
+        glEnableVertexAttribArray(GroundAttribLocations[0]);
+        glVertexAttribPointer(GroundAttribLocations[0], 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*8, 0);
+        glEnableVertexAttribArray(GroundAttribLocations[1]);
+        glVertexAttribPointer(GroundAttribLocations[1], 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*8, (GLvoid*) (sizeof(GLfloat) * 3));
+        glEnableVertexAttribArray(GroundAttribLocations[2]);
+        glVertexAttribPointer(GroundAttribLocations[2], 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*8, (GLvoid*) (sizeof(GLfloat) * 6));
+    }
+    
+    glUseProgram(groundShaderProgram.shader.program);
+    glUniformMatrix4fv(GroundUniformLocations[0], 1, GL_FALSE, &modelView[0][0]);
+    glUniformMatrix4fv(GroundUniformLocations[1], 1, GL_FALSE, &proj[0][0]);
+    
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, groundTexture);
+    glUniform1i(GroundUniformLocations[2], 0);
+    
+    glBindVertexArray(vaoGround);
+    glDrawElements(GL_TRIANGLES, sizeof(GroundIndices)/sizeof(GLushort), GL_UNSIGNED_SHORT, 0);
+    glBindVertexArray(0);
+    
+    glBindTexture(GL_TEXTURE_2D, 0);
+    
+    glUseProgram(0);
+    
+    if(!checkForErrors()) {
+        std::cerr << "Ground failed, exiting" << std::endl;
+        exit(0);
+    }
+//    std::cerr << "Done Ground" << std::endl;
 }
 
 void SimpleWorldRendererPlugin::init() {
-  loadSkybox();
+    loadSkybox();
 }
 
 void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDiff_) {
-    if (USE_FBO && CACHED_SHADER) {
+    if (USE_FBO) {
         glBindFramebuffer(GL_FRAMEBUFFER, fbos[0]);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+        
 		if (!checkForErrors()) {
 			std::cerr << "GL ISSUE -- SimpleWorldRendererPlugin::step" << std::endl;
 			//exit(EXIT_FAILURE);
 		}
     }
-
-    static double *orientation;
+    
 #ifdef _WIN32
-		static const GLuint groundTexture = loadTexture("\\resources\\humus-skybox\\negy.jpg");
-//        orientation = getRiftOrientation();
+    static const GLuint groundTexture = loadTexture("\\resources\\humus-skybox\\negy.jpg");
+    //        orientation = getRiftOrientation();
 #else
 #ifdef __APPLE__
-  static const GLuint groundTexture = loadTexture("/resources/humus-skybox/negy.jpg");
+    static const GLuint groundTexture = loadTexture("/resources/humus-skybox/negy.jpg");
 #else
-  static float sizeX = 64;
-  static float sizeY = 64;
-  static const GLuint groundTexture = glmLoadTexture("./resources/humus-skybox/negy.jpg", GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE, &sizeX, &sizeY);
+    static float sizeX = 64;
+    static float sizeY = 64;
+    static const GLuint groundTexture = glmLoadTexture("./resources/humus-skybox/negy.jpg", GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE, &sizeX, &sizeY);
 #endif
-  //        gluInvertMatrix(get_orientation(), orientation);
+    // gluInvertMatrix(get_orientation(), orientation);
 #endif
     
+    for (int i2 = 0; i2 < 2; ++i2) {
+        const bool left = (i2 == 0);
+        const OVR::Util::Render::StereoEyeParams &stereo = (left) ? leftEye : rightEye;
+        glViewport(stereo.VP.x*renderScale,stereo.VP.y*renderScale,stereo.VP.w*renderScale,stereo.VP.h*renderScale);
+        glEnable(GL_SCISSOR_TEST);
+        glScissor(stereo.VP.x*renderScale,stereo.VP.y*renderScale,stereo.VP.w*renderScale,stereo.VP.h*renderScale);
+        
+        if (!USE_FBO && i2 > 0) {
+            break;
+        }
+        
+        //            // Setup the frustum for the left eye
+        //            glMatrixMode(GL_PROJECTION);
+        //            glLoadMatrixf((const float *)stereo.Projection.Transposed().M);
+        //
+        //            static double *orientation;
+        //            if(i2 == 0) orientation = getRiftOrientation();
+        //            glMultMatrixd(orientation);
+        //
+        //
+        //            glMatrixMode(GL_MODELVIEW);
+        //            glLoadMatrixf((const float*)stereo.ViewAdjust.M);
+        
+        glm::mat4 modelView;
+        glm::mat4 proj;
+        copyMatrix(modelView,stereo.ViewAdjust.Transposed().M);
+        copyMatrix(proj, (getRiftOrientationNative()*stereo.Projection.Transposed()).M);
+        
+        
+        glm::mat4 playerRotation(glm::rotate(glm::mat4(1.0f), (float)loc.getXRotation(), glm::vec3(1, 0, 0)));
+        playerRotation = glm::rotate(playerRotation, (float)loc.getYRotation(), glm::vec3(0, 1, 0));
+        glm::mat4 playerCamera(glm::translate(playerRotation, glm::vec3((float)loc.getXPosition(), (float)loc.getYPosition(), (float)loc.getZPosition())));
+        
+        glDepthMask(GL_FALSE);
+        renderSkybox(modelView*playerRotation, proj);
+        
+        glDepthMask(GL_TRUE);
+        modelView *= playerCamera;
+        renderIbexDisplayFlat(glm::translate(modelView, glm::vec3(0.0f, 0.0f, -10.0f)), proj);
+        if(showGround) {
+            renderGround(modelView, proj);
+        }
+        
+        if(false) {
+            //double orientation[16];
+            //gluInvertMatrix(get_orientation(), orientation);
+            
+            //            glPushMatrix();
+            {
+                //glMultMatrixd(orientation);
+                glRotated(loc.getXRotation(), 1, 0, 0);
+                glRotated(loc.getYRotation(), 0, 1, 0);
+                //  glTranslated(0, -1.5, 0);
+                glTranslated(0, -0.5, 0);
+                
+                //                renderSkybox();
+                glColor4f(1,1,1,1);
+                
+                glPushMatrix();
+                {
+                    glTranslated(loc.getXPosition(),
+                                 loc.getYPosition(),
+                                 loc.getZPosition());
+                    
+                    if(showGround) {
+                        static const int gridSize = 25;
+                        static const int textureRepeat = 2*gridSize;
+                        
+                        glBindTexture(GL_TEXTURE_2D, groundTexture);
+                        glBegin(GL_TRIANGLE_STRIP);
+                        glTexCoord2d(0, 0);
+                        glVertex3f(-gridSize, 0, -gridSize);
+                        
+                        glTexCoord2d(textureRepeat, 0);
+                        glVertex3f(gridSize, 0, -gridSize);
+                        
+                        glTexCoord2d(0, textureRepeat);
+                        glVertex3f(-gridSize, 0, gridSize);
+                        
+                        glTexCoord2d(textureRepeat, textureRepeat);
+                        glVertex3f(gridSize, 0, gridSize);
+                        glEnd();
+                        //glBindTexture(GL_TEXTURE_2D, 0);
+                    }
+                    
+                    if (renderToTexture) {
+                        double ySize = ((double)height / (double)width) / 2.0;
+                        glTranslated(0, 0.5, 0);
+                        const double monitorOriginZ = -0.5;
+                        glBindTexture(GL_TEXTURE_2D, desktopTexture);
+                        glColor4f(1,1,1,1);
+                        
+                        switch(displayShape) {
+                            case SphericalDisplay:
+                                renderSphericalDisplay(0.5, 100, 100,180,135);//25, 25, 180, 90);
+                                break;
+                            case CylindricalDisplay:
+                                renderCylindricalDisplay(0.5, 100,100,180,180);//25, 25, 180, 90);
+                                break;
+                            case FlatDisplay:
+                            default:
+                                glBegin(GL_TRIANGLE_STRIP);
+                                glTexCoord2d(0, 0);
+                                glVertex3f(-0.5, -ySize, monitorOriginZ);
+                                
+                                glTexCoord2d(1, 0);
+                                glVertex3f(0.5, -ySize, monitorOriginZ);
+                                
+                                glTexCoord2d(0, 1);
+                                glVertex3f(-0.5, ySize, monitorOriginZ);
+                                
+                                glTexCoord2d(1, 1);
+                                glVertex3f(0.5, ySize, monitorOriginZ);
+                                glEnd();
+                        }
+                        
+                        ySize = videoHeight/videoWidth/2.0;
+                        glBindTexture(GL_TEXTURE_2D, videoTexture[i2]);
+                        glColor4f(1,1,1,1);
+                        glBegin(GL_TRIANGLE_STRIP);
+                        glTexCoord2d(0, 1);
+                        glVertex3f(1.5-0.5, -ySize, monitorOriginZ);
+                        
+                        glTexCoord2d(1, 1);
+                        glVertex3f(1.5+0.5, -ySize, monitorOriginZ);
+                        
+                        glTexCoord2d(0, 0);
+                        glVertex3f(1.5-0.5, ySize, monitorOriginZ);
+                        
+                        glTexCoord2d(1, 0);
+                        glVertex3f(1.5+0.5, ySize, monitorOriginZ);
+                        glEnd();
+                        
+                        
+                        glEnable(GL_BLEND);
+                        
+                        if(mouseBlendAlternate) {
+                            glBlendFunc(GL_ZERO, GL_ONE_MINUS_SRC_COLOR);
+                        } else {
+                            glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+                        }
+                        
+                        
+                        ySize = ((double)height / (double)width) / 2.0;
+                        glBindTexture( GL_TEXTURE_2D, cursor );
+                        glBegin(GL_TRIANGLE_STRIP);
+                        {
+                            //					const double cursorSize = 32.0; // was 20.0, not sure which is best on each OS
+                            double x0, x1, y0, y1, z;
+                            x0 = -0.5+(cursorPosX/physicalWidth);
+                            x1 = -0.5+((cursorPosX+cursorSize)/physicalWidth);
+                            y0 = -ySize+ySize*2*(cursorPosY+0.)/physicalHeight;
+                            y1 = -ySize+ySize*2*(cursorPosY-cursorSize)/physicalHeight;
+                            
+#ifdef WIN32
+                            z = monitorOriginZ+0.00001;
+#else
+                            z = monitorOriginZ+0.0000001;
+#endif
+                            
+                            glTexCoord2d(0, 0);
+                            glVertex3f(  x0,  y0, z);
+                            
+                            glTexCoord2d(1, 0);
+                            glVertex3f( x1, y0, z);
+                            
+                            glTexCoord2d(0, -1);
+                            glVertex3f(  x0, y1 ,z);
+                            
+                            glTexCoord2d(1, -1);
+                            glVertex3f(  x1,  y1, z);
+                            
+                            glTexCoord2d(1, -1);
+                            glVertex3f( x1, y1, z);
+                            
+                            glTexCoord2d(0, -1);
+                            glVertex3f(  x0, y1,z);
+                        }
+                        glEnd();
+                        
+                        if(mouseBlendAlternate) { // restore mode
+                            glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+                        }
+                    } else {
+                        renderDesktopToTexture();
+                    }
+                }
+                glPopMatrix();
+                
+                if(showDialog) {
+                    window.render();
+                }
+            }
+            //            glPopMatrix();
+        }
+    }
+    glDisable(GL_SCISSOR_TEST);
+    glFlush();
     
-  for (int i2 = 0; i2 < 2; ++i2) {
-      const bool left = (i2 == 0);
-      const OVR::Util::Render::StereoEyeParams &stereo = (left) ? leftEye : rightEye;
-      glViewport(stereo.VP.x*renderScale,stereo.VP.y*renderScale,stereo.VP.w*renderScale,stereo.VP.h*renderScale);
-      glEnable(GL_SCISSOR_TEST);
-      glScissor(stereo.VP.x*renderScale,stereo.VP.y*renderScale,stereo.VP.w*renderScale,stereo.VP.h*renderScale);
-      
-      
-//      checkForErrors();
-       if (USE_FBO) {
+    glViewport(0,0, windowWidth, windowHeight);
+    if (USE_FBO) {
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
         if(!CACHED_SHADER) {
-            glBindFramebuffer(GL_FRAMEBUFFER, fbos[i2]);
-            //glClearColor((1-i2),i2,0,1);
+            glClearColor(0, 0, 0, 1);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         }
-		//glBindFramebuffer(GL_FRAMEBUFFER, fbos[0]);
-        glPushMatrix();
-    } else {
-      if (i2 > 0)
-        break;
-    }
-
-	//glScissor((i2 == 0)? 0 : textureWidth/2.0, 0, textureWidth/2.0, textureHeight);
-
-	// Setup the frustum for the left eye
-	glMatrixMode(GL_PROJECTION);
-    glLoadMatrixf((const float *)stereo.Projection.Transposed().M);
-    
-    if(i2 == 0) orientation = getRiftOrientation();
-	glMultMatrixd(orientation);
-      
-
-	glMatrixMode(GL_MODELVIEW);
-    glLoadMatrixf((const float*)stereo.ViewAdjust.M);
-
-    glEnable(GL_TEXTURE_2D);
-
-    //double orientation[16];
-    //gluInvertMatrix(get_orientation(), orientation);
-
-    glPushMatrix();
-    {
-		//glMultMatrixd(orientation);
-		glRotated(loc.getXRotation(), 1, 0, 0);
-		glRotated(loc.getYRotation(), 0, 1, 0);
-	//  glTranslated(0, -1.5, 0);
-		glTranslated(0, -0.5, 0);
-
-		renderSkybox();
-		glColor4f(1,1,1,1);
-
-          glPushMatrix();
-          {
-              glTranslated(loc.getXPosition(),
-                           loc.getYPosition(),
-                           loc.getZPosition());
-              
-            if(showGround) {
-              static const int gridSize = 25;
-              static const int textureRepeat = 2*gridSize;
-
-              glBindTexture(GL_TEXTURE_2D, groundTexture);
-              glBegin(GL_TRIANGLE_STRIP);
-                glTexCoord2d(0, 0);
-                glVertex3f(-gridSize, 0, -gridSize);
-
-                glTexCoord2d(textureRepeat, 0);
-                glVertex3f(gridSize, 0, -gridSize);
-
-                glTexCoord2d(0, textureRepeat);
-                glVertex3f(-gridSize, 0, gridSize);
-
-                glTexCoord2d(textureRepeat, textureRepeat);
-                glVertex3f(gridSize, 0, gridSize);
-              glEnd();
-              //glBindTexture(GL_TEXTURE_2D, 0);
-            }
-
-			if (renderToTexture) {
-					double ySize = ((double)height / (double)width) / 2.0;
-					glTranslated(0, 0.5, 0);
-					const double monitorOriginZ = -0.5;
-				glBindTexture(GL_TEXTURE_2D, desktopTexture);
-				glColor4f(1,1,1,1);
-                
-                switch(displayShape) {
-                    case SphericalDisplay:
-                        renderSphericalDisplay(0.5, 100, 100,180,135);//25, 25, 180, 90);
-                        break;
-                    case CylindricalDisplay:
-                        renderCylindricalDisplay(0.5, 100,100,180,180);//25, 25, 180, 90);
-                        break;
-                    case FlatDisplay:
-                    default:
-					glBegin(GL_TRIANGLE_STRIP);
-					glTexCoord2d(0, 0);
-					glVertex3f(-0.5, -ySize, monitorOriginZ);
-
-                    glTexCoord2d(1, 0);
-                    glVertex3f(0.5, -ySize, monitorOriginZ);
-
-                    glTexCoord2d(0, 1);
-                    glVertex3f(-0.5, ySize, monitorOriginZ);
-
-                    glTexCoord2d(1, 1);
-                    glVertex3f(0.5, ySize, monitorOriginZ);
-                  glEnd();
-                }
-                
-                ySize = videoHeight/videoWidth/2.0;
-                glBindTexture(GL_TEXTURE_2D, videoTexture[i2]);
-				glColor4f(1,1,1,1);
-                glBegin(GL_TRIANGLE_STRIP);
-                glTexCoord2d(0, 1);
-                glVertex3f(1.5-0.5, -ySize, monitorOriginZ);
-                
-                glTexCoord2d(1, 1);
-                glVertex3f(1.5+0.5, -ySize, monitorOriginZ);
-                
-                glTexCoord2d(0, 0);
-                glVertex3f(1.5-0.5, ySize, monitorOriginZ);
-                
-                glTexCoord2d(1, 0);
-                glVertex3f(1.5+0.5, ySize, monitorOriginZ);
-                glEnd();
-                
-                
-				glEnable(GL_BLEND);
-
-				if(mouseBlendAlternate) {
-					glBlendFunc(GL_ZERO, GL_ONE_MINUS_SRC_COLOR);
-				} else {
-					glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-				}
-				
-
-                ySize = ((double)height / (double)width) / 2.0;
-				glBindTexture( GL_TEXTURE_2D, cursor );
-				glBegin(GL_TRIANGLE_STRIP);
-				{
-//					const double cursorSize = 32.0; // was 20.0, not sure which is best on each OS
-					double x0, x1, y0, y1, z;
-					x0 = -0.5+(cursorPosX/physicalWidth);
-					x1 = -0.5+((cursorPosX+cursorSize)/physicalWidth);
-					y0 = -ySize+ySize*2*(cursorPosY+0.)/physicalHeight;
-					y1 = -ySize+ySize*2*(cursorPosY-cursorSize)/physicalHeight;
-                    
-		#ifdef WIN32
-					z = monitorOriginZ+0.00001;
-		#else
-					z = monitorOriginZ+0.0000001;
-		#endif
-
-					glTexCoord2d(0, 0);
-					glVertex3f(  x0,  y0, z);
-                    
-                    glTexCoord2d(1, 0);
-                    glVertex3f( x1, y0, z);
-                    
-                    glTexCoord2d(0, -1);
-                    glVertex3f(  x0, y1 ,z);
-                    
-                    glTexCoord2d(1, -1);
-                    glVertex3f(  x1,  y1, z);
-                    
-                    glTexCoord2d(1, -1);
-                    glVertex3f( x1, y1, z);
-                    
-                    glTexCoord2d(0, -1);
-                    glVertex3f(  x0, y1,z);
-                }
-                glEnd();
-
-				if(mouseBlendAlternate) { // restore mode
-					glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-				}
-			} else {
-				renderDesktopToTexture();
-			}
-		}
-		glPopMatrix();
         
-        if(showDialog) {
-            window.render();
-        }
-    }
-    glPopMatrix();
-
-    if(USE_FBO) {
-        glPopMatrix();
-    }
-
-  }
-  glDisable(GL_SCISSOR_TEST);
-
-    glViewport(0,0, windowWidth, windowHeight);
-  if (USE_FBO) {
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-      if(!CACHED_SHADER) {
-        glClearColor(0, 0, 0, 1);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glColor4f(1, 1, 1, 1);
-      }
-
-    if (ortho) {
-      glMatrixMode(GL_PROJECTION);
-      glOrtho(0, 1, 0, 1, -1, 1);
-      glMatrixMode(GL_MODELVIEW);
-      glLoadIdentity();
-    }
-      
-    if(barrelDistort) {
-        if(CACHED_SHADER) {
-            if(lensParametersChanged) {
-                render_distortion_lenses();
+        //        if (ortho) {
+        //            glMatrixMode(GL_PROJECTION);
+        //            glOrtho(0, 1, 0, 1, -1, 1);
+        //            glMatrixMode(GL_MODELVIEW);
+        //            glLoadIdentity();
+        //        }
+        
+        if(barrelDistort) {
+            if(CACHED_SHADER) {
+                if(lensParametersChanged) {
+                    render_distortion_lenses();
+                }
+                
+                render_both_frames(textures[0]);
+            } else {
+                render_distorted_frame(true, textures[0]);
+                render_distorted_frame(false, textures[0]);
             }
-
-            render_both_frames(textures[0]);
         } else {
-            render_distorted_frame(true, textures[0]);
-            render_distorted_frame(false, textures[1]);
-        }
-    } else {
-        if(!SBS) {
-            glViewport(0,0, windowWidth, windowHeight);
-            glBindTexture(GL_TEXTURE_2D, textures[0]);
-
-            glColor4f(1, 1, 1, 1);
-            glBegin(GL_TRIANGLE_STRIP);
-            glTexCoord2d(0, bottom);
-            glVertex3f(0, 0, 0);
-            
-            glTexCoord2d(0.5, bottom);
-            glVertex3f(1, 0, 0);
-            
-            glTexCoord2d(0, top);
-            glVertex3f(0, 1, 0);
-            
-            glTexCoord2d(0.5, top);
-            glVertex3f(1, 1, 0);
-            glEnd();
-            
-        } else {
-            for (int i = 0; i < 2; ++i) {
-          if (ortho) {
-          double originX = (i == 0) ? 0 : 0.5;
-          glBindTexture(GL_TEXTURE_2D, textures[i]);
-
-          glColor4f(1, 1, 1, 1);
-          glBegin(GL_TRIANGLE_STRIP);
-            glTexCoord2d(0, bottom);
-            glVertex3f(originX, 0, 0);
-
-            glTexCoord2d(1, bottom);
-            glVertex3f(originX + 0.5, 0, 0);
-
-            glTexCoord2d(0, top);
-            glVertex3f(originX, 1, 0);
-
-            glTexCoord2d(1, top);
-            glVertex3f(originX + 0.5, 1, 0);
-          glEnd();
-        } else {
-          glBindTexture(GL_TEXTURE_2D, textures[i]);
-          glPushMatrix();
-          glTranslated((i < 1) ? -0.98 : 0, -0.5, -2.4);
-          glColor4f(1, 1, 1, 1);
-          glBegin(GL_TRIANGLE_STRIP);
-            glTexCoord2d(0, bottom);
-            glVertex3f(0, 0, 0);
-
-            glTexCoord2d(1, bottom);
-            glVertex3f(1,0,0);
-
-            glTexCoord2d(0, top);
-            glVertex3f(0,1,0);
-
-            glTexCoord2d(1, top);
-            glVertex3f(1,1,0);
-          glEnd();
-          glPopMatrix();
-        }
-      }
+            if(!SBS) {
+                glViewport(0,0, windowWidth, windowHeight);
+                glBindTexture(GL_TEXTURE_2D, textures[0]);
+                
+                glColor4f(1, 1, 1, 1);
+                glBegin(GL_TRIANGLE_STRIP);
+                glTexCoord2d(0, bottom);
+                glVertex3f(0, 0, 0);
+                
+                glTexCoord2d(0.5, bottom);
+                glVertex3f(1, 0, 0);
+                
+                glTexCoord2d(0, top);
+                glVertex3f(0, 1, 0);
+                
+                glTexCoord2d(0.5, top);
+                glVertex3f(1, 1, 0);
+                glEnd();
+                
+            } else {
+                for (int i = 0; i < 2; ++i) {
+                    if (ortho) {
+                        double originX = (i == 0) ? 0 : 0.5;
+                        glBindTexture(GL_TEXTURE_2D, textures[i]);
+                        
+                        glColor4f(1, 1, 1, 1);
+                        glBegin(GL_TRIANGLE_STRIP);
+                        glTexCoord2d(0, bottom);
+                        glVertex3f(originX, 0, 0);
+                        
+                        glTexCoord2d(1, bottom);
+                        glVertex3f(originX + 0.5, 0, 0);
+                        
+                        glTexCoord2d(0, top);
+                        glVertex3f(originX, 1, 0);
+                        
+                        glTexCoord2d(1, top);
+                        glVertex3f(originX + 0.5, 1, 0);
+                        glEnd();
+                    } else {
+                        glBindTexture(GL_TEXTURE_2D, textures[i]);
+                        glPushMatrix();
+                        glTranslated((i < 1) ? -0.98 : 0, -0.5, -2.4);
+                        glColor4f(1, 1, 1, 1);
+                        glBegin(GL_TRIANGLE_STRIP);
+                        glTexCoord2d(0, bottom);
+                        glVertex3f(0, 0, 0);
+                        
+                        glTexCoord2d(1, bottom);
+                        glVertex3f(1,0,0);
+                        
+                        glTexCoord2d(0, top);
+                        glVertex3f(0,1,0);
+                        
+                        glTexCoord2d(1, top);
+                        glVertex3f(1,1,0);
+                        glEnd();
+                        glPopMatrix();
+                    }
+                }
+            }
         }
     }
-  }
 }
 
 Window SimpleWorldRendererPlugin::getWindowID() {
-  return ::window;
+    return ::window;
 }
 
 bool SimpleWorldRendererPlugin::needsSwapBuffers() {
-  return doubleBuffered;
+    return doubleBuffered;
 }

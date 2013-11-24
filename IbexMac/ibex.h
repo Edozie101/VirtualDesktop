@@ -8,11 +8,11 @@
 #ifndef IBEX_H_
 #define IBEX_H_
 
+#include "opengl_helpers.h"
+
 #if !defined(__APPLE__) && !defined(WIN32)
 #include "opengl_setup_x11.h"
 #endif
-
-#include "opengl_helpers.h"
 
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -117,7 +117,7 @@ class Desktop3DLocation
 public:
   // Prevent unforeseen copying
   explicit Desktop3DLocation()
-    : WALK_SPEED(0.2),//1),
+    : WALK_SPEED(5),//0.2),//1),
       m_xRotation(0.0), m_yRotation(0.0), m_zRotation(0.0),
       m_xPosition(0.0), m_yPosition(0.0), m_zPosition(0.0) {};
   // Class not intended for inheritence
