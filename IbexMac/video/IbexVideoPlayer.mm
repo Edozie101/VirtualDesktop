@@ -9,9 +9,7 @@
 
 #import "IbexVideoPlayer.h"
 
-#include <OpenGL/gl.h>
-#include <OpenGL/glu.h>
-#include <OpenGL/glext.h>
+#include "opengl_helpers.h"
 
 #import "VLCVideoPlayer.h"
 
