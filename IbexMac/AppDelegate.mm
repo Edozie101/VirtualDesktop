@@ -110,6 +110,8 @@ NSWindow* myWindow;
 NSWindow *mainWindow;
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
+    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"ApplePersistenceIgnoreState"];
+
     strcpy(mResourcePath, [[[NSBundle mainBundle] resourcePath] cStringUsingEncoding:NSUTF8StringEncoding]);
     
     CGRect mainDisplayRect = NSScreen.mainScreen.frame;
@@ -130,7 +132,6 @@ NSWindow *mainWindow;
     
     NSOpenGLPixelFormatAttribute attrs[] =
     {
-        NSOpenGLPFADoubleBuffer, 0,
         NSOpenGLPFAOpenGLProfile, NSOpenGLProfileVersion3_2Core
     };
     /*NSOpenGLPixelFormat* */pixelFormat = [[NSOpenGLPixelFormat alloc] initWithAttributes:attrs];
