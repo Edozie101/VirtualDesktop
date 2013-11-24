@@ -32,31 +32,31 @@ int riftResolutionX = 0;
 int riftResolutionY = 0;
 
 void initRift() {
-  OVR::System::Init(OVR::Log::ConfigureDefaultLog(OVR::LogMask_All));
-
-  pFusionResult = new OVR::SensorFusion();
-  pManager = *OVR::DeviceManager::Create();
-
-  //pManager->SetMessageHandler(this);
-
-  pHMD = *pManager->EnumerateDevices<OVR::HMDDevice>().CreateDevice();
-
+    OVR::System::Init(OVR::Log::ConfigureDefaultLog(OVR::LogMask_All));
+    
+    pFusionResult = new OVR::SensorFusion();
+    pManager = *OVR::DeviceManager::Create();
+    
+    //pManager->SetMessageHandler(this);
+    
+    pHMD = *pManager->EnumerateDevices<OVR::HMDDevice>().CreateDevice();
+    
     stereo.SetFullViewport(OVR::Util::Render::Viewport(0,0, width, height));
     stereo.SetStereoMode(OVR::Util::Render::Stereo_LeftRight_Multipass);
     stereo.SetDistortionFitPointVP(-1.0f, 0.0f);
     renderScale = stereo.GetDistortionScale();
     
-  if (pHMD)
+    if (pHMD)
     {
-      pSensor = *pHMD->GetSensor();
-
-      InfoLoaded = pHMD->GetDeviceInfo(&Info);
-
-      strncpy(Info.DisplayDeviceName, RiftMonitorName, 32);
-
-      RiftDisplayId = Info.DisplayId;
-
-      EyeDistance = Info.InterpupillaryDistance;
+        pSensor = *pHMD->GetSensor();
+        
+        InfoLoaded = pHMD->GetDeviceInfo(&Info);
+        
+        strncpy(Info.DisplayDeviceName, RiftMonitorName, 32);
+        
+        RiftDisplayId = Info.DisplayId;
+        
+        EyeDistance = Info.InterpupillaryDistance;
         for(int i = 0; i < 4; ++i) {
             DistortionK[i] = Info.DistortionK[i];
             DistortionChromaticAberration[i] = Info.ChromaAbCorrection[i];
@@ -66,9 +66,9 @@ void initRift() {
         stereo.SetDistortionFitPointVP(-1.0f, 0.0f);
         renderScale = stereo.GetDistortionScale();
     }
-  else
+    else
     {
-      pSensor = *pManager->EnumerateDevices<OVR::SensorDevice>().CreateDevice();
+        pSensor = *pManager->EnumerateDevices<OVR::SensorDevice>().CreateDevice();
     }
     
     textureWidth = width * renderScale;
@@ -76,70 +76,70 @@ void initRift() {
     
     
     
-leftEye  = stereo.GetEyeRenderParams(OVR::Util::Render::StereoEye_Left);
-rightEye = stereo.GetEyeRenderParams(OVR::Util::Render::StereoEye_Right);
+    leftEye  = stereo.GetEyeRenderParams(OVR::Util::Render::StereoEye_Left);
+    rightEye = stereo.GetEyeRenderParams(OVR::Util::Render::StereoEye_Right);
     
     // Left eye rendering parameters
-leftVP         = leftEye.VP;
-leftProjection = leftEye.Projection;
-leftViewAdjust = leftEye.ViewAdjust;
+    leftVP         = leftEye.VP;
+    leftProjection = leftEye.Projection;
+    leftViewAdjust = leftEye.ViewAdjust;
     
     // Right eye rendering parameters
-rightVP         = leftEye.VP;
-rightProjection = leftEye.Projection;
-rightViewAdjust = leftEye.ViewAdjust;
-
-  if (pSensor)
+    rightVP         = leftEye.VP;
+    rightProjection = leftEye.Projection;
+    rightViewAdjust = leftEye.ViewAdjust;
+    
+    if (pSensor)
     {
-      pFusionResult->AttachToSensor(pSensor);
-      pFusionResult->SetPredictionEnabled(true);
-      float motionPred = pFusionResult->GetPredictionDelta(); // adjust in 0.01 increments
-      if(motionPred < 0) motionPred = 0;
-      pFusionResult->SetPrediction(motionPred);
-
-      if(InfoLoaded) {
-	riftConnected = true;
-
-	riftX = Info.DesktopX;
-	riftY = Info.DesktopY;
-
-	riftResolutionX = Info.HResolution;
-	riftResolutionY = Info.VResolution;
-      }
+        pFusionResult->AttachToSensor(pSensor);
+        pFusionResult->SetPredictionEnabled(true);
+        float motionPred = pFusionResult->GetPredictionDelta(); // adjust in 0.01 increments
+        if(motionPred < 0) motionPred = 0;
+        pFusionResult->SetPrediction(motionPred);
+        
+        if(InfoLoaded) {
+            riftConnected = true;
+            
+            riftX = Info.DesktopX;
+            riftY = Info.DesktopY;
+            
+            riftResolutionX = Info.HResolution;
+            riftResolutionY = Info.VResolution;
+        }
     }
-
+    
 #ifdef WIN32
-  getRiftDisplay();
+    getRiftDisplay();
 #endif
 }
 void cleanUpRift() {
     pSensor.Clear();
     pHMD.Clear();
     pManager.Clear();
-
+    
     delete pFusionResult;
-
+    
     OVR::System::Destroy();
 }
 
-double orientationRift[16] = {1, 0, 0, 0,
+static double orientationRift[16] = {1, 0, 0, 0,
     0, 1, 0, 0,
     0, 0, 1, 0,
     0, 0, 0, 1};
 double *getRiftOrientation() {
     if(pFusionResult!= 0 && !pFusionResult->IsAttachedToSensor()) return orientationRift;
-    OVR::Quatf quaternion = pFusionResult->GetPredictedOrientation();//FusionResult.GetOrientation();
-    
-    //float yaw, pitch, roll;
-    //quaternion.GetEulerAngles<Axis_Y, Axis_X, Axis_Z>(&yaw, &pitch, &roll);
-    
-    //std::cout << " Yaw: " << RadToDegree(yaw) <<
-    //	", Pitch: " << RadToDegree(pitch) <<
-    //	", Roll: " << RadToDegree(roll) << std::endl;
+    OVR::Quatf quaternion = pFusionResult->GetPredictedOrientation();
     
     OVR::Matrix4f hmdMat(quaternion);
     for(int i = 0; i < 16; ++i) {
         orientationRift[i] = ((float*)hmdMat.M)[i];
     }
     return orientationRift;
+}
+
+static OVR::Matrix4f IdentityMatrix4f;
+const OVR::Matrix4f getRiftOrientationNative() {
+    if(pFusionResult!= 0 && !pFusionResult->IsAttachedToSensor()) return IdentityMatrix4f;
+    
+    return OVR::Matrix4f(pFusionResult->GetPredictedOrientation());
 }

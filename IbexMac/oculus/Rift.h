@@ -31,5 +31,6 @@ void initRift();
 void cleanUpRift();
 
 double *getRiftOrientation();
+const OVR::Matrix4f getRiftOrientationNative();
 
 #endif /* Rift_H_ */
