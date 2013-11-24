@@ -143,6 +143,7 @@ add_subdirectory(filesystem)
 add_subdirectory(video)
 add_subdirectory(sixense)
 add_subdirectory(oculus)
+add_subdirectory(terrain)
 
 IF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     set(LINUX_SOURCES opengl_setup_x11.cpp opengl_setup_x11.h)
@@ -208,6 +209,7 @@ target_link_libraries(ibex
     ibex_windows ibex_filesystem
     ibex_video
     ibex_sixense
+    ibex_terrain
     ${SIXENSE_LIBS}
     ${LINUX_LIBS}
      ibex_oculus
