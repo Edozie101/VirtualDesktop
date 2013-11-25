@@ -174,8 +174,6 @@ GLSLShaderProgram standardShaderProgram;
 
 void SimpleWorldRendererPlugin::loadSkybox()
 {
-    return;
-    
 #ifdef _WIN32
     _skybox[0] = loadTexture("\\resources\\humus-skybox\\negz.jpg");
     _skybox[1] = loadTexture("\\resources\\humus-skybox\\posx.jpg");
@@ -330,14 +328,76 @@ void SimpleWorldRendererPlugin::renderIbexDisplayFlat(const glm::mat4 &MVP, cons
 // ---------------------------------------------------------------------------
 void SimpleWorldRendererPlugin::renderSkybox(const glm::mat4 &modelView, const glm::mat4 &proj)
 {
+    const bool useCubemap = false;
+    
     checkForErrors();
 //    std::cerr << "start skybox" << std::endl;
     
     static GLuint vaoSkybox = 0;
     static const GLfloat skyboxScale = 1000;
     
-    static GLuint SkyBoxUniformLocations[3] = { 0, 0, 0};
-    static GLuint SkyBoxAttribLocations[1] = { 0 };
+    static GLuint SkyBoxUniformLocations[3] = {0, 0, 0};
+    static GLuint SkyBoxAttribLocations[2] = {0, 0};
+    
+    static GLfloat cubeVertices[] = {
+        // Back face
+        1,-1,-1,0,0,
+        -1,-1,-1,1,0,
+        1,1,-1,0,1,
+        -1,1,-1,1,1,
+        
+        // Right face
+        1,-1,1, 0,0,
+        1,-1,-1, 1,0,
+        1,1,1,0,1,
+        1,1,-1,1,1,
+        
+        // Front face
+        -1,-1,1, 0,0,
+        1,-1,1, 1,0,
+        -1,1,1, 0,1,
+        1,1,1, 1,1,
+        
+     
+        
+        // Left face
+        -1,-1,-1,0,0,
+        -1,-1,1,1,0,
+        -1,1,-1,0,1,
+        -1,1,1,1,1,
+        
+        // Top face
+        -1,1,1,0,0,
+        1,1,1,1,0,
+        -1,1,-1,0,1,
+        1,1,-1,1,1,
+        
+        // Bottom face
+        -1,-1,-1,0,0,
+        1,-1,-1,1,0,
+        -1,-1,1,0,1,
+        1,-1,1,1,1,
+    };
+
+    static const GLushort cubeIndices[] = {
+        0, 1, 2,
+        1, 2, 3,
+        
+        4, 5, 6,
+        5, 6, 7,
+        
+        8, 9, 10,
+        9, 10, 11,
+        
+        12, 13, 14,
+        13, 14, 15,
+        
+        16, 17, 18,
+        17, 18, 19,
+        
+        20, 21, 22,
+        21, 22, 23
+    };
     
     static GLfloat skyboxVertices[] = {
         -1.0,  1.0,  1.0,
@@ -354,14 +414,19 @@ void SimpleWorldRendererPlugin::renderSkybox(const glm::mat4 &modelView, const g
     static GLushort skyboxIndices[] = {
         0, 1, 2,
         0, 2, 3,
+        
         3, 2, 6,
         3, 6, 7,
+        
         7, 6, 5,
         7, 5, 4,
+        
         4, 5, 1,
         4, 1, 0,
+        
         0, 3, 7,
         0, 7, 4,
+        
         1, 2, 6,
         1, 6, 5
     };
@@ -371,20 +436,38 @@ void SimpleWorldRendererPlugin::renderSkybox(const glm::mat4 &modelView, const g
     if(first) {
         first = false;
         
+        loadSkybox();
+        
         for(int i = 0; i < sizeof(skyboxVertices)/sizeof(GLfloat); ++i) {
             skyboxVertices[i] *= skyboxScale;
         }
+        for(int i = 0; i < sizeof(cubeVertices)/sizeof(GLfloat); ++i) {
+            if(i%5 < 3) {
+                cubeVertices[i] *= skyboxScale;
+            }
+        }
         
         _skycube = 0;
-        skyboxShaderProgram.loadShaderProgram(mResourcePath, "/resources/shaders/skybox.v.glsl", "/resources/shaders/skybox.f.glsl");
+        if(useCubemap) {
+            skyboxShaderProgram.loadShaderProgram(mResourcePath, "/resources/shaders/skybox.v.glsl", "/resources/shaders/skybox.f.glsl");
+        } else {
+            skyboxShaderProgram.loadShaderProgram(mResourcePath, "/resources/shaders/skybox-cube.v.glsl", "/resources/shaders/skybox-cube.f.glsl");
+        }
         glUseProgram(skyboxShaderProgram.shader.program);
         
         
         SkyBoxUniformLocations[0] = glGetUniformLocation(skyboxShaderProgram.shader.program, "modelViewMatrix");
         SkyBoxUniformLocations[1] = glGetUniformLocation(skyboxShaderProgram.shader.program, "projectionMatrix");
-        SkyBoxUniformLocations[2] = glGetUniformLocation(skyboxShaderProgram.shader.program, "cubemap");
+        if(useCubemap) {
+            SkyBoxUniformLocations[2] = glGetUniformLocation(skyboxShaderProgram.shader.program, "cubemap");
+        } else {
+            SkyBoxUniformLocations[2] = glGetUniformLocation(skyboxShaderProgram.shader.program, "textureIn");
+        }
         
         SkyBoxAttribLocations[0] = glGetAttribLocation(skyboxShaderProgram.shader.program, "vertexPosition_modelspace");
+        if(!useCubemap) {
+            SkyBoxAttribLocations[1] = glGetAttribLocation(skyboxShaderProgram.shader.program, "vertexUV");
+        }
         
         glUseProgram(0);
         
@@ -398,14 +481,29 @@ void SimpleWorldRendererPlugin::renderSkybox(const glm::mat4 &modelView, const g
         glBindVertexArray(vaoSkybox);
         glGenBuffers(1, &vboSkyboxVertices);
         glBindBuffer(GL_ARRAY_BUFFER, vboSkyboxVertices);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), skyboxVertices, GL_STATIC_DRAW);
+        if(useCubemap) {
+            glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), skyboxVertices, GL_STATIC_DRAW);
+        } else {
+            glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), cubeVertices, GL_STATIC_DRAW);
+        }
         
         glGenBuffers(1, &vboSkyboxIndices);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboSkyboxIndices);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(skyboxIndices), skyboxIndices, GL_STATIC_DRAW);
+        if(useCubemap) {
+            glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(skyboxIndices), skyboxIndices, GL_STATIC_DRAW);
+        } else {
+            glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(cubeIndices), cubeIndices, GL_STATIC_DRAW);
+        }
         
-        glEnableVertexAttribArray(SkyBoxAttribLocations[0]);
-        glVertexAttribPointer(SkyBoxAttribLocations[0], 3, GL_FLOAT, GL_FALSE, 0, 0);
+        if(useCubemap) {
+            glEnableVertexAttribArray(SkyBoxAttribLocations[0]);
+            glVertexAttribPointer(SkyBoxAttribLocations[0], 3, GL_FLOAT, GL_FALSE, 0, 0);
+        } else {
+            glEnableVertexAttribArray(SkyBoxAttribLocations[0]);
+            glVertexAttribPointer(SkyBoxAttribLocations[0], 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*5, 0);
+            glEnableVertexAttribArray(SkyBoxAttribLocations[1]);
+            glVertexAttribPointer(SkyBoxAttribLocations[1], 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*5, (void*)(sizeof(GLfloat)*3));
+        }
         
         const char *paths[6] = {
             "/resources/humus-skybox/posx.jpg",
@@ -423,14 +521,28 @@ void SimpleWorldRendererPlugin::renderSkybox(const glm::mat4 &modelView, const g
     glUniformMatrix4fv(SkyBoxUniformLocations[1], 1, GL_FALSE, &proj[0][0]);
     
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, _skycube);
-    glUniform1i(SkyBoxUniformLocations[2], 0);
-    
-    glBindVertexArray(vaoSkybox);
-    glDrawElements(GL_TRIANGLES, sizeof(skyboxIndices)/sizeof(GLushort), GL_UNSIGNED_SHORT, 0);
-    glBindVertexArray(0);
-    
-    glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+    if(useCubemap) {
+        glBindTexture(GL_TEXTURE_CUBE_MAP, _skycube);
+        glUniform1i(SkyBoxUniformLocations[2], 0);
+        
+        glBindVertexArray(vaoSkybox);
+        glDrawElements(GL_TRIANGLES, sizeof(skyboxIndices)/sizeof(GLushort), GL_UNSIGNED_SHORT, 0);
+        glBindVertexArray(0);
+        
+        glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+    } else {
+        glBindVertexArray(vaoSkybox);
+        
+        glUniform1i(SkyBoxUniformLocations[2], 0);
+        for(int i = 0; i < 6; ++i) {
+            glBindTexture(GL_TEXTURE_2D, _skybox[i]);
+            
+            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, (void*)(i*6*sizeof(GLushort)));//&cubeIndices[i*6]);
+        }
+        glBindTexture(GL_TEXTURE_2D, 0);
+        
+        glBindVertexArray(0);
+    }
     
     glUseProgram(0);
     
@@ -559,7 +671,6 @@ void SimpleWorldRendererPlugin::renderGround(const glm::mat4 &MVP, const glm::ma
 }
 
 void SimpleWorldRendererPlugin::init() {
-    loadSkybox();
 }
 
 void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDiff_) {
