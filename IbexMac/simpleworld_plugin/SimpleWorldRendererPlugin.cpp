@@ -436,8 +436,6 @@ void SimpleWorldRendererPlugin::renderSkybox(const glm::mat4 &modelView, const g
     if(first) {
         first = false;
         
-        loadSkybox();
-        
         for(int i = 0; i < sizeof(skyboxVertices)/sizeof(GLfloat); ++i) {
             skyboxVertices[i] *= skyboxScale;
         }
@@ -505,15 +503,19 @@ void SimpleWorldRendererPlugin::renderSkybox(const glm::mat4 &modelView, const g
             glVertexAttribPointer(SkyBoxAttribLocations[1], 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*5, (void*)(sizeof(GLfloat)*3));
         }
         
-        const char *paths[6] = {
-            "/resources/humus-skybox/posx.jpg",
-            "/resources/humus-skybox/negx.jpg",
-            "/resources/humus-skybox/posy.jpg",
-            "/resources/humus-skybox/negy.jpg",
-            "/resources/humus-skybox/posz.jpg",
-            "/resources/humus-skybox/negz.jpg"
-        };
-        _skycube = loadCubemapTextures(paths);
+        if(useCubemap) {
+            const char *paths[6] = {
+                "/resources/humus-skybox/posx.jpg",
+                "/resources/humus-skybox/negx.jpg",
+                "/resources/humus-skybox/posy.jpg",
+                "/resources/humus-skybox/negy.jpg",
+                "/resources/humus-skybox/posz.jpg",
+                "/resources/humus-skybox/negz.jpg"
+            };
+            _skycube = loadCubemapTextures(paths);
+        } else {
+            loadSkybox();
+        }
     }
     
     glUseProgram(skyboxShaderProgram.shader.program);
