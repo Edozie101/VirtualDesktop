@@ -25,9 +25,8 @@ static void *getImageData(const char *path_, size_t &width, size_t &height) {
     char path[2048];
     strcpy(path, mResourcePath);
     strcat(path, path_);
-    
-    
-    //    NSLog(@"%s", path);
+
+    // NSLog(@"%s", path);
     NSURL *URL = [NSURL fileURLWithPath:[NSString stringWithCString:path encoding:NSASCIIStringEncoding]];
     NSLog(@"%@", URL);
     CFURLRef url = (__bridge CFURLRef)URL;
@@ -69,10 +68,8 @@ extern "C" GLuint loadTexture(const char *path_) {
     glGenTextures(1, &myTextureName);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, myTextureName);
-    glTexParameteri(GL_TEXTURE_2D,
-                    GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D,
-                    GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, (GLint)width, (GLint)height,
                  0, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, myData);
     free(myData);
