@@ -195,6 +195,7 @@ set(SRC ${SRC}
     GL/glew.c
     utils.cpp utils.h
     simpleworld_plugin/SimpleWorldRendererPlugin.cpp simpleworld_plugin/SimpleWorldRendererPlugin.h
+    simpleworld_plugin/ShadowBufferRenderer.cpp simpleworld_plugin/ShadowBufferRenderer.h
     iphone_orientation_plugin/iphone_orientation_listener.cpp iphone_orientation_plugin/iphone_orientation_listener.h
     tinyxml/tinystr.cpp
     tinyxml/tinyxml.cpp
