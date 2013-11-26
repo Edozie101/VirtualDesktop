@@ -219,36 +219,36 @@ void SimpleWorldRendererPlugin::loadSkybox()
 /////////////////////
 void SimpleWorldRendererPlugin::renderVideoDisplayFlat(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M)
 {
-//    ySize = videoHeight/videoWidth/2.0;
-//    glBindTexture(GL_TEXTURE_2D, videoTexture[i2]);
-//    glUseProgram(standardShaderProgram.shader.program);
-//    glUniformMatrix4fv(IbexDisplayFlatUniformLocations[0], 1, GL_FALSE, &MVP[0][0]);
-//    glUniformMatrix4fv(IbexDisplayFlatUniformLocations[1], 1, GL_FALSE, &V[0][0]);
-//    glUniformMatrix4fv(IbexDisplayFlatUniformLocations[2], 1, GL_FALSE, &M[0][0]);
-//    glUniformMatrix4fv(IbexDisplayFlatUniformLocations[4], 1, GL_FALSE, &(M*V)[0][0]);
-//    
-//    glActiveTexture(GL_TEXTURE0);
-//    glBindTexture(GL_TEXTURE_2D, desktopTexture);
-//    glUniform1i(IbexDisplayFlatUniformLocations[3], 0);
-//    
-//    glBindVertexArray(vaoIbexDisplayFlat);
-//    glDrawElements(GL_TRIANGLES, sizeof(IbexDisplayFlatIndices)/sizeof(GLushort), GL_UNSIGNED_SHORT, 0);
-//    glBindVertexArray(0);
-//    
-//    glBindTexture(GL_TEXTURE_2D, 0);
-//    
-//    glUseProgram(0);
-//    
-//    if(!checkForErrors()) {
-//        std::cerr << "IbexVideoFlat failed, exiting" << std::endl;
-//        exit(0);
-//    }
-//    //    std::cerr << "Done IbexVideoFlat" << std::endl;
+    //    ySize = videoHeight/videoWidth/2.0;
+    //    glBindTexture(GL_TEXTURE_2D, videoTexture[i2]);
+    //    glUseProgram(standardShaderProgram.shader.program);
+    //    glUniformMatrix4fv(IbexDisplayFlatUniformLocations[0], 1, GL_FALSE, &MVP[0][0]);
+    //    glUniformMatrix4fv(IbexDisplayFlatUniformLocations[1], 1, GL_FALSE, &V[0][0]);
+    //    glUniformMatrix4fv(IbexDisplayFlatUniformLocations[2], 1, GL_FALSE, &M[0][0]);
+    //    glUniformMatrix4fv(IbexDisplayFlatUniformLocations[4], 1, GL_FALSE, &(M*V)[0][0]);
+    //
+    //    glActiveTexture(GL_TEXTURE0);
+    //    glBindTexture(GL_TEXTURE_2D, desktopTexture);
+    //    glUniform1i(IbexDisplayFlatUniformLocations[3], 0);
+    //
+    //    glBindVertexArray(vaoIbexDisplayFlat);
+    //    glDrawElements(GL_TRIANGLES, sizeof(IbexDisplayFlatIndices)/sizeof(GLushort), GL_UNSIGNED_SHORT, 0);
+    //    glBindVertexArray(0);
+    //
+    //    glBindTexture(GL_TEXTURE_2D, 0);
+    //
+    //    glUseProgram(0);
+    //
+    //    if(!checkForErrors()) {
+    //        std::cerr << "IbexVideoFlat failed, exiting" << std::endl;
+    //        exit(0);
+    //    }
+    //    //    std::cerr << "Done IbexVideoFlat" << std::endl;
 }
 void SimpleWorldRendererPlugin::renderIbexDisplayFlat(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M)
 {
     checkForErrors();
-//    std::cerr << "start IbexDisplayFlat" << std::endl;
+    //    std::cerr << "start IbexDisplayFlat" << std::endl;
     
     static GLuint vaoIbexDisplayFlat = 0;
     static const GLfloat IbexDisplayFlatScale = 10;
@@ -311,8 +311,8 @@ void SimpleWorldRendererPlugin::renderIbexDisplayFlat(const glm::mat4 &MVP, cons
         
         glEnableVertexAttribArray(IbexDisplayFlatAttribLocations[0]);
         glVertexAttribPointer(IbexDisplayFlatAttribLocations[0], 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*8, 0);
-//        glEnableVertexAttribArray(IbexDisplayFlatAttribLocations[1]);
-//        glVertexAttribPointer(IbexDisplayFlatAttribLocations[1], 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*8, (GLvoid*) (sizeof(GLfloat) * 3));
+        //        glEnableVertexAttribArray(IbexDisplayFlatAttribLocations[1]);
+        //        glVertexAttribPointer(IbexDisplayFlatAttribLocations[1], 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*8, (GLvoid*) (sizeof(GLfloat) * 3));
         glEnableVertexAttribArray(IbexDisplayFlatAttribLocations[2]);
         glVertexAttribPointer(IbexDisplayFlatAttribLocations[2], 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*8, (GLvoid*) (sizeof(GLfloat) * 6));
         
@@ -344,7 +344,7 @@ void SimpleWorldRendererPlugin::renderIbexDisplayFlat(const glm::mat4 &MVP, cons
         std::cerr << "IbexDisplayFlat failed, exiting" << std::endl;
         exit(0);
     }
-//    std::cerr << "Done IbexDisplayFlat" << std::endl;
+    //    std::cerr << "Done IbexDisplayFlat" << std::endl;
 }
 
 // ---------------------------------------------------------------------------
@@ -358,7 +358,7 @@ void SimpleWorldRendererPlugin::renderSkybox(const glm::mat4 &modelView, const g
     const bool useCubemap = false;
     
     checkForErrors();
-//    std::cerr << "start skybox" << std::endl;
+    //    std::cerr << "start skybox" << std::endl;
     
     static GLuint vaoSkybox = 0;
     static const GLfloat skyboxScale = 1000;
@@ -385,7 +385,7 @@ void SimpleWorldRendererPlugin::renderSkybox(const glm::mat4 &modelView, const g
         -1,1,1, 0,1,
         1,1,1, 1,1,
         
-     
+        
         
         // Left face
         -1,-1,-1,0,0,
@@ -405,7 +405,7 @@ void SimpleWorldRendererPlugin::renderSkybox(const glm::mat4 &modelView, const g
         -1,-1,1,0,1,
         1,-1,1,1,1,
     };
-
+    
     static const GLushort cubeIndices[] = {
         0, 1, 2,
         1, 2, 3,
@@ -579,13 +579,13 @@ void SimpleWorldRendererPlugin::renderSkybox(const glm::mat4 &modelView, const g
         std::cerr << "skybox failed, exiting" << std::endl;
         exit(0);
     }
-//    std::cerr << "Done skybox" << std::endl;
+    //    std::cerr << "Done skybox" << std::endl;
 }
 
 void SimpleWorldRendererPlugin::renderGround(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M)
 {
     checkForErrors();
-//    std::cerr << "Loading ground texture" << std::endl;
+    //    std::cerr << "Loading ground texture" << std::endl;
 #ifdef _WIN32
     static const GLuint groundTexture = loadTexture("\\resources\\humus-skybox\\negy.jpg");
     //        orientation = getRiftOrientation();
@@ -601,7 +601,7 @@ void SimpleWorldRendererPlugin::renderGround(const glm::mat4 &MVP, const glm::ma
 #endif
     
     checkForErrors();
-//    std::cerr << "start Ground" << std::endl;
+    //    std::cerr << "start Ground" << std::endl;
     
     static GLuint vaoGround = 0;
     static const GLfloat GroundScale = 1000;
@@ -633,7 +633,7 @@ void SimpleWorldRendererPlugin::renderGround(const glm::mat4 &MVP, const glm::ma
             }
         }
         
-//        groundShaderProgram.loadShaderProgram(mResourcePath, "/resources/shaders/ground.v.glsl", "/resources/shaders/ground.f.glsl");
+        //        groundShaderProgram.loadShaderProgram(mResourcePath, "/resources/shaders/ground.v.glsl", "/resources/shaders/ground.f.glsl");
         groundShaderProgram.loadShaderProgram(mResourcePath, "/resources/shaders/standard.v.glsl", "/resources/shaders/standard.f.glsl");
         glUseProgram(groundShaderProgram.shader.program);
         
@@ -696,12 +696,31 @@ void SimpleWorldRendererPlugin::renderGround(const glm::mat4 &MVP, const glm::ma
         std::cerr << "Ground failed, exiting" << std::endl;
         exit(0);
     }
-//    std::cerr << "Done Ground" << std::endl;
+    //    std::cerr << "Done Ground" << std::endl;
 }
 
 void SimpleWorldRendererPlugin::init() {
 }
 
+void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &view_, const glm::mat4 &playerCamera_, const glm::mat4 &playerRotation_) {
+    glm::mat4 view(view_);
+    glm::mat4 model;
+    
+    glDepthMask(GL_FALSE);
+    renderSkybox(view*playerRotation_, proj_);
+    glDepthMask(GL_TRUE);
+    view *= playerCamera_;
+    
+    glm::mat4 PV(proj_*view);
+    
+    model = glm::translate(model, glm::vec3(0.0f, 0.0f, -10.0f));
+    renderIbexDisplayFlat(PV*model, view, model);
+    renderVideoDisplayFlat(PV*model, view, model);
+    if(showGround) {
+        model = glm::mat4();
+        renderGround(PV*model, view, model);
+    }
+}
 void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDiff_) {
     bool first = true;
     if(first) {
@@ -719,20 +738,6 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
 		}
     }
     
-#ifdef _WIN32
-    static const GLuint groundTexture = loadTexture("\\resources\\humus-skybox\\negy.jpg");
-    //        orientation = getRiftOrientation();
-#else
-#ifdef __APPLE__
-    static const GLuint groundTexture = loadTexture("/resources/humus-skybox/negy.jpg");
-#else
-    static float sizeX = 64;
-    static float sizeY = 64;
-    static const GLuint groundTexture = glmLoadTexture("./resources/humus-skybox/negy.jpg", GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE, &sizeX, &sizeY);
-#endif
-    // gluInvertMatrix(get_orientation(), orientation);
-#endif
-    
     for (int i2 = 0; i2 < 2; ++i2) {
         const bool left = (i2 == 0);
         const OVR::Util::Render::StereoEyeParams &stereo = (left) ? leftEye : rightEye;
@@ -743,18 +748,6 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
         if (!USE_FBO && i2 > 0) {
             break;
         }
-        
-        //            // Setup the frustum for the left eye
-        //            glMatrixMode(GL_PROJECTION);
-        //            glLoadMatrixf((const float *)stereo.Projection.Transposed().M);
-        //
-        //            static double *orientation;
-        //            if(i2 == 0) orientation = getRiftOrientation();
-        //            glMultMatrixd(orientation);
-        //
-        //
-        //            glMatrixMode(GL_MODELVIEW);
-        //            glLoadMatrixf((const float*)stereo.ViewAdjust.M);
         
         glm::mat4 modelView;
         glm::mat4 view;
@@ -768,171 +761,7 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
         playerRotation = glm::rotate(playerRotation, (float)loc.getYRotation(), glm::vec3(0, 1, 0));
         glm::mat4 playerCamera(glm::translate(playerRotation, glm::vec3((float)loc.getXPosition(), (float)loc.getYPosition(), (float)loc.getZPosition())));
         
-        glDepthMask(GL_FALSE);
-        renderSkybox(view*playerRotation, proj);
-        glDepthMask(GL_TRUE);
-        view *= playerCamera;
-        
-        model = glm::translate(model, glm::vec3(0.0f, 0.0f, -10.0f));
-        renderIbexDisplayFlat(proj*view*model, view, model);
-        renderVideoDisplayFlat(proj*view*model, view, model);
-        if(showGround) {
-            model = glm::mat4();
-            renderGround(proj*view*model, view, model);
-        }
-        
-        if(false) {
-            //double orientation[16];
-            //gluInvertMatrix(get_orientation(), orientation);
-            
-            //            glPushMatrix();
-            {
-                //glMultMatrixd(orientation);
-                glRotated(loc.getXRotation(), 1, 0, 0);
-                glRotated(loc.getYRotation(), 0, 1, 0);
-                //  glTranslated(0, -1.5, 0);
-                glTranslated(0, -0.5, 0);
-                
-                //                renderSkybox();
-                glColor4f(1,1,1,1);
-                
-                glPushMatrix();
-                {
-                    glTranslated(loc.getXPosition(),
-                                 loc.getYPosition(),
-                                 loc.getZPosition());
-                    
-                    if(showGround) {
-                        static const int gridSize = 25;
-                        static const int textureRepeat = 2*gridSize;
-                        
-                        glBindTexture(GL_TEXTURE_2D, groundTexture);
-                        glBegin(GL_TRIANGLE_STRIP);
-                        glTexCoord2d(0, 0);
-                        glVertex3f(-gridSize, 0, -gridSize);
-                        
-                        glTexCoord2d(textureRepeat, 0);
-                        glVertex3f(gridSize, 0, -gridSize);
-                        
-                        glTexCoord2d(0, textureRepeat);
-                        glVertex3f(-gridSize, 0, gridSize);
-                        
-                        glTexCoord2d(textureRepeat, textureRepeat);
-                        glVertex3f(gridSize, 0, gridSize);
-                        glEnd();
-                        //glBindTexture(GL_TEXTURE_2D, 0);
-                    }
-                    
-                    if (renderToTexture) {
-                        double ySize = ((double)height / (double)width) / 2.0;
-                        glTranslated(0, 0.5, 0);
-                        const double monitorOriginZ = -0.5;
-                        glBindTexture(GL_TEXTURE_2D, desktopTexture);
-                        glColor4f(1,1,1,1);
-                        
-                        switch(displayShape) {
-                            case SphericalDisplay:
-                                renderSphericalDisplay(0.5, 100, 100,180,135);//25, 25, 180, 90);
-                                break;
-                            case CylindricalDisplay:
-                                renderCylindricalDisplay(0.5, 100,100,180,180);//25, 25, 180, 90);
-                                break;
-                            case FlatDisplay:
-                            default:
-                                glBegin(GL_TRIANGLE_STRIP);
-                                glTexCoord2d(0, 0);
-                                glVertex3f(-0.5, -ySize, monitorOriginZ);
-                                
-                                glTexCoord2d(1, 0);
-                                glVertex3f(0.5, -ySize, monitorOriginZ);
-                                
-                                glTexCoord2d(0, 1);
-                                glVertex3f(-0.5, ySize, monitorOriginZ);
-                                
-                                glTexCoord2d(1, 1);
-                                glVertex3f(0.5, ySize, monitorOriginZ);
-                                glEnd();
-                        }
-                        
-                        ySize = videoHeight/videoWidth/2.0;
-                        glBindTexture(GL_TEXTURE_2D, videoTexture[i2]);
-                        glColor4f(1,1,1,1);
-                        glBegin(GL_TRIANGLE_STRIP);
-                        glTexCoord2d(0, 1);
-                        glVertex3f(1.5-0.5, -ySize, monitorOriginZ);
-                        
-                        glTexCoord2d(1, 1);
-                        glVertex3f(1.5+0.5, -ySize, monitorOriginZ);
-                        
-                        glTexCoord2d(0, 0);
-                        glVertex3f(1.5-0.5, ySize, monitorOriginZ);
-                        
-                        glTexCoord2d(1, 0);
-                        glVertex3f(1.5+0.5, ySize, monitorOriginZ);
-                        glEnd();
-                        
-                        
-                        glEnable(GL_BLEND);
-                        
-                        if(mouseBlendAlternate) {
-                            glBlendFunc(GL_ZERO, GL_ONE_MINUS_SRC_COLOR);
-                        } else {
-                            glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-                        }
-                        
-                        
-                        ySize = ((double)height / (double)width) / 2.0;
-                        glBindTexture( GL_TEXTURE_2D, cursor );
-                        glBegin(GL_TRIANGLE_STRIP);
-                        {
-                            //					const double cursorSize = 32.0; // was 20.0, not sure which is best on each OS
-                            double x0, x1, y0, y1, z;
-                            x0 = -0.5+(cursorPosX/physicalWidth);
-                            x1 = -0.5+((cursorPosX+cursorSize)/physicalWidth);
-                            y0 = -ySize+ySize*2*(cursorPosY+0.)/physicalHeight;
-                            y1 = -ySize+ySize*2*(cursorPosY-cursorSize)/physicalHeight;
-                            
-#ifdef WIN32
-                            z = monitorOriginZ+0.00001;
-#else
-                            z = monitorOriginZ+0.0000001;
-#endif
-                            
-                            glTexCoord2d(0, 0);
-                            glVertex3f(  x0,  y0, z);
-                            
-                            glTexCoord2d(1, 0);
-                            glVertex3f( x1, y0, z);
-                            
-                            glTexCoord2d(0, -1);
-                            glVertex3f(  x0, y1 ,z);
-                            
-                            glTexCoord2d(1, -1);
-                            glVertex3f(  x1,  y1, z);
-                            
-                            glTexCoord2d(1, -1);
-                            glVertex3f( x1, y1, z);
-                            
-                            glTexCoord2d(0, -1);
-                            glVertex3f(  x0, y1,z);
-                        }
-                        glEnd();
-                        
-                        if(mouseBlendAlternate) { // restore mode
-                            glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-                        }
-                    } else {
-                        renderDesktopToTexture();
-                    }
-                }
-                glPopMatrix();
-                
-                if(showDialog) {
-                    window.render();
-                }
-            }
-            //            glPopMatrix();
-        }
+        render(proj, view, playerCamera, playerRotation);
     }
     glDisable(GL_SCISSOR_TEST);
     glFlush();
@@ -945,86 +774,16 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         }
         
-        //        if (ortho) {
-        //            glMatrixMode(GL_PROJECTION);
-        //            glOrtho(0, 1, 0, 1, -1, 1);
-        //            glMatrixMode(GL_MODELVIEW);
-        //            glLoadIdentity();
-        //        }
-        
-        if(barrelDistort) {
-            if(CACHED_SHADER) {
-                if(lensParametersChanged) {
-                    render_distortion_lenses();
-                }
-                
-                render_both_frames(textures[0]);
-            } else {
-                render_distorted_frame(true, textures[0]);
-                render_distorted_frame(false, textures[0]);
+        // Barrel distort-only for now
+        if(CACHED_SHADER) {
+            if(lensParametersChanged) {
+                render_distortion_lenses();
             }
+            
+            render_both_frames(textures[0]);
         } else {
-            if(!SBS) {
-                glViewport(0,0, windowWidth, windowHeight);
-                glBindTexture(GL_TEXTURE_2D, textures[0]);
-                
-                glColor4f(1, 1, 1, 1);
-                glBegin(GL_TRIANGLE_STRIP);
-                glTexCoord2d(0, bottom);
-                glVertex3f(0, 0, 0);
-                
-                glTexCoord2d(0.5, bottom);
-                glVertex3f(1, 0, 0);
-                
-                glTexCoord2d(0, top);
-                glVertex3f(0, 1, 0);
-                
-                glTexCoord2d(0.5, top);
-                glVertex3f(1, 1, 0);
-                glEnd();
-                
-            } else {
-                for (int i = 0; i < 2; ++i) {
-                    if (ortho) {
-                        double originX = (i == 0) ? 0 : 0.5;
-                        glBindTexture(GL_TEXTURE_2D, textures[i]);
-                        
-                        glColor4f(1, 1, 1, 1);
-                        glBegin(GL_TRIANGLE_STRIP);
-                        glTexCoord2d(0, bottom);
-                        glVertex3f(originX, 0, 0);
-                        
-                        glTexCoord2d(1, bottom);
-                        glVertex3f(originX + 0.5, 0, 0);
-                        
-                        glTexCoord2d(0, top);
-                        glVertex3f(originX, 1, 0);
-                        
-                        glTexCoord2d(1, top);
-                        glVertex3f(originX + 0.5, 1, 0);
-                        glEnd();
-                    } else {
-                        glBindTexture(GL_TEXTURE_2D, textures[i]);
-                        glPushMatrix();
-                        glTranslated((i < 1) ? -0.98 : 0, -0.5, -2.4);
-                        glColor4f(1, 1, 1, 1);
-                        glBegin(GL_TRIANGLE_STRIP);
-                        glTexCoord2d(0, bottom);
-                        glVertex3f(0, 0, 0);
-                        
-                        glTexCoord2d(1, bottom);
-                        glVertex3f(1,0,0);
-                        
-                        glTexCoord2d(0, top);
-                        glVertex3f(0,1,0);
-                        
-                        glTexCoord2d(1, top);
-                        glVertex3f(1,1,0);
-                        glEnd();
-                        glPopMatrix();
-                    }
-                }
-            }
+            render_distorted_frame(true, textures[0]);
+            render_distorted_frame(false, textures[0]);
         }
     }
 }

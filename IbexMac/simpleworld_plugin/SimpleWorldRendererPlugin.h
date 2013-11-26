@@ -31,6 +31,8 @@ public:
     
     Window getWindowID();
 private:
+    void render(const glm::mat4 &proj_, const glm::mat4 &view_, const glm::mat4 &playerCamera_, const glm::mat4 &playerRotation_);
+    
     GLuint _skybox[6];
     GLuint _skycube;
 };
