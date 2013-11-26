@@ -6,6 +6,8 @@
 //  Copyright (c) 2013 Hesham Wahba. All rights reserved.
 //
 
+#include "../opengl_helpers.h"
+
 #import <Foundation/Foundation.h>
 #import <OpenGL/OpenGL.h>
 #import <AppKit/AppKit.h>

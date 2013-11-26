@@ -6,6 +6,8 @@
 //  Copyright (c) 2013 Hesham Wahba. All rights reserved.
 //
 
+#include "opengl_helpers.h"
+
 #import <Cocoa/Cocoa.h>
 
 extern NSCondition *cocoaCondition;

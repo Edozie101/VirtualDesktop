@@ -10,8 +10,6 @@
 
 #include "ibex.h"
 
-#include "opengl_helpers.h"
-
 @implementation ScreenshotView
 
 - (id)initWithFrame:(NSRect)frame

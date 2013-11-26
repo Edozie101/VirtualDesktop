@@ -15,8 +15,6 @@
 #import <QuartzCore/QuartzCore.h>
 #import <Foundation/Foundation.h>
 
-
-#import "opengl_helpers.h"
 #import "ibex_mac_utils.h"
 
 #include "string.h"

@@ -5,6 +5,7 @@
 //  Created by Hesham Wahba on 12/27/12.
 //  Copyright (c) 2012 Hesham Wahba. All rights reserved.
 //
+
 #import "MyOpenGLView.h"
 
 #import "video/IbexVideoPlayer.h"
@@ -22,8 +23,6 @@
 #import <libkern/OSAtomic.h>
 
 #import <Carbon/Carbon.h>
-
-#include "ibex.h"
 
 #include <ApplicationServices/ApplicationServices.h>
 

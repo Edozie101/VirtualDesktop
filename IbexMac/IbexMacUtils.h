@@ -6,6 +6,8 @@
 //  Copyright (c) 2013 Hesham Wahba. All rights reserved.
 //
 
+#import "opengl_helpers.h"
+
 #import <Foundation/Foundation.h>
 
 @interface IbexMacUtils : NSObject

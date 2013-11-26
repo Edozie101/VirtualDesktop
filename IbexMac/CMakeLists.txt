@@ -194,6 +194,7 @@ set(SRC ${SRC}
     opengl_helpers.cpp opengl_helpers.h
     GL/glew.c
     utils.cpp utils.h
+    GLSLShaderProgram.cpp GLSLShaderProgram.h
     simpleworld_plugin/SimpleWorldRendererPlugin.cpp simpleworld_plugin/SimpleWorldRendererPlugin.h
     simpleworld_plugin/ShadowBufferRenderer.cpp simpleworld_plugin/ShadowBufferRenderer.h
     iphone_orientation_plugin/iphone_orientation_listener.cpp iphone_orientation_plugin/iphone_orientation_listener.h

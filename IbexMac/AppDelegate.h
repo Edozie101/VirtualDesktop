@@ -6,6 +6,8 @@
 //  Copyright (c) 2012 Hesham Wahba. All rights reserved.
 //
 
+#import "ibex.h"
+
 #import <Cocoa/Cocoa.h>
 
 @class MyOpenGLView;

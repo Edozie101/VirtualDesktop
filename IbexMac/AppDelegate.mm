@@ -16,8 +16,6 @@
 #import "MyOgreView.h"
 #endif
 
-#import "ibex.h"
-
 #import "ServerController.h"
 #import <IOKit/graphics/IOGraphicsLib.h>
 

@@ -6,6 +6,8 @@
 //  Copyright (c) 2012 Hesham Wahba. All rights reserved.
 //
 
+#include "ibex.h"
+
 #import <Cocoa/Cocoa.h>
 
 extern char mResourcePath[1024];
