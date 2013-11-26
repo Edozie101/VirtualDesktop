@@ -34,7 +34,7 @@
 #include "oculus/Rift.h"
 
 #include "../GLSLShaderProgram.h"
-
+#include "ShadowBufferRenderer.h"
 
 void copyMatrix(glm::mat4 &modelView, float M[4][4]) {
     for(int i = 0; i < 4; ++i) {
@@ -254,7 +254,7 @@ void SimpleWorldRendererPlugin::renderIbexDisplayFlat(const glm::mat4 &MVP, cons
                 IbexDisplayFlatVertices[i] *= height/width;
         }
         
-        standardShaderProgram.loadShaderProgram(mResourcePath, "/resources/shaders/standard.v.glsl", "/resources/shaders/standard.f.glsl");
+        standardShaderProgram.loadShaderProgram(mResourcePath, "/resources/shaders/emissive.v.glsl", "/resources/shaders/emissive.f.glsl");
         glUseProgram(standardShaderProgram.shader.program);
         
         
@@ -284,8 +284,8 @@ void SimpleWorldRendererPlugin::renderIbexDisplayFlat(const glm::mat4 &MVP, cons
         
         glEnableVertexAttribArray(IbexDisplayFlatAttribLocations[0]);
         glVertexAttribPointer(IbexDisplayFlatAttribLocations[0], 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*8, 0);
-        glEnableVertexAttribArray(IbexDisplayFlatAttribLocations[1]);
-        glVertexAttribPointer(IbexDisplayFlatAttribLocations[1], 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*8, (GLvoid*) (sizeof(GLfloat) * 3));
+//        glEnableVertexAttribArray(IbexDisplayFlatAttribLocations[1]);
+//        glVertexAttribPointer(IbexDisplayFlatAttribLocations[1], 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*8, (GLvoid*) (sizeof(GLfloat) * 3));
         glEnableVertexAttribArray(IbexDisplayFlatAttribLocations[2]);
         glVertexAttribPointer(IbexDisplayFlatAttribLocations[2], 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*8, (GLvoid*) (sizeof(GLfloat) * 6));
         
@@ -676,6 +676,12 @@ void SimpleWorldRendererPlugin::init() {
 }
 
 void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDiff_) {
+    bool first = true;
+    if(first) {
+        first = false;
+        generateShadowFBO();
+    }
+    
     if (USE_FBO) {
         glBindFramebuffer(GL_FRAMEBUFFER, fbos[0]);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -737,13 +743,11 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
         
         glDepthMask(GL_FALSE);
         renderSkybox(view*playerRotation, proj);
-        
         glDepthMask(GL_TRUE);
         view *= playerCamera;
         
         model = glm::translate(model, glm::vec3(0.0f, 0.0f, -10.0f));
         renderIbexDisplayFlat(proj*view*model, view, model);
-        
         if(showGround) {
             model = glm::mat4();
             renderGround(proj*view*model, view, model);

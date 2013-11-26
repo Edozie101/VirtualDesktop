@@ -103,9 +103,9 @@ extern "C" GLuint loadCubemapTextures(const char *path_[6]) {
         
         glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X+i, 0, GL_RGBA8, (GLint)width, (GLint)height,
                      0, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, myData);
-        
         free(myData);
     }
+//    glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
     glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
     
     return myTextureName;

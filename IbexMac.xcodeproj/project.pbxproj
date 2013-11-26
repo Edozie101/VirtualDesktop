@@ -272,6 +272,10 @@
 		4C9BEA7717E56A2F00662683 /* Dependencies in Resources */ = {isa = PBXBuildFile; fileRef = 4C9BEA7517E56A2F00662683 /* Dependencies */; };
 		4C9BEA7817E56A2F00662683 /* Dependencies in Resources */ = {isa = PBXBuildFile; fileRef = 4C9BEA7517E56A2F00662683 /* Dependencies */; };
 		4C9BEA7917E56A2F00662683 /* Dependencies in Resources */ = {isa = PBXBuildFile; fileRef = 4C9BEA7517E56A2F00662683 /* Dependencies */; };
+		4CA379671844467D0048B227 /* ShadowBufferRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CA379651844467D0048B227 /* ShadowBufferRenderer.cpp */; };
+		4CA379681844467D0048B227 /* ShadowBufferRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CA379651844467D0048B227 /* ShadowBufferRenderer.cpp */; };
+		4CA379691844467D0048B227 /* ShadowBufferRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CA379651844467D0048B227 /* ShadowBufferRenderer.cpp */; };
+		4CA3796A1844467D0048B227 /* ShadowBufferRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CA379651844467D0048B227 /* ShadowBufferRenderer.cpp */; };
 		4CA92BC41729FB1F00994379 /* libovr.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CA92BC31729FB1F00994379 /* libovr.a */; };
 		4CABF7EA1730926900F94A46 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CABF7E91730926900F94A46 /* OpenAL.framework */; };
 		4CABF7EB1730927500F94A46 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CABF7E91730926900F94A46 /* OpenAL.framework */; };
@@ -563,6 +567,8 @@
 		4C961B5917B89DB50028D242 /* Rift.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Rift.cpp; sourceTree = "<group>"; };
 		4C961B5A17B89DB50028D242 /* Rift.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Rift.h; sourceTree = "<group>"; };
 		4C9BEA7517E56A2F00662683 /* Dependencies */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Dependencies; sourceTree = "<group>"; };
+		4CA379651844467D0048B227 /* ShadowBufferRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShadowBufferRenderer.cpp; sourceTree = "<group>"; };
+		4CA379661844467D0048B227 /* ShadowBufferRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShadowBufferRenderer.h; sourceTree = "<group>"; };
 		4CA92BC31729FB1F00994379 /* libovr.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libovr.a; path = ../OculusSDK/LibOVR/Lib/MacOS/Debug/libovr.a; sourceTree = "<group>"; };
 		4CABF7E91730926900F94A46 /* OpenAL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenAL.framework; path = System/Library/Frameworks/OpenAL.framework; sourceTree = SDKROOT; };
 		4CABF81F1730BAF600F94A46 /* libxvidcore.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libxvidcore.a; path = /usr/local/Cellar/xvid/1.3.2/lib/libxvidcore.a; sourceTree = "<absolute>"; };
@@ -868,6 +874,8 @@
 			children = (
 				4C961B5117B89A780028D242 /* SimpleWorldRendererPlugin.cpp */,
 				4C961B5217B89A780028D242 /* SimpleWorldRendererPlugin.h */,
+				4CA379651844467D0048B227 /* ShadowBufferRenderer.cpp */,
+				4CA379661844467D0048B227 /* ShadowBufferRenderer.h */,
 			);
 			path = simpleworld_plugin;
 			sourceTree = "<group>";
@@ -1325,6 +1333,7 @@
 				4C09379417B1F9CE004EA291 /* distortions.cpp in Sources */,
 				4C09379517B1F9CE004EA291 /* opengl_helpers.cpp in Sources */,
 				4C09379617B1F9CE004EA291 /* RendererPlugin.cpp in Sources */,
+				4CA3796A1844467D0048B227 /* ShadowBufferRenderer.cpp in Sources */,
 				4C011F9018402ECB002583AD /* Terrain.cpp in Sources */,
 				4C961B5617B89A780028D242 /* SimpleWorldRendererPlugin.cpp in Sources */,
 				4C09379717B1F9CE004EA291 /* iphone_orientation_listener.cpp in Sources */,
@@ -1350,6 +1359,7 @@
 				4C961B5417B89A780028D242 /* SimpleWorldRendererPlugin.cpp in Sources */,
 				4C0D589616AD656A007BC9CD /* main.mm in Sources */,
 				4C0D589716AD656A007BC9CD /* AppDelegate.mm in Sources */,
+				4CA379681844467D0048B227 /* ShadowBufferRenderer.cpp in Sources */,
 				4C0D589816AD656A007BC9CD /* ScreenGrabber.m in Sources */,
 				4C961B3017B895330028D242 /* IbexVideoPlayer.mm in Sources */,
 				4C0D589916AD656A007BC9CD /* MyOpenGLView.mm in Sources */,
@@ -1380,6 +1390,7 @@
 			files = (
 				4C961B5517B89A780028D242 /* SimpleWorldRendererPlugin.cpp in Sources */,
 				4C6B99D416F4C17E00C5C725 /* main.mm in Sources */,
+				4CA379691844467D0048B227 /* ShadowBufferRenderer.cpp in Sources */,
 				4C6B99D516F4C17E00C5C725 /* AppDelegate.mm in Sources */,
 				4C6B99D616F4C17E00C5C725 /* ScreenGrabber.m in Sources */,
 				4C6B99D716F4C17E00C5C725 /* MyOpenGLView.mm in Sources */,
@@ -1422,6 +1433,7 @@
 				4C961B5317B89A780028D242 /* SimpleWorldRendererPlugin.cpp in Sources */,
 				4CB79877168AB41E00EF5260 /* main.mm in Sources */,
 				4C961B2417B8949C0028D242 /* Window.cpp in Sources */,
+				4CA379671844467D0048B227 /* ShadowBufferRenderer.cpp in Sources */,
 				4CB7987E168AB41E00EF5260 /* AppDelegate.mm in Sources */,
 				4C961B2F17B895330028D242 /* IbexVideoPlayer.mm in Sources */,
 				4C2DE2FF168B30CC003BEB56 /* ScreenGrabber.m in Sources */,
