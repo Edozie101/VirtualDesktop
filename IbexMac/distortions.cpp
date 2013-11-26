@@ -94,29 +94,26 @@ static GLuint make_shader(GLenum type, const char *filename)
 }
 
 GLuint program;
-GLuint a_position;
-GLuint a_texCoord;
-GLuint textureUniform;
-GLuint lensTextureUniform;
-GLuint lensTextureUniform2;
-GLuint ScaleUniformCachedShader;
-GLuint LensCenterUniformCachedShader;
-GLuint ScreenCenterUniformCachedShader;
+static GLint a_position;
+static GLint a_texCoord;
+static GLint textureUniform;
+static GLint lensTextureUniform;
+static GLint lensTextureUniform2;
 
-GLuint ScreenCenterUniform;
-GLuint LensCenterUniform;
-GLuint ScaleUniform;
-GLuint ScaleInUniform;
-GLuint HmdWarpParamUniform;
-GLuint ChromAbParamUniform;
+static GLint ScreenCenterUniform;
+static GLint LensCenterUniform;
+static GLint ScaleUniform;
+static GLint ScaleInUniform;
+static GLint HmdWarpParamUniform;
+static GLint ChromAbParamUniform;
 
 
-GLuint ScreenCenterUniform2;
-GLuint LensCenterUniform2;
-GLuint ScaleUniform2;
-GLuint ScaleInUniform2;
-GLuint HmdWarpParamUniform2;
-GLuint ChromAbParamUniform2;
+static GLint ScreenCenterUniform2;
+static GLint LensCenterUniform2;
+static GLint ScaleUniform2;
+static GLint ScaleInUniform2;
+static GLint HmdWarpParamUniform2;
+static GLint ChromAbParamUniform2;
 
 char RiftMonitorName[33];
 long RiftDisplayId;

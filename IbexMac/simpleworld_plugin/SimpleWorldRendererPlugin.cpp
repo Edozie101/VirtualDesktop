@@ -217,7 +217,34 @@ void SimpleWorldRendererPlugin::loadSkybox()
 }
 
 /////////////////////
-
+void SimpleWorldRendererPlugin::renderVideoDisplayFlat(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M)
+{
+//    ySize = videoHeight/videoWidth/2.0;
+//    glBindTexture(GL_TEXTURE_2D, videoTexture[i2]);
+//    glUseProgram(standardShaderProgram.shader.program);
+//    glUniformMatrix4fv(IbexDisplayFlatUniformLocations[0], 1, GL_FALSE, &MVP[0][0]);
+//    glUniformMatrix4fv(IbexDisplayFlatUniformLocations[1], 1, GL_FALSE, &V[0][0]);
+//    glUniformMatrix4fv(IbexDisplayFlatUniformLocations[2], 1, GL_FALSE, &M[0][0]);
+//    glUniformMatrix4fv(IbexDisplayFlatUniformLocations[4], 1, GL_FALSE, &(M*V)[0][0]);
+//    
+//    glActiveTexture(GL_TEXTURE0);
+//    glBindTexture(GL_TEXTURE_2D, desktopTexture);
+//    glUniform1i(IbexDisplayFlatUniformLocations[3], 0);
+//    
+//    glBindVertexArray(vaoIbexDisplayFlat);
+//    glDrawElements(GL_TRIANGLES, sizeof(IbexDisplayFlatIndices)/sizeof(GLushort), GL_UNSIGNED_SHORT, 0);
+//    glBindVertexArray(0);
+//    
+//    glBindTexture(GL_TEXTURE_2D, 0);
+//    
+//    glUseProgram(0);
+//    
+//    if(!checkForErrors()) {
+//        std::cerr << "IbexVideoFlat failed, exiting" << std::endl;
+//        exit(0);
+//    }
+//    //    std::cerr << "Done IbexVideoFlat" << std::endl;
+}
 void SimpleWorldRendererPlugin::renderIbexDisplayFlat(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M)
 {
     checkForErrors();
@@ -226,8 +253,8 @@ void SimpleWorldRendererPlugin::renderIbexDisplayFlat(const glm::mat4 &MVP, cons
     static GLuint vaoIbexDisplayFlat = 0;
     static const GLfloat IbexDisplayFlatScale = 10;
     
-    static GLuint IbexDisplayFlatUniformLocations[5] = { 0, 0, 0, 0, 0};
-    static GLuint IbexDisplayFlatAttribLocations[3] = { 0, 0, 0 };
+    static GLint IbexDisplayFlatUniformLocations[5] = { 0, 0, 0, 0, 0};
+    static GLint IbexDisplayFlatAttribLocations[3] = { 0, 0, 0 };
     
     static GLfloat IbexDisplayFlatVertices[] = {
         -1.0,  -1, 0.0, 0, 0, -1, 0, 0,
@@ -336,8 +363,8 @@ void SimpleWorldRendererPlugin::renderSkybox(const glm::mat4 &modelView, const g
     static GLuint vaoSkybox = 0;
     static const GLfloat skyboxScale = 1000;
     
-    static GLuint SkyBoxUniformLocations[3] = {0, 0, 0};
-    static GLuint SkyBoxAttribLocations[2] = {0, 0};
+    static GLint SkyBoxUniformLocations[3] = {0, 0, 0};
+    static GLint SkyBoxAttribLocations[2] = {0, 0};
     
     static GLfloat cubeVertices[] = {
         // Back face
@@ -579,8 +606,8 @@ void SimpleWorldRendererPlugin::renderGround(const glm::mat4 &MVP, const glm::ma
     static GLuint vaoGround = 0;
     static const GLfloat GroundScale = 1000;
     
-    static GLuint GroundUniformLocations[5] = { 0, 0, 0, 0, 0};
-    static GLuint GroundAttribLocations[3] = { 0, 0, 0 };
+    static GLint GroundUniformLocations[5] = { 0, 0, 0, 0, 0};
+    static GLint GroundAttribLocations[3] = { 0, 0, 0 };
     
     static GLfloat GroundVertices[] = {
         -1.0,  -10.0, -1.0, 0, 1, 0, 0, 0,
@@ -748,6 +775,7 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
         
         model = glm::translate(model, glm::vec3(0.0f, 0.0f, -10.0f));
         renderIbexDisplayFlat(proj*view*model, view, model);
+        renderVideoDisplayFlat(proj*view*model, view, model);
         if(showGround) {
             model = glm::mat4();
             renderGround(proj*view*model, view, model);

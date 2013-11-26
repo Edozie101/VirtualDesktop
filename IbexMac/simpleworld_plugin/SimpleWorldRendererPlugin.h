@@ -22,6 +22,7 @@ public:
     void loadSkybox();
     void renderSkybox(const glm::mat4 &modelView, const glm::mat4 &proj);
     void renderGround(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M);
+    void renderVideoDisplayFlat(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M);
     void renderIbexDisplayFlat(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M);
     
     void init();
