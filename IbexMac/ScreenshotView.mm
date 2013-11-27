@@ -71,10 +71,12 @@
         // Bind the texture name.
         glBindTexture(GL_TEXTURE_2D, *texName);
         // Specify a 2D texture image, providing the a pointer to the image data in memory
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, texW, texH, 0, GL_RGBA, GL_UNSIGNED_BYTE, *spriteData);
+        //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, texW, texH, 0, GL_RGBA, GL_UNSIGNED_BYTE, *spriteData);
     } else {
         glBindTexture(GL_TEXTURE_2D, *texName);
-        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, texW, texH, GL_RGBA, GL_UNSIGNED_BYTE, *spriteData);
+//        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, texW, texH, GL_RGBA, GL_UNSIGNED_BYTE, *spriteData);
+        // to resize texture, need to check if it changed and only update then then
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, texW, texH, 0, GL_RGBA, GL_UNSIGNED_BYTE, *spriteData);
     }
 	// Set the texture parameters to use a minifying filter and a linear filer (weighted average)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -129,7 +131,7 @@
     glPixelStorei(GL_UNPACK_ROW_LENGTH, (GLint)texW);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     glPixelStorei(GL_PACK_ALIGNMENT, 1);
-    if(true || newTexture) {
+    if(newTexture) {
         // Use OpenGL ES to generate a name for the texture.
         glGenTextures(1, texName);
         // Bind the texture name.
