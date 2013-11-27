@@ -15,6 +15,16 @@
 GLuint fboShadowMap;
 GLuint shadowMapDepthTextureId;
 
+void bindShadowFBO() {
+    glBindFramebuffer(GL_FRAMEBUFFER, fboShadowMap);
+    glClear(GL_DEPTH_BUFFER_BIT);
+    
+    if (!checkForErrors()) {
+        std::cerr << "GL ISSUE -- bindShadowFBO" << std::endl;
+        //exit(EXIT_FAILURE);
+    }
+}
+
 void generateShadowFBO()
 {
     // size of shadow map

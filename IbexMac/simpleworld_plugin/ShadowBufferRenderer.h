@@ -15,5 +15,6 @@ extern GLuint fboShadowMap;
 extern GLuint shadowMapDepthTextureId;
 
 void generateShadowFBO();
+void bindShadowFBO();
 
 #endif /* defined(__IbexMac__ShadowBufferRenderer__) */
