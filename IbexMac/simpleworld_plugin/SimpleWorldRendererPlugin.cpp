@@ -702,13 +702,15 @@ void SimpleWorldRendererPlugin::renderGround(const glm::mat4 &MVP, const glm::ma
 void SimpleWorldRendererPlugin::init() {
 }
 
-void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &view_, const glm::mat4 &playerCamera_, const glm::mat4 &playerRotation_) {
+void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &view_, const glm::mat4 &playerCamera_, const glm::mat4 &playerRotation_, bool shadowPass) {
     glm::mat4 view(view_);
     glm::mat4 model;
     
-    glDepthMask(GL_FALSE);
-    renderSkybox(view*playerRotation_, proj_);
-    glDepthMask(GL_TRUE);
+    if(!shadowPass) {
+        glDepthMask(GL_FALSE);
+        renderSkybox(view*playerRotation_, proj_);
+        glDepthMask(GL_TRUE);
+    }
     view *= playerCamera_;
     
     glm::mat4 PV(proj_*view);
@@ -721,70 +723,79 @@ void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &
         renderGround(PV*model, view, model);
     }
 }
+
 void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDiff_) {
-    bool first = true;
+    static const bool ENABLE_SHADOWMAPPING = false;
+    
+    static bool first = true;
     if(first) {
         first = false;
-        generateShadowFBO();
-    }
-    
-    if (USE_FBO) {
-        glBindFramebuffer(GL_FRAMEBUFFER, fbos[0]);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         
-		if (!checkForErrors()) {
-			std::cerr << "GL ISSUE -- SimpleWorldRendererPlugin::step" << std::endl;
-			//exit(EXIT_FAILURE);
-		}
+        if(ENABLE_SHADOWMAPPING) {
+            generateShadowFBO();
+        }
     }
     
+    glm::mat4 modelView;
+    glm::mat4 view;
+    glm::mat4 proj;
+    //    copyMatrix(view, lightsourceMatrix);
+    //    copyMatrix(proj, (getRiftOrientationNative()*stereo.Projection.Transposed()).M);
+    
+    glm::mat4 playerRotation(glm::rotate(glm::mat4(1.0f), (float)loc.getXRotation(), glm::vec3(1, 0, 0)));
+    playerRotation = glm::rotate(playerRotation, (float)loc.getYRotation(), glm::vec3(0, 1, 0));
+    glm::mat4 playerCamera(glm::translate(playerRotation,
+                                          glm::vec3((float)loc.getXPosition(), loc.getYPosition(), loc.getZPosition())));
+    
+    if(ENABLE_SHADOWMAPPING) {
+        // render shadowmap
+        bindShadowFBO();
+        static glm::mat4 lightView = glm::lookAt(glm::vec3(0.f,0.f,0.f), glm::vec3(4.f,4.f,4.f), glm::vec3(0,1,0));
+        static glm::mat4 lightProj = glm::ortho(-1000.f, 1000.f, -1000.f, 1000.f, -1000.f, 1000.f);
+        render(lightProj, lightView, glm::mat4(), glm::mat4(), true);
+    }
+    
+    glBindFramebuffer(GL_FRAMEBUFFER, fbos[0]);
+    glClear(/*GL_COLOR_BUFFER_BIT | */GL_DEPTH_BUFFER_BIT);
+    if (!checkForErrors()) {
+        std::cerr << "GL ISSUE -- SimpleWorldRendererPlugin::step" << std::endl;
+        //exit(EXIT_FAILURE);
+    }
+    glEnable(GL_SCISSOR_TEST);
     for (int i2 = 0; i2 < 2; ++i2) {
         const bool left = (i2 == 0);
         const OVR::Util::Render::StereoEyeParams &stereo = (left) ? leftEye : rightEye;
         glViewport(stereo.VP.x*renderScale,stereo.VP.y*renderScale,stereo.VP.w*renderScale,stereo.VP.h*renderScale);
-        glEnable(GL_SCISSOR_TEST);
         glScissor(stereo.VP.x*renderScale,stereo.VP.y*renderScale,stereo.VP.w*renderScale,stereo.VP.h*renderScale);
         
-        if (!USE_FBO && i2 > 0) {
-            break;
-        }
-        
-        glm::mat4 modelView;
-        glm::mat4 view;
-        glm::mat4 model;
-        glm::mat4 proj;
         copyMatrix(view,stereo.ViewAdjust.Transposed().M);
         copyMatrix(proj, (getRiftOrientationNative()*stereo.Projection.Transposed()).M);
         
-        
-        glm::mat4 playerRotation(glm::rotate(glm::mat4(1.0f), (float)loc.getXRotation(), glm::vec3(1, 0, 0)));
-        playerRotation = glm::rotate(playerRotation, (float)loc.getYRotation(), glm::vec3(0, 1, 0));
-        glm::mat4 playerCamera(glm::translate(playerRotation, glm::vec3((float)loc.getXPosition(), (float)loc.getYPosition(), (float)loc.getZPosition())));
-        
-        render(proj, view, playerCamera, playerRotation);
+        // render normally
+        render(proj, view, playerCamera, playerRotation, false);
     }
     glDisable(GL_SCISSOR_TEST);
     glFlush();
     
+    // Barrel distort-only for now
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glViewport(0,0, windowWidth, windowHeight);
-    if (USE_FBO) {
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        if(!CACHED_SHADER) {
-            glClearColor(0, 0, 0, 1);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    if(CACHED_SHADER) {
+        if(lensParametersChanged) {
+            render_distortion_lenses();
         }
         
-        // Barrel distort-only for now
-        if(CACHED_SHADER) {
-            if(lensParametersChanged) {
-                render_distortion_lenses();
-            }
-            
-            render_both_frames(textures[0]);
-        } else {
-            render_distorted_frame(true, textures[0]);
-            render_distorted_frame(false, textures[0]);
-        }
+        render_both_frames(textures[0]);
+    } else {
+        glClearColor(0, 0, 0, 1);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        
+        glDisable(GL_DEPTH_TEST);
+        glDepthMask(GL_FALSE);
+        render_distorted_frame(true, textures[0]);
+        render_distorted_frame(false, textures[0]);
+        glDepthMask(GL_TRUE);
+        glEnable(GL_DEPTH_TEST);
     }
 }
 
