@@ -16,7 +16,10 @@
 
 #ifdef __APPLE__
 
+#ifdef USE_GLEW
 #include "GL/glew.h"
+#endif
+
 #include <OpenGL/gl3.h>
 #include <OpenGL/gl3ext.h>
 

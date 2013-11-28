@@ -19,10 +19,10 @@ void bindShadowFBO() {
     glBindFramebuffer(GL_FRAMEBUFFER, fboShadowMap);
     glClear(GL_DEPTH_BUFFER_BIT);
     
-    if (!checkForErrors()) {
-        std::cerr << "GL ISSUE -- bindShadowFBO" << std::endl;
-        //exit(EXIT_FAILURE);
-    }
+//    if (!checkForErrors()) {
+//        std::cerr << "GL ISSUE -- bindShadowFBO" << std::endl;
+//        //exit(EXIT_FAILURE);
+//    }
 }
 
 void generateShadowFBO()
@@ -39,7 +39,7 @@ void generateShadowFBO()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
     
     glBindTexture(GL_TEXTURE_2D, 0);
     

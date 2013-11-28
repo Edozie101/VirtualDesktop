@@ -143,6 +143,9 @@
                                                           a,
                                                           kCGWindowImageDefault
                                                           );
+//        CGImageRef img = CGDisplayCreateImage(
+//                                        kCGDirectMainDisplay//CGDirectDisplayID displayID
+//                                        );
         
         CGImageRef cursorImageRef = nil;
         if(NSCursor.currentSystemCursor != nil) {

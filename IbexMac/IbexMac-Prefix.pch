@@ -3,9 +3,13 @@
 //
 
 #define GL3_PROTOTYPES
+//#define USE_GLEW
 
 #ifdef __OBJC__
+
+#ifdef USE_GLEW
     #include <GL/glew.h>
+#endif
 
     #import <Cocoa/Cocoa.h>
 #endif

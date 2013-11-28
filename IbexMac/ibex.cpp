@@ -296,6 +296,8 @@ void renderGL(Desktop3DLocation& loc, double timeDiff_, RendererPlugin *renderer
       
     if(renderer->getWindowID()) window = renderer->getWindowID();
 //    if (OGRE3D || IRRLICHT) {
+      
+#ifdef USE_GLEW
       glewExperimental = GL_TRUE;
       GLenum err = glewInit();
       std::cerr << "Inited GLEW: " << err << std::endl;
@@ -305,6 +307,8 @@ void renderGL(Desktop3DLocation& loc, double timeDiff_, RendererPlugin *renderer
         // GLEW failed!
         exit(1);
       }
+#endif
+
 #ifdef _WIN32
 	  //bool r = wglSwapIntervalEXT(5);
 	  //std::cerr << "wglSwapIntervalEXT: " << r << std::endl;
@@ -347,12 +351,12 @@ void resizeGL(unsigned int width, unsigned int height)
     glViewport(0, 0, width, height);
     
     return;
-    
-    // gone in OpenGL 3.3+
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-//    gluPerspective(110.0f, 0.81818181, 0.01f, 1000.0f);
-    glMatrixMode(GL_MODELVIEW);
+//    
+//    // gone in OpenGL 3.3+
+//    glMatrixMode(GL_PROJECTION);
+//    glLoadIdentity();
+////    gluPerspective(110.0f, 0.81818181, 0.01f, 1000.0f);
+//    glMatrixMode(GL_MODELVIEW);
 }
 
 // ---------------------------------------------------------------------------
