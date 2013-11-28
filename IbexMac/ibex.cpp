@@ -64,7 +64,7 @@ bool showDialog = false;
 
 // external variables
 bool resetPosition          = 0;
-bool showGround             = 0;
+bool showGround             = 1;
 bool barrelDistort          = 1;
 bool ortho                  = 1;
 bool renderToTexture        = 1;
