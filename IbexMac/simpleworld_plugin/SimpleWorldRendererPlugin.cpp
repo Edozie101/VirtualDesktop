@@ -168,9 +168,10 @@ void updateResourcePath(char *path_) {
     strcpy(path_, path);
 }
 
-GLSLShaderProgram skyboxShaderProgram;
-GLSLShaderProgram groundShaderProgram;
-GLSLShaderProgram standardShaderProgram;
+static GLSLShaderProgram skyboxShaderProgram;
+static GLSLShaderProgram groundShaderProgram;
+static GLSLShaderProgram standardShaderProgram;
+static GLSLShaderProgram shadowProgram;
 
 void SimpleWorldRendererPlugin::loadSkybox()
 {
@@ -217,7 +218,7 @@ void SimpleWorldRendererPlugin::loadSkybox()
 }
 
 /////////////////////
-void SimpleWorldRendererPlugin::renderVideoDisplayFlat(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M)
+void SimpleWorldRendererPlugin::renderVideoDisplayFlat(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, const glm::mat4 &depthMVP)
 {
     //    ySize = videoHeight/videoWidth/2.0;
     //    glBindTexture(GL_TEXTURE_2D, videoTexture[i2]);
@@ -245,7 +246,19 @@ void SimpleWorldRendererPlugin::renderVideoDisplayFlat(const glm::mat4 &MVP, con
     //    }
     //    //    std::cerr << "Done IbexVideoFlat" << std::endl;
 }
-void SimpleWorldRendererPlugin::renderIbexDisplayFlat(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M)
+
+static GLint ShadowUniformLocations[1];
+static GLint ShadowAttribLocations[3];
+void loadShadowProgram() {
+    shadowProgram.loadShaderProgram(mResourcePath, "/resources/shaders/depth.v.glsl", "/resources/shaders/depth.f.glsl");
+    
+    ShadowUniformLocations[0] = glGetUniformLocation(shadowProgram.shader.program, "MVP");
+    
+    ShadowAttribLocations[0] = glGetAttribLocation(shadowProgram.shader.program, "vertexPosition_modelspace");
+    ShadowAttribLocations[1] = glGetAttribLocation(shadowProgram.shader.program, "vertexNormal_modelspace");
+    ShadowAttribLocations[2] = glGetAttribLocation(shadowProgram.shader.program, "vertexUV");
+}
+void SimpleWorldRendererPlugin::renderIbexDisplayFlat(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP)
 {
     checkForErrors();
     //    std::cerr << "start IbexDisplayFlat" << std::endl;
@@ -322,15 +335,20 @@ void SimpleWorldRendererPlugin::renderIbexDisplayFlat(const glm::mat4 &MVP, cons
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(IbexDisplayFlatIndices), IbexDisplayFlatIndices, GL_STATIC_DRAW);
     }
     
-    glUseProgram(standardShaderProgram.shader.program);
-    glUniformMatrix4fv(IbexDisplayFlatUniformLocations[0], 1, GL_FALSE, &MVP[0][0]);
-    glUniformMatrix4fv(IbexDisplayFlatUniformLocations[1], 1, GL_FALSE, &V[0][0]);
-    glUniformMatrix4fv(IbexDisplayFlatUniformLocations[2], 1, GL_FALSE, &M[0][0]);
-    glUniformMatrix4fv(IbexDisplayFlatUniformLocations[4], 1, GL_FALSE, &(M*V)[0][0]);
-    
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, desktopTexture);
-    glUniform1i(IbexDisplayFlatUniformLocations[3], 0);
+    if(shadowPass) {
+        glUseProgram(shadowProgram.shader.program);
+        glUniformMatrix4fv(ShadowUniformLocations[0], 1, GL_FALSE, &MVP[0][0]);
+    } else {
+        glUseProgram(standardShaderProgram.shader.program);
+        glUniformMatrix4fv(IbexDisplayFlatUniformLocations[0], 1, GL_FALSE, &MVP[0][0]);
+        glUniformMatrix4fv(IbexDisplayFlatUniformLocations[1], 1, GL_FALSE, &V[0][0]);
+        glUniformMatrix4fv(IbexDisplayFlatUniformLocations[2], 1, GL_FALSE, &M[0][0]);
+        glUniformMatrix4fv(IbexDisplayFlatUniformLocations[4], 1, GL_FALSE, &(M*V)[0][0]);
+        
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, desktopTexture);
+        glUniform1i(IbexDisplayFlatUniformLocations[3], 0);
+    }
     
     glBindVertexArray(vaoIbexDisplayFlat);
     glDrawElements(GL_TRIANGLES, sizeof(IbexDisplayFlatIndices)/sizeof(GLushort), GL_UNSIGNED_SHORT, 0);
@@ -582,7 +600,7 @@ void SimpleWorldRendererPlugin::renderSkybox(const glm::mat4 &modelView, const g
     //    std::cerr << "Done skybox" << std::endl;
 }
 
-void SimpleWorldRendererPlugin::renderGround(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M)
+void SimpleWorldRendererPlugin::renderGround(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP)
 {
     checkForErrors();
     //    std::cerr << "Loading ground texture" << std::endl;
@@ -606,7 +624,7 @@ void SimpleWorldRendererPlugin::renderGround(const glm::mat4 &MVP, const glm::ma
     static GLuint vaoGround = 0;
     static const GLfloat GroundScale = 1000;
     
-    static GLint GroundUniformLocations[5] = { 0, 0, 0, 0, 0};
+    static GLint GroundUniformLocations[7] = { 0, 0, 0, 0, 0, 0, 0};
     static GLint GroundAttribLocations[3] = { 0, 0, 0 };
     
     static GLfloat GroundVertices[] = {
@@ -644,6 +662,9 @@ void SimpleWorldRendererPlugin::renderGround(const glm::mat4 &MVP, const glm::ma
         GroundUniformLocations[3] = glGetUniformLocation(groundShaderProgram.shader.program, "textureIn");
         GroundUniformLocations[4] = glGetUniformLocation(groundShaderProgram.shader.program, "MV");
         
+        GroundUniformLocations[5] = glGetUniformLocation(groundShaderProgram.shader.program, "DepthBiasMVP");
+        GroundUniformLocations[6] = glGetUniformLocation(groundShaderProgram.shader.program, "shadowTexture");
+        
         GroundAttribLocations[0] = glGetAttribLocation(groundShaderProgram.shader.program, "vertexPosition_modelspace");
         GroundAttribLocations[1] = glGetAttribLocation(groundShaderProgram.shader.program, "vertexNormal_modelspace");
         GroundAttribLocations[2] = glGetAttribLocation(groundShaderProgram.shader.program, "vertexUV");
@@ -674,21 +695,44 @@ void SimpleWorldRendererPlugin::renderGround(const glm::mat4 &MVP, const glm::ma
         glVertexAttribPointer(GroundAttribLocations[2], 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*8, (GLvoid*) (sizeof(GLfloat) * 6));
     }
     
-    glUseProgram(groundShaderProgram.shader.program);
-    glUniformMatrix4fv(GroundUniformLocations[0], 1, GL_FALSE, &MVP[0][0]);
-    glUniformMatrix4fv(GroundUniformLocations[1], 1, GL_FALSE, &V[0][0]);
-    glUniformMatrix4fv(GroundUniformLocations[2], 1, GL_FALSE, &M[0][0]);
-    glUniformMatrix4fv(GroundUniformLocations[4], 1, GL_FALSE, &(M*V)[0][0]);
-    
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, groundTexture);
-    glUniform1i(GroundUniformLocations[3], 0);
-    
     glBindVertexArray(vaoGround);
+    if(shadowPass) {
+        glUseProgram(shadowProgram.shader.program);
+        glUniformMatrix4fv(ShadowUniformLocations[0], 1, GL_FALSE, &MVP[0][0]);
+    } else {
+        glUseProgram(groundShaderProgram.shader.program);
+        if(GroundUniformLocations[0] > -1) glUniformMatrix4fv(GroundUniformLocations[0], 1, GL_FALSE, &MVP[0][0]);
+        if(GroundUniformLocations[1] > -1) glUniformMatrix4fv(GroundUniformLocations[1], 1, GL_FALSE, &V[0][0]);
+        if(GroundUniformLocations[2] > -1) glUniformMatrix4fv(GroundUniformLocations[2], 1, GL_FALSE, &M[0][0]);
+        if(GroundUniformLocations[4] > -1) glUniformMatrix4fv(GroundUniformLocations[4], 1, GL_FALSE, &(M*V)[0][0]);
+        
+        if(GroundUniformLocations[5] > -1) {
+             glUniformMatrix4fv(GroundUniformLocations[5], 1, GL_FALSE, &depthMVP[0][0]);   
+        }
+        
+        if(GroundUniformLocations[3] > -1) {
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, groundTexture);
+            glUniform1i(GroundUniformLocations[3], 0);
+        }
+        if(GroundUniformLocations[6] > -1) {
+            glActiveTexture(GL_TEXTURE1);
+            glBindTexture(GL_TEXTURE_2D, shadowMapDepthTextureId);
+            glUniform1i(GroundUniformLocations[6], 1);
+        }
+    }
+    
     glDrawElements(GL_TRIANGLES, sizeof(GroundIndices)/sizeof(GLushort), GL_UNSIGNED_SHORT, 0);
     glBindVertexArray(0);
     
-    glBindTexture(GL_TEXTURE_2D, 0);
+    if(GroundUniformLocations[3] > -1) {
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, 0);
+    }
+    if(GroundUniformLocations[6] > -1) {
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, 0);
+    }
     
     glUseProgram(0);
     
@@ -702,7 +746,7 @@ void SimpleWorldRendererPlugin::renderGround(const glm::mat4 &MVP, const glm::ma
 void SimpleWorldRendererPlugin::init() {
 }
 
-void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &view_, const glm::mat4 &playerCamera_, const glm::mat4 &playerRotation_, bool shadowPass) {
+void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &view_, const glm::mat4 &playerCamera_, const glm::mat4 &playerRotation_, bool shadowPass, const glm::mat4 &depthBiasMVP) {
     glm::mat4 view(view_);
     glm::mat4 model;
     
@@ -716,22 +760,30 @@ void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &
     glm::mat4 PV(proj_*view);
     
     model = glm::translate(model, glm::vec3(0.0f, 0.0f, -10.0f));
-    renderIbexDisplayFlat(PV*model, view, model);
-    renderVideoDisplayFlat(PV*model, view, model);
+    
+//    static int i = 0;
+//    i = ++i%(int)(360./0.5);
+//    model = model*glm::rotate(0.5f*i, 0.f, 1.f, 0.f);
+    
+    renderIbexDisplayFlat(PV*model, view, model, shadowPass, depthBiasMVP*model);
+    renderVideoDisplayFlat(PV*model, view, model, depthBiasMVP);
     if(showGround) {
         model = glm::mat4();
-        renderGround(PV*model, view, model);
+        if(!shadowPass) {
+            renderGround(PV*model, view, model, shadowPass, depthBiasMVP*model);
+        }
     }
 }
 
 void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDiff_) {
-    static const bool ENABLE_SHADOWMAPPING = false;
+    static const bool ENABLE_SHADOWMAPPING = true;
     
     static bool first = true;
     if(first) {
         first = false;
         
         if(ENABLE_SHADOWMAPPING) {
+            loadShadowProgram();
             generateShadowFBO();
         }
     }
@@ -747,12 +799,36 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
     glm::mat4 playerCamera(glm::translate(playerRotation,
                                           glm::vec3((float)loc.getXPosition(), loc.getYPosition(), loc.getZPosition())));
     
+    
+    
+//    static glm::mat4 lightView = glm::lookAt(glm::vec3(0.f,0.f,0.f), glm::vec3(4.f,4.f,4.f), glm::vec3(0,1,0));
+//    static glm::mat4 lightProj = glm::ortho(-100.f, 100.f, -100.f, 100.f, -100.f, 100.f);
+    
+    glm::vec3 lightInvDir = glm::vec3(4,4,4);///0.5f,2,2);
+    
+    // Compute the MVP matrix from the light's point of view
+    static glm::mat4 lightProj = glm::ortho<float>(-30,30,-30,30,-10,3000);//-10,10,-10,10,-10,20);
+    static glm::mat4 lightView = glm::lookAt(lightInvDir, glm::vec3(-1,-1,-1), glm::vec3(0,1,0));
+    static glm::mat4 depthMVP = lightProj*lightView;
+
+//    // spotlight
+//    glm::vec3 lightPos(5, 20, 20);
+//    lightProj = glm::perspective<float>(45.0f, 1.0f, 2.0f, 50.0f);
+//    lightView = glm::lookAt(lightPos, lightPos-lightInvDir, glm::vec3(0,1,0));
+//    depthMVP = lightProj*lightView;
+    
+    static glm::mat4 biasMatrix(
+                         0.5, 0.0, 0.0, 0.0,
+                         0.0, 0.5, 0.0, 0.0,
+                         0.0, 0.0, 0.5, 0.0,
+                         0.5, 0.5, 0.5, 1.0
+                         );
+    static glm::mat4 depthBiasMVP = biasMatrix*depthMVP;
     if(ENABLE_SHADOWMAPPING) {
         // render shadowmap
         bindShadowFBO();
-        static glm::mat4 lightView = glm::lookAt(glm::vec3(0.f,0.f,0.f), glm::vec3(4.f,4.f,4.f), glm::vec3(0,1,0));
-        static glm::mat4 lightProj = glm::ortho(-1000.f, 1000.f, -1000.f, 1000.f, -1000.f, 1000.f);
-        render(lightProj, lightView, glm::mat4(), glm::mat4(), true);
+        
+        render(lightProj, lightView, glm::mat4(), glm::mat4(), true, depthBiasMVP);
     }
     
     glBindFramebuffer(GL_FRAMEBUFFER, fbos[0]);
@@ -772,7 +848,7 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
         copyMatrix(proj, (getRiftOrientationNative()*stereo.Projection.Transposed()).M);
         
         // render normally
-        render(proj, view, playerCamera, playerRotation, false);
+        render(proj, view, playerCamera, playerRotation, false, depthBiasMVP);
     }
     glDisable(GL_SCISSOR_TEST);
     glFlush();

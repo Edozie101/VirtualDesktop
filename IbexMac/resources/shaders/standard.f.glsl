@@ -9,6 +9,8 @@ in vec3 Normal_cameraspace;
 in vec3 EyeDirection_cameraspace;
 in vec3 LightDirection_cameraspace;
 
+in vec4  ShadowCoord;
+
 // Ouput data
 layout (location = 0) out vec3 color;
 
@@ -16,6 +18,8 @@ layout (location = 0) out vec3 color;
 uniform sampler2D textureIn;
 uniform mat4 MV;
 //uniform vec3 LightPosition_worldspace;
+uniform sampler2DShadow shadowTexture;
+//uniform sampler2D shadowTexture;
 
 void main()
 {
@@ -28,7 +32,7 @@ void main()
 	
 	// Material properties
 	vec3 MaterialDiffuseColor = texture(textureIn, UV).rgb;
-	vec3 MaterialAmbientColor = vec3(0.5,0.5,0.5) * MaterialDiffuseColor;
+	vec3 MaterialAmbientColor = vec3(0.99,0.99,0.99) * MaterialDiffuseColor;
 	vec3 MaterialSpecularColor = vec3(0.3,0.3,0.3);
     
 	// Distance to the light
@@ -55,11 +59,22 @@ void main()
 	//  - Looking elsewhere -> < 1
 	float cosAlpha = clamp( dot( E,R ), 0,1 );
 	
-	color =
+//    float bias = 0.005;
+//    float visibility = 1.0;
+//    if (texture(shadowTexture, ShadowCoord.xy).x  <  ShadowCoord.z-bias) {
+//        visibility = 0.5;
+//    }
+    float visibility = texture(shadowTexture, vec3(ShadowCoord.xy, (ShadowCoord.z/ShadowCoord.w)));
+    
+//    if(visibility < 0.1) color = vec3(1, 0, 0);
+//    else if(visibility < 0.5) color = vec3(0, 1, 0);
+//    else color = vec3(0,0,1);
+    
+	color = //vec3(visibility,visibility,visibility);
     // Ambient : simulates indirect lighting
-    MaterialAmbientColor +
+    visibility * MaterialAmbientColor +
     // Diffuse : "color" of the object
-    MaterialDiffuseColor * LightColor * LightPower * cosTheta / (distance*distance) +
+    visibility * MaterialDiffuseColor * LightColor * LightPower * cosTheta / (distance*distance) +
     // Specular : reflective highlight, like a mirror
-    MaterialSpecularColor * LightColor * LightPower * pow(cosAlpha,5) / (distance*distance);
+    visibility * MaterialSpecularColor * LightColor * LightPower * pow(cosAlpha,5) / (distance*distance);
 }

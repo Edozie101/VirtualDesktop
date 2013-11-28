@@ -10,6 +10,7 @@ uniform mat4 MVP;
 uniform mat4 V;
 uniform mat4 M;
 //uniform vec3 LightPosition_worldspace;
+uniform mat4 DepthBiasMVP;
 
 // Output data; will be interpolated for each fragment
 out vec2 UV;
@@ -17,6 +18,7 @@ out vec3 Position_worldspace;
 out vec3 Normal_cameraspace;
 out vec3 EyeDirection_cameraspace;
 out vec3 LightDirection_cameraspace;
+out vec4 ShadowCoord;
 
 void main()
 {
@@ -42,4 +44,7 @@ void main()
     
     UV = vertexUV;
     gl_Position = MVP*vpm4;
+    
+    // Same, but with the light's view matrix
+    ShadowCoord = DepthBiasMVP * vec4(vertexPosition_modelspace,1);
 }
