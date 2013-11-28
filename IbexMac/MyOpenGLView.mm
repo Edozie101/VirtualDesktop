@@ -124,6 +124,17 @@ static NSTimer *t;
         [self setOpenGLContext:openGLContext];
         [openGLContext makeCurrentContext];
         [openGLContext setView:self];
+
+        // enable multithreading
+//        [openGLContext makeCurrentContext];
+//        CGLContextObj ctx = CGLGetCurrentContext();
+//        // Enable the multi-threading
+//        CGLError err =  CGLEnable(ctx, kCGLCEMPEngine);
+//        if (err != kCGLNoError )
+//        {
+//            // Multi-threaded execution is possibly not available
+//            // Insert your code to take appropriate action
+//        }
         
         NSLog(@"OpenGL Version: %s", glGetString(GL_VERSION));
         

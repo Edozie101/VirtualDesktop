@@ -30,11 +30,11 @@
 - (void)createGLTextureNoAlpha:(GLuint *)texName fromCGImage:(CGImageRef)img andCursor:(CGImageRef)cursorImageRef andDataCache:(GLubyte**)spriteData andClear:(bool)clear
 {
     bool newTexture = (*texName == 0);
-	CGContextRef spriteContext;
+	static CGContextRef spriteContext;
 	GLuint imgW, imgH, texW, texH;
 
-    GLuint mouseW = (GLuint)CGImageGetWidth(cursorImageRef);
-	GLuint mouseH = (GLuint)CGImageGetHeight(cursorImageRef);
+    const GLuint mouseW = (GLuint)CGImageGetWidth(cursorImageRef);
+	const GLuint mouseH = (GLuint)CGImageGetHeight(cursorImageRef);
     
 	imgW = (GLuint)CGImageGetWidth(img);
 	imgH = (GLuint)CGImageGetHeight(img);
@@ -48,8 +48,10 @@
     }
 //    NSLog(@"display: %dx%d", texW, texH);
     
+    static CGColorSpaceRef space = CGColorSpaceCreateDeviceRGB();
+    
 	// Uses the bitmatp creation function provided by the Core Graphics framework.
-	spriteContext = CGBitmapContextCreate(*spriteData, texW, texH, 8, texW * 4, CGImageGetColorSpace(img), kCGImageAlphaNoneSkipLast);
+	spriteContext = CGBitmapContextCreate(*spriteData, texW, texH, 8, texW * 4, /*CGImageGetColorSpace(img)*/space, kCGImageAlphaNoneSkipLast);
 	
 	// Translate and scale the context to draw the image upside-down (conflict in flipped-ness between GL textures and CG contexts)
 	CGContextTranslateCTM(spriteContext, 0., texH);
@@ -82,6 +84,7 @@
 //        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, texW, texH, GL_RGBA, GL_UNSIGNED_BYTE, *spriteData);
         // to resize texture, need to check if it changed and only update then then
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, texW, texH, 0, GL_RGBA, GL_UNSIGNED_BYTE, *spriteData);
+//        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, texW, texH, 0, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, *spriteData);
     }
 	// Set the texture parameters to use a minifying filter and a linear filer (weighted average)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -124,17 +127,12 @@
     [newContext makeCurrentContext];
     
     CGRect mainDisplayRect = NSScreen.mainScreen.frame;
-    mainDisplayRect = CGRectMake(0, 0, physicalWidth, physicalHeight);//1440,900);//1440, 900);
-    
+    mainDisplayRect = CGRectMake(0, 0, physicalWidth, physicalHeight);
+  
+    [newContext makeCurrentContext];
     while(1) {
 //        NSLog(@"NSScreen.mainScreen: %@, size: %@", NSScreen.mainScreen, NSStringFromRect(NSScreen.mainScreen.frame));
         done = 0;
-        [newContext makeCurrentContext];
-        CGImageRef cursorImageRef = nil;
-        if(NSCursor.currentSystemCursor != nil) {
-            cursorImageRef = [NSCursor.currentSystemCursor.image CGImageForProposedRect:nil context:nil hints:nil];
-        }
-        
         CFArrayRef a = CGWindowListCreate(
                                           kCGWindowListOptionOnScreenBelowWindow,
                                           (CGWindowID)_window.windowNumber
@@ -146,8 +144,18 @@
                                                           kCGWindowImageDefault
                                                           );
         
+        CGImageRef cursorImageRef = nil;
+        if(NSCursor.currentSystemCursor != nil) {
+            cursorImageRef = [NSCursor.currentSystemCursor.image CGImageForProposedRect:nil context:nil hints:nil];
+        }
+        
+        
 //        [self savePNGImage:img path:@"/Users/hesh/blah_rift.png"];
 //        exit(0);
+        
+        [cocoaCondition lock];
+        [cocoaCondition wait];
+        [cocoaCondition unlock];
         
         [self createGLTextureNoAlpha:&desktopTexture fromCGImage:img andCursor:cursorImageRef andDataCache:&s andClear:NO];
         
@@ -155,10 +163,6 @@
 //        [newContext flushBuffer];
         CFRelease(a);
         CGImageRelease(img);
-        
-        [cocoaCondition lock];
-        [cocoaCondition wait];
-        [cocoaCondition unlock];
     }
 }
 
