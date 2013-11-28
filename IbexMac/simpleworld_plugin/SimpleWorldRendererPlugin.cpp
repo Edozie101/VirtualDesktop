@@ -391,22 +391,22 @@ void SimpleWorldRendererPlugin::renderSkybox(const glm::mat4 &modelView, const g
     };
     
     static const GLushort cubeIndices[] = {
-        0, 1, 2,
+        0, 2, 1,
         1, 2, 3,
         
-        4, 5, 6,
+        4, 6, 5,
         5, 6, 7,
         
-        8, 9, 10,
+        8, 10, 9,
         9, 10, 11,
         
-        12, 13, 14,
+        12, 14, 13,
         13, 14, 15,
         
-        16, 17, 18,
+        16, 18, 17,
         17, 18, 19,
         
-        20, 21, 22,
+        20, 22, 21,
         21, 22, 23
     };
     
@@ -602,8 +602,8 @@ void SimpleWorldRendererPlugin::renderGround(const glm::mat4 &MVP, const glm::ma
     static GLuint vboGroundVertices = 0;
     
     static GLushort GroundIndices[] = {
-        0, 1, 2,
-        0, 2, 3
+        0, 2, 1,
+        0, 3, 2
     };
     static GLuint vboGroundIndices = 0;
     
@@ -731,8 +731,16 @@ void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &
     //    i = ++i%(int)(360./0.5);
     //    model = model*glm::rotate(0.5f*i, 0.f, 1.f, 0.f);
     
+    if(!shadowPass) {
+        glDisable(GL_CULL_FACE);
+        glCullFace(GL_BACK);
+    }
     renderIbexDisplayFlat(PV*model, view, model, shadowPass, depthBiasMVP*model);
     renderVideoDisplayFlat(PV*model, view, model, depthBiasMVP);
+    if(!shadowPass) {
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_BACK);
+    }
     if(showGround) {
         model = glm::mat4();
         if(!shadowPass) {
@@ -743,6 +751,10 @@ void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &
 
 void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDiff_) {
     static const bool ENABLE_SHADOWMAPPING = true;
+    
+    glDisable(GL_BLEND);
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
     
     static bool first = true;
     if(first) {

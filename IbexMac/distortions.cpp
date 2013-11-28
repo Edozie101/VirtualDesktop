@@ -227,7 +227,7 @@ static const GLfloat dataArrayBoth[] =
 static const GLushort indices[] =
   {
     0,1,2,
-    1,2,3
+    1,3,2
   };
 
 static GLuint vao1;

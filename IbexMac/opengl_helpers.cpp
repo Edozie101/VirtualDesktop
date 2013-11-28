@@ -147,9 +147,9 @@ double distort2ShaderScaleFactor(double ax, double ay)
   return px/py;
 }
 
-static GLboolean depthTestEnabled =0;
-static GLboolean stencilTestEnabled =0;
-static int matrixMode = 0;
+//static GLboolean depthTestEnabled =0;
+//static GLboolean stencilTestEnabled =0;
+//static int matrixMode = 0;
 void saveState()
 {
 //  //    driver->setTransform(video::ETS_WORLD, AbsoluteTransformation);
