@@ -32,7 +32,7 @@ void main()
 	
 	// Material properties
 	vec3 MaterialDiffuseColor = texture(textureIn, UV).rgb;
-	vec3 MaterialAmbientColor = vec3(0.99,0.99,0.99) * MaterialDiffuseColor;
+	vec3 MaterialAmbientColor = vec3(0.75,0.75,0.75) * MaterialDiffuseColor;
 	vec3 MaterialSpecularColor = vec3(0.3,0.3,0.3);
     
 	// Distance to the light
