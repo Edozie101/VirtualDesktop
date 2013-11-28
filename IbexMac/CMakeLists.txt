@@ -276,6 +276,12 @@ INSTALL(TARGETS ibex
 INSTALL(CODE "
     execute_process(COMMAND \"iconutil\" --convert icns --output \"${CMAKE_INSTALL_PREFIX}/ibex.app/Contents/Resources/ibex.icns\" \"${PROJECT_SOURCE_DIR}/ibex.iconset\")
     #execute_process(COMMAND rm \"${CMAKE_INSTALL_PREFIX}/ibex.app/Contents/Resources/ibex.iconset\")
+    execute_process(COMMAND rm -rf \"${CMAKE_INSTALL_PREFIX}/ibex.app/Contents/Resources/resources/ogre3d-media\")
+    execute_process(COMMAND rm -rf \"${CMAKE_INSTALL_PREFIX}/ibex.app/Contents/Resources/resources/plugins.cfg\")
+    execute_process(COMMAND rm -rf \"${CMAKE_INSTALL_PREFIX}/ibex.app/Contents/Resources/resources/resources.cfg\")
+    execute_process(COMMAND rm -rf \"${CMAKE_INSTALL_PREFIX}/ibex.app/Contents/Resources/resources/lcd_monitor.mtl\")
+    execute_process(COMMAND rm -rf \"${CMAKE_INSTALL_PREFIX}/ibex.app/Contents/Resources/resources/lcd_monitor.obj\")
+    execute_process(COMMAND rm -rf \"${CMAKE_INSTALL_PREFIX}/ibex.app/Contents/Resources/resources/terrain.raw\")
 ")
 
 install (DIRECTORY resources DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
