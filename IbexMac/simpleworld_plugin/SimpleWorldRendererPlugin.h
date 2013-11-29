@@ -11,8 +11,21 @@
 #include "../RendererPlugin.h"
 #include "../ibex.h"
 
+#include "GLSLShaderProgram.h"
+
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
+
+#include "../terrain/Terrain.h"
+
+extern GLSLShaderProgram skyboxShaderProgram;
+extern GLSLShaderProgram groundShaderProgram;
+extern GLSLShaderProgram standardShaderProgram;
+extern GLSLShaderProgram shadowProgram;
+extern GLSLShaderProgram waterShaderProgram;
+
+extern GLint ShadowUniformLocations[1];
+extern GLint ShadowAttribLocations[3];
 
 class SimpleWorldRendererPlugin : public RendererPlugin {
 public:
@@ -35,6 +48,8 @@ private:
     
     GLuint _skybox[6];
     GLuint _skycube;
+    
+    Terrain terrain;
 };
 
 #endif /* SIMPLEWORLDRENDERERPLUGIN_H_ */

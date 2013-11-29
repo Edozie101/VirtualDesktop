@@ -134,11 +134,11 @@ void updateResourcePath(char *path_) {
     strcpy(path_, path);
 }
 
-static GLSLShaderProgram skyboxShaderProgram;
-static GLSLShaderProgram groundShaderProgram;
-static GLSLShaderProgram standardShaderProgram;
-static GLSLShaderProgram shadowProgram;
-static GLSLShaderProgram waterShaderProgram;
+GLSLShaderProgram skyboxShaderProgram;
+GLSLShaderProgram groundShaderProgram;
+GLSLShaderProgram standardShaderProgram;
+GLSLShaderProgram shadowProgram;
+GLSLShaderProgram waterShaderProgram;
 
 void SimpleWorldRendererPlugin::loadSkybox()
 {
@@ -214,8 +214,8 @@ void SimpleWorldRendererPlugin::renderVideoDisplayFlat(const glm::mat4 &MVP, con
     //    //    std::cerr << "Done IbexVideoFlat" << std::endl;
 }
 
-static GLint ShadowUniformLocations[1];
-static GLint ShadowAttribLocations[3];
+GLint ShadowUniformLocations[1];
+GLint ShadowAttribLocations[3];
 void loadShadowProgram() {
     shadowProgram.loadShaderProgram(mResourcePath, "/resources/shaders/depth.v.glsl", "/resources/shaders/depth.f.glsl");
     
@@ -572,15 +572,15 @@ void renderWater(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, b
     //    checkForErrors();
     //    std::cerr << "Loading Water texture" << std::endl;
 #ifdef _WIN32
-    static const GLuint WaterTexture = loadTexture("\\resources\\humus-skybox\\negy.jpg");
+    static const GLuint WaterTexture = loadTexture("\\resources\\humus-skybox\\posy.jpg");
     //        orientation = getRiftOrientation();
 #else
 #ifdef __APPLE__
-    static const GLuint WaterTexture = loadTexture("/resources/humus-skybox/negy.jpg");
+    static const GLuint WaterTexture = loadTexture("/resources/humus-skybox/posy.jpg");
 #else
     static float sizeX = 64;
     static float sizeY = 64;
-    static const GLuint WaterTexture = glmLoadTexture("./resources/humus-skybox/negy.jpg", GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE, &sizeX, &sizeY);
+    static const GLuint WaterTexture = glmLoadTexture("./resources/humus-skybox/posy.jpg", GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE, &sizeX, &sizeY);
 #endif
     // gluInvertMatrix(get_orientation(), orientation);
 #endif
@@ -618,7 +618,8 @@ void renderWater(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, b
             }
         }
         
-        waterShaderProgram.loadShaderProgram(mResourcePath, "/resources/shaders/water.v.glsl", "/resources/shaders/water.f.glsl");
+        //waterShaderProgram.loadShaderProgram(mResourcePath, "/resources/shaders/water.v.glsl", "/resources/shaders/water.f.glsl");
+        waterShaderProgram.loadShaderProgram(mResourcePath, "/resources/shaders/water-reflect.v.glsl", "/resources/shaders/water-reflect.f.glsl");
         glUseProgram(waterShaderProgram.shader.program);
         
         
@@ -672,7 +673,7 @@ void renderWater(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, b
         if(WaterUniformLocations[1] > -1) glUniformMatrix4fv(WaterUniformLocations[1], 1, GL_FALSE, &V[0][0]);
         if(WaterUniformLocations[2] > -1) glUniformMatrix4fv(WaterUniformLocations[2], 1, GL_FALSE, &M[0][0]);
         if(WaterUniformLocations[4] > -1) glUniformMatrix4fv(WaterUniformLocations[4], 1, GL_FALSE, &(M*V)[0][0]);
-        if(WaterUniformLocations[7] > -1) glUniform1f(WaterUniformLocations[7], (float)time*8);
+        if(WaterUniformLocations[7] > -1) glUniform1f(WaterUniformLocations[7], (float)time);//*8);
         
         if(WaterUniformLocations[5] > -1) {
             glUniformMatrix4fv(WaterUniformLocations[5], 1, GL_FALSE, &depthMVP[0][0]);
@@ -887,7 +888,12 @@ void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &
         model = glm::mat4();
         if(!shadowPass) {
             //renderGround(PV*model, view, model, shadowPass, depthBiasMVP*model);
+            terrain.renderGround(PV*model, view, model, shadowPass, depthBiasMVP*model);
+            
+            glEnable(GL_BLEND);
+            glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
             renderWater(PV*model, view, model, shadowPass, depthBiasMVP*model, time);
+            glDisable(GL_BLEND);
         }
     }
 }
@@ -896,7 +902,7 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
     static const bool ENABLE_SHADOWMAPPING = true;
     
     glDisable(GL_BLEND);
-    glEnable(GL_CULL_FACE);
+//    glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
     
     static bool first = true;
@@ -909,6 +915,9 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
             loadShadowProgram();
             generateShadowFBO();
         }
+        
+        //terrain.loadHeightmap("/resources/terrain.raw", 1024, 1024);
+        terrain.loadHeightmap("/resources/terrain-128.raw", 128,128);
     }
     
     glm::mat4 modelView;
@@ -954,7 +963,7 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
     }
     
     glBindFramebuffer(GL_FRAMEBUFFER, fbos[0]);
-    glClear(/*GL_COLOR_BUFFER_BIT | */GL_DEPTH_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     if (!checkForErrors()) {
         std::cerr << "GL ISSUE -- SimpleWorldRendererPlugin::step" << std::endl;
         //exit(EXIT_FAILURE);
