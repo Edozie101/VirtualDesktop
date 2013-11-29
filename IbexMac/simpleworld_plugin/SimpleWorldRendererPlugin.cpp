@@ -138,6 +138,7 @@ static GLSLShaderProgram skyboxShaderProgram;
 static GLSLShaderProgram groundShaderProgram;
 static GLSLShaderProgram standardShaderProgram;
 static GLSLShaderProgram shadowProgram;
+static GLSLShaderProgram waterShaderProgram;
 
 void SimpleWorldRendererPlugin::loadSkybox()
 {
@@ -566,6 +567,150 @@ void SimpleWorldRendererPlugin::renderSkybox(const glm::mat4 &modelView, const g
     //    std::cerr << "Done skybox" << std::endl;
 }
 
+void renderWater(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP, const double &time)
+{
+    //    checkForErrors();
+    //    std::cerr << "Loading Water texture" << std::endl;
+#ifdef _WIN32
+    static const GLuint WaterTexture = loadTexture("\\resources\\humus-skybox\\negy.jpg");
+    //        orientation = getRiftOrientation();
+#else
+#ifdef __APPLE__
+    static const GLuint WaterTexture = loadTexture("/resources/humus-skybox/negy.jpg");
+#else
+    static float sizeX = 64;
+    static float sizeY = 64;
+    static const GLuint WaterTexture = glmLoadTexture("./resources/humus-skybox/negy.jpg", GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE, &sizeX, &sizeY);
+#endif
+    // gluInvertMatrix(get_orientation(), orientation);
+#endif
+    
+    //    checkForErrors();
+    //    std::cerr << "start Water" << std::endl;
+    
+    static GLuint vaoWater = 0;
+    static const GLfloat WaterScale = 100;
+    
+    static GLint WaterUniformLocations[8] = { 0, 0, 0, 0, 0, 0, 0, 0};
+    static GLint WaterAttribLocations[3] = { 0, 0, 0 };
+    
+    static GLfloat WaterVertices[] = {
+        -1.0,  -10.0, -1.0, 0, 1, 0, 0, 0,
+        1.0, -10.0, -1.0, 0, 1, 0, 1, 0,
+        1.0, -10.0, 1.0, 0, 1, 0, 1, 1,
+        -1.0, -10.0, 1.0, 0, 1, 0, 0, 1
+    };
+    static GLuint vboWaterVertices = 0;
+    
+    static GLushort WaterIndices[] = {
+        0, 2, 1,
+        0, 3, 2
+    };
+    static GLuint vboWaterIndices = 0;
+    
+    static bool first = true;
+    if(first) {
+        first = false;
+        
+        for(int i = 0; i < sizeof(WaterVertices)/sizeof(GLfloat); ++i) {
+            if(i%8 != 1 && (i%8 < 3 || i%8 > 5)) {
+                WaterVertices[i] *= WaterScale;
+            }
+        }
+        
+        waterShaderProgram.loadShaderProgram(mResourcePath, "/resources/shaders/water.v.glsl", "/resources/shaders/water.f.glsl");
+        glUseProgram(waterShaderProgram.shader.program);
+        
+        
+        WaterUniformLocations[0] = glGetUniformLocation(waterShaderProgram.shader.program, "MVP");
+        WaterUniformLocations[1] = glGetUniformLocation(waterShaderProgram.shader.program, "V");
+        WaterUniformLocations[2] = glGetUniformLocation(waterShaderProgram.shader.program, "M");
+        WaterUniformLocations[3] = glGetUniformLocation(waterShaderProgram.shader.program, "textureIn");
+        WaterUniformLocations[4] = glGetUniformLocation(waterShaderProgram.shader.program, "MV");
+        
+        WaterUniformLocations[5] = glGetUniformLocation(waterShaderProgram.shader.program, "DepthBiasMVP");
+        WaterUniformLocations[6] = glGetUniformLocation(waterShaderProgram.shader.program, "shadowTexture");
+        WaterUniformLocations[7] = glGetUniformLocation(waterShaderProgram.shader.program, "time");
+        
+        WaterAttribLocations[0] = glGetAttribLocation(waterShaderProgram.shader.program, "vertexPosition_modelspace");
+        WaterAttribLocations[1] = glGetAttribLocation(waterShaderProgram.shader.program, "vertexNormal_modelspace");
+        WaterAttribLocations[2] = glGetAttribLocation(waterShaderProgram.shader.program, "vertexUV");
+        
+        glUseProgram(0);
+        
+        std::cerr << "setup_buffers" << std::endl;
+        checkForErrors();
+        glGenVertexArrays(1,&vaoWater);
+        
+        checkForErrors();
+        std::cerr << "gen vaoWater done" << std::endl;
+        
+        glBindVertexArray(vaoWater);
+        glGenBuffers(1, &vboWaterVertices);
+        glBindBuffer(GL_ARRAY_BUFFER, vboWaterVertices);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(WaterVertices), WaterVertices, GL_STATIC_DRAW);
+        
+        glGenBuffers(1, &vboWaterIndices);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboWaterIndices);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(WaterIndices), WaterIndices, GL_STATIC_DRAW);
+        
+        glEnableVertexAttribArray(WaterAttribLocations[0]);
+        glVertexAttribPointer(WaterAttribLocations[0], 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*8, 0);
+//        glEnableVertexAttribArray(WaterAttribLocations[1]);
+//        glVertexAttribPointer(WaterAttribLocations[1], 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*8, (GLvoid*) (sizeof(GLfloat) * 3));
+//        glEnableVertexAttribArray(WaterAttribLocations[2]);
+//        glVertexAttribPointer(WaterAttribLocations[2], 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*8, (GLvoid*) (sizeof(GLfloat) * 6));
+    }
+    
+    glBindVertexArray(vaoWater);
+    if(shadowPass) {
+        glUseProgram(shadowProgram.shader.program);
+        glUniformMatrix4fv(ShadowUniformLocations[0], 1, GL_FALSE, &MVP[0][0]);
+    } else {
+        glUseProgram(waterShaderProgram.shader.program);
+        if(WaterUniformLocations[0] > -1) glUniformMatrix4fv(WaterUniformLocations[0], 1, GL_FALSE, &MVP[0][0]);
+        if(WaterUniformLocations[1] > -1) glUniformMatrix4fv(WaterUniformLocations[1], 1, GL_FALSE, &V[0][0]);
+        if(WaterUniformLocations[2] > -1) glUniformMatrix4fv(WaterUniformLocations[2], 1, GL_FALSE, &M[0][0]);
+        if(WaterUniformLocations[4] > -1) glUniformMatrix4fv(WaterUniformLocations[4], 1, GL_FALSE, &(M*V)[0][0]);
+        if(WaterUniformLocations[7] > -1) glUniform1f(WaterUniformLocations[7], (float)time*8);
+        
+        if(WaterUniformLocations[5] > -1) {
+            glUniformMatrix4fv(WaterUniformLocations[5], 1, GL_FALSE, &depthMVP[0][0]);
+        }
+        
+        if(WaterUniformLocations[3] > -1) {
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, WaterTexture);
+            glUniform1i(WaterUniformLocations[3], 0);
+        }
+        if(WaterUniformLocations[6] > -1) {
+            glActiveTexture(GL_TEXTURE1);
+            glBindTexture(GL_TEXTURE_2D, shadowMapDepthTextureId);
+            glUniform1i(WaterUniformLocations[6], 1);
+        }
+    }
+    
+    glDrawElements(GL_TRIANGLES, sizeof(WaterIndices)/sizeof(GLushort), GL_UNSIGNED_SHORT, 0);
+    //    glBindVertexArray(0);
+    //
+    //    if(WaterUniformLocations[3] > -1) {
+    //        glActiveTexture(GL_TEXTURE0);
+    //        glBindTexture(GL_TEXTURE_2D, 0);
+    //    }
+    //    if(WaterUniformLocations[6] > -1) {
+    //        glActiveTexture(GL_TEXTURE1);
+    //        glBindTexture(GL_TEXTURE_2D, 0);
+    //    }
+    //
+    //    glUseProgram(0);
+    //
+    //    if(!checkForErrors()) {
+    //        std::cerr << "Water water, exiting" << std::endl;
+    //        exit(0);
+    //    }
+    //    std::cerr << "Done Water" << std::endl;
+}
+
 void SimpleWorldRendererPlugin::renderGround(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP)
 {
     //    checkForErrors();
@@ -712,7 +857,7 @@ void SimpleWorldRendererPlugin::renderGround(const glm::mat4 &MVP, const glm::ma
 void SimpleWorldRendererPlugin::init() {
 }
 
-void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &view_, const glm::mat4 &playerCamera_, const glm::mat4 &playerRotation_, bool shadowPass, const glm::mat4 &depthBiasMVP) {
+void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &view_, const glm::mat4 &playerCamera_, const glm::mat4 &playerRotation_, bool shadowPass, const glm::mat4 &depthBiasMVP, const double &time) {
     glm::mat4 view(view_);
     glm::mat4 model;
     
@@ -727,29 +872,27 @@ void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &
     
     model = glm::translate(model, glm::vec3(0.0f, 0.0f, -10.0f));
     
-    //    static int i = 0;
-    //    i = ++i%(int)(360./0.5);
-    //    model = model*glm::rotate(0.5f*i, 0.f, 1.f, 0.f);
+//    static int i = 0;
+//    i = ++i%(int)(360./0.5);
+//    model = model*glm::rotate(0.5f*i, 0.f, 1.f, 0.f);
     
-    if(!shadowPass) {
-        glDisable(GL_CULL_FACE);
-        glCullFace(GL_BACK);
-    }
+    glDisable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
     renderIbexDisplayFlat(PV*model, view, model, shadowPass, depthBiasMVP*model);
-    renderVideoDisplayFlat(PV*model, view, model, depthBiasMVP);
-    if(!shadowPass) {
-        glEnable(GL_CULL_FACE);
-        glCullFace(GL_BACK);
-    }
+//    renderVideoDisplayFlat(PV*model, view, model, depthBiasMVP*model);
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
+    
     if(showGround) {
         model = glm::mat4();
         if(!shadowPass) {
-            renderGround(PV*model, view, model, shadowPass, depthBiasMVP*model);
+            //renderGround(PV*model, view, model, shadowPass, depthBiasMVP*model);
+            renderWater(PV*model, view, model, shadowPass, depthBiasMVP*model, time);
         }
     }
 }
 
-void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDiff_) {
+void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDiff_, const double &time_) {
     static const bool ENABLE_SHADOWMAPPING = true;
     
     glDisable(GL_BLEND);
@@ -807,7 +950,7 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
         // render shadowmap
         bindShadowFBO();
         
-        render(lightProj, lightView, glm::mat4(), glm::mat4(), true, depthBiasMVP);
+        render(lightProj, lightView, glm::mat4(), glm::mat4(), true, depthBiasMVP, time_);
     }
     
     glBindFramebuffer(GL_FRAMEBUFFER, fbos[0]);
@@ -827,7 +970,7 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
         copyMatrix(proj, (getRiftOrientationNative()*stereo.Projection.Transposed()).M);
         
         // render normally
-        render(proj, view, playerCamera, playerRotation, false, depthBiasMVP);
+        render(proj, view, playerCamera, playerRotation, false, depthBiasMVP, time_);
     }
     glDisable(GL_SCISSOR_TEST);
     glFlush();

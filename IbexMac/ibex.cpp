@@ -291,6 +291,9 @@ bool didInitOpenGL() {
 // ---------------------------------------------------------------------------
 void renderGL(Desktop3DLocation& loc, double timeDiff_, RendererPlugin *renderer)
 {
+    static double time = 0;
+    time += timeDiff_;
+    
   if (!initedOpenGL) {
     initedOpenGL = true;
       
@@ -337,7 +340,7 @@ void renderGL(Desktop3DLocation& loc, double timeDiff_, RendererPlugin *renderer
       }
   }
 
-  renderer->step(loc, timeDiff_);
+  renderer->step(loc, timeDiff_, time);
 }
 
 void resizeGL(unsigned int width, unsigned int height)

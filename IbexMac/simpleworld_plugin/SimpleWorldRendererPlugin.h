@@ -26,12 +26,12 @@ public:
     void renderIbexDisplayFlat(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP);
     
     void init();
-    void step(const Desktop3DLocation &loc_, double timeDiff_);
+    void step(const Desktop3DLocation &loc_, double timeDiff_, const double &time_);
     bool needsSwapBuffers();
     
     Window getWindowID();
 private:
-    void render(const glm::mat4 &proj_, const glm::mat4 &view_, const glm::mat4 &playerCamera_, const glm::mat4 &playerRotation_, bool shadowPass, const glm::mat4 &depthBiasMVP);
+    void render(const glm::mat4 &proj_, const glm::mat4 &view_, const glm::mat4 &playerCamera_, const glm::mat4 &playerRotation_, bool shadowPass, const glm::mat4 &depthBiasMVP, const double &time);
     
     GLuint _skybox[6];
     GLuint _skycube;
