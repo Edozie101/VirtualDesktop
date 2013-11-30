@@ -103,6 +103,7 @@ extern bool showDialog;
 
 extern double relativeMouseX;
 extern double relativeMouseY;
+extern bool   running;
 extern double walkForward;
 extern double strafeRight;
 
@@ -155,7 +156,7 @@ public:
   // Modify location of the desktop in 3D
   inline void walk(double forward, double right, double seconds)
   {
-    const double walkSpeedSec = WALK_SPEED * seconds;
+    const double walkSpeedSec = WALK_SPEED * ((running)?10.0:1.0) * seconds;
 
     m_xPosition -= sin(m_yRotation / 90.0 * M_PI_2) * walkSpeedSec * forward;
     m_zPosition += cos(m_yRotation / 90.0 * M_PI_2) * walkSpeedSec * forward;

@@ -530,6 +530,16 @@ static CGPoint cursorPos;
     return YES;
 }
 
+- (void)flagsChanged:(NSEvent *)event
+{
+    if ([event modifierFlags] & NSShiftKeyMask)
+    {
+        running = true;
+    } else {
+        running = false;
+    }
+}
+
 - (void)keyDown:(NSEvent *)theEvent {
     int processed = 0;
     if(showDialog) {

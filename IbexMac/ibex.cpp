@@ -100,6 +100,7 @@ GLfloat cursorPosY(0);
 
 GLuint cursorTexture(0);
 
+bool   running     = false;
 double walkForward = 0;
 double strafeRight = 0;
 
