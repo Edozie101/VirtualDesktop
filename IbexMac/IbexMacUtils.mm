@@ -68,10 +68,11 @@ extern "C" GLuint loadTexture(const char *path_, bool flip) {
     glGenTextures(1, &myTextureName);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, myTextureName);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR); // GL_LINEAR
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, (GLint)width, (GLint)height,
                  0, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, myData);
+    glGenerateMipmap(GL_TEXTURE_2D);
     free(myData);
     glBindTexture(GL_TEXTURE_2D, 0);
     
@@ -88,7 +89,7 @@ extern "C" GLuint loadCubemapTextures(const char *path_[6]) {
     glTexParameteri(GL_TEXTURE_CUBE_MAP,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP,GL_TEXTURE_WRAP_R,GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR); // GL_LINEAR
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_BASE_LEVEL, 0);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAX_LEVEL, 0);
@@ -104,7 +105,7 @@ extern "C" GLuint loadCubemapTextures(const char *path_[6]) {
                      0, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, myData);
         free(myData);
     }
-//    glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+    glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
     glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
     
     return myTextureName;
