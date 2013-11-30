@@ -167,7 +167,7 @@ void Terrain::renderGround(const glm::mat4 &MVP, const glm::mat4 &V, const glm::
     //        orientation = getRiftOrientation();
 #else
 #ifdef __APPLE__
-    static const GLuint groundTexture = loadTexture("/resources/humus-skybox/negy.jpg");
+    static const GLuint groundTexture = loadTexture("/resources/humus-skybox/smaller/negy.jpg");
 #else
     static float sizeX = 64;
     static float sizeY = 64;

@@ -282,6 +282,13 @@ INSTALL(CODE "
     execute_process(COMMAND rm -rf \"${CMAKE_INSTALL_PREFIX}/ibex.app/Contents/Resources/resources/lcd_monitor.mtl\")
     execute_process(COMMAND rm -rf \"${CMAKE_INSTALL_PREFIX}/ibex.app/Contents/Resources/resources/lcd_monitor.obj\")
     execute_process(COMMAND rm -rf \"${CMAKE_INSTALL_PREFIX}/ibex.app/Contents/Resources/resources/terrain.raw\")
+
+    execute_process(COMMAND rm -rf \"${CMAKE_INSTALL_PREFIX}/ibex.app/Contents/Resources/resources/humus-skybox/negx.jpg\")
+    execute_process(COMMAND rm -rf \"${CMAKE_INSTALL_PREFIX}/ibex.app/Contents/Resources/resources/humus-skybox/posx.jpg\")
+    execute_process(COMMAND rm -rf \"${CMAKE_INSTALL_PREFIX}/ibex.app/Contents/Resources/resources/humus-skybox/negy.jpg\")
+    execute_process(COMMAND rm -rf \"${CMAKE_INSTALL_PREFIX}/ibex.app/Contents/Resources/resources/humus-skybox/posy.jpg\")
+    execute_process(COMMAND rm -rf \"${CMAKE_INSTALL_PREFIX}/ibex.app/Contents/Resources/resources/humus-skybox/negz.jpg\")
+    execute_process(COMMAND rm -rf \"${CMAKE_INSTALL_PREFIX}/ibex.app/Contents/Resources/resources/humus-skybox/posz.jpg\")
 ")
 
 install (DIRECTORY resources DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")

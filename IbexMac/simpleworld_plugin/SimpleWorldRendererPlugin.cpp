@@ -46,73 +46,73 @@ void copyMatrix(glm::mat4 &modelView, float M[4][4]) {
 //////
 
 void renderSphericalDisplay(double r, double numHorizontalLines, double numVerticalLines, double width, double height) {
-//    glPushMatrix();
-//    glRotated(90, 0, 1, 0);
-//    
-//    glPushMatrix();
-//    for(double i = 0; i <= numHorizontalLines; i++) {
-//        const double latitude0 = M_PI * (-0.5 + (i-1.0)/numHorizontalLines) *(width/360.0)-(width*M_2_PI/360/2);
-//        const double depth0  = sin(latitude0);
-//        const double depthXY0 =  cos(latitude0);
-//        
-//        const double latitude1 = M_PI * (-0.5 + i / numHorizontalLines) *(width/360.0)-(width*M_2_PI/360/2);
-//        const double depth1 = sin(latitude1);
-//        const double depthXY1 = cos(latitude1);
-//        
-//        glBegin(GL_QUAD_STRIP);
-//        for(double j = 0; j <= numVerticalLines; j++) {
-//            const double longitude = 2 * M_PI * (j-1.0)/numVerticalLines *(height/360.0) -4*(height*M_2_PI/360);
-//            const double x = cos(longitude);
-//            const double y = sin(longitude);
-//            
-//            glTexCoord2d(i/(numHorizontalLines+1.0), j/numVerticalLines);
-//            glNormal3f(x * depthXY0, y * depthXY0, depth0);
-//            glVertex3f(x * depthXY0, y * depthXY0, depth0);
-//            
-//            glTexCoord2d((i+1.0)/(numHorizontalLines+1.0), j/numVerticalLines);
-//            glNormal3f(x * depthXY1, y * depthXY1, depth1);
-//            glVertex3f(x * depthXY1, y * depthXY1, depth1);
-//        }
-//        glEnd();
-//    }
-//    glPopMatrix();
-//    
-//    glPopMatrix();
+    //    glPushMatrix();
+    //    glRotated(90, 0, 1, 0);
+    //
+    //    glPushMatrix();
+    //    for(double i = 0; i <= numHorizontalLines; i++) {
+    //        const double latitude0 = M_PI * (-0.5 + (i-1.0)/numHorizontalLines) *(width/360.0)-(width*M_2_PI/360/2);
+    //        const double depth0  = sin(latitude0);
+    //        const double depthXY0 =  cos(latitude0);
+    //
+    //        const double latitude1 = M_PI * (-0.5 + i / numHorizontalLines) *(width/360.0)-(width*M_2_PI/360/2);
+    //        const double depth1 = sin(latitude1);
+    //        const double depthXY1 = cos(latitude1);
+    //
+    //        glBegin(GL_QUAD_STRIP);
+    //        for(double j = 0; j <= numVerticalLines; j++) {
+    //            const double longitude = 2 * M_PI * (j-1.0)/numVerticalLines *(height/360.0) -4*(height*M_2_PI/360);
+    //            const double x = cos(longitude);
+    //            const double y = sin(longitude);
+    //
+    //            glTexCoord2d(i/(numHorizontalLines+1.0), j/numVerticalLines);
+    //            glNormal3f(x * depthXY0, y * depthXY0, depth0);
+    //            glVertex3f(x * depthXY0, y * depthXY0, depth0);
+    //
+    //            glTexCoord2d((i+1.0)/(numHorizontalLines+1.0), j/numVerticalLines);
+    //            glNormal3f(x * depthXY1, y * depthXY1, depth1);
+    //            glVertex3f(x * depthXY1, y * depthXY1, depth1);
+    //        }
+    //        glEnd();
+    //    }
+    //    glPopMatrix();
+    //
+    //    glPopMatrix();
 }
 
 void renderCylindricalDisplay(double r, double numHorizontalLines, double numVerticalLines, double width, double height) {
-//    glPushMatrix();
-//    //    glRotated(90, 1, 0, 0);
-//    
-//    glPushMatrix();
-//    for(double i = 0; i <= numHorizontalLines; i++) {
-//        const double latitude0 = 2*M_PI * (-0.5 + (i-1.0)/numHorizontalLines) *(width/360.0);
-//        const double depth0  = sin(latitude0);
-//        const double depthXY0 =  cos(latitude0);
-//        
-//        const double latitude1 = 2*M_PI * (-0.5 + i / numHorizontalLines) *(width/360.0);
-//        const double depth1 = sin(latitude1);
-//        const double depthXY1 = cos(latitude1);
-//        
-//        glBegin(GL_QUAD_STRIP);
-//        for(double j = 0; j <= numVerticalLines; j++) {
-//            const double longitude = 2 * M_PI * (j-1.0)/numVerticalLines *(height/360.0);
-//            const double x = cos(longitude);
-//            const double y = sin(longitude);
-//            
-//            glTexCoord2d(1-i/(numHorizontalLines+1.0), j/numVerticalLines);
-//            glNormal3f(x * depthXY0, depthXY0, y * depthXY0);
-//            glVertex3f(depth0*r, (j/numVerticalLines)*2*r-r, depthXY0*r);
-//            
-//            glTexCoord2d(1-(i+1.0)/(numHorizontalLines+1.0), j/numVerticalLines);
-//            glNormal3f(x * depthXY1, y * depthXY1, depthXY1);
-//            glVertex3f(depth1*r, (j/numVerticalLines)*2*r-r,depthXY1*r);
-//        }
-//        glEnd();
-//    }
-//    glPopMatrix();
-//    
-//    glPopMatrix();
+    //    glPushMatrix();
+    //    //    glRotated(90, 1, 0, 0);
+    //
+    //    glPushMatrix();
+    //    for(double i = 0; i <= numHorizontalLines; i++) {
+    //        const double latitude0 = 2*M_PI * (-0.5 + (i-1.0)/numHorizontalLines) *(width/360.0);
+    //        const double depth0  = sin(latitude0);
+    //        const double depthXY0 =  cos(latitude0);
+    //
+    //        const double latitude1 = 2*M_PI * (-0.5 + i / numHorizontalLines) *(width/360.0);
+    //        const double depth1 = sin(latitude1);
+    //        const double depthXY1 = cos(latitude1);
+    //
+    //        glBegin(GL_QUAD_STRIP);
+    //        for(double j = 0; j <= numVerticalLines; j++) {
+    //            const double longitude = 2 * M_PI * (j-1.0)/numVerticalLines *(height/360.0);
+    //            const double x = cos(longitude);
+    //            const double y = sin(longitude);
+    //
+    //            glTexCoord2d(1-i/(numHorizontalLines+1.0), j/numVerticalLines);
+    //            glNormal3f(x * depthXY0, depthXY0, y * depthXY0);
+    //            glVertex3f(depth0*r, (j/numVerticalLines)*2*r-r, depthXY0*r);
+    //
+    //            glTexCoord2d(1-(i+1.0)/(numHorizontalLines+1.0), j/numVerticalLines);
+    //            glNormal3f(x * depthXY1, y * depthXY1, depthXY1);
+    //            glVertex3f(depth1*r, (j/numVerticalLines)*2*r-r,depthXY1*r);
+    //        }
+    //        glEnd();
+    //    }
+    //    glPopMatrix();
+    //
+    //    glPopMatrix();
 }
 
 SimpleWorldRendererPlugin::SimpleWorldRendererPlugin() {
@@ -151,12 +151,12 @@ void SimpleWorldRendererPlugin::loadSkybox()
     _skybox[5] = loadTexture("\\resources\\humus-skybox\\negy.jpg");
 #else
 #ifdef __APPLE__
-    _skybox[0] = loadTexture("/resources/humus-skybox/negz.jpg");
-    _skybox[1] = loadTexture("/resources/humus-skybox/posx.jpg");
-    _skybox[2] = loadTexture("/resources/humus-skybox/posz.jpg");
-    _skybox[3] = loadTexture("/resources/humus-skybox/negx.jpg");
-    _skybox[4] = loadTexture("/resources/humus-skybox/posy.jpg");
-    _skybox[5] = loadTexture("/resources/humus-skybox/negy.jpg");
+    _skybox[0] = loadTexture("/resources/humus-skybox/smaller/negz.jpg");
+    _skybox[1] = loadTexture("/resources/humus-skybox/smaller/posx.jpg");
+    _skybox[2] = loadTexture("/resources/humus-skybox/smaller/posz.jpg");
+    _skybox[3] = loadTexture("/resources/humus-skybox/smaller/negx.jpg");
+    _skybox[4] = loadTexture("/resources/humus-skybox/smaller/posy.jpg");
+    _skybox[5] = loadTexture("/resources/humus-skybox/smaller/negy.jpg");
 #else
     float sizeX = 2048;
     float sizeY = 2048;
@@ -570,19 +570,19 @@ void SimpleWorldRendererPlugin::renderWater(const glm::mat4 &MVP, const glm::mat
 {
     //    checkForErrors();
     //    std::cerr << "Loading Water texture" << std::endl;
-#ifdef _WIN32
-    static const GLuint WaterTexture = loadTexture("\\resources\\humus-skybox\\posy.jpg");
-    //        orientation = getRiftOrientation();
-#else
-#ifdef __APPLE__
-    static const GLuint WaterTexture = loadTexture("/resources/humus-skybox/posy.jpg");
-#else
-    static float sizeX = 64;
-    static float sizeY = 64;
-    static const GLuint WaterTexture = glmLoadTexture("./resources/humus-skybox/posy.jpg", GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE, &sizeX, &sizeY);
-#endif
-    // gluInvertMatrix(get_orientation(), orientation);
-#endif
+    //#ifdef _WIN32
+    //    static const GLuint WaterTexture = loadTexture("\\resources\\humus-skybox\\posy.jpg");
+    //    //        orientation = getRiftOrientation();
+    //#else
+    //#ifdef __APPLE__
+    //    static const GLuint WaterTexture = loadTexture("/resources/humus-skybox/smaller/posy.jpg");
+    //#else
+    //    static float sizeX = 64;
+    //    static float sizeY = 64;
+    //    static const GLuint WaterTexture = glmLoadTexture("./resources/humus-skybox/posy.jpg", GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE, &sizeX, &sizeY);
+    //#endif
+    //    // gluInvertMatrix(get_orientation(), orientation);
+    //#endif
     
     //    checkForErrors();
     //    std::cerr << "start Water" << std::endl;
@@ -657,10 +657,10 @@ void SimpleWorldRendererPlugin::renderWater(const glm::mat4 &MVP, const glm::mat
         
         glEnableVertexAttribArray(WaterAttribLocations[0]);
         glVertexAttribPointer(WaterAttribLocations[0], 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*8, 0);
-//        glEnableVertexAttribArray(WaterAttribLocations[1]);
-//        glVertexAttribPointer(WaterAttribLocations[1], 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*8, (GLvoid*) (sizeof(GLfloat) * 3));
-//        glEnableVertexAttribArray(WaterAttribLocations[2]);
-//        glVertexAttribPointer(WaterAttribLocations[2], 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*8, (GLvoid*) (sizeof(GLfloat) * 6));
+        //        glEnableVertexAttribArray(WaterAttribLocations[1]);
+        //        glVertexAttribPointer(WaterAttribLocations[1], 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*8, (GLvoid*) (sizeof(GLfloat) * 3));
+        //        glEnableVertexAttribArray(WaterAttribLocations[2]);
+        //        glVertexAttribPointer(WaterAttribLocations[2], 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*8, (GLvoid*) (sizeof(GLfloat) * 6));
     }
     
     glBindVertexArray(vaoWater);
@@ -674,7 +674,7 @@ void SimpleWorldRendererPlugin::renderWater(const glm::mat4 &MVP, const glm::mat
         if(WaterUniformLocations[2] > -1) glUniformMatrix4fv(WaterUniformLocations[2], 1, GL_FALSE, &M[0][0]);
         if(WaterUniformLocations[4] > -1) glUniformMatrix4fv(WaterUniformLocations[4], 1, GL_FALSE, &(M*V)[0][0]);
         if(WaterUniformLocations[7] > -1) glUniform1f(WaterUniformLocations[7], (float)time);//*8);
-//        if(WaterUniformLocations[8] > -1) glUniform3f(WaterUniformLocations[8], ;
+        //        if(WaterUniformLocations[8] > -1) glUniform3f(WaterUniformLocations[8], ;
         
         if(WaterUniformLocations[5] > -1) {
             glUniformMatrix4fv(WaterUniformLocations[5], 1, GL_FALSE, &depthMVP[0][0]);
@@ -682,7 +682,7 @@ void SimpleWorldRendererPlugin::renderWater(const glm::mat4 &MVP, const glm::mat
         
         if(WaterUniformLocations[3] > -1) {
             glActiveTexture(GL_TEXTURE0);
-//            glBindTexture(GL_TEXTURE_2D, WaterTexture);
+            //            glBindTexture(GL_TEXTURE_2D, WaterTexture);
             glBindTexture(GL_TEXTURE_CUBE_MAP, _skycube);
             glUniform1i(WaterUniformLocations[3], 0);
         }
@@ -723,7 +723,7 @@ void SimpleWorldRendererPlugin::renderGround(const glm::mat4 &MVP, const glm::ma
     //        orientation = getRiftOrientation();
 #else
 #ifdef __APPLE__
-    static const GLuint groundTexture = loadTexture("/resources/humus-skybox/negy.jpg");
+    static const GLuint groundTexture = loadTexture("/resources/humus-skybox/smaller/negy.jpg");
 #else
     static float sizeX = 64;
     static float sizeY = 64;
@@ -875,14 +875,14 @@ void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &
     
     model = glm::translate(model, glm::vec3(0.0f, 0.0f, -10.0f));
     
-//    static int i = 0;
-//    i = ++i%(int)(360./0.5);
-//    model = model*glm::rotate(0.5f*i, 0.f, 1.f, 0.f);
+    //    static int i = 0;
+    //    i = ++i%(int)(360./0.5);
+    //    model = model*glm::rotate(0.5f*i, 0.f, 1.f, 0.f);
     
     glDisable(GL_CULL_FACE);
     glCullFace(GL_BACK);
     renderIbexDisplayFlat(PV*model, view, model, shadowPass, depthBiasMVP*model);
-//    renderVideoDisplayFlat(PV*model, view, model, depthBiasMVP*model);
+    //    renderVideoDisplayFlat(PV*model, view, model, depthBiasMVP*model);
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
     
@@ -905,7 +905,7 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
     static const bool ENABLE_SHADOWMAPPING = true;
     
     glDisable(GL_BLEND);
-//    glEnable(GL_CULL_FACE);
+    //    glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
     
     static bool first = true;
