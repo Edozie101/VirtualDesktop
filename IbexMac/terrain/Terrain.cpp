@@ -13,7 +13,7 @@
 #include "../ibex_mac_utils.h"
 #include "../ibex.h"
 
-Terrain::Terrain() : data(0),vertices(0),indices(0),scaleX(10),scaleY(.1),scaleZ(10) {
+Terrain::Terrain() : data(0),vertices(0),indices(0),scaleX(30),scaleY(.2),scaleZ(30),translateX(-10),translateY(0),translateZ(-10) {
 }
 
 void Terrain::loadTerrain(unsigned char *data, int width, int height) {
@@ -28,9 +28,9 @@ void Terrain::loadTerrain(unsigned char *data, int width, int height) {
     int index = 0;
     for(int y = 0; y < height; ++y) {
         for(int x = 0; x < width; ++x) {
-            vertices[index] = (x-width/2)*scaleX;
-            vertices[index+1] = data[y*width+x]*scaleY-20.0;
-            vertices[index+2] = (y-height/2)*scaleZ;
+            vertices[index] = (x-width/2)*scaleX+translateX;
+            vertices[index+1] = data[y*width+x]*scaleY-20.0+translateY;
+            vertices[index+2] = (y-height/2)*scaleZ+translateZ;
             
             vertices[index+6] = x;
             vertices[index+7] = y;

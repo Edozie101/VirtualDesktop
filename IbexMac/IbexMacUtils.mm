@@ -19,7 +19,7 @@
 
 #include "string.h"
 
-static void *getImageData(const char *path_, size_t &width, size_t &height) {
+static void *getImageData(const char *path_, size_t &width, size_t &height, bool flip) {
     char path[2048];
     strcpy(path, mResourcePath);
     strcat(path, path_);
@@ -41,8 +41,10 @@ static void *getImageData(const char *path_, size_t &width, size_t &height) {
                                                           width*4, space,
                                                           kCGBitmapByteOrder32Host |
                                                           kCGImageAlphaPremultipliedFirst);
+    if(!flip) {
     CGContextTranslateCTM(myBitmapContext, 0, height);
-    CGContextScaleCTM(myBitmapContext, 1.0, -1.0);
+        CGContextScaleCTM(myBitmapContext, 1.0, -1.0);
+    }
     CGContextSetBlendMode(myBitmapContext, kCGBlendModeCopy);
     CGContextDrawImage(myBitmapContext, rect, myImageRef);
     CGContextRelease(myBitmapContext);
@@ -54,12 +56,12 @@ static void *getImageData(const char *path_, size_t &width, size_t &height) {
     return myData;
 }
 
-extern "C" GLuint loadTexture(const char *path_) {
+extern "C" GLuint loadTexture(const char *path_, bool flip) {
     GLuint myTextureName;
     
     size_t width = 0;
     size_t height = 0;
-    void *myData = getImageData(path_, width, height);
+    void *myData = getImageData(path_, width, height, flip);
     
     glPixelStorei(GL_UNPACK_ROW_LENGTH, (GLint)width);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -90,11 +92,10 @@ extern "C" GLuint loadCubemapTextures(const char *path_[6]) {
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_BASE_LEVEL, 0);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAX_LEVEL, 0);
-    
     for(int i = 0; i < 6; ++i) {
         size_t width = 0;
         size_t height = 0;
-        void *myData = getImageData(path_[i], width, height);
+        void *myData = getImageData(path_[i], width, height, true);
         
         glPixelStorei(GL_UNPACK_ROW_LENGTH, (GLint)width);
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);

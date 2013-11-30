@@ -17,7 +17,7 @@
 extern bool doubleBuffered;
 extern char mResourcePath[1024];
 
-extern "C" GLuint loadTexture(const char *path_);
+extern "C" GLuint loadTexture(const char *path_, bool flip=true);
 extern "C" GLuint loadCubemapTextures(const char *path_[6]);
 
 #endif

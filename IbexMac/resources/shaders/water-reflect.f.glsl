@@ -1,9 +1,11 @@
 #version 330 core
 
 uniform float time;
-uniform sampler2D textureIn;
+//uniform sampler2D textureIn;
+uniform samplerCube textureIn;
 
 in vec3 pos;
+in vec3 reflected;
 
 layout (location = 0) out vec4 color;
 
@@ -11,11 +13,13 @@ float snoise(vec3 v);
 
 void main() {
     vec3 p = vec3(pos.xz, time);
-//    float f = 0.2*snoise(p/4.0)+0.3*snoise(p/8.0)+0.7*snoise(p/40.0);
-    color = vec4(texture(textureIn, vec2(snoise(p/10.0), snoise((p+0.2)/10.0))).rgb*0.5+vec3(0.1,0.3,0.5)*0.6, 0.3);//vec3(0.13, 0.85, 0.96)*(f*0.3+0.7);
-//    color = vec4(texture(textureIn, vec2(snoise(p/8.0), snoise((p+0.2)/8.0))).rgb, 0.3);
+    //vec3 reflected2 = vec3(reflected.x+(snoise(p/2.0f)+snoise(p)/5.0)*(0.0025-0.00125)/1.0,reflected.y, reflected.z+(snoise((p+5.f)/3.0f)+snoise(p*1.2)/6.0)*(0.0025-0.00125)/1.0); // reflection with 2 noise functions
+    vec3 reflected2 = vec3(reflected.x+(snoise(p/2.0f))*(0.0025-0.00125)/1.0,reflected.y, reflected.z+(snoise((p+5.f)/3.0f))*(0.0025-0.00125)/1.0);
+    //
+//    vec3 reflected2 = reflected; // straight reflection
+    color = texture(textureIn, reflected2);
+    color.a = 0.3;
 }
-
 //////////////////////// INCLUDED /////////////////
 //
 // Description : Array and textureless GLSL 2D/3D/4D simplex

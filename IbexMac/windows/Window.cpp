@@ -244,63 +244,63 @@ void Ibex::Window::renderFileChooser() {
     }
     glBindTexture(GL_TEXTURE_2D, 0);
     glDisable(GL_DEPTH_TEST);
-    glColor4f(0,0.1,0,0.5);
-    glBegin(GL_QUADS);
-    glVertex3d(-0.1, 0.35, -0.25);
-    glVertex3d(0.1, 0.35, -0.25);
-    glVertex3d(0.1, 0.65, -0.25);
-    glVertex3d(-0.1, 0.65, -0.25);
-    glEnd();
-    glColor4f(1,1,1,1);
+//    glColor4f(0,0.1,0,0.5);
+//    glBegin(GL_QUADS);
+//    glVertex3d(-0.1, 0.35, -0.25);
+//    glVertex3d(0.1, 0.35, -0.25);
+//    glVertex3d(0.1, 0.65, -0.25);
+//    glVertex3d(-0.1, 0.65, -0.25);
+//    glEnd();
+//    glColor4f(1,1,1,1);
 //    renderBitmapString(-0.095, 0.64, -0.25, GLUT_BITMAP_HELVETICA_18, "~/Backspace: Back");
-    char blah[256];
-    uint startIndex = (selectedFile > 28/2) ? selectedFile-28/2 : 0;
-    for(uint i = startIndex,index = 0; i < startIndex+28 && i < directoryList.size(); ++i,++index) {
-        std::string pathWithoutDir = directoryList[i];
-        if(directoryList[i].size() && directoryList[i][0] == '*') {
-            pathWithoutDir = pathWithoutDir.substr(1);
-        }
-        
-        sprintf(blah,"%u. %s",i+1,(i < directoryList.size()) ? pathWithoutDir.c_str() : "---------");
-        
-        if(directoryList[i].size() && directoryList[i][0] == '*') {
-            glColor4f(0.,0.,1,1);
-        }
-        if(selectedFile == i) {
-            glColor4f(1,1,0,1);
-        }
-//        renderBitmapString(-0.095, 0.63-index*0.01, -0.25, GLUT_BITMAP_HELVETICA_18, blah);
-        glColor4f(1,1,1,1);
-    }
-//    renderBitmapString(0.055, 0.36, -0.25, GLUT_BITMAP_HELVETICA_18, fpsString);
+//    char blah[256];
+//    uint startIndex = (selectedFile > 28/2) ? selectedFile-28/2 : 0;
+//    for(uint i = startIndex,index = 0; i < startIndex+28 && i < directoryList.size(); ++i,++index) {
+//        std::string pathWithoutDir = directoryList[i];
+//        if(directoryList[i].size() && directoryList[i][0] == '*') {
+//            pathWithoutDir = pathWithoutDir.substr(1);
+//        }
+//        
+//        sprintf(blah,"%u. %s",i+1,(i < directoryList.size()) ? pathWithoutDir.c_str() : "---------");
+//        
+//        if(directoryList[i].size() && directoryList[i][0] == '*') {
+//            glColor4f(0.,0.,1,1);
+//        }
+//        if(selectedFile == i) {
+//            glColor4f(1,1,0,1);
+//        }
+////        renderBitmapString(-0.095, 0.63-index*0.01, -0.25, GLUT_BITMAP_HELVETICA_18, blah);
+//        glColor4f(1,1,1,1);
+//    }
+////    renderBitmapString(0.055, 0.36, -0.25, GLUT_BITMAP_HELVETICA_18, fpsString);
     glEnable(GL_DEPTH_TEST);
 }
 
 void Ibex::Window::renderCameraChooser() {
-    glBindTexture(GL_TEXTURE_2D, 0);
-    glDisable(GL_DEPTH_TEST);
-    glColor4f(0,0.1,0,0.5);
-    glBegin(GL_QUADS);
-    glVertex3d(-0.1, 0.35, -0.25);
-    glVertex3d(0.1, 0.35, -0.25);
-    glVertex3d(0.1, 0.65, -0.25);
-    glVertex3d(-0.1, 0.65, -0.25);
-    glEnd();
-    glColor4f(1,1,1,1);
-//    renderBitmapString(-0.095, 0.64, -0.25, GLUT_BITMAP_HELVETICA_18, "~/Backspace: Back");
-    char blah[256];
-    uint startIndex = (selectedFile > 28/2) ? selectedFile-28/2 : 0;
-    for(uint i = startIndex,index = 0; i < startIndex+28 && i < cameras.size(); ++i,++index) {
-        sprintf(blah,"%d. Camera %d",i+1, cameras[i]);
-        
-        if(selectedFile == i) {
-            glColor4f(1,1,0,1);
-        }
-//        renderBitmapString(-0.095, 0.63-index*0.01, -0.25, GLUT_BITMAP_HELVETICA_18, blah);
-        glColor4f(1,1,1,1);
-    }
-//    renderBitmapString(0.055, 0.36, -0.25, GLUT_BITMAP_HELVETICA_18, fpsString);
-    glEnable(GL_DEPTH_TEST);
+//    glBindTexture(GL_TEXTURE_2D, 0);
+//    glDisable(GL_DEPTH_TEST);
+//    glColor4f(0,0.1,0,0.5);
+//    glBegin(GL_QUADS);
+//    glVertex3d(-0.1, 0.35, -0.25);
+//    glVertex3d(0.1, 0.35, -0.25);
+//    glVertex3d(0.1, 0.65, -0.25);
+//    glVertex3d(-0.1, 0.65, -0.25);
+//    glEnd();
+//    glColor4f(1,1,1,1);
+////    renderBitmapString(-0.095, 0.64, -0.25, GLUT_BITMAP_HELVETICA_18, "~/Backspace: Back");
+//    char blah[256];
+//    uint startIndex = (selectedFile > 28/2) ? selectedFile-28/2 : 0;
+//    for(uint i = startIndex,index = 0; i < startIndex+28 && i < cameras.size(); ++i,++index) {
+//        sprintf(blah,"%d. Camera %d",i+1, cameras[i]);
+//        
+//        if(selectedFile == i) {
+//            glColor4f(1,1,0,1);
+//        }
+////        renderBitmapString(-0.095, 0.63-index*0.01, -0.25, GLUT_BITMAP_HELVETICA_18, blah);
+//        glColor4f(1,1,1,1);
+//    }
+////    renderBitmapString(0.055, 0.36, -0.25, GLUT_BITMAP_HELVETICA_18, fpsString);
+//    glEnable(GL_DEPTH_TEST);
 }
 
 void Ibex::Window::reset() {

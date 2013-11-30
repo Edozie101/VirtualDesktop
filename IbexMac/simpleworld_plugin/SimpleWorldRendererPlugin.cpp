@@ -340,13 +340,13 @@ void SimpleWorldRendererPlugin::renderIbexDisplayFlat(const glm::mat4 &MVP, cons
 // ---------------------------------------------------------------------------
 void SimpleWorldRendererPlugin::renderSkybox(const glm::mat4 &modelView, const glm::mat4 &proj)
 {
-    const bool useCubemap = false;
+    const bool useCubemap = true;//false;
     
     //    checkForErrors();
     //    std::cerr << "start skybox" << std::endl;
     
     static GLuint vaoSkybox = 0;
-    static const GLfloat skyboxScale = 1000;
+    static const GLfloat skyboxScale = 100;
     
     static GLint SkyBoxUniformLocations[3] = {0, 0, 0};
     static GLint SkyBoxAttribLocations[2] = {0, 0};
@@ -424,20 +424,20 @@ void SimpleWorldRendererPlugin::renderSkybox(const glm::mat4 &modelView, const g
     static GLuint vboSkyboxVertices = 0;
     
     static GLushort skyboxIndices[] = {
-        0, 1, 2,
-        0, 2, 3,
+        0, 2, 1,
+        0, 3, 2,
         
-        3, 2, 6,
-        3, 6, 7,
+        3, 6, 2,
+        3, 7, 6,
         
-        7, 6, 5,
-        7, 5, 4,
+        7, 5, 6,
+        7, 4, 5,
         
-        4, 5, 1,
-        4, 1, 0,
+        4, 1, 5,
+        4, 0, 1,
         
-        0, 3, 7,
-        0, 7, 4,
+        0, 7, 3,
+        0, 4, 7,
         
         1, 2, 6,
         1, 6, 5
@@ -515,17 +515,16 @@ void SimpleWorldRendererPlugin::renderSkybox(const glm::mat4 &modelView, const g
             glVertexAttribPointer(SkyBoxAttribLocations[1], 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*5, (void*)(sizeof(GLfloat)*3));
         }
         
-        if(useCubemap) {
-            const char *paths[6] = {
-                "/resources/humus-skybox/posx.jpg",
-                "/resources/humus-skybox/negx.jpg",
-                "/resources/humus-skybox/posy.jpg",
-                "/resources/humus-skybox/negy.jpg",
-                "/resources/humus-skybox/posz.jpg",
-                "/resources/humus-skybox/negz.jpg"
-            };
-            _skycube = loadCubemapTextures(paths);
-        } else {
+        const char *paths[6] = {
+            "/resources/humus-skybox/smaller/posx.jpg",
+            "/resources/humus-skybox/smaller/negx.jpg",
+            "/resources/humus-skybox/smaller/posy.jpg",
+            "/resources/humus-skybox/smaller/negy.jpg",
+            "/resources/humus-skybox/smaller/posz.jpg",
+            "/resources/humus-skybox/smaller/negz.jpg"
+        };
+        _skycube = loadCubemapTextures(paths);
+        if(!useCubemap) {
             loadSkybox();
         }
     }
@@ -567,7 +566,7 @@ void SimpleWorldRendererPlugin::renderSkybox(const glm::mat4 &modelView, const g
     //    std::cerr << "Done skybox" << std::endl;
 }
 
-void renderWater(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP, const double &time)
+void SimpleWorldRendererPlugin::renderWater(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP, const double &time)
 {
     //    checkForErrors();
     //    std::cerr << "Loading Water texture" << std::endl;
@@ -589,10 +588,10 @@ void renderWater(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, b
     //    std::cerr << "start Water" << std::endl;
     
     static GLuint vaoWater = 0;
-    static const GLfloat WaterScale = 100;
+    static const GLfloat WaterScale = 1000;
     
-    static GLint WaterUniformLocations[8] = { 0, 0, 0, 0, 0, 0, 0, 0};
-    static GLint WaterAttribLocations[3] = { 0, 0, 0 };
+    static GLint WaterUniformLocations[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+    static GLint WaterAttribLocations[3] = {0, 0, 0};
     
     static GLfloat WaterVertices[] = {
         -1.0,  -10.0, -1.0, 0, 1, 0, 0, 0,
@@ -632,6 +631,7 @@ void renderWater(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, b
         WaterUniformLocations[5] = glGetUniformLocation(waterShaderProgram.shader.program, "DepthBiasMVP");
         WaterUniformLocations[6] = glGetUniformLocation(waterShaderProgram.shader.program, "shadowTexture");
         WaterUniformLocations[7] = glGetUniformLocation(waterShaderProgram.shader.program, "time");
+        WaterUniformLocations[8] = glGetUniformLocation(waterShaderProgram.shader.program, "eyePosition_modelspace");
         
         WaterAttribLocations[0] = glGetAttribLocation(waterShaderProgram.shader.program, "vertexPosition_modelspace");
         WaterAttribLocations[1] = glGetAttribLocation(waterShaderProgram.shader.program, "vertexNormal_modelspace");
@@ -674,6 +674,7 @@ void renderWater(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, b
         if(WaterUniformLocations[2] > -1) glUniformMatrix4fv(WaterUniformLocations[2], 1, GL_FALSE, &M[0][0]);
         if(WaterUniformLocations[4] > -1) glUniformMatrix4fv(WaterUniformLocations[4], 1, GL_FALSE, &(M*V)[0][0]);
         if(WaterUniformLocations[7] > -1) glUniform1f(WaterUniformLocations[7], (float)time);//*8);
+//        if(WaterUniformLocations[8] > -1) glUniform3f(WaterUniformLocations[8], ;
         
         if(WaterUniformLocations[5] > -1) {
             glUniformMatrix4fv(WaterUniformLocations[5], 1, GL_FALSE, &depthMVP[0][0]);
@@ -681,7 +682,8 @@ void renderWater(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, b
         
         if(WaterUniformLocations[3] > -1) {
             glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D, WaterTexture);
+//            glBindTexture(GL_TEXTURE_2D, WaterTexture);
+            glBindTexture(GL_TEXTURE_CUBE_MAP, _skycube);
             glUniform1i(WaterUniformLocations[3], 0);
         }
         if(WaterUniformLocations[6] > -1) {
@@ -858,7 +860,7 @@ void SimpleWorldRendererPlugin::renderGround(const glm::mat4 &MVP, const glm::ma
 void SimpleWorldRendererPlugin::init() {
 }
 
-void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &view_, const glm::mat4 &playerCamera_, const glm::mat4 &playerRotation_, bool shadowPass, const glm::mat4 &depthBiasMVP, const double &time) {
+void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &view_, const glm::mat4 &playerCamera_, const glm::mat4 &playerRotation_, const glm::vec3 &playerPosition_, bool shadowPass, const glm::mat4 &depthBiasMVP, const double &time) {
     glm::mat4 view(view_);
     glm::mat4 model;
     
@@ -892,6 +894,7 @@ void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &
             
             glEnable(GL_BLEND);
             glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            model = glm::translate(model, -glm::vec3(playerPosition_.x, 0, playerPosition_.z));
             renderWater(PV*model, view, model, shadowPass, depthBiasMVP*model, time);
             glDisable(GL_BLEND);
         }
@@ -928,8 +931,9 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
     
     glm::mat4 playerRotation(glm::rotate(glm::mat4(1.0f), (float)loc.getXRotation(), glm::vec3(1, 0, 0)));
     playerRotation = glm::rotate(playerRotation, (float)loc.getYRotation(), glm::vec3(0, 1, 0));
+    glm::vec3 playerPosition((float)loc.getXPosition(), loc.getYPosition(), loc.getZPosition());
     glm::mat4 playerCamera(glm::translate(playerRotation,
-                                          glm::vec3((float)loc.getXPosition(), loc.getYPosition(), loc.getZPosition())));
+                                          playerPosition));
     
     
     
@@ -959,7 +963,7 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
         // render shadowmap
         bindShadowFBO();
         
-        render(lightProj, lightView, glm::mat4(), glm::mat4(), true, depthBiasMVP, time_);
+        render(lightProj, lightView, glm::mat4(), glm::mat4(), glm::vec3(), true, depthBiasMVP, time_);
     }
     
     glBindFramebuffer(GL_FRAMEBUFFER, fbos[0]);
@@ -979,7 +983,7 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
         copyMatrix(proj, (getRiftOrientationNative()*stereo.Projection.Transposed()).M);
         
         // render normally
-        render(proj, view, playerCamera, playerRotation, false, depthBiasMVP, time_);
+        render(proj, view, playerCamera, playerRotation, playerPosition, false, depthBiasMVP, time_);
     }
     glDisable(GL_SCISSOR_TEST);
     glFlush();

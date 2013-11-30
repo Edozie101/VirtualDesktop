@@ -37,6 +37,7 @@ private:
     GLuint numVertices;
     
     GLfloat scaleX,scaleY,scaleZ;
+    GLfloat translateX,translateY,translateZ;
     
     GLuint vaoGround = 0;
     GLuint vboGroundVertices = 0;
