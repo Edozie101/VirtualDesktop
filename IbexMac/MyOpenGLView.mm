@@ -33,6 +33,7 @@
 #include "windows/Window.h"
 
 #include "RendererPlugin.h"
+#include "oculus/Rift.h"
 
 bool doubleBuffered = true;
 char mResourcePath[1024];
@@ -79,12 +80,29 @@ extern "C" int _CGSDefaultConnection();
 }
 static OSStatus hotKeyHandler(EventHandlerCallRef nextHandler,EventRef theEvent, void *userData)
 {
-    MyOpenGLView *obj =  (__bridge MyOpenGLView*)userData;
-    if(!controlDesktop) {
-        CGDisplayMoveCursorToPoint(kCGDirectMainDisplay, CGPointMake(cursorPosX, physicalHeight-cursorPosY));
+    //Do something once the key is pressed
+	EventHotKeyID hotKeyID;
+	GetEventParameter(theEvent,kEventParamDirectObject,typeEventHotKeyID,
+                      NULL,sizeof(hotKeyID),NULL,&hotKeyID);
+	int temphotKeyId = hotKeyID.id; //Get the id, so we can know which HotKey we are handling.
+    
+    switch(temphotKeyId) {
+        case 1:
+        {
+            MyOpenGLView *obj =  (__bridge MyOpenGLView*)userData;
+            if(!controlDesktop) {
+                CGDisplayMoveCursorToPoint(kCGDirectMainDisplay, CGPointMake(cursorPosX, physicalHeight-cursorPosY));
+            }
+            controlDesktop = !controlDesktop;
+            [obj controlDesktopUpdate];
+            break;
+        }
+        case 2:
+        {
+            toggleRenderScale();
+            break;
+        }
     }
-    controlDesktop = !controlDesktop;
-    [obj controlDesktopUpdate];
     
     return noErr;
 }
@@ -97,19 +115,26 @@ static OSStatus hotKeyHandler(EventHandlerCallRef nextHandler,EventRef theEvent,
     eventType.eventClass = kEventClassKeyboard;
     eventType.eventKind = kEventHotKeyReleased;
     InstallApplicationEventHandler(hotKeyFunction,1,&eventType,(__bridge_retained void*)self,NULL);
+    
     //hotkey
-    UInt32 keyCode = kVK_F1;//kVK_ANSI_R; //F19
+    UInt32 keyCode = kVK_F1;
     EventHotKeyRef theRef = NULL;
     EventHotKeyID keyID;
     keyID.signature = 'FOO '; //arbitrary string
     keyID.id = 1;
     RegisterEventHotKey(keyCode,/*cmdKey+*/shiftKey,keyID,GetApplicationEventTarget(),0,&theRef);
     
-    keyCode = kVK_ANSI_G;//kVK_ANSI_R; //F19
+    keyCode = kVK_ANSI_G;
     theRef = NULL;
     keyID.signature = 'FOO '; //arbitrary string
     keyID.id = 1;
     RegisterEventHotKey(keyCode, controlKey|shiftKey, keyID,GetApplicationEventTarget(), 0, &theRef);
+    
+    keyCode = kVK_F2;
+    theRef = NULL;
+    keyID.signature = 'FOO '; //arbitrary string
+    keyID.id = 2;
+    RegisterEventHotKey(keyCode, shiftKey, keyID,GetApplicationEventTarget(), 0, &theRef);
 }
 - (void) unregisterHotkey {
     // release self one more time...
@@ -437,6 +462,10 @@ static CGPoint cursorPos;
         glContext = [self openGLContext];
     
     [glContext makeCurrentContext];
+    
+    if(renderScaleChanged) {
+        regenerateMainFBORenderDepthBuffer();
+    }
     
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{

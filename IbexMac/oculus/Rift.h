@@ -18,6 +18,7 @@ extern OVR::HMDInfo Info;
 extern bool InfoLoaded;
 extern bool riftConnected;
 extern float renderScale;
+extern bool renderScaleChanged;
 
 extern OVR::Util::Render::StereoEyeParams  leftEye;
 extern OVR::Util::Render::StereoEyeParams  rightEye;
@@ -32,5 +33,8 @@ void cleanUpRift();
 
 double *getRiftOrientation();
 const OVR::Matrix4f getRiftOrientationNative();
+
+void setRenderScale(float renderScale_);
+void toggleRenderScale();
 
 #endif /* Rift_H_ */

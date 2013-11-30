@@ -11,6 +11,7 @@ OVR::HMDInfo			Info;
 bool				InfoLoaded = false;
 bool				riftConnected = false;
 float               renderScale;
+bool                renderScaleChanged = false;
 
 OVR::Util::Render::StereoEyeParams  leftEye  = stereo.GetEyeRenderParams(OVR::Util::Render::StereoEye_Left);
 OVR::Util::Render::StereoEyeParams  rightEye = stereo.GetEyeRenderParams(OVR::Util::Render::StereoEye_Right);
@@ -73,8 +74,6 @@ void initRift() {
     
     textureWidth = width * renderScale;
     textureHeight = height * renderScale;
-    
-    
     
     leftEye  = stereo.GetEyeRenderParams(OVR::Util::Render::StereoEye_Left);
     rightEye = stereo.GetEyeRenderParams(OVR::Util::Render::StereoEye_Right);
@@ -142,4 +141,21 @@ const OVR::Matrix4f getRiftOrientationNative() {
     if(pFusionResult!= 0 && !pFusionResult->IsAttachedToSensor()) return IdentityMatrix4f;
     
     return OVR::Matrix4f(pFusionResult->GetPredictedOrientation());
+}
+
+
+void setRenderScale(float renderScale_) {
+    renderScale = renderScale_;
+    
+    textureWidth = width * renderScale;
+    textureHeight = height * renderScale;
+    
+    renderScaleChanged = true;
+}
+void toggleRenderScale() {
+    if(renderScale != 1) {
+        setRenderScale(1);
+    } else {
+        setRenderScale(stereo.GetDistortionScale());
+    }
 }

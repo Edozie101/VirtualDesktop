@@ -191,6 +191,7 @@ bool didInitOpenGL();
 
 void renderSkybox();
 void renderDesktopToTexture();
+void regenerateMainFBORenderDepthBuffer();
 
 void resizeGL(unsigned int width, unsigned int height);
 namespace Ibex {
@@ -206,6 +207,7 @@ public:
     
     Ibex(int argc, char ** argv);
     void render(double timeDiff);
+    
 public:
     RendererPlugin *renderer;
 };

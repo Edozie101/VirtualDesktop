@@ -52,6 +52,7 @@
 
 #include "ibex.h"
 
+#include "oculus/Rift.h"
 #include "sixense/sixense_controller.h"
 
 GLfloat top, bottom;
@@ -78,12 +79,12 @@ bool IRRLICHT               = 0;
 bool SBS                    = 1;
 bool CACHED_SHADER          = 0;
 
-GLuint fbos[2];
-GLuint textures[2];
+GLuint fbos[2] = {0, 0};
+GLuint textures[2] = {0, 0};
 
-GLuint depthBuffer;
+GLuint depthBuffer = 0;
 
-GLuint desktopFBO;
+GLuint desktopFBO = 0;
 GLuint desktopTexture(0);
 GLuint videoTexture[2] = {0,0};
 #ifdef _WIN32
@@ -217,12 +218,29 @@ void prep_framebuffers()
   }
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
   glBindTexture(GL_TEXTURE_2D, 0);
+    
+    regenerateMainFBORenderDepthBuffer();
+}
 
-  glGenFramebuffers(2, fbos);
-  glGenRenderbuffers(1, &depthBuffer);
-  glGenTextures(2, textures);
-
-    for (int i = 0; i < 1; ++i) {
+void regenerateMainFBORenderDepthBuffer() {
+    renderScaleChanged = false;
+    
+    const int numBuffers = 1;
+    if(fbos[0] != 0) {
+        glDeleteBuffers(numBuffers, fbos);
+    }
+    if(depthBuffer != 0) {
+        glDeleteRenderbuffers(1, &depthBuffer);
+    }
+    if(textures[0] != 0) {
+        glDeleteTextures(numBuffers, textures);
+    }
+    
+    glGenFramebuffers(numBuffers, fbos);
+    glGenRenderbuffers(1, &depthBuffer);
+    glGenTextures(numBuffers, textures);
+    
+    for (int i = 0; i < numBuffers; ++i) {
         glBindFramebuffer(GL_FRAMEBUFFER, fbos[i]);
         glBindTexture(GL_TEXTURE_2D, textures[i]);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -231,29 +249,29 @@ void prep_framebuffers()
                      GL_RGBA, GL_UNSIGNED_BYTE, 0);
         glFramebufferTexture2D (GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
                                 GL_TEXTURE_2D, textures[i], 0);
-
+        
         glBindRenderbuffer(GL_RENDERBUFFER, depthBuffer);
         if (i == 0) {
-          glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24,
-                                textureWidth, textureHeight);
+            glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24,
+                                  textureWidth, textureHeight);
+        }
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+                                  GL_RENDERBUFFER, depthBuffer);
+        if (!checkForErrors()) {
+            std::cerr << "Stage 1 - Problem generating FBO " << i << std::endl;
+            exit(EXIT_FAILURE);
+        }
+        
+        std::cout << "Generating FBO #" << i << std::endl;
+        std::cout << "FBO: " << textureWidth << "x" << textureHeight << std::endl;
+        
+        if (!checkForErrors() ||
+            glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+            std::cerr << "Stage 2 - Problem generating FBO " << i << std::endl;
+            exit(EXIT_FAILURE);
+        }
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
-                              GL_RENDERBUFFER, depthBuffer);
-    if (!checkForErrors()) {
-      std::cerr << "Stage 1 - Problem generating FBO " << i << std::endl;
-      exit(EXIT_FAILURE);
-    }
-
-    std::cout << "Generating FBO #" << i << std::endl;
-    std::cout << "FBO: " << textureWidth << "x" << textureHeight << std::endl;
-
-    if (!checkForErrors() ||
-        glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-      std::cerr << "Stage 2 - Problem generating FBO " << i << std::endl;
-      exit(EXIT_FAILURE);
-    }
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-  }
 }
 
 // ---------------------------------------------------------------------------
