@@ -11,7 +11,7 @@
 #include "../RendererPlugin.h"
 #include "../ibex.h"
 
-#include "GLSLShaderProgram.h"
+#include "../GLSLShaderProgram.h"
 
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
