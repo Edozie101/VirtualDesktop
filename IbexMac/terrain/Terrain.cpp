@@ -13,10 +13,57 @@
 #include "../ibex_mac_utils.h"
 #include "../ibex.h"
 
+#include <glm/gtc/noise.hpp>
+
 Terrain::Terrain() : data(0),vertices(0),indices(0),scaleX(30),scaleY(.2),scaleZ(30),translateX(-10),translateY(0),translateZ(-10) {
 }
 
-void Terrain::loadTerrain(unsigned char *data, int width, int height) {
+float Terrain::getNoiseHeight(const float &x_, const float &z_) const {
+    glm::vec2 v((x_-translateX)/scaleX, (z_-translateZ)/scaleZ);
+    
+    return ((glm::simplex(v*f1)
+             +glm::simplex(v*f2)*0.2
+             +glm::simplex(v*f3)*0.1))*(maxHeight-minHeight) + minHeight;
+}
+
+void Terrain::generateNoiseTerrain(int width, int height,
+                                   float scaleX_, float scaleY_, float scaleZ_,
+                                   float minHeight_, float maxHeight_,
+                                   float f1_, float f2_, float f3_) {
+    scaleX = scaleX_;
+    scaleY = scaleY_;
+    scaleZ = scaleZ_;
+    
+    translateX = 0;
+    translateY = 0;
+    translateZ = 0;
+    
+    f1 = f1_;
+    f2 = f2_;
+    f3 = f3_;
+    
+    minHeight = minHeight_;
+    maxHeight = maxHeight_;
+    
+    float *heights = new float[width*height];
+    for(int x = 0; x < width; ++x) {
+        for(int z = 0; z < height; ++z) {
+            float px = x-width/2;
+            float pz = z-height/2;
+            
+            if(px == 0 && pz == 0) {
+                std::cerr << "******** " << z << " " << x << std::endl;
+            }
+            heights[z*height+x] = getNoiseHeight(px, pz);
+        }
+    }
+    
+    loadTerrain(heights, width, height);
+    delete [] heights;
+}
+
+template <class T>
+void Terrain::loadTerrain(T *data, int width, int height) {
     if(indices != 0) delete [] indices;
     numIndices = (width-1)*(height-1)*6;
     indices = new GLuint[numIndices];
@@ -28,14 +75,18 @@ void Terrain::loadTerrain(unsigned char *data, int width, int height) {
     int index = 0;
     for(int y = 0; y < height; ++y) {
         for(int x = 0; x < width; ++x) {
+            if(x-width/2 == 0 && y-height/2 == 0) {
+                std::cerr << "^^^^^^^^ " << data[y*width+x]*scaleY+translateY << std::endl;
+            }
+            
             vertices[index] = (x-width/2)*scaleX+translateX;
-            vertices[index+1] = data[y*width+x]*scaleY-20.0+translateY;
+            vertices[index+1] = data[y*width+x]*scaleY+translateY;
             vertices[index+2] = (y-height/2)*scaleZ+translateZ;
             
             vertices[index+6] = x;
             vertices[index+7] = y;
             
-//            std::cerr << vertices[index] << ", " << vertices[index+1] << "," << vertices[index+2] << std::endl;
+            //            std::cerr << vertices[index] << ", " << vertices[index+1] << "," << vertices[index+2] << std::endl;
             index += 8;
         }
     }
@@ -72,15 +123,15 @@ void Terrain::loadTerrain(unsigned char *data, int width, int height) {
             indices[index+4] = (y+1)*width+x;
             indices[index+5] = (y+1)*width+x+1;
             
-//            std::cerr << "i: " << indices[index] << ", " << indices[index+1] << ", " << indices[index+2] << std::endl;
-//            std::cerr << "v: " << vertices[indices[index]*8] << ", " << vertices[indices[index]*8+1] << ", " << vertices[indices[index]*8+2] << std::endl;
-//            std::cerr << "v: " << vertices[indices[index+1]*8] << ", " << vertices[indices[index+1]*8+1] << ", " << vertices[indices[index+1]*8+2] << std::endl;
-//            std::cerr << "v: " << vertices[indices[index+2]*8] << ", " << vertices[indices[index+2]*8+1] << ", " << vertices[indices[index+2]*8+2] << std::endl;
-//            
-//            std::cerr << "i: " << indices[index+3] << ", " << indices[index+4] << ", " << indices[index+5] << std::endl;
-//            std::cerr << "v: " << vertices[indices[index+3]*8] << ", " << vertices[indices[index+3]*8+1] << ", " << vertices[indices[index+3]*8+2] << std::endl;
-//            std::cerr << "v: " << vertices[indices[index+4]*8] << ", " << vertices[indices[index+4]*8+1] << ", " << vertices[indices[index+4]*8+2] << std::endl;
-//            std::cerr << "v: " << vertices[indices[index+5]*8] << ", " << vertices[indices[index+5]*8+1] << ", " << vertices[indices[index+5]*8+2] << std::endl;
+            //            std::cerr << "i: " << indices[index] << ", " << indices[index+1] << ", " << indices[index+2] << std::endl;
+            //            std::cerr << "v: " << vertices[indices[index]*8] << ", " << vertices[indices[index]*8+1] << ", " << vertices[indices[index]*8+2] << std::endl;
+            //            std::cerr << "v: " << vertices[indices[index+1]*8] << ", " << vertices[indices[index+1]*8+1] << ", " << vertices[indices[index+1]*8+2] << std::endl;
+            //            std::cerr << "v: " << vertices[indices[index+2]*8] << ", " << vertices[indices[index+2]*8+1] << ", " << vertices[indices[index+2]*8+2] << std::endl;
+            //
+            //            std::cerr << "i: " << indices[index+3] << ", " << indices[index+4] << ", " << indices[index+5] << std::endl;
+            //            std::cerr << "v: " << vertices[indices[index+3]*8] << ", " << vertices[indices[index+3]*8+1] << ", " << vertices[indices[index+3]*8+2] << std::endl;
+            //            std::cerr << "v: " << vertices[indices[index+4]*8] << ", " << vertices[indices[index+4]*8+1] << ", " << vertices[indices[index+4]*8+2] << std::endl;
+            //            std::cerr << "v: " << vertices[indices[index+5]*8] << ", " << vertices[indices[index+5]*8+1] << ", " << vertices[indices[index+5]*8+2] << std::endl;
             
             index += 6;
         }

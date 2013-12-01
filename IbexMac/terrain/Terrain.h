@@ -22,7 +22,13 @@ class Terrain {
 public:
     Terrain();
     
-    void loadTerrain(unsigned char *data, int width, int height);
+    float getNoiseHeight(const float &x_, const float &y_) const;
+    void generateNoiseTerrain(int width, int height,
+                                       float scaleX_, float scaleY_, float scaleZ_,
+                                       float minHeight, float maxHeight,
+                                       float f1, float f2, float f3);
+    
+    template <class T> void loadTerrain(T *data, int width, int height);
     void loadHeightmap(const char * filename, int width=-1, int height=-1);
     
     void renderGround(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP);
@@ -38,6 +44,8 @@ private:
     
     GLfloat scaleX,scaleY,scaleZ;
     GLfloat translateX,translateY,translateZ;
+    GLfloat minHeight, maxHeight;
+    GLfloat f1, f2, f3;
     
     GLuint vaoGround = 0;
     GLuint vboGroundVertices = 0;

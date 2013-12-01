@@ -887,8 +887,8 @@ void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &
     glCullFace(GL_BACK);
     
     if(showGround) {
-        model = glm::mat4();
         if(!shadowPass) {
+            model = glm::mat4();
             //renderGround(PV*model, view, model, shadowPass, depthBiasMVP*model);
             terrain.renderGround(PV*model, view, model, shadowPass, depthBiasMVP*model);
             
@@ -920,7 +920,12 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
         }
         
         //terrain.loadHeightmap("/resources/terrain.raw", 1024, 1024);
-        terrain.loadHeightmap("/resources/terrain-128.raw", 128,128);
+        //terrain.loadHeightmap("/resources/terrain-128.raw", 128,128);
+        terrain.generateNoiseTerrain(128,128,
+                                     50.0, 1.0, 50.0,//50.,1.,50.,
+                                     -20.0,500.0,
+                                     //0.7/256., 1.4/256., 3./256.);
+                                     0.7, 1.4, 3.);
     }
     
     glm::mat4 modelView;
@@ -932,6 +937,8 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
     glm::mat4 playerRotation(glm::rotate(glm::mat4(1.0f), (float)loc.getXRotation(), glm::vec3(1, 0, 0)));
     playerRotation = glm::rotate(playerRotation, (float)loc.getYRotation(), glm::vec3(0, 1, 0));
     glm::vec3 playerPosition((float)loc.getXPosition(), loc.getYPosition(), loc.getZPosition());
+    playerPosition.y = -terrain.getNoiseHeight((-playerPosition.x)/50., (-playerPosition.z)/50.)-6.0;
+    if(playerPosition.y > -6.) playerPosition.y = -6.;
     glm::mat4 playerCamera(glm::translate(playerRotation,
                                           playerPosition));
     
