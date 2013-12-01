@@ -70,6 +70,13 @@ extern "C" GLuint loadTexture(const char *path_, bool flip) {
     glBindTexture(GL_TEXTURE_2D, myTextureName);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR); // GL_LINEAR
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    
+    //if(glIsExtSupported("GL_EXT_texture_filter_anisotropic")) {
+    GLfloat fLargest;
+    glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &fLargest);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, fLargest);
+    //}
+    
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, (GLint)width, (GLint)height,
                  0, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, myData);
     glGenerateMipmap(GL_TEXTURE_2D);
@@ -93,6 +100,13 @@ extern "C" GLuint loadCubemapTextures(const char *path_[6]) {
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_BASE_LEVEL, 0);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAX_LEVEL, 0);
+    
+    //if(glIsExtSupported("GL_EXT_texture_filter_anisotropic")) {
+        GLfloat fLargest;
+        glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &fLargest);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, fLargest);
+    //}
+    
     for(int i = 0; i < 6; ++i) {
         size_t width = 0;
         size_t height = 0;

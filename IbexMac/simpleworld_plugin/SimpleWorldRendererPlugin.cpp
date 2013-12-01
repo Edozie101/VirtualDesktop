@@ -588,7 +588,7 @@ void SimpleWorldRendererPlugin::renderWater(const glm::mat4 &MVP, const glm::mat
     //    std::cerr << "start Water" << std::endl;
     
     static GLuint vaoWater = 0;
-    static const GLfloat WaterScale = 1000;
+    static const GLfloat WaterScale = 6000;
     
     static GLint WaterUniformLocations[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
     static GLint WaterAttribLocations[3] = {0, 0, 0};
@@ -881,6 +881,7 @@ void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &
     
     glDisable(GL_CULL_FACE);
     glCullFace(GL_BACK);
+    model = glm::translate(model, glm::vec3(0,-getPlayerHeightAtPosition(0, -10.0f),0));
     renderIbexDisplayFlat(PV*model, view, model, shadowPass, depthBiasMVP*model);
     //    renderVideoDisplayFlat(PV*model, view, model, depthBiasMVP*model);
     glEnable(GL_CULL_FACE);
@@ -901,6 +902,12 @@ void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &
     }
 }
 
+GLfloat SimpleWorldRendererPlugin::getPlayerHeightAtPosition(GLfloat x, GLfloat z) {
+    const GLfloat playerHeight = 10.;
+    GLfloat y = -terrain.getNoiseHeight((-x)/50., (-z)/50.)-playerHeight;
+    if(y > -playerHeight) y = -playerHeight;
+    return y;
+}
 void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDiff_, const double &time_) {
     static const bool ENABLE_SHADOWMAPPING = true;
     
@@ -934,11 +941,11 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
     //    copyMatrix(view, lightsourceMatrix);
     //    copyMatrix(proj, (getRiftOrientationNative()*stereo.Projection.Transposed()).M);
     
+    
     glm::mat4 playerRotation(glm::rotate(glm::mat4(1.0f), (float)loc.getXRotation(), glm::vec3(1, 0, 0)));
     playerRotation = glm::rotate(playerRotation, (float)loc.getYRotation(), glm::vec3(0, 1, 0));
     glm::vec3 playerPosition((float)loc.getXPosition(), loc.getYPosition(), loc.getZPosition());
-    playerPosition.y = -terrain.getNoiseHeight((-playerPosition.x)/50., (-playerPosition.z)/50.)-6.0;
-    if(playerPosition.y > -6.) playerPosition.y = -6.;
+    playerPosition.y = getPlayerHeightAtPosition(playerPosition.x, playerPosition.z)-playerPosition.y;
     glm::mat4 playerCamera(glm::translate(playerRotation,
                                           playerPosition));
     

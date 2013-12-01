@@ -51,7 +51,7 @@ private:
     GLuint vboGroundVertices = 0;
     GLuint vboGroundIndices = 0;
     
-    GLint GroundUniformLocations[7] = { 0, 0, 0, 0, 0, 0, 0};
+    GLint GroundUniformLocations[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     GLint GroundAttribLocations[3] = { 0, 0, 0 };
 };
 

@@ -103,6 +103,7 @@ GLuint cursorTexture(0);
 bool   running     = false;
 double walkForward = 0;
 double strafeRight = 0;
+bool   jump        = false;
 
 int dpy = 0;
 int display = 0;
@@ -253,7 +254,7 @@ void regenerateMainFBORenderDepthBuffer() {
         
         glBindRenderbuffer(GL_RENDERBUFFER, depthBuffer);
         if (i == 0) {
-            glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24,
+            glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT32,//24,
                                   textureWidth, textureHeight);
         }
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
@@ -412,8 +413,6 @@ void initGL()
 double relativeMouseX = 0;
 double relativeMouseY = 0;
 
-static bool jump = false;
-
 Ibex::Ibex::Ibex(int argc, char ** argv) {
     int c;
 #ifndef _WIN32
@@ -517,7 +516,7 @@ void Ibex::Ibex::render(double timeDiff) {
         processRawMotion(ry, rx, desktop3DLocation);
         relativeMouseX = 0;
         relativeMouseY = 0;
-        desktop3DLocation.walk(walkForward+sixenseWalkForward, strafeRight+sixenseStrafeRight, timeDiff);
+        desktop3DLocation.walk(walkForward+sixenseWalkForward, strafeRight+sixenseStrafeRight, jump, timeDiff);
     }
     
     if(resetPosition) {

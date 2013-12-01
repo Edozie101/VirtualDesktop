@@ -137,7 +137,7 @@ void Terrain::loadTerrain(T *data, int width, int height) {
         }
     }
     
-    groundShaderProgram.loadShaderProgram(mResourcePath, "/resources/shaders/standard.v.glsl", "/resources/shaders/standard.f.glsl");
+    groundShaderProgram.loadShaderProgram(mResourcePath, "/resources/shaders/standard.v.glsl", "/resources/shaders/ground.f.glsl");
     glUseProgram(groundShaderProgram.shader.program);
     
     
@@ -149,6 +149,10 @@ void Terrain::loadTerrain(T *data, int width, int height) {
     
     GroundUniformLocations[5] = glGetUniformLocation(groundShaderProgram.shader.program, "DepthBiasMVP");
     GroundUniformLocations[6] = glGetUniformLocation(groundShaderProgram.shader.program, "shadowTexture");
+    
+    GroundUniformLocations[7] = glGetUniformLocation(groundShaderProgram.shader.program, "textureIn2");
+    GroundUniformLocations[8] = glGetUniformLocation(groundShaderProgram.shader.program, "textureIn3");
+    GroundUniformLocations[9] = glGetUniformLocation(groundShaderProgram.shader.program, "textureIn4");
     
     GroundAttribLocations[0] = glGetAttribLocation(groundShaderProgram.shader.program, "vertexPosition_modelspace");
     GroundAttribLocations[1] = glGetAttribLocation(groundShaderProgram.shader.program, "vertexNormal_modelspace");
@@ -218,7 +222,10 @@ void Terrain::renderGround(const glm::mat4 &MVP, const glm::mat4 &V, const glm::
     //        orientation = getRiftOrientation();
 #else
 #ifdef __APPLE__
-    static const GLuint groundTexture = loadTexture("/resources/humus-skybox/smaller/negy.jpg");
+    static const GLuint groundTexture = loadTexture("/resources/textures/grass1/grass1-diffuse.png");
+    static const GLuint groundTexture1 = loadTexture("/resources/textures/grass1/grass1-normal.png");
+    static const GLuint groundTexture2 = loadTexture("/resources/textures/brown1/brown1-diffuse.png");
+    static const GLuint groundTexture3 = loadTexture("/resources/textures/brown1/brown1-normal.png");
 #else
     static float sizeX = 64;
     static float sizeY = 64;
@@ -251,6 +258,21 @@ void Terrain::renderGround(const glm::mat4 &MVP, const glm::mat4 &V, const glm::
             glActiveTexture(GL_TEXTURE1);
             glBindTexture(GL_TEXTURE_2D, shadowMapDepthTextureId);
             glUniform1i(GroundUniformLocations[6], 1);
+        }
+        if(GroundUniformLocations[7] > -1) {
+            glActiveTexture(GL_TEXTURE2);
+            glBindTexture(GL_TEXTURE_2D, groundTexture1);
+            glUniform1i(GroundUniformLocations[7], 2);
+        }
+        if(GroundUniformLocations[8] > -1) {
+            glActiveTexture(GL_TEXTURE3);
+            glBindTexture(GL_TEXTURE_2D, groundTexture2);
+            glUniform1i(GroundUniformLocations[8], 3);
+        }
+        if(GroundUniformLocations[9] > -1) {
+            glActiveTexture(GL_TEXTURE4);
+            glBindTexture(GL_TEXTURE_2D, groundTexture3);
+            glUniform1i(GroundUniformLocations[9], 4);
         }
     }
     

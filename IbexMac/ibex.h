@@ -106,6 +106,7 @@ extern double relativeMouseY;
 extern bool   running;
 extern double walkForward;
 extern double strafeRight;
+extern bool   jump;
 
 // ---------------------------------------------------------------------------
 // Class:    Desktop3DLocation
@@ -120,9 +121,11 @@ public:
   explicit Desktop3DLocation()
     : WALK_SPEED(10),
       m_xRotation(0.0), m_yRotation(0.0), m_zRotation(0.0),
-      m_xPosition(0.0), m_yPosition(0.0), m_zPosition(0.0) {};
+      m_xPosition(0.0), m_yPosition(0.0), m_zPosition(0.0),
+      yVelocity(0.0) {}
+    
   // Class not intended for inheritence
-  ~Desktop3DLocation() {};
+  ~Desktop3DLocation() {}
 
   // Resets the state
   inline void resetState()
@@ -133,6 +136,8 @@ public:
     m_xPosition = 0.0;
     m_yPosition = 0.0;
     m_zPosition = 0.0;
+      
+    yVelocity = 0.0;
   }
 
   // Get methods for position and rotation
@@ -154,7 +159,7 @@ public:
   inline void setZPosition(const double zPosition) { m_zPosition = zPosition; }
 
   // Modify location of the desktop in 3D
-  inline void walk(double forward, double right, double seconds)
+  inline void walk(double forward, double right, bool jump, double seconds)
   {
     const double walkSpeedSec = WALK_SPEED * ((running)?10.0:1.0) * seconds;
 
@@ -163,6 +168,14 @@ public:
 
     m_xPosition -= cos(-m_yRotation / 90.0 * M_PI_2) * walkSpeedSec * right;
     m_zPosition += sin(-m_yRotation / 90.0 * M_PI_2) * walkSpeedSec * right;
+    
+    if(m_yPosition <= 0 && jump) yVelocity = (running)?50.0:25.0;
+    m_yPosition += yVelocity*seconds;
+    yVelocity -= 40*seconds;
+    if(m_yPosition <= 0) {
+        m_yPosition = 0;
+        yVelocity = 0;
+    }
   }
 
   void setWalkSpeed(double WALK_SPEED_) {
@@ -184,6 +197,8 @@ private:
   double m_xPosition;
   double m_yPosition;
   double m_zPosition;
+    
+  double yVelocity;
 };
 
 void getCursorTexture();

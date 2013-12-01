@@ -32,6 +32,8 @@ public:
     SimpleWorldRendererPlugin();
     ~SimpleWorldRendererPlugin();
     
+    GLfloat getPlayerHeightAtPosition(GLfloat x, GLfloat z);
+    
     void loadSkybox();
     void renderSkybox(const glm::mat4 &modelView, const glm::mat4 &proj);
     void renderGround(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP);

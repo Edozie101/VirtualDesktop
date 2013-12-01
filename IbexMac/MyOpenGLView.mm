@@ -564,6 +564,7 @@ static CGPoint cursorPos;
                 strafeRight = 1;
                 break;
             case kVK_Space:
+                jump = true;
                 break;
             case kVK_ANSI_Q:
                 displayShape = (displayShape == FlatDisplay) ? SphericalDisplay : (displayShape == SphericalDisplay) ? CylindricalDisplay: FlatDisplay;
@@ -616,6 +617,7 @@ static CGPoint cursorPos;
                 strafeRight = 0;
                 break;
             case kVK_Space:
+                jump = false;
                 break;
         }
     }
