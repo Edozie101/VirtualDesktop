@@ -8,6 +8,10 @@ void RendererPlugin::init() {
 
 }
 
+void RendererPlugin::reset() {
+    
+}
+
 Window RendererPlugin::getWindowID() {
   return 0;
 }

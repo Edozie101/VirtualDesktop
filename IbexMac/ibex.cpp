@@ -62,6 +62,7 @@ DisplayShape displayShape = FlatDisplay;
 
 bool controlDesktop  = 1;
 bool showDialog = false;
+bool bringUpIbexDisplay = false;
 
 // external variables
 bool resetPosition          = 0;
@@ -522,11 +523,16 @@ void Ibex::Ibex::render(double timeDiff) {
     if(resetPosition) {
         resetPosition = 0;
         desktop3DLocation.resetState();
+        renderer->reset();
     }
     
     renderer->setDesktopTexture(desktopTexture);
     if(OGRE3D) {
         renderer->move(walkForward+sixenseWalkForward, strafeRight+sixenseStrafeRight, jump, ry, rx);
+    }
+    if(bringUpIbexDisplay) {
+        bringUpIbexDisplay = false;
+        renderer->bringUpIbexDisplay();
     }
     renderer->processEvents();
     

@@ -42,8 +42,11 @@ public:
     void renderWater(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP, const double &time);
     
     void init();
+    void reset();
     void step(const Desktop3DLocation &loc_, double timeDiff_, const double &time_);
     bool needsSwapBuffers();
+    
+    void bringUpIbexDisplay();
     
     Window getWindowID();
 private:
@@ -53,6 +56,9 @@ private:
     GLuint _skycube;
     
     Terrain terrain;
+    
+    bool _bringUpIbexDisplay;
+    glm::mat4 ibexDisplayModelTransform;
 };
 
 #endif /* SIMPLEWORLDRENDERERPLUGIN_H_ */

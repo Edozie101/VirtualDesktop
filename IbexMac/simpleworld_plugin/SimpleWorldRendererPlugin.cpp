@@ -115,11 +115,15 @@ void renderCylindricalDisplay(double r, double numHorizontalLines, double numVer
     //    glPopMatrix();
 }
 
-SimpleWorldRendererPlugin::SimpleWorldRendererPlugin() {
+SimpleWorldRendererPlugin::SimpleWorldRendererPlugin() : _bringUpIbexDisplay(false) {
+    reset();
 }
 SimpleWorldRendererPlugin::~SimpleWorldRendererPlugin() {
 }
 
+void SimpleWorldRendererPlugin::bringUpIbexDisplay() {
+    _bringUpIbexDisplay = true;
+}
 // ---------------------------------------------------------------------------
 // Function: loadSkybox
 // Design:   Belongs to OpenGL component
@@ -858,8 +862,12 @@ void SimpleWorldRendererPlugin::renderGround(const glm::mat4 &MVP, const glm::ma
 }
 
 void SimpleWorldRendererPlugin::init() {
+    reset();
 }
 
+void SimpleWorldRendererPlugin::reset() {
+    ibexDisplayModelTransform = glm::mat4(glm::translate(glm::mat4(), glm::vec3(0.0f, 0.0f, -10.0f)));
+}
 void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &view_, const glm::mat4 &playerCamera_, const glm::mat4 &playerRotation_, const glm::vec3 &playerPosition_, bool shadowPass, const glm::mat4 &depthBiasMVP, const double &time) {
     glm::mat4 view(view_);
     glm::mat4 model;
@@ -873,15 +881,13 @@ void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &
     
     glm::mat4 PV(proj_*view);
     
-    model = glm::translate(model, glm::vec3(0.0f, 0.0f, -10.0f));
-    
     //    static int i = 0;
     //    i = ++i%(int)(360./0.5);
     //    model = model*glm::rotate(0.5f*i, 0.f, 1.f, 0.f);
     
     glDisable(GL_CULL_FACE);
     glCullFace(GL_BACK);
-    model = glm::translate(model, glm::vec3(0,-getPlayerHeightAtPosition(0, -10.0f),0));
+    model = glm::translate(ibexDisplayModelTransform, glm::vec3(0,-getPlayerHeightAtPosition(-ibexDisplayModelTransform[3][0], -ibexDisplayModelTransform[3][2]),0));
     renderIbexDisplayFlat(PV*model, view, model, shadowPass, depthBiasMVP*model);
     //    renderVideoDisplayFlat(PV*model, view, model, depthBiasMVP*model);
     glEnable(GL_CULL_FACE);
@@ -949,6 +955,11 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
     glm::mat4 playerCamera(glm::translate(playerRotation,
                                           playerPosition));
     
+    
+    if(_bringUpIbexDisplay) {
+        _bringUpIbexDisplay = false;
+        ibexDisplayModelTransform = glm::translate(glm::mat4(), glm::vec3(-playerPosition.x, 0, -playerPosition.z-10));//glm::inverse(playerCamera), glm::vec3(0,0,-10));
+    }
     
     
     //    static glm::mat4 lightView = glm::lookAt(glm::vec3(0.f,0.f,0.f), glm::vec3(4.f,4.f,4.f), glm::vec3(0,1,0));

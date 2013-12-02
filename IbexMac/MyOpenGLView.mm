@@ -577,6 +577,9 @@ static CGPoint cursorPos;
                     showDialog = !showDialog;
                 }
                 break;
+            case kVK_ANSI_Backslash:
+                bringUpIbexDisplay = true;
+                break;
             case kVK_ANSI_Minus:
                 IOD -= 0.0005;
                 lensParametersChanged = true;

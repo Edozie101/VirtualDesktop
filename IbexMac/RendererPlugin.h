@@ -22,6 +22,8 @@ public:
 
   // initialization after OpenGL set up
   virtual void init();
+    
+  virtual void reset();
 
   // what is the WindowHandle or XID of the renderer plugin, return 0 for default
   virtual Window getWindowID();
@@ -43,6 +45,8 @@ public:
 
   // do we need to swap the GLX buffer for double-buffering at the end of a render?
   virtual bool needsSwapBuffers() { return false; }
+    
+    virtual void bringUpIbexDisplay() {}
     
 public:
     ::Ibex::Window window;

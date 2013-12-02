@@ -100,6 +100,7 @@ extern bool CACHED_SHADER;
 
 extern bool controlDesktop;
 extern bool showDialog;
+extern bool bringUpIbexDisplay;
 
 extern double relativeMouseX;
 extern double relativeMouseY;
