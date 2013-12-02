@@ -714,7 +714,7 @@ void SimpleWorldRendererPlugin::renderWater(const glm::mat4 &MVP, const glm::mat
     //    std::cerr << "Done Water" << std::endl;
 }
 
-void SimpleWorldRendererPlugin::renderGround(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP)
+void SimpleWorldRendererPlugin::renderGround(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP, const double &time)
 {
     //    checkForErrors();
     //    std::cerr << "Loading ground texture" << std::endl;
@@ -890,8 +890,8 @@ void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &
     if(showGround) {
         if(!shadowPass) {
             model = glm::mat4();
-            //renderGround(PV*model, view, model, shadowPass, depthBiasMVP*model);
-            terrain.renderGround(PV*model, view, model, shadowPass, depthBiasMVP*model);
+            //renderGround(PV*model, view, model, shadowPass, depthBiasMVP*model, time);
+            terrain.renderGround(PV*model, view, model, shadowPass, depthBiasMVP*model, time);
             
             glEnable(GL_BLEND);
             glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

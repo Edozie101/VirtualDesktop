@@ -83,8 +83,8 @@ void Terrain::loadTerrain(T *data, int width, int height) {
             vertices[index+1] = data[y*width+x]*scaleY+translateY;
             vertices[index+2] = (y-height/2)*scaleZ+translateZ;
             
-            vertices[index+6] = x;
-            vertices[index+7] = y;
+            vertices[index+6] = x/4.0;
+            vertices[index+7] = y/4.0;
             
             //            std::cerr << vertices[index] << ", " << vertices[index+1] << "," << vertices[index+2] << std::endl;
             index += 8;
@@ -154,6 +154,8 @@ void Terrain::loadTerrain(T *data, int width, int height) {
     GroundUniformLocations[8] = glGetUniformLocation(groundShaderProgram.shader.program, "textureIn3");
     GroundUniformLocations[9] = glGetUniformLocation(groundShaderProgram.shader.program, "textureIn4");
     
+    GroundUniformLocations[10] = glGetUniformLocation(groundShaderProgram.shader.program, "time");
+    
     GroundAttribLocations[0] = glGetAttribLocation(groundShaderProgram.shader.program, "vertexPosition_modelspace");
     GroundAttribLocations[1] = glGetAttribLocation(groundShaderProgram.shader.program, "vertexNormal_modelspace");
     GroundAttribLocations[2] = glGetAttribLocation(groundShaderProgram.shader.program, "vertexUV");
@@ -214,7 +216,7 @@ void Terrain::loadHeightmap(const char *filename, int width, int height)
     data = 0;
 }
 
-void Terrain::renderGround(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP) {
+void Terrain::renderGround(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP, const double &time) {
     //    checkForErrors();
     //    std::cerr << "Loading ground texture" << std::endl;
 #ifdef _WIN32
@@ -274,6 +276,8 @@ void Terrain::renderGround(const glm::mat4 &MVP, const glm::mat4 &V, const glm::
             glBindTexture(GL_TEXTURE_2D, groundTexture3);
             glUniform1i(GroundUniformLocations[9], 4);
         }
+        
+        if(GroundUniformLocations[10] > -1) glUniform1f(GroundUniformLocations[10], time);
     }
     
     glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, 0);
