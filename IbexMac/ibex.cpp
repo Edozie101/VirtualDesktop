@@ -79,6 +79,7 @@ bool OGRE3D                 = 0;
 bool IRRLICHT               = 0;
 bool SBS                    = 1;
 bool CACHED_SHADER          = 0;
+bool useLightPerspective    = 0;
 
 GLuint fbos[2] = {0, 0};
 GLuint textures[2] = {0, 0};
@@ -248,8 +249,8 @@ void regenerateMainFBORenderDepthBuffer() {
         glBindTexture(GL_TEXTURE_2D, textures[i]);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, textureWidth, textureHeight, 0,
-                     GL_RGBA, GL_UNSIGNED_BYTE, 0);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB, textureWidth, textureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+        //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, textureWidth, textureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
         glFramebufferTexture2D (GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
                                 GL_TEXTURE_2D, textures[i], 0);
         
