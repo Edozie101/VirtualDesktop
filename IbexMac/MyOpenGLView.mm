@@ -601,6 +601,9 @@ static CGPoint cursorPos;
             case kVK_ANSI_B:
                 barrelDistort = !barrelDistort;
                 break;
+            case kVK_ANSI_L:
+                useLightPerspective = !useLightPerspective;
+                break;
             case kVK_ANSI_G:
                 showGround = !showGround;
                 break;
