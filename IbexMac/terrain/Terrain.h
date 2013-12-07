@@ -51,8 +51,8 @@ private:
     GLuint vboGroundVertices = 0;
     GLuint vboGroundIndices = 0;
     
-    GLint GroundUniformLocations[11] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    GLint GroundAttribLocations[3] = { 0, 0, 0 };
+    GLint GroundUniformLocations[13] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    GLint GroundAttribLocations[5] = {0, 0, 0, 0, 0};
 };
 
 #endif /* defined(__IbexMac__Terrain__) */

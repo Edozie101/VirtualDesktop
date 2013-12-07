@@ -27,6 +27,8 @@ extern GLSLShaderProgram waterShaderProgram;
 extern GLint ShadowUniformLocations[1];
 extern GLint ShadowAttribLocations[3];
 
+extern glm::vec3 lightInvDir;
+
 class SimpleWorldRendererPlugin : public RendererPlugin {
 public:
     SimpleWorldRendererPlugin();

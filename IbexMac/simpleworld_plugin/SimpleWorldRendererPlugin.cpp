@@ -36,6 +36,8 @@
 #include "../GLSLShaderProgram.h"
 #include "ShadowBufferRenderer.h"
 
+glm::vec3 lightInvDir;
+
 void copyMatrix(glm::mat4 &modelView, float M[4][4]) {
     for(int i = 0; i < 4; ++i) {
         for(int i2 = 0; i2 < 4; ++i2) {
@@ -592,7 +594,7 @@ void SimpleWorldRendererPlugin::renderWater(const glm::mat4 &MVP, const glm::mat
     //    std::cerr << "start Water" << std::endl;
     
     static GLuint vaoWater = 0;
-    static const GLfloat WaterScale = 6000;
+    static const GLfloat WaterScale = 2000;
     
     static GLint WaterUniformLocations[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
     static GLint WaterAttribLocations[3] = {0, 0, 0};
@@ -887,38 +889,48 @@ void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &
     
     glDisable(GL_CULL_FACE);
     glCullFace(GL_BACK);
-    model = glm::translate(ibexDisplayModelTransform, glm::vec3(0,-getPlayerHeightAtPosition(-ibexDisplayModelTransform[3][0], -ibexDisplayModelTransform[3][2]),0));
+    model = glm::translate(ibexDisplayModelTransform, glm::vec3(0,-getPlayerHeightAtPosition(-ibexDisplayModelTransform[3][0], -ibexDisplayModelTransform[3][2]-10),0));
     renderIbexDisplayFlat(PV*model, view, model, shadowPass, depthBiasMVP*model);
     //    renderVideoDisplayFlat(PV*model, view, model, depthBiasMVP*model);
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
     
+    if(shadowPass) {
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_FRONT);
+//        glCullFace(GL_FRONT_AND_BACK);
+//    glDisable(GL_CULL_FACE);
+    }
     if(showGround) {
+        model = glm::mat4();
+        //renderGround(PV*model, view, model, shadowPass, depthBiasMVP*model, time);
+        terrain.renderGround(PV*model, view, model, shadowPass, depthBiasMVP*model, time);
+        
         if(!shadowPass) {
-            model = glm::mat4();
-            //renderGround(PV*model, view, model, shadowPass, depthBiasMVP*model, time);
-            terrain.renderGround(PV*model, view, model, shadowPass, depthBiasMVP*model, time);
-            
             glEnable(GL_BLEND);
-            glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
             model = glm::translate(model, -glm::vec3(playerPosition_.x, 0, playerPosition_.z));
             renderWater(PV*model, view, model, shadowPass, depthBiasMVP*model, time);
             glDisable(GL_BLEND);
         }
     }
+    if(shadowPass) {
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_BACK);
+    }
 }
 
 GLfloat SimpleWorldRendererPlugin::getPlayerHeightAtPosition(GLfloat x, GLfloat z) {
-    const GLfloat playerHeight = 10.;
+    const GLfloat playerHeight = 75.;
     GLfloat y = -terrain.getNoiseHeight((-x)/50., (-z)/50.)-playerHeight;
     if(y > -playerHeight) y = -playerHeight;
-    return y;
+    return y-playerHeight;
 }
 void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDiff_, const double &time_) {
     static const bool ENABLE_SHADOWMAPPING = true;
     
     glDisable(GL_BLEND);
-    //    glEnable(GL_CULL_FACE);
+    glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
     
     static bool first = true;
@@ -965,17 +977,26 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
     //    static glm::mat4 lightView = glm::lookAt(glm::vec3(0.f,0.f,0.f), glm::vec3(4.f,4.f,4.f), glm::vec3(0,1,0));
     //    static glm::mat4 lightProj = glm::ortho(-100.f, 100.f, -100.f, 100.f, -100.f, 100.f);
     
-    glm::vec3 lightInvDir = glm::vec3(4,4,4);///0.5f,2,2);
+    lightInvDir = glm::vec3(0.0f,50.0f,250.0f);//playerPosition.x, playerPosition.y, playerPosition.z);//0,1000,1000);///0.5f,2,2);
     
     // Compute the MVP matrix from the light's point of view
-    static glm::mat4 lightProj = glm::ortho<float>(-30,30,-30,30,-100,3000);//-10,10,-10,10,-10,20);
-    static glm::mat4 lightView = glm::lookAt(lightInvDir, glm::vec3(-1,-1,-1), glm::vec3(0,1,0));
-    static glm::mat4 depthMVP = lightProj*lightView;
+    glm::mat4 lightProj = glm::ortho<float>(-4000,4000,-4000,4000,-4000,4000);//-10,10,-10,10,-10,20);
+    //glm::mat4 lightView = glm::lookAt(lightInvDir, glm::vec3(playerPosition.x-1,playerPosition.y-1,playerPosition.z-1), glm::vec3(0,1,0));//glm::vec3(-1,-1,-1), glm::vec3(0,1,0));
+    glm::mat4 lightView = glm::lookAt(lightInvDir, glm::vec3(0.0f,0.0f, 0.0f), glm::vec3(0.0f,1.0f,0.0f));//glm::vec3(-1,-1,-1), glm::vec3(0,1,0));
+    glm::mat4 depthMVP = lightProj*lightView;
     //    // spotlight
     //    glm::vec3 lightPos(5, 20, 20);
     //    lightProj = glm::perspective<float>(45.0f, 1.0f, 2.0f, 50.0f);
     //    lightView = glm::lookAt(lightPos, lightPos-lightInvDir, glm::vec3(0,1,0));
     //    depthMVP = lightProj*lightView;
+    
+//    lightInvDir = glm::vec3(4,4,4);///0.5f,2,2);
+//    
+//    // Compute the MVP matrix from the light's point of view
+//    lightProj = glm::ortho<float>(-30,30,-30,30,-100,3000);//-10,10,-10,10,-10,20);
+//    lightView = glm::lookAt(lightInvDir, glm::vec3(-1,-1,-1), glm::vec3(0,1,0));
+//    depthMVP = lightProj*lightView;
+
     
     static glm::mat4 biasMatrix(
                                 0.5, 0.0, 0.0, 0.0,
@@ -983,15 +1004,19 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
                                 0.0, 0.0, 0.5, 0.0,
                                 0.5, 0.5, 0.5, 1.0
                                 );
-    static glm::mat4 depthBiasMVP = biasMatrix*depthMVP;
+    glm::mat4 depthBiasMVP = biasMatrix*depthMVP;
     if(ENABLE_SHADOWMAPPING) {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        glFrontFace(GL_CCW);
+        
         // render shadowmap
         bindShadowFBO();
-        
         render(lightProj, lightView, glm::mat4(), glm::mat4(), glm::vec3(), true, depthBiasMVP, time_);
     }
     
     glBindFramebuffer(GL_FRAMEBUFFER, fbos[0]);
+    glEnable(GL_FRAMEBUFFER_SRGB);
+    glViewport(0, 0, textureWidth,textureHeight);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     if (!checkForErrors()) {
         std::cerr << "GL ISSUE -- SimpleWorldRendererPlugin::step" << std::endl;
@@ -1007,10 +1032,16 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
         copyMatrix(view,stereo.ViewAdjust.Transposed().M);
         copyMatrix(proj, (getRiftOrientationNative()*stereo.Projection.Transposed()).M);
         
+        if(useLightPerspective) {
+            proj = lightProj;
+            view = lightView;
+        }
+        
         // render normally
         render(proj, view, playerCamera, playerRotation, playerPosition, false, depthBiasMVP, time_);
     }
     glDisable(GL_SCISSOR_TEST);
+    glDisable(GL_FRAMEBUFFER_SRGB);
     glFlush();
     
     // Barrel distort-only for now

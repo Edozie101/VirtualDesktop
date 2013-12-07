@@ -14,6 +14,9 @@
 extern GLuint fboShadowMap;
 extern GLuint shadowMapDepthTextureId;
 
+extern GLuint shadowMapWidth;
+extern GLuint shadowMapHeight;
+
 void generateShadowFBO();
 void bindShadowFBO();
 

@@ -62,14 +62,29 @@ void Terrain::generateNoiseTerrain(int width, int height,
     delete [] heights;
 }
 
+glm::vec2 getUV(GLfloat *vertices, GLuint vertexBufferStep, int width, int height, int x, int y) {
+    
+    return glm::vec2(vertices[(y*width+x)*vertexBufferStep+6], vertices[(y*width+x)*vertexBufferStep+7]);
+}
+glm::vec3 getPos(GLfloat *vertices, GLuint vertexBufferStep, int width, int height, int x, int y) {
+    
+    return glm::vec3(vertices[(y*width+x)*vertexBufferStep+0], vertices[(y*width+x)*vertexBufferStep+1],vertices[(y*width+x)*vertexBufferStep+2]);
+}
+
 template <class T>
 void Terrain::loadTerrain(T *data, int width, int height) {
     if(indices != 0) delete [] indices;
     numIndices = (width-1)*(height-1)*6;
     indices = new GLuint[numIndices];
     
+    bool useNormalMappedTextures = true;
+    
+    GLuint vertexBufferStep = 8;
+    if(useNormalMappedTextures) {
+        vertexBufferStep = 14;
+    }
     if(vertices != 0) delete [] vertices;
-    numVertices = width*height*8;
+    numVertices = width*height*vertexBufferStep;
     vertices = new GLfloat[numVertices];
     
     int index = 0;
@@ -83,11 +98,11 @@ void Terrain::loadTerrain(T *data, int width, int height) {
             vertices[index+1] = data[y*width+x]*scaleY+translateY;
             vertices[index+2] = (y-height/2)*scaleZ+translateZ;
             
-            vertices[index+6] = x/4.0;
-            vertices[index+7] = y/4.0;
+            vertices[index+6] = x*0.5;
+            vertices[index+7] = y*0.5;
             
             //            std::cerr << vertices[index] << ", " << vertices[index+1] << "," << vertices[index+2] << std::endl;
-            index += 8;
+            index += vertexBufferStep;
         }
     }
     
@@ -108,7 +123,90 @@ void Terrain::loadTerrain(T *data, int width, int height) {
             vertices[index+4] = normal.y;
             vertices[index+5] = normal.z;
             
-            index += 8;
+            index += vertexBufferStep;
+        }
+    }
+    if(useNormalMappedTextures) {
+        index = 0;
+        for(int x = 0; x < width-1; ++x) {
+            for(int y = 0; y < height-1; ++y) {
+                // Shortcuts for vertices
+                glm::vec3 v0 = getPos(vertices, vertexBufferStep, width, height, x,y);
+                glm::vec3 v1 = getPos(vertices, vertexBufferStep,  width, height, x+1,y);
+                glm::vec3 v2 = getPos(vertices, vertexBufferStep,  width, height, x,y+1);
+                
+                // Shortcuts for UVs
+                glm::vec2 uv0 = getUV(vertices, vertexBufferStep,  width, height, x,y);
+                glm::vec2 uv1 = getUV(vertices, vertexBufferStep,  width, height, x+1,y);
+                glm::vec2 uv2 = getUV(vertices, vertexBufferStep,  width, height, x,y+1);
+                
+                // Edges of the triangle : postion delta
+                glm::vec3 deltaPos1 = v1-v0;
+                glm::vec3 deltaPos2 = v2-v0;
+                
+                // UV delta
+                glm::vec2 deltaUV1 = uv1-uv0;
+                glm::vec2 deltaUV2 = uv2-uv0;
+                
+                float r = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV1.y * deltaUV2.x);
+                if(!isinf(r) && !isnan(r)) {
+                    std::cerr << r << std::endl;
+                } else {
+                    for(int i2 = 0; i2 < 3; ++i2) {
+                        // tangents
+                        vertices[index+i2*vertexBufferStep+8] = 0;
+                        vertices[index+i2*vertexBufferStep+9] = 0;
+                        vertices[index+i2*vertexBufferStep+10] = 0;
+                        
+                        // bitangents
+                        vertices[index+i2*vertexBufferStep+11] = 0;
+                        vertices[index+i2*vertexBufferStep+12] = 0;
+                        vertices[index+i2*vertexBufferStep+13] = 0;
+                    }
+                    continue;
+                }
+                glm::vec3 tangent = glm::normalize((deltaPos1 * deltaUV2.y   - deltaPos2 * deltaUV1.y)*r);
+                glm::vec3 bitangent = glm::normalize((deltaPos2 * deltaUV1.x   - deltaPos1 * deltaUV2.x)*r);
+                
+//                // use same value for all 3 vertices of triangle
+//                for(int i2 = 0; i2 < 3; ++i2) {
+//                    // tangents
+//                    vertices[index+i2*vertexBufferStep+3] = tangent.x;
+//                    vertices[index+i2*vertexBufferStep+4] = tangent.y;
+//                    vertices[index+i2*vertexBufferStep+5] = tangent.z;
+//                    
+//                    // bitangents
+//                    vertices[index+i2*vertexBufferStep+8] = bitangent.x;
+//                    vertices[index+i2*vertexBufferStep+9] = bitangent.y;
+//                    vertices[index+i2*vertexBufferStep+10] = bitangent.z;
+//                }
+                
+                // use same value for all 3 vertices of triangle
+                // tangents
+                vertices[(y*width+x)*vertexBufferStep+8] = tangent.x;
+                vertices[(y*width+x)*vertexBufferStep+9] = tangent.y;
+                vertices[(y*width+x)*vertexBufferStep+10] = tangent.z;
+                vertices[(y*width+x+1)*vertexBufferStep+8] = tangent.x;
+                vertices[(y*width+x+1)*vertexBufferStep+9] = tangent.y;
+                vertices[(y*width+x+1)*vertexBufferStep+10] = tangent.z;
+                vertices[((y+1)*width+x)*vertexBufferStep+8] = tangent.x;
+                vertices[((y+1)*width+x)*vertexBufferStep+9] = tangent.y;
+                vertices[((y+1)*width+x)*vertexBufferStep+10] = tangent.z;
+                
+                // bitangents
+                vertices[(y*width+x)*vertexBufferStep+11] = bitangent.x;
+                vertices[(y*width+x)*vertexBufferStep+12] = bitangent.y;
+                vertices[(y*width+x)*vertexBufferStep+13] = bitangent.z;
+                vertices[(y*width+x+1)*vertexBufferStep+11] = bitangent.x;
+                vertices[(y*width+x+1)*vertexBufferStep+12] = bitangent.y;
+                vertices[(y*width+x+1)*vertexBufferStep+13] = bitangent.z;
+                vertices[((y+1)*width+x)*vertexBufferStep+11] = bitangent.x;
+                vertices[((y+1)*width+x)*vertexBufferStep+12] = bitangent.y;
+                vertices[((y+1)*width+x)*vertexBufferStep+13] = bitangent.z;
+                
+                // go to next triangle
+                index += vertexBufferStep*3;
+            }
         }
     }
     
@@ -124,20 +222,24 @@ void Terrain::loadTerrain(T *data, int width, int height) {
             indices[index+5] = (y+1)*width+x+1;
             
             //            std::cerr << "i: " << indices[index] << ", " << indices[index+1] << ", " << indices[index+2] << std::endl;
-            //            std::cerr << "v: " << vertices[indices[index]*8] << ", " << vertices[indices[index]*8+1] << ", " << vertices[indices[index]*8+2] << std::endl;
-            //            std::cerr << "v: " << vertices[indices[index+1]*8] << ", " << vertices[indices[index+1]*8+1] << ", " << vertices[indices[index+1]*8+2] << std::endl;
-            //            std::cerr << "v: " << vertices[indices[index+2]*8] << ", " << vertices[indices[index+2]*8+1] << ", " << vertices[indices[index+2]*8+2] << std::endl;
+            //            std::cerr << "v: " << vertices[indices[index]*vertexBufferStep] << ", " << vertices[indices[index]*vertexBufferStep+1] << ", " << vertices[indices[index]*vertexBufferStep+2] << std::endl;
+            //            std::cerr << "v: " << vertices[indices[index+1]*vertexBufferStep] << ", " << vertices[indices[index+1]*vertexBufferStep+1] << ", " << vertices[indices[index+1]*vertexBufferStep+2] << std::endl;
+            //            std::cerr << "v: " << vertices[indices[index+2]*vertexBufferStep] << ", " << vertices[indices[index+2]*vertexBufferStep+1] << ", " << vertices[indices[index+2]*vertexBufferStep+2] << std::endl;
             //
             //            std::cerr << "i: " << indices[index+3] << ", " << indices[index+4] << ", " << indices[index+5] << std::endl;
-            //            std::cerr << "v: " << vertices[indices[index+3]*8] << ", " << vertices[indices[index+3]*8+1] << ", " << vertices[indices[index+3]*8+2] << std::endl;
-            //            std::cerr << "v: " << vertices[indices[index+4]*8] << ", " << vertices[indices[index+4]*8+1] << ", " << vertices[indices[index+4]*8+2] << std::endl;
-            //            std::cerr << "v: " << vertices[indices[index+5]*8] << ", " << vertices[indices[index+5]*8+1] << ", " << vertices[indices[index+5]*8+2] << std::endl;
+            //            std::cerr << "v: " << vertices[indices[index+3]*vertexBufferStep] << ", " << vertices[indices[index+3]*vertexBufferStep+1] << ", " << vertices[indices[index+3]*vertexBufferStep+2] << std::endl;
+            //            std::cerr << "v: " << vertices[indices[index+4]*vertexBufferStep] << ", " << vertices[indices[index+4]*vertexBufferStep+1] << ", " << vertices[indices[index+4]*vertexBufferStep+2] << std::endl;
+            //            std::cerr << "v: " << vertices[indices[index+5]*vertexBufferStep] << ", " << vertices[indices[index+5]*vertexBufferStep+1] << ", " << vertices[indices[index+5]*vertexBufferStep+2] << std::endl;
             
             index += 6;
         }
     }
     
-    groundShaderProgram.loadShaderProgram(mResourcePath, "/resources/shaders/standard.v.glsl", "/resources/shaders/ground.f.glsl");
+    if(useNormalMappedTextures) {
+        groundShaderProgram.loadShaderProgram(mResourcePath, "/resources/shaders/standard-normalmapped.v.glsl", "/resources/shaders/ground-normalmapped.f.glsl");
+    } else {
+        groundShaderProgram.loadShaderProgram(mResourcePath, "/resources/shaders/standard.v.glsl", "/resources/shaders/ground.f.glsl");
+    }
     glUseProgram(groundShaderProgram.shader.program);
     
     
@@ -155,10 +257,20 @@ void Terrain::loadTerrain(T *data, int width, int height) {
     GroundUniformLocations[9] = glGetUniformLocation(groundShaderProgram.shader.program, "textureIn4");
     
     GroundUniformLocations[10] = glGetUniformLocation(groundShaderProgram.shader.program, "time");
+    GroundUniformLocations[11] = glGetUniformLocation(groundShaderProgram.shader.program, "LightPosition_worldspace");
+    GroundUniformLocations[12] = glGetUniformLocation(groundShaderProgram.shader.program, "MV3x3");
     
-    GroundAttribLocations[0] = glGetAttribLocation(groundShaderProgram.shader.program, "vertexPosition_modelspace");
-    GroundAttribLocations[1] = glGetAttribLocation(groundShaderProgram.shader.program, "vertexNormal_modelspace");
-    GroundAttribLocations[2] = glGetAttribLocation(groundShaderProgram.shader.program, "vertexUV");
+    if(useNormalMappedTextures) {
+        GroundAttribLocations[0] = glGetAttribLocation(groundShaderProgram.shader.program, "vertexPosition_modelspace");
+        GroundAttribLocations[1] = glGetAttribLocation(groundShaderProgram.shader.program, "vertexNormal_modelspace");
+        GroundAttribLocations[2] = glGetAttribLocation(groundShaderProgram.shader.program, "vertexUV");
+        GroundAttribLocations[3] = glGetAttribLocation(groundShaderProgram.shader.program, "vertexTangent_modelspace");
+        GroundAttribLocations[4] = glGetAttribLocation(groundShaderProgram.shader.program, "vertexBitangent_modelspace");
+    } else {
+        GroundAttribLocations[0] = glGetAttribLocation(groundShaderProgram.shader.program, "vertexPosition_modelspace");
+        GroundAttribLocations[1] = glGetAttribLocation(groundShaderProgram.shader.program, "vertexNormal_modelspace");
+        GroundAttribLocations[2] = glGetAttribLocation(groundShaderProgram.shader.program, "vertexUV");
+    }
     
     glUseProgram(0);
     
@@ -180,12 +292,25 @@ void Terrain::loadTerrain(T *data, int width, int height) {
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint)*numIndices, indices, GL_STATIC_DRAW);
     checkForErrors();
     
-    glEnableVertexAttribArray(GroundAttribLocations[0]);
-    glVertexAttribPointer(GroundAttribLocations[0], 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*8, 0);
-    glEnableVertexAttribArray(GroundAttribLocations[1]);
-    glVertexAttribPointer(GroundAttribLocations[1], 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*8, (GLvoid*) (sizeof(GLfloat) * 3));
-    glEnableVertexAttribArray(GroundAttribLocations[2]);
-    glVertexAttribPointer(GroundAttribLocations[2], 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*8, (GLvoid*) (sizeof(GLfloat) * 6));
+    if(useNormalMappedTextures) {
+        glEnableVertexAttribArray(GroundAttribLocations[0]);
+        glVertexAttribPointer(GroundAttribLocations[0], 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*vertexBufferStep, 0);
+        glEnableVertexAttribArray(GroundAttribLocations[1]);
+        glVertexAttribPointer(GroundAttribLocations[1], 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*vertexBufferStep, (GLvoid*) (sizeof(GLfloat) * 3));
+        glEnableVertexAttribArray(GroundAttribLocations[2]);
+        glVertexAttribPointer(GroundAttribLocations[2], 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*vertexBufferStep, (GLvoid*) (sizeof(GLfloat) * 6));
+        glEnableVertexAttribArray(GroundAttribLocations[3]);
+        glVertexAttribPointer(GroundAttribLocations[3], 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*vertexBufferStep, (GLvoid*) (sizeof(GLfloat) * 8));
+        glEnableVertexAttribArray(GroundAttribLocations[4]);
+        glVertexAttribPointer(GroundAttribLocations[4], 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*vertexBufferStep, (GLvoid*) (sizeof(GLfloat) * 11));
+    } else {
+        glEnableVertexAttribArray(GroundAttribLocations[0]);
+        glVertexAttribPointer(GroundAttribLocations[0], 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*vertexBufferStep, 0);
+        glEnableVertexAttribArray(GroundAttribLocations[1]);
+        glVertexAttribPointer(GroundAttribLocations[1], 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*vertexBufferStep, (GLvoid*) (sizeof(GLfloat) * 3));
+        glEnableVertexAttribArray(GroundAttribLocations[2]);
+        glVertexAttribPointer(GroundAttribLocations[2], 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*vertexBufferStep, (GLvoid*) (sizeof(GLfloat) * 6));
+    }
     checkForErrors();
     
     std::cerr << "gen terrain done" << std::endl;
@@ -278,6 +403,10 @@ void Terrain::renderGround(const glm::mat4 &MVP, const glm::mat4 &V, const glm::
         }
         
         if(GroundUniformLocations[10] > -1) glUniform1f(GroundUniformLocations[10], time);
+        if(GroundUniformLocations[11] > -1) glUniform3f(GroundUniformLocations[11], lightInvDir.x, lightInvDir.y, lightInvDir.z);
+        
+        glm::mat3 MV3x3 = glm::mat3(V*M);
+        if(GroundUniformLocations[12] > -1) glUniformMatrix3fv(GroundUniformLocations[12], 1, GL_FALSE, &MV3x3[0][0]);
     }
     
     glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, 0);
