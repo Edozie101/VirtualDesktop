@@ -893,7 +893,7 @@ void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &
     renderIbexDisplayFlat(PV*model, view, model, shadowPass, depthBiasMVP*model);
     //    renderVideoDisplayFlat(PV*model, view, model, depthBiasMVP*model);
     glEnable(GL_CULL_FACE);
-    glCullFace(GL_BACK);
+//    glCullFace(GL_BACK);
     
     if(shadowPass) {
         glEnable(GL_CULL_FACE);
