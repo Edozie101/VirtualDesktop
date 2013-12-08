@@ -29,6 +29,49 @@ float snoise(vec2 v);
 
 void main()
 {
+    //    vec3 LightPosition_worldspace = vec3(0,5,5);
+//    vec3 LightPosition_worldspace = vec3(0.0f,100.0f,500.0f);
+    
+    // Light emission properties
+	// You probably want to put them as uniforms
+//	vec3 LightColor = vec3(1,1,1);
+//	float LightPower = 10.0f;
+	
+    float topMix = round((abs(snoise(Position_worldspace.xz/2000.0)+0.6)/2.0));
+//    float topMix = (1.0f-(snoise(Position_worldspace.xz/1000.0)/2.0f+1.0f))/1.4+0.7;///2.0;
+	// Material properties
+    vec3 MaterialDiffuseColor = mix(texture(textureIn, UV).rgb,texture(textureIn3, UV).rgb, topMix);
+//	vec3 MaterialAmbientColor = vec3(0.2,0.2,0.2) * MaterialDiffuseColor;
+//	vec3 MaterialSpecularColor = vec3(0.3,0.3,0.3);
+    
+    
+    // Local normal, in tangent space
+    vec3 TextureNormal_tangentspace = normalize(2.0f*mix(texture(textureIn2, UV).rgb,texture(textureIn4, UV).rgb, topMix)-1.0f);
+
+	// Normal of the computed fragment, in camera space
+    vec3 n = TextureNormal_tangentspace;
+    
+	// Direction of the light (from the fragment to the light)
+	vec3 l = normalize( LightDirection_tangentspace );
+    
+    float visibility = 1.0;
+    if(Position_worldspace.y < -7) {
+        //float c = (1-snoise(vec3(UV.xy*2.0,time)));
+        //visibility *= clamp(c*c,0,1);//Position_worldspace.xy/50.0, time/4.0)));
+        float c = abs(snoise(vec3(Position_worldspace.xz/200.0, time/4.0)));
+        c = 1.0-clamp(c, 0.0, 0.6);
+        visibility = visibility*0.7+c*0.3;
+        MaterialDiffuseColor = MaterialDiffuseColor*0.9+vec3(0.0,0.3,0.5)*0.1;
+    }
+
+    // sunlight
+    float ambientIntensity = 0.5;
+    float diffuseIntensity = max(0.0, clamp( dot( n,l ), 0,1 ));//dot(n,l));//dot(normalize(vNormal), -sunLight.vDirection));
+    color = visibility * MaterialDiffuseColor * (ambientIntensity+diffuseIntensity);
+}
+
+void main2()
+{
 //    vec3 LightPosition_worldspace = vec3(0,5,5);
     vec3 LightPosition_worldspace = vec3(0.0f,100.0f,500.0f);
     
@@ -114,7 +157,7 @@ void main()
     float ambientIntensity = 0.5;
 //    vec3 sunColor = vec3(1,1,1);
     float diffuseIntensity = max(0.0, dot(n, -l));//dot(normalize(vNormal), -sunLight.vDirection));
-    color = visibility * MaterialDiffuseColor * (ambientIntensity+diffuseIntensity);
+    color = MaterialDiffuseColor * (ambientIntensity+diffuseIntensity);
 }
 
 //////////////////////// INCLUDED /////////////////
