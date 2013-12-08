@@ -16,8 +16,8 @@ GLuint fboShadowMap = 0;
 GLuint shadowMapDepthTextureId = 0;
 
 // size of shadow map
-GLuint shadowMapWidth = 2048;
-GLuint shadowMapHeight = 2048;
+GLuint shadowMapWidth = 2048/2;
+GLuint shadowMapHeight = 2048/2;
 
 void bindShadowFBO() {
     glViewport(0,0,shadowMapWidth,shadowMapHeight);
