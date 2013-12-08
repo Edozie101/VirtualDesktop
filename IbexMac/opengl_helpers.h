@@ -71,7 +71,7 @@ inline static bool checkForErrors()
   static bool doCheck = true;
 
   if (!doCheck)
-    return false;
+    return true;
 
   const char* errorString = 0;
   bool retVal = false;
