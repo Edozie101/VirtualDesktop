@@ -35,12 +35,12 @@ void main()
     // Light emission properties
 	// You probably want to put them as uniforms
 	vec3 LightColor = vec3(1,1,1);
-	float LightPower = 1.0f;
+	float LightPower = 10.0f;
 	
     float topMix = round((abs(snoise(Position_worldspace.xz/2000.0)+0.6)/2.0));
 	// Material properties
     vec3 MaterialDiffuseColor = mix(texture(textureIn, UV).rgb,texture(textureIn3, UV).rgb, topMix);
-	vec3 MaterialAmbientColor = vec3(0.5,0.5,0.5) * MaterialDiffuseColor;
+	vec3 MaterialAmbientColor = vec3(0.2,0.2,0.2) * MaterialDiffuseColor;
 	vec3 MaterialSpecularColor = vec3(0.3,0.3,0.3);
     
     
@@ -87,28 +87,34 @@ void main()
 //        }
 //    }
     
-//    if(Position_worldspace.y < -7) {
-//        //float c = (1-snoise(vec3(UV.xy*2.0,time)));
-//        //visibility *= clamp(c*c,0,1);//Position_worldspace.xy/50.0, time/4.0)));
-//        float c = abs(snoise(vec3(Position_worldspace.xz/200.0, time/4.0)));
-//        c = 1.0-clamp(c, 0.0, 0.6);
-//        visibility = visibility*0.7+c*0.3;
-//        MaterialAmbientColor = MaterialAmbientColor*0.9+vec3(0.0,0.3,0.5)*0.1;
-//        MaterialDiffuseColor = MaterialDiffuseColor*0.9+vec3(0.0,0.3,0.5)*0.1;
-//    }
+    if(Position_worldspace.y < -7) {
+        //float c = (1-snoise(vec3(UV.xy*2.0,time)));
+        //visibility *= clamp(c*c,0,1);//Position_worldspace.xy/50.0, time/4.0)));
+        float c = abs(snoise(vec3(Position_worldspace.xz/200.0, time/4.0)));
+        c = 1.0-clamp(c, 0.0, 0.6);
+        visibility = visibility*0.7+c*0.3;
+        MaterialAmbientColor = MaterialAmbientColor*0.9+vec3(0.0,0.3,0.5)*0.1;
+        MaterialDiffuseColor = MaterialDiffuseColor*0.9+vec3(0.0,0.3,0.5)*0.1;
+    }
     
     //    if(visibility < 0.1) color = vec3(1, 0, 0);
     //    else if(visibility < 0.5) color = vec3(0, 1, 0);
     //    else color = vec3(0,0,1);
     
-	color = visibility*(
-    // Ambient : simulates indirect lighting
-    MaterialAmbientColor +
-    // Diffuse : "color" of the object
-    MaterialDiffuseColor * LightColor * LightPower * cosTheta + // / (distance*distance) +
-    // Specular : reflective highlight, like a mirror
-    MaterialSpecularColor * LightColor * LightPower * pow(cosAlpha,5) / (distance*distance)
-                          );
+//	color = visibility*(
+//    // Ambient : simulates indirect lighting
+//    MaterialAmbientColor +
+//    // Diffuse : "color" of the object
+//    MaterialDiffuseColor * LightColor * LightPower * cosTheta / (distance*distance) +
+//    // Specular : reflective highlight, like a mirror
+//    MaterialSpecularColor * LightColor * LightPower * pow(cosAlpha,5) / (distance*distance)
+//                          );
+    
+    // sunlight
+    float ambientIntensity = 0.5;
+//    vec3 sunColor = vec3(1,1,1);
+    float diffuseIntensity = max(0.0, dot(n, -l));//dot(normalize(vNormal), -sunLight.vDirection));
+    color = visibility * MaterialDiffuseColor * (ambientIntensity+diffuseIntensity);
 }
 
 //////////////////////// INCLUDED /////////////////
