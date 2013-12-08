@@ -904,9 +904,10 @@ void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &
     if(showGround) {
         model = glm::mat4();
         //renderGround(PV*model, view, model, shadowPass, depthBiasMVP*model, time);
-        terrain.renderGround(PV*model, view, model, shadowPass, depthBiasMVP*model, time);
-        
+
         if(!shadowPass) {
+            terrain.renderGround(PV*model, view, model, shadowPass, depthBiasMVP*model, time);
+            
             glEnable(GL_BLEND);
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
             model = glm::translate(model, -glm::vec3(playerPosition_.x, 0, playerPosition_.z));
@@ -921,7 +922,7 @@ void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &
 }
 
 GLfloat SimpleWorldRendererPlugin::getPlayerHeightAtPosition(GLfloat x, GLfloat z) {
-    const GLfloat playerHeight = 75.;
+    const GLfloat playerHeight = 10.;
     GLfloat y = -terrain.getNoiseHeight((-x)/50., (-z)/50.)-playerHeight;
     if(y > -playerHeight) y = -playerHeight;
     return y-playerHeight;
