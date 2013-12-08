@@ -141,7 +141,7 @@ static inline void copyImageToBytes(const CGImageRef &img, const CGImageRef &cur
 - (void)createGLTextureNoAlpha:(GLuint *)texName fromCGImage:(CGImageRef)img andCursor:(CGImageRef)cursorImageRef andDataCache:(GLubyte**)spriteData andClear:(bool)clear
 {
     bool newTexture = (*texName == 0);
-	static CGContextRef spriteContext;
+	static CGContextRef spriteContext = nil;
 	GLuint imgW, imgH, texW, texH;
 
     const GLuint mouseW = (GLuint)CGImageGetWidth(cursorImageRef);
@@ -162,45 +162,62 @@ static inline void copyImageToBytes(const CGImageRef &img, const CGImageRef &cur
     static CGColorSpaceRef space = CGColorSpaceCreateDeviceRGB();
     
 	// Uses the bitmatp creation function provided by the Core Graphics framework.
-	spriteContext = CGBitmapContextCreate(*spriteData, texW, texH, 8, texW * 4, /*CGImageGetColorSpace(img)*/space, kCGImageAlphaNoneSkipLast);
-	
-	// Translate and scale the context to draw the image upside-down (conflict in flipped-ness between GL textures and CG contexts)
-	CGContextTranslateCTM(spriteContext, 0., texH);
-	CGContextScaleCTM(spriteContext, 1., -1.);
-	
-	// After you create the context, you can draw the sprite image to the context.
+    if(spriteContext == nil) {
+        spriteContext = CGBitmapContextCreate(*spriteData, texW, texH, 8, texW * 4, /*CGImageGetColorSpace(img)*/space, kCGImageAlphaNoneSkipLast);
+        
+        // Translate and scale the context to draw the image upside-down (conflict in flipped-ness between GL textures and CG contexts)
+        CGContextTranslateCTM(spriteContext, 0., texH);
+        CGContextScaleCTM(spriteContext, 1., -1.);
+    }
+    
+    // After you create the context, you can draw the sprite image to the context.
     const CGRect r = CGRectMake(0.0, 0.0, imgW, imgH);
     if(clear) {
         CGContextClearRect(spriteContext, r);
     }
+
 	CGContextDrawImage(spriteContext, r, img);
     const CGRect mouseRect = CGRectMake(cursorPosX, cursorPosY-mouseH, mouseW, mouseH);
     CGContextDrawImage(spriteContext, mouseRect, cursorImageRef);
 	// You don't need the context at this point, so you need to release it to avoid memory leaks.
-	CGContextRelease(spriteContext);
-	
+//	CGContextRelease(spriteContext);
+    
     //    glEnable(GL_TEXTURE_2D);
     glPixelStorei(GL_UNPACK_ROW_LENGTH, (GLint)texW);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-    glPixelStorei(GL_PACK_ALIGNMENT, 1);
+//    glPixelStorei(GL_PACK_ALIGNMENT, 1);
     if(newTexture) {
         // Use OpenGL ES to generate a name for the texture.
         glGenTextures(1, texName);
+//        glEnable(GL_TEXTURE_RECTANGLE);
         // Bind the texture name.
         glBindTexture(GL_TEXTURE_2D, *texName);
+        
+//        glTextureRangeAPPLE(GL_TEXTURE_2D, texH*texW*4, *spriteData);
+//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_STORAGE_HINT_APPLE, GL_STORAGE_SHARED_APPLE);
+//        glPixelStorei(GL_UNPACK_CLIENT_STORAGE_APPLE, GL_TRUE);
+        
         // Specify a 2D texture image, providing the a pointer to the image data in memory
-        //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, texW, texH, 0, GL_RGBA, GL_UNSIGNED_BYTE, *spriteData);
+//        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, texW, texH, 0, GL_RGBA, GL_UNSIGNED_BYTE, *spriteData);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, texW, texH, 0, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, *spriteData);
     } else {
         glBindTexture(GL_TEXTURE_2D, *texName);
+
+//        glTextureRangeAPPLE(GL_TEXTURE_2D, texH*texW*4, *spriteData);
+//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_STORAGE_HINT_APPLE, GL_STORAGE_SHARED_APPLE);//GL_STORAGE_CACHED_APPLE);
+//        glPixelStorei(GL_UNPACK_CLIENT_STORAGE_APPLE, GL_TRUE);
+        
 //        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, texW, texH, GL_RGBA, GL_UNSIGNED_BYTE, *spriteData);
+//        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, texW, texH, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8_REV, *spriteData);
         // to resize texture, need to check if it changed and only update then then
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, texW, texH, 0, GL_RGBA, GL_UNSIGNED_BYTE, *spriteData);
+//        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, texW, texH, 0, GL_RGBA, GL_UNSIGNED_BYTE, *spriteData);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, texW, texH, 0, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, *spriteData);
 //        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, texW, texH, 0, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, *spriteData);
     }
     // Set the texture parameters to use a minifying filter and a linear filer (weighted average)
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glGenerateMipmap(GL_TEXTURE_2D);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);//GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+//    glGenerateMipmap(GL_TEXTURE_2D);
     
     // user-allocated, don't touch it
     //	free(*spriteData);
@@ -243,6 +260,10 @@ static inline void copyImageToBytes(const CGImageRef &img, const CGImageRef &cur
   
     [newContext makeCurrentContext];
     while(1) {
+        [cocoaCondition lock];
+        [cocoaCondition wait];
+        [cocoaCondition unlock];
+        
 //        NSLog(@"NSScreen.mainScreen: %@, size: %@", NSScreen.mainScreen, NSStringFromRect(NSScreen.mainScreen.frame));
         done = 0;
         CFArrayRef a = CGWindowListCreate(
@@ -268,9 +289,6 @@ static inline void copyImageToBytes(const CGImageRef &img, const CGImageRef &cur
 //        [self savePNGImage:img path:@"/Users/hesh/blah_rift.png"];
 //        exit(0);
         
-        [cocoaCondition lock];
-        [cocoaCondition wait];
-        [cocoaCondition unlock];
         
         [self createGLTextureNoAlpha:&desktopTexture fromCGImage:img andCursor:cursorImageRef andDataCache:&s andClear:NO];
 //        [self createGLTextureNoAlphaUsingPBO:&desktopTexture fromCGImage:img andCursor:cursorImageRef andDataCache:&s andClear:NO];

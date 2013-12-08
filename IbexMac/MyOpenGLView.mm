@@ -153,10 +153,11 @@ static NSTimer *t;
         // enable multithreading
 //        [openGLContext makeCurrentContext];
 //        CGLContextObj ctx = CGLGetCurrentContext();
-//        // Enable the multi-threading
+////        // Enable the multi-threading
 //        CGLError err =  CGLEnable(ctx, kCGLCEMPEngine);
 //        if (err != kCGLNoError )
 //        {
+//            exit(-1);
 //            // Multi-threaded execution is possibly not available
 //            // Insert your code to take appropriate action
 //        }
