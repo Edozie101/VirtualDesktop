@@ -98,8 +98,8 @@ void Terrain::loadTerrain(T *data, int width, int height) {
             vertices[index+1] = data[y*width+x]*scaleY+translateY;
             vertices[index+2] = (y-height/2)*scaleZ+translateZ;
             
-            vertices[index+6] = x*0.5;
-            vertices[index+7] = y*0.5;
+            vertices[index+6] = x*2;
+            vertices[index+7] = y*2;
             
             //            std::cerr << vertices[index] << ", " << vertices[index+1] << "," << vertices[index+2] << std::endl;
             index += vertexBufferStep;
