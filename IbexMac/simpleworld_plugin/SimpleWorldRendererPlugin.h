@@ -18,6 +18,8 @@
 
 #include "../terrain/Terrain.h"
 
+#include "Model.h"
+
 extern GLSLShaderProgram skyboxShaderProgram;
 extern GLSLShaderProgram groundShaderProgram;
 extern GLSLShaderProgram standardShaderProgram;
@@ -61,6 +63,8 @@ private:
     
     bool _bringUpIbexDisplay;
     glm::mat4 ibexDisplayModelTransform;
+    
+    Model treeModel;
 };
 
 #endif /* SIMPLEWORLDRENDERERPLUGIN_H_ */

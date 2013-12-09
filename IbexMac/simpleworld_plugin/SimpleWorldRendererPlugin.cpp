@@ -36,6 +36,8 @@
 #include "../GLSLShaderProgram.h"
 #include "ShadowBufferRenderer.h"
 
+#include "Model.h"
+
 glm::vec3 lightInvDir;
 
 void copyMatrix(glm::mat4 &modelView, float M[4][4]) {
@@ -902,14 +904,32 @@ void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &
 //    glDisable(GL_CULL_FACE);
     }
     if(showGround) {
-        model = glm::mat4();
+        //model = glm::mat4();
         //renderGround(PV*model, view, model, shadowPass, depthBiasMVP*model, time);
 
+        glm::mat4 treeMat;// = glm::scale(glm::mat4(), 10.0f, 10.0f, 10.0f);
+        glDisable(GL_CULL_FACE);
+        srand(1982);
+        for(int i = 0; i < 10; ++i) {
+            
+            int x = rand()%6000-3000;
+            int z = rand()%6000-3000;
+            float height = getPlayerHeightAtPosition(x, z);
+            if(height >= -20) continue;
+            model = glm::translate(treeMat, glm::vec3(-x,-height-20.0f,-z));
+            model = glm::scale(model, 40.0f, 40.0f, 40.0f);
+            treeModel.renderScene(standardShaderProgram.shader.program, PV*model, view, model, shadowPass, depthBiasMVP*model);
+            //                std::cerr << x << " " << z << std::endl;
+        }
+        glEnable(GL_CULL_FACE);
+        
         if(!shadowPass) {
+            model = glm::mat4();
             terrain.renderGround(PV*model, view, model, shadowPass, depthBiasMVP*model, time);
             
             glEnable(GL_BLEND);
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            
             model = glm::translate(model, -glm::vec3(playerPosition_.x, 0, playerPosition_.z));
             renderWater(PV*model, view, model, shadowPass, depthBiasMVP*model, time);
             glDisable(GL_BLEND);
@@ -937,6 +957,11 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
     static bool first = true;
     if(first) {
         first = false;
+        
+        //Import3DFromFile("/Users/hesh/Downloads/59269_low_poly_foliege_blend_by_EugeneKiver/tree.dae");
+        //Import3DFromFile("/Users/hesh/Downloads/59269_low_poly_foliege_blend_by_EugeneKiver/tree2.dae");
+        treeModel.Import3DFromFile("/Users/hesh/Downloads/59269_low_poly_foliege_blend_by_EugeneKiver/tree3.dae");
+        //Import3DFromFile("/Users/hesh/Downloads/palmtree3DS/palmtree.3ds");
         
         glClearColor(0, 0, 0, 1);
         
@@ -978,7 +1003,7 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
     //    static glm::mat4 lightView = glm::lookAt(glm::vec3(0.f,0.f,0.f), glm::vec3(4.f,4.f,4.f), glm::vec3(0,1,0));
     //    static glm::mat4 lightProj = glm::ortho(-100.f, 100.f, -100.f, 100.f, -100.f, 100.f);
     
-    lightInvDir = glm::vec3(0.0f,50.0f,250.0f);//playerPosition.x, playerPosition.y, playerPosition.z);//0,1000,1000);///0.5f,2,2);
+    lightInvDir = glm::vec3(0.0f,300.0f,250.0f);//playerPosition.x, playerPosition.y, playerPosition.z);//0,1000,1000);///0.5f,2,2);
     
     // Compute the MVP matrix from the light's point of view
     glm::mat4 lightProj = glm::ortho<float>(-4000,4000,-4000,4000,-4000,4000);//-10,10,-10,10,-10,20);

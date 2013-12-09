@@ -67,6 +67,8 @@ static GLuint make_program(GLuint vertex_shader, GLuint fragment_shader)
     glAttachShader(program, fragment_shader);
     glLinkProgram(program);
     checkForErrors();
+    glValidateProgram(program);
+    checkForErrors();
     
     glGetProgramiv(program, GL_LINK_STATUS, &program_ok);
     checkForErrors();

@@ -19,10 +19,14 @@
 
 #include "string.h"
 
-static void *getImageData(const char *path_, size_t &width, size_t &height, bool flip) {
+static void *getImageData(const char *path_, size_t &width, size_t &height, bool flip, bool isAbsolutePath) {
     char path[2048];
-    strcpy(path, mResourcePath);
-    strcat(path, path_);
+    if(isAbsolutePath) {
+        strcpy(path, path_);
+    } else {
+        strcpy(path, mResourcePath);
+        strcat(path, path_);
+    }
 
     // NSLog(@"%s", path);
     NSURL *URL = [NSURL fileURLWithPath:[NSString stringWithCString:path encoding:NSASCIIStringEncoding]];
@@ -56,12 +60,12 @@ static void *getImageData(const char *path_, size_t &width, size_t &height, bool
     return myData;
 }
 
-extern "C" GLuint loadTexture(const char *path_, bool flip) {
+extern "C" GLuint loadTexture(const char *path_, bool flip, bool isAbsolutePath) {
     GLuint myTextureName;
     
     size_t width = 0;
     size_t height = 0;
-    void *myData = getImageData(path_, width, height, flip);
+    void *myData = getImageData(path_, width, height, flip, isAbsolutePath);
     
     glPixelStorei(GL_UNPACK_ROW_LENGTH, (GLint)width);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -110,7 +114,7 @@ extern "C" GLuint loadCubemapTextures(const char *path_[6]) {
     for(int i = 0; i < 6; ++i) {
         size_t width = 0;
         size_t height = 0;
-        void *myData = getImageData(path_[i], width, height, true);
+        void *myData = getImageData(path_[i], width, height, true, false);
         
         glPixelStorei(GL_UNPACK_ROW_LENGTH, (GLint)width);
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);

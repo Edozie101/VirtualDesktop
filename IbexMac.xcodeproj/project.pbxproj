@@ -276,6 +276,8 @@
 		4CA379681844467D0048B227 /* ShadowBufferRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CA379651844467D0048B227 /* ShadowBufferRenderer.cpp */; };
 		4CA379691844467D0048B227 /* ShadowBufferRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CA379651844467D0048B227 /* ShadowBufferRenderer.cpp */; };
 		4CA3796A1844467D0048B227 /* ShadowBufferRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CA379651844467D0048B227 /* ShadowBufferRenderer.cpp */; };
+		4CA4A3CB1854F96B001BF850 /* libboost_filesystem.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CA4A3CA1854F96B001BF850 /* libboost_filesystem.a */; };
+		4CA4A3CD1854F98C001BF850 /* libboost_system.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CA4A3CC1854F98C001BF850 /* libboost_system.a */; };
 		4CA92BC41729FB1F00994379 /* libovr.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CA92BC31729FB1F00994379 /* libovr.a */; };
 		4CABF7EA1730926900F94A46 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CABF7E91730926900F94A46 /* OpenAL.framework */; };
 		4CABF7EB1730927500F94A46 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CABF7E91730926900F94A46 /* OpenAL.framework */; };
@@ -337,6 +339,11 @@
 		4CEEED7D17877DCB0067405F /* libopencv_videostab.2.4.5.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4CEEED57178777830067405F /* libopencv_videostab.2.4.5.dylib */; };
 		4CF354B9168D0D5000EAA2FE /* MyOpenGLView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4CF354B8168D0D5000EAA2FE /* MyOpenGLView.mm */; };
 		4CF354BC168D0E1600EAA2FE /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CF354BB168D0E1600EAA2FE /* OpenGL.framework */; };
+		4CFA17F61847D29300E8C716 /* Model.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFA17F41847D29300E8C716 /* Model.cpp */; };
+		4CFA17F71847D29300E8C716 /* Model.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFA17F41847D29300E8C716 /* Model.cpp */; };
+		4CFA17F81847D29300E8C716 /* Model.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFA17F41847D29300E8C716 /* Model.cpp */; };
+		4CFA17F91847D29300E8C716 /* Model.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFA17F41847D29300E8C716 /* Model.cpp */; };
+		4CFA17FB1847D4BA00E8C716 /* libassimp.3.0.255.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CFA17FA1847D4BA00E8C716 /* libassimp.3.0.255.dylib */; };
 		4CFB0B43168E5D840025AF0F /* distortions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFB0B40168E5D840025AF0F /* distortions.cpp */; };
 		4CFB0B44168E5D840025AF0F /* opengl_helpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFB0B41168E5D840025AF0F /* opengl_helpers.cpp */; };
 		4CFB0B48168E5D960025AF0F /* RendererPlugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFB0B45168E5D960025AF0F /* RendererPlugin.cpp */; };
@@ -569,6 +576,8 @@
 		4C9BEA7517E56A2F00662683 /* Dependencies */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Dependencies; sourceTree = "<group>"; };
 		4CA379651844467D0048B227 /* ShadowBufferRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShadowBufferRenderer.cpp; sourceTree = "<group>"; };
 		4CA379661844467D0048B227 /* ShadowBufferRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShadowBufferRenderer.h; sourceTree = "<group>"; };
+		4CA4A3CA1854F96B001BF850 /* libboost_filesystem.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libboost_filesystem.a; path = ../../../../usr/local/Cellar/boost/1.55.0/lib/libboost_filesystem.a; sourceTree = "<group>"; };
+		4CA4A3CC1854F98C001BF850 /* libboost_system.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libboost_system.a; path = ../../../../usr/local/Cellar/boost/1.55.0/lib/libboost_system.a; sourceTree = "<group>"; };
 		4CA92BC31729FB1F00994379 /* libovr.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libovr.a; path = ../OculusSDK/LibOVR/Lib/MacOS/Debug/libovr.a; sourceTree = "<group>"; };
 		4CABF7E91730926900F94A46 /* OpenAL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenAL.framework; path = System/Library/Frameworks/OpenAL.framework; sourceTree = SDKROOT; };
 		4CABF81F1730BAF600F94A46 /* libxvidcore.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libxvidcore.a; path = /usr/local/Cellar/xvid/1.3.2/lib/libxvidcore.a; sourceTree = "<absolute>"; };
@@ -627,6 +636,9 @@
 		4CF354B7168D0D5000EAA2FE /* MyOpenGLView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyOpenGLView.h; sourceTree = "<group>"; };
 		4CF354B8168D0D5000EAA2FE /* MyOpenGLView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MyOpenGLView.mm; sourceTree = "<group>"; };
 		4CF354BB168D0E1600EAA2FE /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
+		4CFA17F41847D29300E8C716 /* Model.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Model.cpp; sourceTree = "<group>"; };
+		4CFA17F51847D29300E8C716 /* Model.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Model.h; sourceTree = "<group>"; };
+		4CFA17FA1847D4BA00E8C716 /* libassimp.3.0.255.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libassimp.3.0.255.dylib; path = ../../../../usr/local/Cellar/assimp/3.0.1270/lib/libassimp.3.0.255.dylib; sourceTree = "<group>"; };
 		4CFB0B40168E5D840025AF0F /* distortions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = distortions.cpp; sourceTree = "<group>"; };
 		4CFB0B41168E5D840025AF0F /* opengl_helpers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = opengl_helpers.cpp; sourceTree = "<group>"; };
 		4CFB0B42168E5D840025AF0F /* opengl_helpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = opengl_helpers.h; sourceTree = "<group>"; };
@@ -642,6 +654,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4CA4A3CD1854F98C001BF850 /* libboost_system.a in Frameworks */,
+				4CA4A3CB1854F96B001BF850 /* libboost_filesystem.a in Frameworks */,
+				4CFA17FB1847D4BA00E8C716 /* libassimp.3.0.255.dylib in Frameworks */,
 				4C0937AE17B1F9CE004EA291 /* IOKit.framework in Frameworks */,
 				4C0937AF17B1F9CE004EA291 /* VideoDecodeAcceleration.framework in Frameworks */,
 				4C0937B017B1F9CE004EA291 /* CoreFoundation.framework in Frameworks */,
@@ -876,6 +891,8 @@
 				4C961B5217B89A780028D242 /* SimpleWorldRendererPlugin.h */,
 				4CA379651844467D0048B227 /* ShadowBufferRenderer.cpp */,
 				4CA379661844467D0048B227 /* ShadowBufferRenderer.h */,
+				4CFA17F41847D29300E8C716 /* Model.cpp */,
+				4CFA17F51847D29300E8C716 /* Model.h */,
 			);
 			path = simpleworld_plugin;
 			sourceTree = "<group>";
@@ -917,6 +934,9 @@
 		4CB79869168AB41E00EF5260 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				4CA4A3CC1854F98C001BF850 /* libboost_system.a */,
+				4CA4A3CA1854F96B001BF850 /* libboost_filesystem.a */,
+				4CFA17FA1847D4BA00E8C716 /* libassimp.3.0.255.dylib */,
 				4CEEED45178777830067405F /* libopencv_calib3d.2.4.5.dylib */,
 				4CEEED46178777830067405F /* libopencv_contrib.2.4.5.dylib */,
 				4CEEED47178777830067405F /* libopencv_core.2.4.5.dylib */,
@@ -1087,6 +1107,7 @@
 				4C0937D617B1F9CE004EA291 /* CopyFiles */,
 				4C0937EE17B1F9CE004EA291 /* ShellScript */,
 				4C0937EF17B1F9CE004EA291 /* ShellScript */,
+				4C17B1621852993800067CC2 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -1290,6 +1311,19 @@
 			shellPath = /bin/sh;
 			shellScript = "# Sign all frameworks and dylibs\n\n# WARNING: If you've changed CODE_SIGN_IDENTITY project should be cleaned\n\n# Verify that $CODE_SIGN_IDENTITY is set\nif [ -z \"$CODE_SIGN_IDENTITY\" ] ; then\necho \"need a non-empty CODE_SIGN_IDENTITY to sign!\"\n\n#if [ \"$CONFIGURATION\" = \"Release\" ] ; then\n#exit 1\n#else\n## Codesigning isn't required on non-release builds.\n#exit 0\n#fi\nfi\n\nexit 0\n\nSAVEIFS=$IFS\nIFS=$(echo -en \"\\n\\b\")\n\nFRAMEWORKS_DIR=\"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}\"\nLIB_DIR=\"${TARGET_BUILD_DIR}\"\n\n# Loop through all frameworks\nFRAMEWORKS_LIST=`find \"${FRAMEWORKS_DIR}\" -type d -name \"*.framework\" | sed -e \"s/\\(.*\\)/\\1\\/Versions\\/A\\//\"`\nRES=$?\nif [[ $RES != 0 ]] ; then\nexit 1\nfi\n\nLIBS=`find \"${LIB_DIR}\" -type f -name \"*.dylib\"`\nRES=$?\nif [[ $RES != 0 ]] ; then\nexit 1\nfi\n\necho \"Searching: ${LIB_DIR} and ${FRAMEWORK_DIR}\"\necho \"Found:\"\necho \"${LIBS}\"\n\nfor LIB in $LIBS;\ndo\necho \"Signing dylib: '${LIB}'\"\n`codesign -fv -s \"${CODE_SIGN_IDENTITY}\" \"${LIB}\"`\nRES=$?\nif [[ $RES != 0 ]] ; then\nexit 1\nfi\ndone\n\necho \"Found:\"\necho \"${FRAMEWORKS}\"\n\nfor FRAMEWORK in $FRAMEWORKS_LIST;\ndo\necho \"Signing framework: '${FRAMEWORK}'\"\n`codesign -fv -s \"${CODE_SIGN_IDENTITY}\" \"${FRAMEWORK}\"`\nRES=$?\nif [[ $RES != 0 ]] ; then\nexit 1\nfi\ndone\n\n# restore $IFS\nIFS=$SAVEIFS\n";
 		};
+		4C17B1621852993800067CC2 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "rm -f \"$TARGET_BUILD_DIR/$EXECUTABLE_NAME.app/Contents/Resources/resources/shaders/*\"\ncp -Rf \"$PROJECT_DIR/IbexMac/resources/shaders\" \"$TARGET_BUILD_DIR/$EXECUTABLE_NAME.app/Contents/Resources/resources/\"";
+		};
 		4C4A95A21738708100172F70 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 12;
@@ -1324,6 +1358,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4C09378F17B1F9CE004EA291 /* main.mm in Sources */,
+				4CFA17F91847D29300E8C716 /* Model.cpp in Sources */,
 				4C961B2717B8949C0028D242 /* Window.cpp in Sources */,
 				4C961B4F17B899F10028D242 /* sixense_controller.cpp in Sources */,
 				4C09379017B1F9CE004EA291 /* AppDelegate.mm in Sources */,
@@ -1373,6 +1408,7 @@
 				4C961B3817B895330028D242 /* VLCVideoPlayer.cpp in Sources */,
 				4C961B3417B895330028D242 /* VideoPlayer.cpp in Sources */,
 				4C0D58A016AD656A007BC9CD /* IbexMacUtils.mm in Sources */,
+				4CFA17F71847D29300E8C716 /* Model.cpp in Sources */,
 				4C011F9A1840388A002583AD /* GLSLShaderProgram.cpp in Sources */,
 				4C011F8E18402ECB002583AD /* Terrain.cpp in Sources */,
 				4C0D58A116AD656A007BC9CD /* utils.cpp in Sources */,
@@ -1420,6 +1456,7 @@
 				4C961B3917B895330028D242 /* VLCVideoPlayer.cpp in Sources */,
 				4C961B4717B899860028D242 /* Filesystem.cpp in Sources */,
 				4C49791317CCC6A0008DC26E /* tinystr.cpp in Sources */,
+				4CFA17F81847D29300E8C716 /* Model.cpp in Sources */,
 				4C61AC3916F9272000F98776 /* MyOgreView.mm in Sources */,
 				4C936066172A282100A94980 /* ScreenshotView.mm in Sources */,
 			);
@@ -1447,6 +1484,7 @@
 				4C961B3717B895330028D242 /* VLCVideoPlayer.cpp in Sources */,
 				4C961B3317B895330028D242 /* VideoPlayer.cpp in Sources */,
 				4C41232116936E4F008F5B15 /* IbexMacUtils.mm in Sources */,
+				4CFA17F61847D29300E8C716 /* Model.cpp in Sources */,
 				4C011F991840388A002583AD /* GLSLShaderProgram.cpp in Sources */,
 				4C011F8D18402ECB002583AD /* Terrain.cpp in Sources */,
 				4CAC8D581690A2C100341AA0 /* utils.cpp in Sources */,
@@ -1533,6 +1571,8 @@
 					/Applications/VLC.app/Contents/MacOS/libb,
 					/Users/hesh/Downloads/vlc/build/VLC.app/Contents/MacOS/lib,
 					/Users/hesh/Downloads/vlc/build/VLC.app/Contents/MacOS/pluginss,
+					/usr/local/Cellar/assimp/3.0.1270/lib,
+					/usr/local/Cellar/boost/1.55.0/lib,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_CPLUSPLUSFLAGS = (
@@ -1598,6 +1638,8 @@
 					/Applications/VLC.app/Contents/MacOS/libb,
 					/Users/hesh/Downloads/vlc/build/VLC.app/Contents/MacOS/lib,
 					/Users/hesh/Downloads/vlc/build/VLC.app/Contents/MacOS/pluginss,
+					/usr/local/Cellar/assimp/3.0.1270/lib,
+					/usr/local/Cellar/boost/1.55.0/lib,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_CPLUSPLUSFLAGS = (

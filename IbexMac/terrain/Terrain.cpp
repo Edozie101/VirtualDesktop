@@ -94,6 +94,7 @@ void Terrain::loadTerrain(T *data, int width, int height) {
                 std::cerr << "^^^^^^^^ " << data[y*width+x]*scaleY+translateY << std::endl;
             }
             
+            index = (y*width+x)*vertexBufferStep;
             vertices[index] = (x-width/2)*scaleX+translateX;
             vertices[index+1] = data[y*width+x]*scaleY+translateY;
             vertices[index+2] = (y-height/2)*scaleZ+translateZ;
@@ -102,28 +103,29 @@ void Terrain::loadTerrain(T *data, int width, int height) {
             vertices[index+7] = y*2;
             
             //            std::cerr << vertices[index] << ", " << vertices[index+1] << "," << vertices[index+2] << std::endl;
-            index += vertexBufferStep;
         }
     }
     
     index = 0;
-    for(int y = 0; y < height; ++y) {
-        for(int x = 0; x < width; ++x) {
-            glm::vec3 normal;
-            if(y == height-1) {
-            } else if(x == width-1) {
-                
-            } else {
-                glm::vec3 v1(0.f,float(data[y*width+x]),0.f);
-                glm::vec3 v2 = glm::vec3(1,data[y*width+x+1],0)-v1;
-                glm::vec3 v3 = glm::vec3(0,data[(y+1)*width+x],1)-v1;
-                normal = glm::normalize(glm::cross(v2,v3));
-            }
-            vertices[index+3] = normal.x;
-            vertices[index+4] = normal.y;
-            vertices[index+5] = normal.z;
+    for(int y = 0; y < height-1; ++y) {
+        for(int x = 0; x < width-1; ++x) {
+            glm::vec3 v1(0.f,float(data[y*width+x])*scaleY,0.f);
+            glm::vec3 v2 = glm::vec3(1*scaleX,data[y*width+x+1]*scaleY,0)-v1;
+            glm::vec3 v3 = glm::vec3(0,data[(y+1)*width+x]*scaleY,1*scaleZ)-v1;
+            glm::vec3 normal = glm::normalize(glm::cross(v2,v3));
             
-            index += vertexBufferStep;
+            int i = (y*width+x) * vertexBufferStep;
+            vertices[i+3] = normal.x;
+            vertices[i+4] = normal.y;
+            vertices[i+5] = normal.z;
+            i = (y*width+x+1) * vertexBufferStep;
+            vertices[i+3] = normal.x;
+            vertices[i+4] = normal.y;
+            vertices[i+5] = normal.z;
+            i = ((y+1)*width+x) * vertexBufferStep;
+            vertices[i+3] = normal.x;
+            vertices[i+4] = normal.y;
+            vertices[i+5] = normal.z;
         }
     }
     if(useNormalMappedTextures) {
@@ -150,7 +152,7 @@ void Terrain::loadTerrain(T *data, int width, int height) {
                 
                 float r = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV1.y * deltaUV2.x);
                 if(!isinf(r) && !isnan(r)) {
-                    std::cerr << r << std::endl;
+                    //                    std::cerr << r << std::endl;
                 } else {
                     for(int i2 = 0; i2 < 3; ++i2) {
                         // tangents
@@ -167,19 +169,6 @@ void Terrain::loadTerrain(T *data, int width, int height) {
                 }
                 glm::vec3 tangent = glm::normalize((deltaPos1 * deltaUV2.y   - deltaPos2 * deltaUV1.y)*r);
                 glm::vec3 bitangent = glm::normalize((deltaPos2 * deltaUV1.x   - deltaPos1 * deltaUV2.x)*r);
-                
-//                // use same value for all 3 vertices of triangle
-//                for(int i2 = 0; i2 < 3; ++i2) {
-//                    // tangents
-//                    vertices[index+i2*vertexBufferStep+3] = tangent.x;
-//                    vertices[index+i2*vertexBufferStep+4] = tangent.y;
-//                    vertices[index+i2*vertexBufferStep+5] = tangent.z;
-//                    
-//                    // bitangents
-//                    vertices[index+i2*vertexBufferStep+8] = bitangent.x;
-//                    vertices[index+i2*vertexBufferStep+9] = bitangent.y;
-//                    vertices[index+i2*vertexBufferStep+10] = bitangent.z;
-//                }
                 
                 // use same value for all 3 vertices of triangle
                 // tangents

@@ -193,6 +193,10 @@ static inline void copyImageToBytes(const CGImageRef &img, const CGImageRef &cur
         // Bind the texture name.
         glBindTexture(GL_TEXTURE_2D, *texName);
         
+        // Set the texture parameters to use a minifying filter and a linear filer (weighted average)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);//GL_LINEAR_MIPMAP_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        
 //        glTextureRangeAPPLE(GL_TEXTURE_2D, texH*texW*4, *spriteData);
 //        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_STORAGE_HINT_APPLE, GL_STORAGE_SHARED_APPLE);
 //        glPixelStorei(GL_UNPACK_CLIENT_STORAGE_APPLE, GL_TRUE);
@@ -203,6 +207,10 @@ static inline void copyImageToBytes(const CGImageRef &img, const CGImageRef &cur
     } else {
         glBindTexture(GL_TEXTURE_2D, *texName);
 
+        // Set the texture parameters to use a minifying filter and a linear filer (weighted average)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);//GL_LINEAR_MIPMAP_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        
 //        glTextureRangeAPPLE(GL_TEXTURE_2D, texH*texW*4, *spriteData);
 //        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_STORAGE_HINT_APPLE, GL_STORAGE_SHARED_APPLE);//GL_STORAGE_CACHED_APPLE);
 //        glPixelStorei(GL_UNPACK_CLIENT_STORAGE_APPLE, GL_TRUE);
@@ -214,9 +222,6 @@ static inline void copyImageToBytes(const CGImageRef &img, const CGImageRef &cur
 //        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, texW, texH, 0, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, *spriteData);
 //        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, texW, texH, 0, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, *spriteData);
     }
-    // Set the texture parameters to use a minifying filter and a linear filer (weighted average)
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);//GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 //    glGenerateMipmap(GL_TEXTURE_2D);
     
     // user-allocated, don't touch it
