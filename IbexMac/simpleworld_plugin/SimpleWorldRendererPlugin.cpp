@@ -910,7 +910,7 @@ void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &
         glm::mat4 treeMat;// = glm::scale(glm::mat4(), 10.0f, 10.0f, 10.0f);
         glDisable(GL_CULL_FACE);
         srand(1982);
-        for(int i = 0; i < 10; ++i) {
+        for(int i = 0; i < 250; ++i) {
             
             int x = rand()%6000-3000;
             int z = rand()%6000-3000;
@@ -958,10 +958,10 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
     if(first) {
         first = false;
         
-        //Import3DFromFile("/Users/hesh/Downloads/59269_low_poly_foliege_blend_by_EugeneKiver/tree.dae");
-        //Import3DFromFile("/Users/hesh/Downloads/59269_low_poly_foliege_blend_by_EugeneKiver/tree2.dae");
-        treeModel.Import3DFromFile("/Users/hesh/Downloads/59269_low_poly_foliege_blend_by_EugeneKiver/tree3.dae");
-        //Import3DFromFile("/Users/hesh/Downloads/palmtree3DS/palmtree.3ds");
+        char path[2048];
+        strcpy(path, mResourcePath);
+        strcat(path, "/resources/tree3/tree3.dae");
+        treeModel.Import3DFromFile(path);
         
         glClearColor(0, 0, 0, 1);
         
