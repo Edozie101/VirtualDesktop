@@ -93,7 +93,7 @@ private:
     };
     
     // Model Matrix (part of the OpenGL Model View Matrix)
-    float modelMatrix[16];
+//    float modelMatrix[16];
     
     // For push and pop matrix
     std::vector<float *> matrixStack;

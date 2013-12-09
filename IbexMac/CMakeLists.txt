@@ -14,8 +14,9 @@ find_package(OpenGL REQUIRED)
 find_package(OpenCV)
 find_package(VLC)
 find_package(OculusSDK)
+find_package(Assimp REQUIRED)
 
-include_directories( ${OCULUS_INCLUDE_DIRS} ${VLC_INCLUDE_DIRS} )
+include_directories( ${OCULUS_INCLUDE_DIRS} ${VLC_INCLUDE_DIRS} {ASSIMP_INCLUDE_DIRS} )
 
 IF(APPLE)
   set(CMAKE_OSX_ARCHITECTURES "x86_64") #i386;x86_64")
@@ -24,6 +25,11 @@ IF(APPLE)
     SET (CMAKE_CXX_COMPILER             "/usr/bin/clang++")
 
    SET(CMAKE_OSX_DEPLOYMENT_TARGET "10.9" CACHE STRING "Deployment target for OSX" FORCE)
+   
+   set(Boost_USE_STATIC_LIBS ON)
+    set(Boost_USE_MULTITHREADED ON)
+    #set(Boost_USE_STATIC_RUNTIME OFF)
+    find_package(Boost 1.54.0 COMPONENTS filesystem system thread atomic chrono date_time context)
 
    INCLUDE_DIRECTORIES ( /System/Library/Frameworks )
    FIND_LIBRARY(COCOA_LIBRARY Cocoa)
@@ -165,7 +171,7 @@ include_directories(
      ${CMAKE_CURRENT_SOURCE_DIR}
      ${Boost_INCLUDE_DIR}
  )
-link_directories(${Boost_LIBRARY_DIR} ${OCULUS_LIBRARY_DIR} ${VLC_LIBRARY_DIR} /usr/local/lib ${OGRE_LIBS_DIR})
+link_directories(${Boost_LIBRARY_DIR} ${OCULUS_LIBRARY_DIR} ${VLC_LIBRARY_DIR} ${ASSIMP_LIBRARY_DIR} /usr/local/lib ${OGRE_LIBS_DIR})
 
 set(RESOURCES README.md COPYING AUTHORS)
 
@@ -197,6 +203,7 @@ set(SRC ${SRC}
     GLSLShaderProgram.cpp GLSLShaderProgram.h
     simpleworld_plugin/SimpleWorldRendererPlugin.cpp simpleworld_plugin/SimpleWorldRendererPlugin.h
     simpleworld_plugin/ShadowBufferRenderer.cpp simpleworld_plugin/ShadowBufferRenderer.h
+    simpleworld_plugin/Model.cpp simpleworld_plugin/Model.h
     iphone_orientation_plugin/iphone_orientation_listener.cpp iphone_orientation_plugin/iphone_orientation_listener.h
     tinyxml/tinystr.cpp
     tinyxml/tinyxml.cpp
@@ -223,6 +230,8 @@ target_link_libraries(ibex
     ${IRRLICHT_LIBRARY} ${OGRE_LIBRARIES} ${OIS_LIBRARIES}
     ${OGRE_LIBS}
     ${OSX_LIBS}
+    ${ASSIMP_LIBRARIES}
+    ${Boost_LIBRARIES}
 )
  
 set_target_properties( ibex PROPERTIES RESOURCE "${RESOURCES}")

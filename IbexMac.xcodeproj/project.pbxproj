@@ -578,6 +578,7 @@
 		4CA379661844467D0048B227 /* ShadowBufferRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShadowBufferRenderer.h; sourceTree = "<group>"; };
 		4CA4A3CA1854F96B001BF850 /* libboost_filesystem.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libboost_filesystem.a; path = ../../../../usr/local/Cellar/boost/1.55.0/lib/libboost_filesystem.a; sourceTree = "<group>"; };
 		4CA4A3CC1854F98C001BF850 /* libboost_system.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libboost_system.a; path = ../../../../usr/local/Cellar/boost/1.55.0/lib/libboost_system.a; sourceTree = "<group>"; };
+		4CA4A3CE18556A12001BF850 /* FindAssimp.cmake */ = {isa = PBXFileReference; lastKnownFileType = text; path = FindAssimp.cmake; sourceTree = "<group>"; };
 		4CA92BC31729FB1F00994379 /* libovr.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libovr.a; path = ../OculusSDK/LibOVR/Lib/MacOS/Debug/libovr.a; sourceTree = "<group>"; };
 		4CABF7E91730926900F94A46 /* OpenAL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenAL.framework; path = System/Library/Frameworks/OpenAL.framework; sourceTree = SDKROOT; };
 		4CABF81F1730BAF600F94A46 /* libxvidcore.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libxvidcore.a; path = /usr/local/Cellar/xvid/1.3.2/lib/libxvidcore.a; sourceTree = "<absolute>"; };
@@ -1084,6 +1085,7 @@
 		4CD81A3F17C98C1200C94D83 /* cmake */ = {
 			isa = PBXGroup;
 			children = (
+				4CA4A3CE18556A12001BF850 /* FindAssimp.cmake */,
 				4CD81A4117C98C1200C94D83 /* FindIrrlicht.cmake */,
 				4CD81A4217C98C1200C94D83 /* FindOculusSDK.cmake */,
 				4CD81A4317C98C1200C94D83 /* FindOgre.cmake */,

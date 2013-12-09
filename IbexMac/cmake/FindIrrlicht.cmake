@@ -6,7 +6,6 @@
 # IRRLICHT_LIBRARIES - Link these to use Irrlicht
 # IRRLICHT_DEFINITIONS - Compiler switches required for using Irrlicht
 #
-# Copyright (c) 2006 Andreas Schneider <mail@cynapses.org>
 #
 # Redistribution and use is allowed according to the terms of the New
 # BSD license.

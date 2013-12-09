@@ -245,7 +245,7 @@ NSTimer *renderTimer;
 }
 
 static int desktopTextureIndex = 0;
-static GLuint desktopTextures[2] = {NULL, NULL};
+static GLuint desktopTextures[2] = {0, 0};
 - (void)loopScreenshot_multipleBuffers {
     static NSOpenGLContext* context = nil;
     if(context == nil)

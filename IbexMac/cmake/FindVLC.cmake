@@ -6,7 +6,6 @@
 # VLC_LIBRARIES - Link these to use VLC
 # VLC_DEFINITIONS - Compiler switches required for using VLC
 #
-# Copyright (c) 2006 Andreas Schneider <mail@cynapses.org>
 #
 # Redistribution and use is allowed according to the terms of the New
 # BSD license.
