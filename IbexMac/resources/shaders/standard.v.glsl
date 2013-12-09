@@ -9,8 +9,8 @@ layout(location = 2) in vec2 vertexUV;
 uniform mat4 MVP;
 uniform mat4 V;
 uniform mat4 M;
-//uniform vec3 LightPosition_worldspace;
 uniform mat4 DepthBiasMVP;
+uniform vec3 LightPosition_worldspace;
 
 // Output data; will be interpolated for each fragment
 out vec2 UV;
@@ -22,7 +22,7 @@ out vec4 ShadowCoord;
 
 void main()
 {
-    vec3 LightPosition_worldspace = vec3(0, 5, 5);
+    //vec3 LightPosition_worldspace = vec3(0, 5, 5);
     
     vec4 vpm4 = vec4(vertexPosition_modelspace,1);
     vec4 vnm4 = vec4(vertexNormal_modelspace,0);
@@ -40,11 +40,11 @@ void main()
 	LightDirection_cameraspace = LightPosition_cameraspace + EyeDirection_cameraspace;
 	
 	// Normal of the the vertex, in camera space
-	Normal_cameraspace = ( V * M * vnm4).xyz; // Only correct if ModelMatrix does not scale the model ! Use its inverse transpose if not.
+	Normal_cameraspace = (V * M * vnm4).xyz; // Only correct if ModelMatrix does not scale the model ! Use its inverse transpose if not.
     
     UV = vertexUV;
     gl_Position = MVP*vpm4;
     
     // Same, but with the light's view matrix
-    ShadowCoord = DepthBiasMVP * vec4(vertexPosition_modelspace,1);
+    ShadowCoord = DepthBiasMVP * vpm4; //vec4(vertexPosition_modelspace,1);
 }

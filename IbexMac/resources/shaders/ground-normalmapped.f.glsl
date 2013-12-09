@@ -53,11 +53,24 @@ void main()
         visibility = visibility*0.7+c*0.3;
         MaterialDiffuseColor = MaterialDiffuseColor*0.9+vec3(0.0,0.3,0.5)*0.1;
     }
+    
+    #define bias -0.05
+    vec2 poissonDisk[4] = vec2[](
+                                 vec2( -0.94201624, -0.39906216 ),
+                                 vec2( 0.94558609, -0.76890725 ),
+                                 vec2( -0.094184101, -0.92938870 ),
+                                 vec2( 0.34495938, 0.29387760 )
+                                 );
+    for (int i=0;i<4;i++){
+        if ( texture( shadowTexture, ShadowCoord.xyz + vec3(poissonDisk[i]/700.0,0) )  < ShadowCoord.z-bias ){
+            visibility-=0.2;
+        }
+    }
 
     // sunlight
 //    const float ambientIntensity = 0.5;    
-    float diffuseIntensity = clamp(dot(n,l),0,1);//dot(n,l));//dot(normalize(vNormal), -sunLight.vDirection));
-    color = visibility * MaterialDiffuseColor * (ambientIntensity+diffuseIntensity);
+    float diffuseIntensity = clamp(dot(n,-l),0,1);//dot(n,l));//dot(normalize(vNormal), -sunLight.vDirection));
+    color = MaterialDiffuseColor * (ambientIntensity + visibility * diffuseIntensity);
 }
 
 void main2()
@@ -146,7 +159,7 @@ void main2()
     // sunlight
 //    float ambientIntensity = 0.5;
 //    vec3 sunColor = vec3(1,1,1);
-    float diffuseIntensity = max(0.0, dot(n, -l));//dot(normalize(vNormal), -sunLight.vDirection));
+    float diffuseIntensity = max(0.0, dot(n,-l));//dot(normalize(vNormal), -sunLight.vDirection));
     color = MaterialDiffuseColor * (ambientIntensity+diffuseIntensity);
 }
 

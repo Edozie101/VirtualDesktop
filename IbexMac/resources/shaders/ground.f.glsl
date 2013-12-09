@@ -30,28 +30,111 @@ float snoise(vec2 v);
 
 void main()
 {
-    vec3 LightPosition_worldspace = vec3(0,5,5);
+    float topMix = round((abs(snoise(Position_worldspace.xz/2000.0)+0.6)/2.0));
+	// Material properties
+    vec3 MaterialDiffuseColor = mix(texture(textureIn, UV).rgb,texture(textureIn3, UV).rgb, topMix);
+    
+	// Normal of the computed fragment, in camera space
+	vec3 n = normalize( Normal_cameraspace );
+	// Direction of the light (from the fragment to the light)
+	vec3 l = normalize( LightDirection_cameraspace );
+    
+    float visibility = 1.0;
+    if(Position_worldspace.y < -7) {
+        //float c = (1-snoise(vec3(UV.xy*2.0,time)));
+        //visibility *= clamp(c*c,0,1);//Position_worldspace.xy/50.0, time/4.0)));
+        float c = abs(snoise(vec3(Position_worldspace.xz/200.0, time/4.0)));
+        c = 1.0-clamp(c, 0.0, 0.6);
+        visibility = visibility*0.7+c*0.3;
+        MaterialDiffuseColor = MaterialDiffuseColor*0.9+vec3(0.0,0.3,0.5)*0.1;
+    }
+    
+#define bias -0.05
+    vec2 poissonDisk[4] = vec2[](
+                                 vec2( -0.94201624, -0.39906216 ),
+                                 vec2( 0.94558609, -0.76890725 ),
+                                 vec2( -0.094184101, -0.92938870 ),
+                                 vec2( 0.34495938, 0.29387760 )
+                                 );
+    for (int i=0;i<4;i++){
+        if ( texture( shadowTexture, ShadowCoord.xyz + vec3(poissonDisk[i]/700.0,0) )  < ShadowCoord.z-bias ){
+            visibility-=0.2;
+        }
+    }
+    
+#define ambientIntensity 0.5f
+    float diffuseIntensity = clamp(dot(n,-l),0,1);
+    color = MaterialDiffuseColor * (ambientIntensity + visibility * diffuseIntensity);
+}
+
+
+//uniform vec3 sunColor;
+//uniform vec3 sunDirection;
+vec3 sunLight(const vec3 surfaceNormal, const vec3 eyeNormal, float shiny, float spec, vec3 diffuse){
+    vec3 sunColor = vec3(1,1,1);
+    vec3 sunDirection = vec3(0.0f,-100.0f,-500.0f);
+    
+    vec3 diffuseColor = max(dot(sunDirection, surfaceNormal),0.0)*sunColor*diffuse;
+    vec3 reflection = normalize(reflect(-sunDirection, surfaceNormal));
+    float direction = max(0.0, dot(eyeNormal, reflection));
+    vec3 specular = pow(direction, shiny)*sunColor*spec;
+    return diffuseColor + specular;
+}
+
+
+void main3()
+{
+    #define bias -0.05
+    float visibility = 1;
+    
+    vec2 poissonDisk[4] = vec2[](
+                                 vec2( -0.94201624, -0.39906216 ),
+                                 vec2( 0.94558609, -0.76890725 ),
+                                 vec2( -0.094184101, -0.92938870 ),
+                                 vec2( 0.34495938, 0.29387760 )
+                                 );
+    for (int i=0;i<4;i++){
+        if ( texture( shadowTexture, ShadowCoord.xyz + vec3(poissonDisk[i]/700.0,0) )  < ShadowCoord.z-bias ){
+            visibility-=0.2;
+        }
+    }
+    
+//    vec3 LightPosition_worldspace = vec3(0,5,5);
+    vec3 LightPosition_worldspace = vec3(0.0f,100.0f,500.0f);
+    
+    float topMix = round((abs(snoise(Position_worldspace.xz/2000.0)+0.6)/2.0));
+    vec3 MaterialDiffuseColor = mix(texture(textureIn, UV).rgb,texture(textureIn3, UV).rgb, topMix);
+    vec3 MaterialNormal = normalize(2.0f*mix(texture(textureIn2, UV).rgb,texture(textureIn4, UV).rgb, topMix)-1.0f);
+    
+	color = visibility * sunLight(MaterialNormal, EyeDirection_cameraspace, 15.0, 2.5 , MaterialDiffuseColor);//1.0);
+}
+
+void main2()
+{
+//    vec3 LightPosition_worldspace = vec3(0,5,5);
+    vec3 LightPosition_worldspace = vec3(0.0f,100.0f,500.0f);
     
     // Light emission properties
 	// You probably want to put them as uniforms
 	vec3 LightColor = vec3(1,1,1);
-	float LightPower = 100.0f;
+	float LightPower = 1000.0f;
 	
     float topMix = round((abs(snoise(Position_worldspace.xz/2000.0)+0.6)/2.0));
 	// Material properties
     vec3 MaterialDiffuseColor = mix(texture(textureIn, UV).rgb,texture(textureIn3, UV).rgb, topMix);
-    vec3 MaterialNormal = mix(texture(textureIn2, UV).rgb,texture(textureIn4, UV).rgb, topMix);
+    vec3 MaterialNormal = normalize(2.0f*mix(texture(textureIn2, UV).rgb,texture(textureIn4, UV).rgb, topMix)-1.0f);
     
 //	vec3 MaterialDiffuseColor = mix(texture(textureIn, UV).rgb,texture(textureIn3, UV).rgb, step(Position_worldspace.y, -7));
 //    vec3 MaterialNormal = mix(texture(textureIn2, UV).rgb,texture(textureIn4, UV).rgb, step(Position_worldspace.y, -6.5));
-	vec3 MaterialAmbientColor = vec3(0.75,0.75,0.75) * MaterialDiffuseColor;
+	vec3 MaterialAmbientColor = vec3(0.5,0.5,0.5) * MaterialDiffuseColor;
 	vec3 MaterialSpecularColor = vec3(0.3,0.3,0.3);
     
 	// Distance to the light
 	float distance = length( LightPosition_worldspace - Position_worldspace );
     
 	// Normal of the computed fragment, in camera space
-	vec3 n = normalize( MaterialNormal*2.0-vec3(1.0)); //Normal_cameraspace );
+//	vec3 n = normalize( MaterialNormal); //Normal_cameraspace );
+    vec3 n = normalize( Normal_cameraspace );
 	// Direction of the light (from the fragment to the light)
 	vec3 l = normalize( LightDirection_cameraspace );
 	// Cosine of the angle between the normal and the light direction,
@@ -76,17 +159,51 @@ void main()
     //    if (texture(shadowTexture, ShadowCoord.xy).x  <  ShadowCoord.z-bias) {
     //        visibility = 0.5;
     //    }
-    float visibility = texture(shadowTexture, vec3(ShadowCoord.xy, (ShadowCoord.z/ShadowCoord.w)));
+#define bias -0.05
     
-    if(Position_worldspace.y < -7) {
-        //float c = (1-snoise(vec3(UV.xy*2.0,time)));
-        //visibility *= clamp(c*c,0,1);//Position_worldspace.xy/50.0, time/4.0)));
-        float c = abs(snoise(vec3(Position_worldspace.xz/200.0, time/4.0)));
-        c = 1.0-clamp(c, 0.0, 0.6);
-        visibility = visibility*0.8+c*0.2;
-        MaterialAmbientColor = MaterialAmbientColor*0.9+vec3(0.0,0.3,0.5)*0.1;
-        MaterialDiffuseColor = MaterialDiffuseColor*0.9+vec3(0.0,0.3,0.5)*0.1;
+    float visibility = 1;//texture(shadowTexture, vec3(ShadowCoord.xy, ((ShadowCoord.z-0.0005)/ShadowCoord.w)));// * 0.6 + 0.4;
+////    float visibility = texture(shadowTexture, ShadowCoord.xyz);// * 0.6 + 0.4;
+//    if ( texture( shadowTexture, (ShadowCoord.xy/ShadowCoord.w) ).r  <  (ShadowCoord.z-bias)/ShadowCoord.w ) {
+////        if ( textureProj( shadowTexture, ShadowCoord.xyw ).z  <  (ShadowCoord.z-bias)/ShadowCoord.w ) {
+//        visibility = 0.5;
+//    }
+    
+    vec2 poissonDisk[4] = vec2[](
+                                 vec2( -0.94201624, -0.39906216 ),
+                                 vec2( 0.94558609, -0.76890725 ),
+                                 vec2( -0.094184101, -0.92938870 ),
+                                 vec2( 0.34495938, 0.29387760 )
+                                 );
+    for (int i=0;i<4;i++){
+        if ( texture( shadowTexture, ShadowCoord.xyz + vec3(poissonDisk[i]/700.0,0) )  < ShadowCoord.z-bias ){
+            visibility-=0.2;
+        }
     }
+    
+//    //  - A random sample, based on the pixel's screen location.
+//    //    No banding, but the shadow moves with the camera, which looks weird.
+//    int index = int(16.0*random(gl_FragCoord.xyy, i))%16;
+//    //  - A random sample, based on the pixel's position in world space.
+//    //    The position is rounded to the millimeter to avoid too much aliasing
+//    //int index = int(16.0*random(floor(Position_worldspace.xyz*1000.0), i))%16;
+//
+//    float dot_product = dot(seed4, vec4(12.9898,78.233,45.164,94.673));
+//    return fract(sin(dot_product) * 43758.5453);
+//    for (int i=0;i<4;i++){
+//        int index = // A random number between 0 and 15, different for each pixel (and each i !)
+//        visibility -= 0.2*(1.0-texture( shadowTexture, vec3(ShadowCoord.xy + poissonDisk[index]/700.0,  (ShadowCoord.z-bias)/ShadowCoord.w) ));
+//    }
+
+    
+//    if(Position_worldspace.y < -7) {
+//        //float c = (1-snoise(vec3(UV.xy*2.0,time)));
+//        //visibility *= clamp(c*c,0,1);//Position_worldspace.xy/50.0, time/4.0)));
+//        float c = abs(snoise(vec3(Position_worldspace.xz/200.0, time/4.0)));
+//        c = 1.0-clamp(c, 0.0, 0.6);
+//        visibility = visibility*0.8+c*0.2;
+//        MaterialAmbientColor = MaterialAmbientColor*0.9+vec3(0.0,0.3,0.5)*0.1;
+//        MaterialDiffuseColor = MaterialDiffuseColor*0.9+vec3(0.0,0.3,0.5)*0.1;
+//    }
     
     //    if(visibility < 0.1) color = vec3(1, 0, 0);
     //    else if(visibility < 0.5) color = vec3(0, 1, 0);

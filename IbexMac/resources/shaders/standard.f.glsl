@@ -23,6 +23,21 @@ uniform sampler2DShadow shadowTexture;
 
 void main()
 {
+	// Material properties
+	vec3 MaterialDiffuseColor = texture(textureIn, UV).rgb;
+
+	// Normal of the computed fragment, in camera space
+	vec3 n = normalize( Normal_cameraspace );
+	// Direction of the light (from the fragment to the light)
+	vec3 l = normalize( LightDirection_cameraspace );
+
+    #define ambientIntensity 0.5f    
+    float diffuseIntensity = clamp(dot(n,-l), 0, 1);//dot(normalize(vNormal), -sunLight.vDirection));
+    color = MaterialDiffuseColor * (ambientIntensity+diffuseIntensity);
+}
+
+void main2()
+{
     vec3 LightPosition_worldspace = vec3(0,5,5);
     
     // Light emission properties
@@ -60,21 +75,30 @@ void main()
 	float cosAlpha = clamp( dot( E,R ), 0,1 );
 	
 //    float bias = 0.005;
-//    float visibility = 1.0;
+    float visibility = 1.0;
 //    if (texture(shadowTexture, ShadowCoord.xy).x  <  ShadowCoord.z-bias) {
 //        visibility = 0.5;
 //    }
-    float visibility = texture(shadowTexture, vec3(ShadowCoord.xy, (ShadowCoord.z/ShadowCoord.w)));
+//    float visibility = 1;//texture(shadowTexture, vec3(ShadowCoord.xy, (ShadowCoord.z/ShadowCoord.w))) * 0.6 + 0.4;
+//    if ( textureProj( shadowTexture, ShadowCoord.xyw ).z  <  (ShadowCoord.z-bias)/ShadowCoord.w ) {
+//        visibility = 0.4;
+//    }
+
     
 //    if(visibility < 0.1) color = vec3(1, 0, 0);
 //    else if(visibility < 0.5) color = vec3(0, 1, 0);
 //    else color = vec3(0,0,1);
     
-	color = //vec3(visibility,visibility,visibility);
+/*	color = //vec3(visibility,visibility,visibility);
     // Ambient : simulates indirect lighting
     visibility * MaterialAmbientColor +
     // Diffuse : "color" of the object
     visibility * MaterialDiffuseColor * LightColor * LightPower * cosTheta / (distance*distance) +
     // Specular : reflective highlight, like a mirror
-    visibility * MaterialSpecularColor * LightColor * LightPower * pow(cosAlpha,5) / (distance*distance);
+    visibility * MaterialSpecularColor * LightColor * LightPower * pow(cosAlpha,5) / (distance*distance);*/
+
+
+
+float diffuseIntensity = max(0.0, dot(n, -l));//dot(normalize(vNormal), -sunLight.vDirection));
+    color = MaterialDiffuseColor * (ambientIntensity+diffuseIntensity);
 }

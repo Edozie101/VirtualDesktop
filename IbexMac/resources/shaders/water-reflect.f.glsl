@@ -15,7 +15,7 @@ float snoise(vec3 v);
 void main() {
     vec3 p = vec3(pos.xz, time);
     //vec3 reflected2 = vec3(reflected.x+(snoise(p/2.0f)+snoise(p)/5.0)*(0.0025-0.00125)/1.0,reflected.y, reflected.z+(snoise((p+5.f)/3.0f)+snoise(p*1.2)/6.0)*(0.0025-0.00125)/1.0); // reflection with 2 noise functions
-    vec3 reflected2 = vec3(reflected.x+(snoise(p/2.0f))*(0.0025-0.00125)/1.0,reflected.y, reflected.z+(snoise((p+5.f)/3.0f))*(0.0025-0.00125)/1.0);
+    vec3 reflected2 = vec3(reflected.x+(snoise(p/2.0f))*(0.0025-0.00125),reflected.y, reflected.z+(snoise((p+5.f)/3.0f))*(0.0025-0.00125));
 //    vec3 reflected2 = vec3(reflected.x+
 //                                pow(((sin(pos.x/30.0+time)+1.0)/2.0),2.0)*0.001
 //                                +pow(((sin(pos.x/17.0+time+0.1)+1.0)/2.0),2.0)*0.0001
