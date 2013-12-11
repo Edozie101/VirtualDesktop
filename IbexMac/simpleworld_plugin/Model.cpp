@@ -281,7 +281,7 @@ void Model::recursive_render(const aiScene *sc, const aiNode* nd,  const glm::ma
         glUniformMatrix4fv(ModelUniformLocations[0], 1, GL_FALSE, &MVP2[0][0]);
         glUniformMatrix4fv(ModelUniformLocations[1], 1, GL_FALSE, &V[0][0]);
         glUniformMatrix4fv(ModelUniformLocations[2], 1, GL_FALSE, &M2[0][0]);
-        glUniformMatrix4fv(ModelUniformLocations[4], 1, GL_FALSE, &(M2*V)[0][0]);
+        glUniformMatrix4fv(ModelUniformLocations[4], 1, GL_FALSE, &(V*M2)[0][0]);
         if(ModelUniformLocations[5] > -1) glUniform3f(ModelUniformLocations[5], lightInvDir.x, lightInvDir.y, lightInvDir.z);
     }
     
