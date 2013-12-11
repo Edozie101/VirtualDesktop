@@ -29,17 +29,12 @@ out vec4 ShadowCoord;
 
 void main()
 {
-    //vec3 LightPosition_worldspace = vec3(0, 5, 5);
-    
-    vec4 vpm4 = vec4(vertexPosition_modelspace,1);
-    vec4 vnm4 = vec4(vertexNormal_modelspace,0);
-
     // Position of the vertex, in worldspace : M * position
-	Position_worldspace = (M * vpm4).xyz;
+	Position_worldspace = (M * vec4(vertexPosition_modelspace,1)).xyz;
 	
 	// Vector that goes from the vertex to the camera, in camera space.
 	// In camera space, the camera is at the origin (0,0,0).
-	vec3 vertexPosition_cameraspace = ( V * M * vpm4).xyz;
+	vec3 vertexPosition_cameraspace = ( V * M * vec4(vertexPosition_modelspace,1)).xyz;
 	vec3 EyeDirection_cameraspace = vec3(0,0,0) - vertexPosition_cameraspace;
     
 	// Vector that goes from the vertex to the light, in camera space. M is ommited because it's identity.
@@ -56,12 +51,12 @@ void main()
                               vertexNormal_cameraspace
                               )); // You can use dot products instead of building this matrix and transposing it. See References for details.
     
-    LightDirection_tangentspace = TBN * LightDirection_cameraspace;
-    EyeDirection_tangentspace =  TBN * EyeDirection_cameraspace;
+    LightDirection_tangentspace = normalize(TBN * LightDirection_cameraspace);
+    EyeDirection_tangentspace =  normalize(TBN * EyeDirection_cameraspace);
     
     UV = vertexUV;
-    gl_Position = MVP*vpm4;
+    gl_Position = MVP*vec4(vertexPosition_modelspace,1);
     
     // Same, but with the light's view matrix
-    ShadowCoord = DepthBiasMVP * vpm4; //vec4(vertexPosition_modelspace,1);
+    ShadowCoord = DepthBiasMVP * vec4(vertexPosition_modelspace,1); //vec4(vertexPosition_modelspace,1);
 }

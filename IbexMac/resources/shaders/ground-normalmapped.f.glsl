@@ -5,7 +5,6 @@
 // Interpolated values from the vertex shaders
 in vec2 UV;
 in vec3 Position_worldspace;
-in vec3 EyeDirection_tangentspace;
 in vec3 LightDirection_tangentspace;
 
 in vec4  ShadowCoord;
@@ -19,30 +18,27 @@ uniform sampler2D textureIn2;
 uniform sampler2D textureIn3;
 uniform sampler2D textureIn4;
 uniform mat4 MV;
-//uniform vec3 LightPosition_worldspace;
 uniform sampler2DShadow shadowTexture;
-//uniform sampler2D shadowTexture;
 uniform float time;
 
 float snoise(vec3 v);
 float snoise(vec2 v);
 
-#define ambientIntensity 0.5f
 void main()
 {
-    float topMix = round(abs(snoise(Position_worldspace.xz/2000.0)+0.6)/2.0);
+    float topMix = clamp(round(abs(snoise(Position_worldspace.xz/2000.0)+0.6)/2.0),0,1);
 //    float topMix = (1.0f-(snoise(Position_worldspace.xz/1000.0)/2.0f+1.0f))/1.4+0.7;///2.0;
 	// Material properties
     vec3 MaterialDiffuseColor = mix(texture(textureIn, UV).rgb,texture(textureIn3, UV).rgb, topMix);
     
     // Local normal, in tangent space
-    vec3 TextureNormal_tangentspace = normalize(2.0f*mix(texture(textureIn2, UV).rgb,texture(textureIn4, UV).rgb, topMix)-1.0f);
+    //vec3 TextureNormal_tangentspace = normalize(2.0f*mix(texture(textureIn2, UV).rgb,texture(textureIn4, UV).rgb, topMix)-1.0f);
 
-	// Normal of the computed fragment, in camera space
-    vec3 n = TextureNormal_tangentspace;
+	// Normal of the computed fragment, in tangent space
+    vec3 n = (2.0f*mix(texture(textureIn2, UV).rgb,texture(textureIn4, UV).rgb, topMix)-1.0f); //TextureNormal_tangentspace;
     
 	// Direction of the light (from the fragment to the light)
-	vec3 l = normalize( LightDirection_tangentspace );
+	vec3 l = LightDirection_tangentspace;
     
     float visibility = 1.0;
     if(Position_worldspace.y < -7) {
@@ -67,100 +63,9 @@ void main()
         }
     }
 
-    // sunlight
-//    const float ambientIntensity = 0.5;    
-    float diffuseIntensity = clamp(dot(n,-l),0,1);//dot(n,l));//dot(normalize(vNormal), -sunLight.vDirection));
+    #define ambientIntensity 0.5f
+    float diffuseIntensity = clamp(dot(n,-l),0,1);
     color = MaterialDiffuseColor * (ambientIntensity + visibility * diffuseIntensity);
-}
-
-void main2()
-{
-//    vec3 LightPosition_worldspace = vec3(0,5,5);
-    vec3 LightPosition_worldspace = vec3(0.0f,100.0f,500.0f);
-    
-    // Light emission properties
-	// You probably want to put them as uniforms
-	vec3 LightColor = vec3(1,1,1);
-	float LightPower = 10.0f;
-	
-    float topMix = round((abs(snoise(Position_worldspace.xz/2000.0)+0.6)/2.0));
-	// Material properties
-    vec3 MaterialDiffuseColor = mix(texture(textureIn, UV).rgb,texture(textureIn3, UV).rgb, topMix);
-	vec3 MaterialAmbientColor = vec3(0.2,0.2,0.2) * MaterialDiffuseColor;
-	vec3 MaterialSpecularColor = vec3(0.3,0.3,0.3);
-    
-    
-    // Local normal, in tangent space
-    vec3 TextureNormal_tangentspace = normalize(2.0f*mix(texture(textureIn2, UV).rgb,texture(textureIn4, UV).rgb, topMix)-1.0f);
-    
-    
-	// Distance to the light
-	float distance = length( LightPosition_worldspace - Position_worldspace );
-    
-	// Normal of the computed fragment, in camera space
-    vec3 n = TextureNormal_tangentspace;
-    
-	// Direction of the light (from the fragment to the light)
-	vec3 l = normalize( LightDirection_tangentspace );
-	// Cosine of the angle between the normal and the light direction,
-	// clamped above 0
-	//  - light is at the vertical of the triangle -> 1
-	//  - light is perpendicular to the triangle -> 0
-	//  - light is behind the triangle -> 0
-	float cosTheta = clamp( dot( n,l ), 0,1 );
-	
-	// Eye vector (towards the camera)
-	vec3 E = normalize(EyeDirection_tangentspace);
-	// Direction in which the triangle reflects the light
-	vec3 R = reflect(-l,n);
-	// Cosine of the angle between the Eye vector and the Reflect vector,
-	// clamped to 0
-	//  - Looking into the reflection -> 1
-	//  - Looking elsewhere -> < 1
-	float cosAlpha = clamp( dot( E,R ), 0,1 );
-	
-    #define bias -0.05
-    float visibility = 1;
-//    vec2 poissonDisk[4] = vec2[](
-//                                 vec2( -0.94201624, -0.39906216 ),
-//                                 vec2( 0.94558609, -0.76890725 ),
-//                                 vec2( -0.094184101, -0.92938870 ),
-//                                 vec2( 0.34495938, 0.29387760 )
-//                                 );
-//    for (int i=0;i<4;i++){
-//        if ( texture( shadowTexture, ShadowCoord.xyz + vec3(poissonDisk[i]/700.0,0) )  < ShadowCoord.z-bias ){
-//            visibility-=0.2;
-//        }
-//    }
-    
-    if(Position_worldspace.y < -7) {
-        //float c = (1-snoise(vec3(UV.xy*2.0,time)));
-        //visibility *= clamp(c*c,0,1);//Position_worldspace.xy/50.0, time/4.0)));
-        float c = abs(snoise(vec3(Position_worldspace.xz/200.0, time/4.0)));
-        c = 1.0-clamp(c, 0.0, 0.6);
-        visibility = visibility*0.7+c*0.3;
-        MaterialAmbientColor = MaterialAmbientColor*0.9+vec3(0.0,0.3,0.5)*0.1;
-        MaterialDiffuseColor = MaterialDiffuseColor*0.9+vec3(0.0,0.3,0.5)*0.1;
-    }
-    
-    //    if(visibility < 0.1) color = vec3(1, 0, 0);
-    //    else if(visibility < 0.5) color = vec3(0, 1, 0);
-    //    else color = vec3(0,0,1);
-    
-//	color = visibility*(
-//    // Ambient : simulates indirect lighting
-//    MaterialAmbientColor +
-//    // Diffuse : "color" of the object
-//    MaterialDiffuseColor * LightColor * LightPower * cosTheta / (distance*distance) +
-//    // Specular : reflective highlight, like a mirror
-//    MaterialSpecularColor * LightColor * LightPower * pow(cosAlpha,5) / (distance*distance)
-//                          );
-    
-    // sunlight
-//    float ambientIntensity = 0.5;
-//    vec3 sunColor = vec3(1,1,1);
-    float diffuseIntensity = max(0.0, dot(n,-l));//dot(normalize(vNormal), -sunLight.vDirection));
-    color = MaterialDiffuseColor * (ambientIntensity+diffuseIntensity);
 }
 
 //////////////////////// INCLUDED /////////////////

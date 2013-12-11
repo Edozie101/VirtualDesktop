@@ -201,7 +201,7 @@ void SimpleWorldRendererPlugin::renderVideoDisplayFlat(const glm::mat4 &MVP, con
     //    glUniformMatrix4fv(IbexDisplayFlatUniformLocations[0], 1, GL_FALSE, &MVP[0][0]);
     //    glUniformMatrix4fv(IbexDisplayFlatUniformLocations[1], 1, GL_FALSE, &V[0][0]);
     //    glUniformMatrix4fv(IbexDisplayFlatUniformLocations[2], 1, GL_FALSE, &M[0][0]);
-    //    glUniformMatrix4fv(IbexDisplayFlatUniformLocations[4], 1, GL_FALSE, &(M*V)[0][0]);
+    //    glUniformMatrix4fv(IbexDisplayFlatUniformLocations[4], 1, GL_FALSE, &(V*M)[0][0]);
     //
     //    glActiveTexture(GL_TEXTURE0);
     //    glBindTexture(GL_TEXTURE_2D, desktopTexture);
@@ -318,7 +318,7 @@ void SimpleWorldRendererPlugin::renderIbexDisplayFlat(const glm::mat4 &MVP, cons
         glUniformMatrix4fv(IbexDisplayFlatUniformLocations[0], 1, GL_FALSE, &MVP[0][0]);
         glUniformMatrix4fv(IbexDisplayFlatUniformLocations[1], 1, GL_FALSE, &V[0][0]);
         glUniformMatrix4fv(IbexDisplayFlatUniformLocations[2], 1, GL_FALSE, &M[0][0]);
-        glUniformMatrix4fv(IbexDisplayFlatUniformLocations[4], 1, GL_FALSE, &(M*V)[0][0]);
+        glUniformMatrix4fv(IbexDisplayFlatUniformLocations[4], 1, GL_FALSE, &(V*M)[0][0]);
         
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, desktopTexture);
@@ -680,7 +680,7 @@ void SimpleWorldRendererPlugin::renderWater(const glm::mat4 &MVP, const glm::mat
         if(WaterUniformLocations[0] > -1) glUniformMatrix4fv(WaterUniformLocations[0], 1, GL_FALSE, &MVP[0][0]);
         if(WaterUniformLocations[1] > -1) glUniformMatrix4fv(WaterUniformLocations[1], 1, GL_FALSE, &V[0][0]);
         if(WaterUniformLocations[2] > -1) glUniformMatrix4fv(WaterUniformLocations[2], 1, GL_FALSE, &M[0][0]);
-        if(WaterUniformLocations[4] > -1) glUniformMatrix4fv(WaterUniformLocations[4], 1, GL_FALSE, &(M*V)[0][0]);
+        if(WaterUniformLocations[4] > -1) glUniformMatrix4fv(WaterUniformLocations[4], 1, GL_FALSE, &(V*M)[0][0]);
         if(WaterUniformLocations[7] > -1) glUniform1f(WaterUniformLocations[7], (float)time);//*8);
         //        if(WaterUniformLocations[8] > -1) glUniform3f(WaterUniformLocations[8], ;
         
@@ -826,7 +826,7 @@ void SimpleWorldRendererPlugin::renderGround(const glm::mat4 &MVP, const glm::ma
         if(GroundUniformLocations[0] > -1) glUniformMatrix4fv(GroundUniformLocations[0], 1, GL_FALSE, &MVP[0][0]);
         if(GroundUniformLocations[1] > -1) glUniformMatrix4fv(GroundUniformLocations[1], 1, GL_FALSE, &V[0][0]);
         if(GroundUniformLocations[2] > -1) glUniformMatrix4fv(GroundUniformLocations[2], 1, GL_FALSE, &M[0][0]);
-        if(GroundUniformLocations[4] > -1) glUniformMatrix4fv(GroundUniformLocations[4], 1, GL_FALSE, &(M*V)[0][0]);
+        if(GroundUniformLocations[4] > -1) glUniformMatrix4fv(GroundUniformLocations[4], 1, GL_FALSE, &(V*M)[0][0]);
         
         if(GroundUniformLocations[5] > -1) {
             glUniformMatrix4fv(GroundUniformLocations[5], 1, GL_FALSE, &depthMVP[0][0]);
@@ -890,12 +890,11 @@ void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &
     //    model = model*glm::rotate(0.5f*i, 0.f, 1.f, 0.f);
     
     glDisable(GL_CULL_FACE);
-    glCullFace(GL_BACK);
+    //glCullFace(GL_BACK);
     model = glm::translate(ibexDisplayModelTransform, glm::vec3(0,-getPlayerHeightAtPosition(-ibexDisplayModelTransform[3][0], -ibexDisplayModelTransform[3][2]-10),0));
     renderIbexDisplayFlat(PV*model, view, model, shadowPass, depthBiasMVP*model);
     //    renderVideoDisplayFlat(PV*model, view, model, depthBiasMVP*model);
     glEnable(GL_CULL_FACE);
-//    glCullFace(GL_BACK);
     
     if(shadowPass) {
         glEnable(GL_CULL_FACE);
@@ -923,9 +922,10 @@ void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &
         }
         glEnable(GL_CULL_FACE);
         
+        model = glm::mat4();
+        terrain.renderGround(PV*model, view, model, shadowPass, depthBiasMVP*model, time);
+        
         if(!shadowPass) {
-            model = glm::mat4();
-            terrain.renderGround(PV*model, view, model, shadowPass, depthBiasMVP*model, time);
             
             glEnable(GL_BLEND);
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -1003,7 +1003,8 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
     //    static glm::mat4 lightView = glm::lookAt(glm::vec3(0.f,0.f,0.f), glm::vec3(4.f,4.f,4.f), glm::vec3(0,1,0));
     //    static glm::mat4 lightProj = glm::ortho(-100.f, 100.f, -100.f, 100.f, -100.f, 100.f);
     
-    lightInvDir = glm::vec3(0.0f,300.0f,250.0f);//playerPosition.x, playerPosition.y, playerPosition.z);//0,1000,1000);///0.5f,2,2);
+    //lightInvDir = glm::vec3(0.0f,300.0f,250.0f);//playerPosition.x, playerPosition.y, playerPosition.z);//0,1000,1000);///0.5f,2,2);
+    lightInvDir = glm::vec3(0.0f,300.0f*4,250.0f*4);//playerPosition.x, playerPosition.y, playerPosition.z);//0,1000,1000);///0.5f,2,2);
     
     // Compute the MVP matrix from the light's point of view
     glm::mat4 lightProj = glm::ortho<float>(-4000,4000,-4000,4000,-4000,4000);//-10,10,-10,10,-10,20);

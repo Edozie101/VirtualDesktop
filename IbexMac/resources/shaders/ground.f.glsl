@@ -30,7 +30,7 @@ float snoise(vec2 v);
 
 void main()
 {
-    float topMix = round((abs(snoise(Position_worldspace.xz/2000.0)+0.6)/2.0));
+    float topMix = round(abs(snoise(Position_worldspace.xz/2000.0)+0.6)/2.0);
 	// Material properties
     vec3 MaterialDiffuseColor = mix(texture(textureIn, UV).rgb,texture(textureIn3, UV).rgb, topMix);
     

@@ -27,9 +27,9 @@ void main()
 	vec3 MaterialDiffuseColor = texture(textureIn, UV).rgb;
 
 	// Normal of the computed fragment, in camera space
-	vec3 n = normalize( Normal_cameraspace );
+	vec3 n = Normal_cameraspace;
 	// Direction of the light (from the fragment to the light)
-	vec3 l = normalize( LightDirection_cameraspace );
+	vec3 l = LightDirection_cameraspace;
 
     #define ambientIntensity 0.5f    
     float diffuseIntensity = clamp(dot(n,-l), 0, 1);//dot(normalize(vNormal), -sunLight.vDirection));

@@ -19,7 +19,7 @@
 
 #include "string.h"
 
-static void *getImageData(const char *path_, size_t &width, size_t &height, bool flip, bool isAbsolutePath) {
+static void *getImageData(const char *path_, size_t &width, size_t &height, bool flip, bool isAbsolutePath, bool disableAlpha) {
     char path[2048];
     if(isAbsolutePath) {
         strcpy(path, path_);
@@ -40,13 +40,13 @@ static void *getImageData(const char *path_, size_t &width, size_t &height, bool
     CGRect rect = CGRectMake(0, 0, width, height);
     void * myData = calloc(width * 4, height);
     CGColorSpaceRef space = CGColorSpaceCreateDeviceRGB();
-    CGContextRef myBitmapContext = CGBitmapContextCreate (myData,
-                                                          width, height, 8,
-                                                          width*4, space,
-                                                          kCGBitmapByteOrder32Host |
-                                                          kCGImageAlphaPremultipliedFirst);
+    CGContextRef myBitmapContext = CGBitmapContextCreate(myData,
+                                                         width, height, 8,
+                                                         width*4, space,
+                                                         kCGBitmapByteOrder32Host |
+                                                         ((disableAlpha) ? kCGImageAlphaNoneSkipFirst : kCGImageAlphaPremultipliedFirst));
     if(!flip) {
-    CGContextTranslateCTM(myBitmapContext, 0, height);
+        CGContextTranslateCTM(myBitmapContext, 0, height);
         CGContextScaleCTM(myBitmapContext, 1.0, -1.0);
     }
     CGContextSetBlendMode(myBitmapContext, kCGBlendModeCopy);
@@ -60,18 +60,23 @@ static void *getImageData(const char *path_, size_t &width, size_t &height, bool
     return myData;
 }
 
-extern "C" GLuint loadTexture(const char *path_, bool flip, bool isAbsolutePath) {
+extern "C" GLuint loadNormalTexture(const char *path_) {
+    return loadTexture(path_, false, false, true);
+}
+extern "C" GLuint loadTexture(const char *path_, bool flip, bool isAbsolutePath, bool disableAlpha) {
     GLuint myTextureName;
     
     size_t width = 0;
     size_t height = 0;
-    void *myData = getImageData(path_, width, height, flip, isAbsolutePath);
+    void *myData = getImageData(path_, width, height, flip, isAbsolutePath, disableAlpha);
     
     glPixelStorei(GL_UNPACK_ROW_LENGTH, (GLint)width);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     glGenTextures(1, &myTextureName);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, myTextureName);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR); // GL_LINEAR
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     
@@ -81,8 +86,7 @@ extern "C" GLuint loadTexture(const char *path_, bool flip, bool isAbsolutePath)
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, fLargest);
     //}
     
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, (GLint)width, (GLint)height,
-                 0, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, myData);
+    glTexImage2D(GL_TEXTURE_2D, 0, ((disableAlpha) ? GL_RGB8 : GL_RGBA8), (GLint)width, (GLint)height, 0, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, myData);
     glGenerateMipmap(GL_TEXTURE_2D);
     free(myData);
     glBindTexture(GL_TEXTURE_2D, 0);
@@ -114,12 +118,12 @@ extern "C" GLuint loadCubemapTextures(const char *path_[6]) {
     for(int i = 0; i < 6; ++i) {
         size_t width = 0;
         size_t height = 0;
-        void *myData = getImageData(path_[i], width, height, true, false);
+        void *myData = getImageData(path_[i], width, height, true, false, true);
         
         glPixelStorei(GL_UNPACK_ROW_LENGTH, (GLint)width);
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
         
-        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X+i, 0, GL_RGBA8, (GLint)width, (GLint)height,
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X+i, 0, GL_RGB8, (GLint)width, (GLint)height,
                      0, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, myData);
         free(myData);
     }

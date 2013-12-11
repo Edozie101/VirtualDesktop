@@ -109,10 +109,11 @@ void Terrain::loadTerrain(T *data, int width, int height) {
     index = 0;
     for(int y = 0; y < height-1; ++y) {
         for(int x = 0; x < width-1; ++x) {
-            glm::vec3 v1(0.f,float(data[y*width+x])*scaleY,0.f);
-            glm::vec3 v2 = glm::vec3(1*scaleX,data[y*width+x+1]*scaleY,0)-v1;
-            glm::vec3 v3 = glm::vec3(0,data[(y+1)*width+x]*scaleY,1*scaleZ)-v1;
-            glm::vec3 normal = glm::normalize(glm::cross(v2,v3));
+            glm::vec3 v0 = getPos(vertices, vertexBufferStep, width, height, x,y);
+            glm::vec3 v1 = getPos(vertices, vertexBufferStep,  width, height, x+1,y);
+            glm::vec3 v2 = getPos(vertices, vertexBufferStep,  width, height, x,y+1);
+            
+            glm::vec3 normal = glm::normalize(glm::cross(v1-v0,v2-v0));
             
             int i = (y*width+x) * vertexBufferStep;
             vertices[i+3] = normal.x;
@@ -154,21 +155,30 @@ void Terrain::loadTerrain(T *data, int width, int height) {
                 if(!isinf(r) && !isnan(r)) {
                     //                    std::cerr << r << std::endl;
                 } else {
-                    for(int i2 = 0; i2 < 3; ++i2) {
-                        // tangents
-                        vertices[index+i2*vertexBufferStep+8] = 0;
-                        vertices[index+i2*vertexBufferStep+9] = 0;
-                        vertices[index+i2*vertexBufferStep+10] = 0;
-                        
-                        // bitangents
-                        vertices[index+i2*vertexBufferStep+11] = 0;
-                        vertices[index+i2*vertexBufferStep+12] = 0;
-                        vertices[index+i2*vertexBufferStep+13] = 0;
-                    }
+//                    for(int i2 = 0; i2 < 3; ++i2) {
+//                        // tangents
+//                        vertices[index+i2*vertexBufferStep+8] = 0;
+//                        vertices[index+i2*vertexBufferStep+9] = 0;
+//                        vertices[index+i2*vertexBufferStep+10] = 0;
+//                        
+//                        // bitangents
+//                        vertices[index+i2*vertexBufferStep+11] = 0;
+//                        vertices[index+i2*vertexBufferStep+12] = 0;
+//                        vertices[index+i2*vertexBufferStep+13] = 0;
+//                    }
                     continue;
                 }
                 glm::vec3 tangent = glm::normalize((deltaPos1 * deltaUV2.y   - deltaPos2 * deltaUV1.y)*r);
                 glm::vec3 bitangent = glm::normalize((deltaPos2 * deltaUV1.x   - deltaPos1 * deltaUV2.x)*r);
+                
+                glm::vec3 normal = glm::normalize(glm::cross(v1-v0, v2-v0));
+                // Gram-Schmidt orthogonalize
+                tangent = glm::normalize(tangent - normal * glm::dot(normal, tangent));
+                
+                // Calculate handedness
+                if (glm::dot(glm::cross(normal, tangent), bitangent) < 0.0f){
+                    tangent = tangent * -1.0f;
+                }
                 
                 // use same value for all 3 vertices of triangle
                 // tangents
@@ -339,9 +349,9 @@ void Terrain::renderGround(const glm::mat4 &MVP, const glm::mat4 &V, const glm::
 #else
 #ifdef __APPLE__
     static const GLuint groundTexture = loadTexture("/resources/textures/grass1/grass1-diffuse.png");
-    static const GLuint groundTexture1 = loadTexture("/resources/textures/grass1/grass1-normal.png");
+    static const GLuint groundTexture1 = loadNormalTexture("/resources/textures/grass1/grass1-normal.png");
     static const GLuint groundTexture2 = loadTexture("/resources/textures/brown1/brown1-diffuse.png");
-    static const GLuint groundTexture3 = loadTexture("/resources/textures/brown1/brown1-normal.png");
+    static const GLuint groundTexture3 = loadNormalTexture("/resources/textures/brown1/brown1-normal.png");
 #else
     static float sizeX = 64;
     static float sizeY = 64;
@@ -359,10 +369,16 @@ void Terrain::renderGround(const glm::mat4 &MVP, const glm::mat4 &V, const glm::
         if(GroundUniformLocations[0] > -1) glUniformMatrix4fv(GroundUniformLocations[0], 1, GL_FALSE, &MVP[0][0]);
         if(GroundUniformLocations[1] > -1) glUniformMatrix4fv(GroundUniformLocations[1], 1, GL_FALSE, &V[0][0]);
         if(GroundUniformLocations[2] > -1) glUniformMatrix4fv(GroundUniformLocations[2], 1, GL_FALSE, &M[0][0]);
-        if(GroundUniformLocations[4] > -1) glUniformMatrix4fv(GroundUniformLocations[4], 1, GL_FALSE, &(M*V)[0][0]);
+        if(GroundUniformLocations[4] > -1) glUniformMatrix4fv(GroundUniformLocations[4], 1, GL_FALSE, &(V*M)[0][0]);
         
         if(GroundUniformLocations[5] > -1) {
             glUniformMatrix4fv(GroundUniformLocations[5], 1, GL_FALSE, &depthMVP[0][0]);
+        }
+        
+        if(GroundUniformLocations[6] > -1) {
+            glActiveTexture(GL_TEXTURE1);
+            glBindTexture(GL_TEXTURE_2D, shadowMapDepthTextureId);
+            glUniform1i(GroundUniformLocations[6], 1);
         }
         
         if(GroundUniformLocations[3] > -1) {
@@ -370,16 +386,12 @@ void Terrain::renderGround(const glm::mat4 &MVP, const glm::mat4 &V, const glm::
             glBindTexture(GL_TEXTURE_2D, groundTexture);
             glUniform1i(GroundUniformLocations[3], 0);
         }
-        if(GroundUniformLocations[6] > -1) {
-            glActiveTexture(GL_TEXTURE1);
-            glBindTexture(GL_TEXTURE_2D, shadowMapDepthTextureId);
-            glUniform1i(GroundUniformLocations[6], 1);
-        }
         if(GroundUniformLocations[7] > -1) {
             glActiveTexture(GL_TEXTURE2);
             glBindTexture(GL_TEXTURE_2D, groundTexture1);
             glUniform1i(GroundUniformLocations[7], 2);
         }
+        
         if(GroundUniformLocations[8] > -1) {
             glActiveTexture(GL_TEXTURE3);
             glBindTexture(GL_TEXTURE_2D, groundTexture2);
