@@ -13,9 +13,15 @@ float snoise(vec2 v);
 float snoise(vec3 v);
 
 void main() {
-    vec3 p = vec3(pos.xz, time);
+    vec3 p = vec3(pos.xz, time)/3.0;
     //vec3 reflected2 = vec3(reflected.x+(snoise(p/2.0f)+snoise(p)/5.0)*(0.0025-0.00125)/1.0,reflected.y, reflected.z+(snoise((p+5.f)/3.0f)+snoise(p*1.2)/6.0)*(0.0025-0.00125)/1.0); // reflection with 2 noise functions
-    vec3 reflected2 = vec3(reflected.x+(snoise(p/2.0f))*(0.0025-0.00125),reflected.y, reflected.z+(snoise((p+5.f)/3.0f))*(0.0025-0.00125));
+//    vec3 reflected2 = vec3(reflected.x+(snoise(p/2.0f))*(0.0025-0.00125),reflected.y, reflected.z+(snoise((p+5.f)/3.0f))*(0.0025-0.00125));
+    
+    float f = snoise(p)*0.00125;
+    //vec3 reflected2 = vec3(f+snoise(vec2(p.x,time/5.0))*0.0006,0,f+snoise(vec2(p.z,(time+0.1)/5.0))*0.0006);
+    //vec3 reflected2 = vec3(f,0,f);
+
+    
 //    vec3 reflected2 = vec3(reflected.x+
 //                                pow(((sin(pos.x/30.0+time)+1.0)/2.0),2.0)*0.001
 //                                +pow(((sin(pos.x/17.0+time+0.1)+1.0)/2.0),2.0)*0.0001
@@ -30,7 +36,7 @@ void main() {
                                 //(sin(pos.z/17.0+time+0.1)+cos(pos.z/6.0+time*1.3)*0.5)*0.0025);
     //
 //    vec3 reflected2 = reflected; // straight reflection
-    color = vec4(texture(textureIn, reflected2).rgb, 0.3);
+    color = vec4(texture(textureIn, vec3(reflected.x+f, reflected.y, reflected.z+f)).rgb, 0.3);
 }
 
 //////////////////////// INCLUDED /////////////////

@@ -1,74 +1,69 @@
 #version 330 core
 
-#define highp
+// Input vertex data; different for all executions of this shader
+layout(location = 0) in vec3 vertexPosition_modelspace;
+layout(location = 1) in vec3 vertexNormal_modelspace;
+layout(location = 2) in vec2 vertexUV;
+layout(location = 3) in vec3 vertexTangent_modelspace;
+layout(location = 4) in vec3 vertexBitangent_modelspace;
 
-// Interpolated values from the vertex shaders
-in vec2 UV;
-in vec3 Position_worldspace;
-in vec3 LightDirection_tangentspace;
+// Values that stay constant for the whole mesh
+uniform mat4 MVP;
+uniform mat4 V;
+uniform mat4 M;
+uniform mat4 DepthBiasMVP;
+uniform vec3 LightPosition_worldspace;
+uniform mat3 MV3x3;
 
-in vec4  ShadowCoord;
-//in float tex;
+// Output data; will be interpolated for each fragment
+out vec2 UV;
+out vec3 Position_worldspace;
 
-// Ouput data
-layout (location = 0) out vec3 color;
+out vec3 vertexNormal_cameraspace;
+out vec3 vertexTangent_cameraspace;
+out vec3 vertexBitangent_cameraspace;
 
-// Values that stay constant for the whole mesh.
-uniform sampler2D textureIn;
-uniform sampler2D textureIn2;
-uniform sampler2D textureIn3;
-uniform sampler2D textureIn4;
-uniform mat4 MV;
-uniform sampler2DShadow shadowTexture;
-uniform float time;
+out vec3 EyeDirection_tangentspace;
+out vec3 LightDirection_tangentspace;
+out vec4 ShadowCoord;
+//out float tex;
 
 float snoise(vec3 v);
 float snoise(vec2 v);
 
 void main()
 {
-    float topMix = snoise(Position_worldspace.xz/2000.0);
-//    float topMix = (1.0f-(snoise(Position_worldspace.xz/1000.0)/2.0f+1.0f))/1.4+0.7;///2.0;
-	// Material properties
-    vec3 MaterialDiffuseColor;
-    vec3 n;
-    if(topMix > -0.4) {
-        MaterialDiffuseColor = texture(textureIn, UV).rgb;
-        n = (2.0f*texture(textureIn2, UV).rgb-1.0f);
-    } else {
-        MaterialDiffuseColor = texture(textureIn3, UV).rgb;
-        n = (2.0f*texture(textureIn4, UV).rgb-1.0f);
-    }
+    // Position of the vertex, in worldspace : M * position
+	Position_worldspace = (M * vec4(vertexPosition_modelspace,1)).xyz;
+	
+	// Vector that goes from the vertex to the camera, in camera space.
+	// In camera space, the camera is at the origin (0,0,0).
+	vec3 vertexPosition_cameraspace = ( V * M * vec4(vertexPosition_modelspace,1)).xyz;
+	vec3 EyeDirection_cameraspace = vec3(0,0,0) - vertexPosition_cameraspace;
     
-	// Direction of the light (from the fragment to the light)
-	vec3 l = LightDirection_tangentspace;
+	// Vector that goes from the vertex to the light, in camera space. M is ommited because it's identity.
+	vec3 LightPosition_cameraspace = ( V * vec4(LightPosition_worldspace,1)).xyz;
+	vec3 LightDirection_cameraspace = LightPosition_cameraspace + EyeDirection_cameraspace;
     
-    float visibility = 1.0;
-    if(Position_worldspace.y < -7) {
-        //float c = (1-snoise(vec3(UV.xy*2.0,time)));
-        //visibility *= clamp(c*c,0,1);//Position_worldspace.xy/50.0, time/4.0)));
-//        float c = 1.0-clamp(abs(snoise(vec3(Position_worldspace.xz/200.0, time/4.0))),0,0.6);
-        float c = 1.0-max(abs(snoise(vec3(Position_worldspace.xz/200.0, time/4.0))),0);
-        visibility = 0.7+c*0.3;//visibility*0.7+c*0.3;
-        MaterialDiffuseColor = MaterialDiffuseColor*0.9+vec3(0.0,0.03,0.05);//vec3(0,0.3, 0.5)*0.1;
-    }
+    vertexNormal_cameraspace = MV3x3 * normalize(vertexNormal_modelspace);
+    vertexTangent_cameraspace = MV3x3 * normalize(vertexTangent_modelspace);
+    vertexBitangent_cameraspace = MV3x3 * normalize(vertexBitangent_modelspace);
     
-    #define bias -0.05
-    const vec2 poissonDisk[4] = vec2[4](
-                                 vec2( -0.94201624, -0.39906216 )/700.0,
-                                 vec2( 0.94558609, -0.76890725 )/700.0,
-                                 vec2( -0.094184101, -0.92938870 )/700.0,
-                                 vec2( 0.34495938, 0.29387760 )/700.0
-                                 );
-    for (int i=0;i<4;i++){
-        if ( texture( shadowTexture, ShadowCoord.xyz + vec3(poissonDisk[i],0) )  < ShadowCoord.z-bias ){
-            visibility-=0.2;
-        }
-    }
-
-    #define ambientIntensity 0.5f
-    float diffuseIntensity = max(dot(n,-l),0);//clamp(dot(n,-l),0,1);
-    color = MaterialDiffuseColor * (ambientIntensity + visibility * diffuseIntensity);
+    mat3 TBN = transpose(mat3(
+                              vertexTangent_cameraspace,
+                              vertexBitangent_cameraspace,
+                              vertexNormal_cameraspace
+                              )); // You can use dot products instead of building this matrix and transposing it. See References for details.
+    
+    LightDirection_tangentspace = normalize(TBN * LightDirection_cameraspace);
+    EyeDirection_tangentspace =  normalize(TBN * EyeDirection_cameraspace);
+    
+    UV = vertexUV;
+    gl_Position = MVP*vec4(vertexPosition_modelspace,1);
+    
+    // Same, but with the light's view matrix
+    ShadowCoord = DepthBiasMVP * vec4(vertexPosition_modelspace,1); //vec4(vertexPosition_modelspace,1);
+    //tex = clamp(round(abs(snoise(Position_worldspace.xz/2000.0)+0.6)/2.0),0,1);
 }
 
 //////////////////////// INCLUDED /////////////////
