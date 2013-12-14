@@ -25,7 +25,7 @@ out vec3 vertexBitangent_cameraspace;
 
 out vec3 EyeDirection_tangentspace;
 out vec3 LightDirection_tangentspace;
-out vec4 ShadowCoord;
+out vec3 ShadowCoord;
 //out float tex;
 
 float snoise(vec3 v);
@@ -62,7 +62,7 @@ void main()
     gl_Position = MVP*vec4(vertexPosition_modelspace,1);
     
     // Same, but with the light's view matrix
-    ShadowCoord = DepthBiasMVP * vec4(vertexPosition_modelspace,1); //vec4(vertexPosition_modelspace,1);
+    ShadowCoord = (DepthBiasMVP * vec4(vertexPosition_modelspace,1)).xyz; //vec4(vertexPosition_modelspace,1);
     //tex = clamp(round(abs(snoise(Position_worldspace.xz/2000.0)+0.6)/2.0),0,1);
 }
 

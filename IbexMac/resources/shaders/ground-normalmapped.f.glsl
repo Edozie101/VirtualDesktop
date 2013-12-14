@@ -7,7 +7,7 @@ in vec2 UV;
 in vec3 Position_worldspace;
 in vec3 LightDirection_tangentspace;
 
-in vec4  ShadowCoord;
+in vec3 ShadowCoord;
 //in float tex;
 
 // Ouput data
@@ -53,18 +53,9 @@ void main()
         MaterialDiffuseColor = MaterialDiffuseColor*0.9+vec3(0.0,0.03,0.05);//vec3(0,0.3, 0.5)*0.1;
     }
     
-    #define bias -0.05
-    const vec2 poissonDisk[4] = vec2[4](
-                                 vec2( -0.94201624, -0.39906216 )/700.0,
-                                 vec2( 0.94558609, -0.76890725 )/700.0,
-                                 vec2( -0.094184101, -0.92938870 )/700.0,
-                                 vec2( 0.34495938, 0.29387760 )/700.0
-                                 );
-    for (int i=0;i<4;i++){
-        if ( texture( shadowTexture, ShadowCoord.xyz + vec3(poissonDisk[i],0) )  < ShadowCoord.z-bias ){
-            visibility-=0.2;
-        }
-    }
+    // free PCF if using GL_LINEAR on shadow texture
+    visibility = texture(shadowTexture, ShadowCoord);
+    
 
     #define ambientIntensity 0.5f
     float diffuseIntensity = max(dot(n,-l),0);//clamp(dot(n,-l),0,1);

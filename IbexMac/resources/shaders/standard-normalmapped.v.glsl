@@ -58,5 +58,5 @@ void main()
     gl_Position = MVP*vec4(vertexPosition_modelspace,1);
     
     // Same, but with the light's view matrix
-    ShadowCoord = DepthBiasMVP * vec4(vertexPosition_modelspace,1); //vec4(vertexPosition_modelspace,1);
+    ShadowCoord = (DepthBiasMVP * vec4(vertexPosition_modelspace,1)).xyz; //vec4(vertexPosition_modelspace,1);
 }
