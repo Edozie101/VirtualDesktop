@@ -905,7 +905,9 @@ void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &
     if(showGround) {
         //model = glm::mat4();
         //renderGround(PV*model, view, model, shadowPass, depthBiasMVP*model, time);
-
+        model = glm::mat4();
+        terrain.renderGround(PV*model, view, model, shadowPass, depthBiasMVP*model, time);
+        
         glm::mat4 treeMat;// = glm::scale(glm::mat4(), 10.0f, 10.0f, 10.0f);
         glDisable(GL_CULL_FACE);
         srand(1982);
@@ -922,11 +924,8 @@ void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &
         }
         glEnable(GL_CULL_FACE);
         
-        model = glm::mat4();
-        terrain.renderGround(PV*model, view, model, shadowPass, depthBiasMVP*model, time);
-        
         if(!shadowPass) {
-            
+            model = glm::mat4();
             glEnable(GL_BLEND);
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
             

@@ -235,7 +235,7 @@ void Terrain::loadTerrain(T *data, int width, int height) {
     }
     
     if(useNormalMappedTextures) {
-        groundShaderProgram.loadShaderProgram(mResourcePath, "/resources/shaders/standard-normalmapped.v.glsl", "/resources/shaders/ground-normalmapped.f.glsl");
+        groundShaderProgram.loadShaderProgram(mResourcePath, "/resources/shaders/ground-normalmapped.v.glsl", "/resources/shaders/ground-normalmapped.f.glsl");
     } else {
         groundShaderProgram.loadShaderProgram(mResourcePath, "/resources/shaders/standard.v.glsl", "/resources/shaders/ground.f.glsl");
     }
