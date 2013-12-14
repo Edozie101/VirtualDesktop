@@ -284,6 +284,8 @@ int setup_buffers() {
   glEnableVertexAttribArray(a_texCoord);
   glVertexAttribPointer(a_texCoord, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*7, (GLvoid*) (sizeof(GLfloat) * 4));
     
+    
+  glGenVertexArrays(1,&vaoBoth);
   glBindVertexArray(vaoBoth);
 
   glGenBuffers(1, &_vertexBufferBoth);
