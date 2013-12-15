@@ -910,14 +910,31 @@ void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &
         
         glm::mat4 treeMat;// = glm::scale(glm::mat4(), 10.0f, 10.0f, 10.0f);
         glDisable(GL_CULL_FACE);
-        srand(1982);
-        for(int i = 0; i < 250; ++i) {
+        
+        
+        static std::list<glm::vec2> treePositions;
+        std::list<glm::vec2> renderedTreePositions;
+        static bool initedTreePositions = false;
+        if(!initedTreePositions) {
+            initedTreePositions = true;
+            srand(1982);
+            for(int i = 0; i < 250; ++i) {
+                float x = rand()%6000-3000;
+                float z = rand()%6000-3000;
+                float height = getPlayerHeightAtPosition(x, z);
+                if(height >= -20) continue;
+                treePositions.push_back(glm::vec2(x,z));
+            }
+        }
+        for(const glm::vec2 &p : treePositions) {
+            float height = getPlayerHeightAtPosition(p.x, p.y);
             
-            int x = rand()%6000-3000;
-            int z = rand()%6000-3000;
-            float height = getPlayerHeightAtPosition(x, z);
-            if(height >= -20) continue;
-            model = glm::translate(treeMat, glm::vec3(-x,-height-20.0f,-z));
+            glm::vec4 position(-p.x,-height-20.0f,-p.y,1);
+            glm::vec4 viewablePosition = view * position;
+            
+            if(viewablePosition.z > 0) continue;
+            
+            model = glm::translate(treeMat, glm::vec3(position));
             model = glm::scale(model, 40.0f, 40.0f, 40.0f);
             treeModel.renderScene(standardShaderProgram.shader.program, PV*model, view, model, shadowPass, depthBiasMVP*model);
             //                std::cerr << x << " " << z << std::endl;
