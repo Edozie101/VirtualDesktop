@@ -13,7 +13,7 @@
 extern OVR::Ptr<OVR::DeviceManager> pManager;
 extern OVR::Ptr<OVR::HMDDevice> pHMD;
 extern OVR::Ptr<OVR::SensorDevice> pSensor;
-extern OVR::SensorFusion FusionResult;
+extern OVR::SensorFusion *pFusionResult;
 extern OVR::HMDInfo Info;
 extern bool InfoLoaded;
 extern bool riftConnected;
