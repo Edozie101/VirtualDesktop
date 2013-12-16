@@ -28,6 +28,8 @@
 #include "guicon.h"
 #include <crtdbg.h>
 
+#include "oculus/Rift.h"
+
 #define MAX_LOADSTRING 100
 
 // Global Variables:
@@ -37,48 +39,8 @@ TCHAR szWindowClass[MAX_LOADSTRING];			// the main window class name
 
 #include <stdio.h>
 
-#ifdef __APPLE__
-
-#include "GL/glew.h"
-#include <OpenGL/gl.h>
-#include <OpenGL/glu.h>
-#include <OpenGL/glext.h>
-#include <GLUT/glut.h>
-
 typedef unsigned long Window;
 typedef unsigned long GLXContext;
-
-#else
-#ifdef _WIN32
-
-#include "video/VLCVideoPlayer.h"
-
-#include "GL/glew.h"
-#include <GL/gl.h>
-#include <GL/glu.h>
-//#include <GL/glext.h>
-#include <GL/glut.h>
-#include <GL/freeglut.h>
-
-#include "ibex_win_utils.h"
-#include "opengl_helpers.h"
-
-typedef unsigned long Window;
-typedef unsigned long GLXContext;
-
-#else
-
-#include <GL/glew.h>
-#include <GL/glxew.h>
-#include <GL/gl.h>
-#include <GL/glx.h>
-#include <GL/glext.h>
-#include <GL/glxext.h>
-#include <GL/glut.h>
-#include <GL/glu.h>
-
-#endif
-#endif
 
 #include "math_3d.h"
 
@@ -86,15 +48,6 @@ typedef unsigned long GLXContext;
 #include "RendererPlugin.h"
 
 #include "distortions.h"
-#include "OVR.h"
-
-OVR::Ptr<OVR::DeviceManager>	pManager;
-OVR::Ptr<OVR::HMDDevice>		pHMD;
-OVR::Ptr<OVR::SensorDevice>	pSensor;
-OVR::SensorFusion		FusionResult;
-OVR::HMDInfo				Info;
-bool				InfoLoaded = false;
-bool				riftConnected = false;
 
 bool modifiedDesktop(false);
 GLuint VBO(0);
@@ -105,20 +58,20 @@ Ibex::Ibex *ibex = 0;
 static inline void processSpecialKey(int key, int down) {
 	if(showDialog) ibex->renderer->window.processSpecialKey(key, down);
 	else {
-		switch(key) {
-        case GLUT_KEY_UP:
-			walkForward = 1 * down;
-            break;
-        case GLUT_KEY_DOWN:
-            walkForward = -1 * down;
-            break;
-		case GLUT_KEY_RIGHT:
-            strafeRight = 1 * down;
-            break;
-		case GLUT_KEY_LEFT:
-            strafeRight = -1 * down;
-            break;
-		}
+		//switch(key) {
+  //      case GLUT_KEY_UP:
+		//	walkForward = 1 * down;
+  //          break;
+  //      case GLUT_KEY_DOWN:
+  //          walkForward = -1 * down;
+  //          break;
+		//case GLUT_KEY_RIGHT:
+  //          strafeRight = 1 * down;
+  //          break;
+		//case GLUT_KEY_LEFT:
+  //          strafeRight = -1 * down;
+  //          break;
+		//}
 	}
 }
 static void processSpecialKeyDown(int key, int x, int y) {
@@ -127,7 +80,15 @@ static void processSpecialKeyDown(int key, int x, int y) {
 static void processSpecialKeyUp(int key, int x, int y) {
 	processSpecialKey(key, 0);
 }
-static inline void Keyboard(unsigned char key, int down) {
+
+static inline void Keyboard(GLFWwindow* window, int key, int scancode, int action, int mods) {//int key, int action) {
+	int down = action != GLFW_RELEASE; //(action == GLFW_PRESS || action == GLFW_REPEAT);
+	//if (key == GLFW_KEY_ESC && action == GLFW_PRESS)
+ //   quit_the_program = 1;
+ // else if (key == 'A' and action == GLFW_PRESS)
+ //   printf("A was pressed");
+
+
 	int processed = 0;
 	if(showDialog) {
 		processed = ibex->renderer->window.processKey(key, down);
@@ -135,6 +96,13 @@ static inline void Keyboard(unsigned char key, int down) {
 	if(!processed) {
 		switch (key)
 		{
+		case GLFW_KEY_LEFT_SHIFT:
+		case GLFW_KEY_RIGHT_SHIFT:
+			running = down;
+			break;
+		case GLFW_KEY_SPACE:
+			jump = down;
+			break;
 		case 'w':
 		case 'W':
 			walkForward = 1*down;
@@ -161,10 +129,11 @@ static inline void Keyboard(unsigned char key, int down) {
 		case 'Q':
 		case 'q':
 			if(down) {
-				if(glutGetModifiers() == GLUT_ACTIVE_CTRL) {
-					exit(0); 
-					break; 
-				}
+				////glfwGetKey(glfwWindow, GLFW_KEY_LEFT_CONTROL)
+				//if(glutGetModifiers() == GLFW_KEY_LEFT_CONTROL) {
+				//	exit(0); 
+				//	break; 
+				//}
 				displayShape = (displayShape == FlatDisplay) ? SphericalDisplay : FlatDisplay;
 			}
 			break;
@@ -202,21 +171,22 @@ static inline void Keyboard(unsigned char key, int down) {
 		}
 	}
 }
-static void KeyboardDown(unsigned char key, int x, int y)
-{
-	Keyboard(key, 1);
-}
-static void KeyboardUp(unsigned char key, int x, int y)
-{
-	Keyboard(key, 0);
-}
+//static void KeyboardDown(unsigned char key, int x, int y)
+//{
+//	Keyboard(key, 1);
+//}
+//static void KeyboardUp(unsigned char key, int x, int y)
+//{
+//	Keyboard(key, 0);
+//}
 
-static inline void MouseMoved(int x, int y) {
+static inline void cursor_callback(GLFWwindow *window, double x, double y)
+{
 	if(!controlDesktop) {
 		relativeMouseX = x-500;
 		relativeMouseY = y-500;
 	}
-//    NSLog(@"%f, %f", relativeMouseX, relativeMouseY);
+    //std::cerr << relativeMouseX << ", " << relativeMouseY << std::endl;
 }
 
 static inline void getMouseCursor(HDC hdcScreen)
@@ -395,7 +365,7 @@ static inline int CaptureAnImage(HWND hWnd)
 			used = true;
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, bmpScreen.bmWidth, bmpScreen.bmHeight, 0,
                GL_BGR, GL_UNSIGNED_BYTE, lpbitmap);
-			glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_FALSE);
+			//glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_FALSE);
 		}
 		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
 		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
@@ -435,20 +405,20 @@ static void loopScreenshot() {
 		getScreenshot();
 
 #ifdef _DEBUG
-		static double timeprev = glutGet(GLUT_ELAPSED_TIME);
-		const double time = glutGet(GLUT_ELAPSED_TIME);
-		timeprev = time;
+		//static double timeprev = glutGet(GLUT_ELAPSED_TIME);
+		//const double time = glutGet(GLUT_ELAPSED_TIME);
+		//timeprev = time;
 
-		static double timebase = glutGet(GLUT_ELAPSED_TIME);
-		static double frame = 0;
-		++frame;
-		static char fpsString[64];
-		if (time - timebase >= 5000.0) {
-			sprintf(fpsString,"FPS:%4.2f", frame*5000.0/(time-timebase));
-			std::cerr << "Capture " << fpsString << std::endl;
-			timebase = time;
-			frame = 0;
-		}
+		//static double timebase = glutGet(GLUT_ELAPSED_TIME);
+		//static double frame = 0;
+		//++frame;
+		//static char fpsString[64];
+		//if (time - timebase >= 5000.0) {
+		//	sprintf(fpsString,"FPS:%4.2f", frame*5000.0/(time-timebase));
+		//	std::cerr << "Capture " << fpsString << std::endl;
+		//	timebase = time;
+		//	frame = 0;
+		//}
 #endif
 	}
 }
@@ -478,35 +448,35 @@ static void playCamera() {
 static void RenderSceneCB()
 {
 	screenshotCondition.notify_all();
-	static double timeprev = glutGet(GLUT_ELAPSED_TIME);
-	double time = glutGet(GLUT_ELAPSED_TIME);
-	double timeDiff = (time - timeprev)/1000.0;
+	static double timeprev = 0;//glutGet(GLUT_ELAPSED_TIME);
+	double time = 0;//glutGet(GLUT_ELAPSED_TIME);
+	double timeDiff = 0.033;//(time - timeprev)/1000.0;
 	timeprev = time;
 
 #ifdef _DEBUG
-	static double timebase = glutGet(GLUT_ELAPSED_TIME);
-	static double frame = 0;
-	++frame;
-	static char fpsString[64];
-	if (time - timebase >= 5000.0) {
-		sprintf(fpsString,"FPS:%4.2f", frame*5000.0/(time-timebase));
-		std::cerr << fpsString << std::endl;
-		timebase = time;
-		frame = 0;
-	}
+	//static double timebase = glutGet(GLUT_ELAPSED_TIME);
+	//static double frame = 0;
+	//++frame;
+	//static char fpsString[64];
+	//if (time - timebase >= 5000.0) {
+	//	sprintf(fpsString,"FPS:%4.2f", frame*5000.0/(time-timebase));
+	//	std::cerr << fpsString << std::endl;
+	//	timebase = time;
+	//	frame = 0;
+	//}
 #endif
 
 	if(modifiedDesktop) {
 		modifiedDesktop = false;
-		if(controlDesktop) {
-			glutSetCursor(GLUT_CURSOR_INHERIT);
-		} else {
-			glutSetCursor(GLUT_CURSOR_NONE);
-		}
+		//if(controlDesktop) {
+		//	glutSetCursor(GLUT_CURSOR_INHERIT);
+		//} else {
+		//	glutSetCursor(GLUT_CURSOR_NONE);
+		//}
 	}
 
 	if(!controlDesktop) {
-		glutWarpPointer(500, 500);
+		//glutWarpPointer(500, 500);
 	}
 
 	// Add your drawing codes here
@@ -549,8 +519,8 @@ static void RenderSceneCB()
     ibex->render(timeDiff);
 	//checkForErrors();
 
-	glutSwapBuffers();
-	glutPostRedisplay();
+	//glutSwapBuffers();
+	//glutPostRedisplay();
 
 	//screenshotCondition.notify_all();
 }
@@ -561,15 +531,15 @@ void ReshapeFunc(int width, int height) {
 
 static void InitializeGlutCallbacks()
 {
-	glutWarpPointer(500, 500);
+	//glutWarpPointer(500, 500);
 
-    glutDisplayFunc(RenderSceneCB);
-	glutKeyboardFunc (KeyboardDown);
-	glutKeyboardUpFunc (KeyboardUp);
-	glutSpecialFunc(processSpecialKeyDown);
-	glutSpecialUpFunc(processSpecialKeyUp);
-	glutPassiveMotionFunc (MouseMoved);
-	glutReshapeFunc(ReshapeFunc);
+ //   glutDisplayFunc(RenderSceneCB);
+	//glutKeyboardFunc (KeyboardDown);
+	//glutKeyboardUpFunc (KeyboardUp);
+	//glutSpecialFunc(processSpecialKeyDown);
+	//glutSpecialUpFunc(processSpecialKeyUp);
+	//glutPassiveMotionFunc (MouseMoved);
+	//glutReshapeFunc(ReshapeFunc);
 }
 
 static HWND hwnd;
@@ -605,129 +575,68 @@ static void globalHotkeyListener() {
 
 
 
-static int riftX = 0;
-static int riftY = 0;
-static int riftResolutionX = 0;
-static int riftResolutionY = 0;
-BOOL CALLBACK MonitorEnumProc(
-  _In_  HMONITOR hMonitor,
-  _In_  HDC hdcMonitor,
-  _In_  LPRECT lprcMonitor,
-  _In_  LPARAM dwData
-) {
-	MONITORINFOEX lpmi;
-	MONITORINFO l;
-	lpmi.cbSize = sizeof(MONITORINFOEX);
-	char name[32];
-	DISPLAY_DEVICE d;
-	
-	if(GetMonitorInfo(hMonitor, &lpmi)) {
-		
-		//strncpy(name, (const char*)lpmi.szDevice, 32);
-		//if(strstr(name, "Rift") != NULL) {
-		if( ((lpmi.rcMonitor.right-lpmi.rcMonitor.left) == riftResolutionX) &&
-					((lpmi.rcMonitor.bottom-lpmi.rcMonitor.top) == riftResolutionY)) {
-			riftX = lpmi.rcMonitor.left;
-			riftY = lpmi.rcMonitor.top;
-		}
-	}
-	return true;
-}
+//static int riftX = 0;
+//static int riftY = 0;
+//static int riftResolutionX = 0;
+//static int riftResolutionY = 0;
 
-static void getRiftDisplay() {
-	if(InfoLoaded) {
-		EnumDisplayMonitors(NULL, NULL, MonitorEnumProc, 0);
-		//char name[32];
-		//DISPLAY_DEVICE d;
-		//d.cb = sizeof(DISPLAY_DEVICE);
-		//int i = 0;
-		//while(EnumDisplayDevices(NULL, i++, &d, NULL)) {
-		//	int i2 = 0;
-		//	d.cb = sizeof(DISPLAY_DEVICE);
-		//	DISPLAY_DEVICE ddMon;
-		//	ZeroMemory(&ddMon, sizeof(ddMon));
-		//	ddMon.cb = sizeof(ddMon);
-		//	DWORD devMon = 0;
-		//	while(EnumDisplayDevices(d.DeviceName, i2++, &ddMon, NULL)) {
-		//		MONITORINFOEX mInfo;
-		//		mInfo.cbSize = sizeof(MONITORINFOEX);
-		//		GetMonitorInfo(ddMon.,&mInfo);
-		//		if( ((mInfo.rcMonitor.right-mInfo.rcMonitor.left) == riftResolutionX) &&
-		//			((mInfo.rcMonitor.top-mInfo.rcMonitor.bottom) == riftResolutionX)) {
-		//		}
-
-		//		d.cb = sizeof(DISPLAY_DEVICE);
-		//		if(strstr((const char*)ddMon.DeviceString, "Rift") != NULL) {
-		//			return;
-		//			//riftX = lpmi.rcMonitor.left;
-		//			//riftY = lpmi.rcMonitor.top;
-		//		}
-		//		devMon++;
-
-		//		ZeroMemory(&ddMon, sizeof(ddMon));
-		//		ddMon.cb = sizeof(ddMon);
-		//	}
-		//	d.cb = sizeof(DISPLAY_DEVICE);
-		//}
-	}
-}
-static void initRift() {
-	OVR::System::Init(OVR::Log::ConfigureDefaultLog(OVR::LogMask_All));
-
-	pManager = *OVR::DeviceManager::Create();
-
-	//pManager->SetMessageHandler(this);
-
-	pHMD = *pManager->EnumerateDevices<OVR::HMDDevice>().CreateDevice();
-
-	if (pHMD)
-    {
-		pSensor = *pHMD->GetSensor();
-
-        InfoLoaded = pHMD->GetDeviceInfo(&Info);
-
-		strncpy(Info.DisplayDeviceName, RiftMonitorName, 32);
-
-		RiftDisplayId = Info.DisplayId;
-
-		EyeDistance = Info.InterpupillaryDistance;
-		DistortionK[0] = Info.DistortionK[0];
-		DistortionK[1] = Info.DistortionK[1];
-		DistortionK[2] = Info.DistortionK[2];
-		DistortionK[3] = Info.DistortionK[3];
-	}
-	else
-	{
-		pSensor = *pManager->EnumerateDevices<OVR::SensorDevice>().CreateDevice();
-	}
-
-	if (pSensor)
-	{
-	   FusionResult.AttachToSensor(pSensor);
-	   FusionResult.SetPredictionEnabled(true);
-	   float motionPred = FusionResult.GetPredictionDelta(); // adjust in 0.01 increments
-	   if(motionPred < 0) motionPred = 0;
-	   FusionResult.SetPrediction(motionPred);
-
-	   if(InfoLoaded) {
-		   riftConnected = true;
-
-		   riftX = Info.DesktopX;
-		   riftY = Info.DesktopY;
-
-		   riftResolutionX = Info.HResolution;
-		   riftResolutionY = Info.VResolution;
-	   }
-	}
-
-	getRiftDisplay();
-}
-static void cleanUpRift() {
-	pSensor.Clear();
-	pManager.Clear();
-
-	OVR::System::Destroy();
-}
+//static void initRift() {
+//	OVR::System::Init(OVR::Log::ConfigureDefaultLog(OVR::LogMask_All));
+//
+//	pManager = *OVR::DeviceManager::Create();
+//
+//	//pManager->SetMessageHandler(this);
+//
+//	pHMD = *pManager->EnumerateDevices<OVR::HMDDevice>().CreateDevice();
+//
+//	if (pHMD)
+//    {
+//		pSensor = *pHMD->GetSensor();
+//
+//        InfoLoaded = pHMD->GetDeviceInfo(&Info);
+//
+//		strncpy(Info.DisplayDeviceName, RiftMonitorName, 32);
+//
+//		RiftDisplayId = Info.DisplayId;
+//
+//		EyeDistance = Info.InterpupillaryDistance;
+//		DistortionK[0] = Info.DistortionK[0];
+//		DistortionK[1] = Info.DistortionK[1];
+//		DistortionK[2] = Info.DistortionK[2];
+//		DistortionK[3] = Info.DistortionK[3];
+//	}
+//	else
+//	{
+//		pSensor = *pManager->EnumerateDevices<OVR::SensorDevice>().CreateDevice();
+//	}
+//
+//	if (pSensor)
+//	{
+//	   FusionResult.AttachToSensor(pSensor);
+//	   FusionResult.SetPredictionEnabled(true);
+//	   float motionPred = FusionResult.GetPredictionDelta(); // adjust in 0.01 increments
+//	   if(motionPred < 0) motionPred = 0;
+//	   FusionResult.SetPrediction(motionPred);
+//
+//	   if(InfoLoaded) {
+//		   riftConnected = true;
+//
+//		   riftX = Info.DesktopX;
+//		   riftY = Info.DesktopY;
+//
+//		   riftResolutionX = Info.HResolution;
+//		   riftResolutionY = Info.VResolution;
+//	   }
+//	}
+//
+//	getRiftDisplay();
+//}
+//static void cleanUpRift() {
+//	pSensor.Clear();
+//	pManager.Clear();
+//
+//	OVR::System::Destroy();
+//}
 
 // Get the horizontal and vertical screen sizes in pixel
 static void GetDesktopResolution(int& horizontal, int& vertical)
@@ -793,6 +702,19 @@ void restoreCompositing() {
 }
 /////////////////
 
+
+
+static void error_callback(int error, const char* description)
+{
+    fputs(description, stderr);
+}
+static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+        glfwSetWindowShouldClose(window, GL_TRUE);
+}
+
+
 static void exiting() {
 	captureDesktop = false;
 	captureInput = false;
@@ -815,9 +737,6 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	int mainScreenHorizontal = 0;
 	int mainScreenVertical = 0;
 	GetDesktopResolution(mainScreenHorizontal, mainScreenVertical);
-
-	initRift();
-	FusionResult.Reset();
 
 	width = 1280;
 	height = 800;
@@ -843,24 +762,58 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	GetCurrentDirectory(1023, cwd);
 	wcstombs_s(&len, mResourcePath, cwd, 1023);
 
-	int argc = 0;
-	char **argv = 0;
-    glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGB|GLUT_FULL_SCREEN);
-    glutInitWindowSize(width, height);
-    glutInitWindowPosition(0, 0);
-	glutInitWindowPosition(riftX, riftY);
-    glutCreateWindow("Ibex");
+	//int argc = 0;
+	//char **argv = 0;
+ //   glutInit(&argc, argv);
+	//glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGB|GLUT_FULL_SCREEN);
+ //   glutInitWindowSize(width, height);
+ //   glutInitWindowPosition(0, 0);
+	//glutInitWindowPosition(riftX, riftY);
+ //   glutCreateWindow("Ibex");
+
+	GLFWwindow* glfwWindow;
+	glfwSetErrorCallback(error_callback);
+	if (!glfwInit())
+        exit(EXIT_FAILURE);
+
+	
+	int monitorCount = 0;
+	GLFWmonitor* monitor = NULL;//glfwGetPrimaryMonitor();
+	GLFWmonitor** monitors = glfwGetMonitors	(&monitorCount);
+	for(int i = 0; i < monitorCount; ++i) {
+		if(strcmp(glfwGetMonitorName(monitors[i]), /*RiftMonitorName*/"RiftDK") == 0) {
+			monitor = monitors[i];
+			break;
+		}
+	}
+
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindow = glfwCreateWindow(width, height, "Ibex", monitor, NULL);
+	if (!glfwWindow)
+    {
+        glfwTerminate();
+        exit(EXIT_FAILURE);
+    }
+	glfwMakeContextCurrent(glfwWindow);
+    glfwSetKeyCallback(glfwWindow, Keyboard);
+	glfwSetCursorPosCallback(glfwWindow, cursor_callback);
+
+	initRift();
+	//FusionResult.Reset();
 
     InitializeGlutCallbacks();
 
-    // Must be done after glut is initialized!
+    // Must be done after GLFW is initialized!
+	// Initialize GLEW
+	glewExperimental=true; // Needed in core profile
     GLenum res = glewInit();
     if (res != GLEW_OK) {
       fprintf(stderr, "Error: '%s'\n", glewGetErrorString(res));
       return 1;
     }
-
 
 	hwnd = GetActiveWindow();
 	hdc = GetDC(hwnd);
@@ -878,7 +831,17 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	std::thread hotkeyThread(globalHotkeyListener);
 
 	disableCompositing();
-    glutMainLoop();
+    // main loop
+	while (!glfwWindowShouldClose(glfwWindow))
+    {
+		RenderSceneCB();
+        glfwSwapBuffers(glfwWindow);
+        glfwPollEvents();
+		glfwSetCursorPos(glfwWindow, 500,500);
+    }
+    glfwDestroyWindow(glfwWindow);
+    glfwTerminate();
+
 	restoreCompositing();
 
 	cleanUpRift();

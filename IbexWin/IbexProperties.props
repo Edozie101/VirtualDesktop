@@ -21,16 +21,28 @@
     <VLC_INCLUDES>C:\Program Files (x86)\VideoLAN\VLC\sdk\include</VLC_INCLUDES>
     <VLC_LIB_DIR>C:\Program Files (x86)\VideoLAN\VLC</VLC_LIB_DIR>
     <VLC_LIBS>libvlc.lib</VLC_LIBS>
+    <ASSIMP_ROOT>C:\Program Files\Assimp</ASSIMP_ROOT>
+    <GLM_INCLUDES>..\..\glm-0.9.4.6\glm</GLM_INCLUDES>
+    <ASSIMP_INCLUDES>$(ASSIMP_ROOT)\include</ASSIMP_INCLUDES>
+    <ASSIMP_LIB_DIR>$(ASSIMP_ROOT)\lib\x86</ASSIMP_LIB_DIR>
+    <ASSIMP_LIBS>assimp.lib</ASSIMP_LIBS>
+    <ASSIMP_DLL_DIR>$(ASSIMP_ROOT)\bin\x86</ASSIMP_DLL_DIR>
+    <GL_GLEXT_PROTOTYPES>1</GL_GLEXT_PROTOTYPES>
+    <GLFW_ROOT>..\..\glfw-3.0.3.bin.WIN32</GLFW_ROOT>
+    <GLFW_LIB_DIR>$(GLFW_ROOT)\lib-msvc110</GLFW_LIB_DIR>
+    <GLFW_INCLUDES>$(GLFW_ROOT)\include</GLFW_INCLUDES>
+    <GLFW_LIBS>glfw3.lib</GLFW_LIBS>
+    <EXTRA_IBEX_LIBS>opengl32.lib;glu32.lib;Shlwapi.lib;$(GLFW_LIBS)</EXTRA_IBEX_LIBS>
   </PropertyGroup>
   <PropertyGroup />
   <ItemDefinitionGroup>
     <ClCompile>
-      <PreprocessorDefinitions>_USE_SIXENSE=$(USE_SIXENSE);%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(OPENCV_INCLUDES);$(VLC_INCLUDES);$(SIXENSE_INCLUDES);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_USE_SIXENSE=$(USE_SIXENSE);GL_GLEXT_PROTOTYPES=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ASSIMP_INCLUDES);$(GLM_INCLUDES);$(OPENCV_INCLUDES);$(VLC_INCLUDES);$(SIXENSE_INCLUDES);$(GLFW_INCLUDES);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(OPENCV_LIB_DIR);$(VLC_LIB_DIR);$(SIXENSE_LIB_DIR);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>$(OPENCV_LIBS);$(SIXENSE_LIBS);$(VLC_LIBS);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(GLFW_LIB_DIR);$(ASSIMP_LIB_DIR);$(OPENCV_LIB_DIR);$(VLC_LIB_DIR);$(SIXENSE_LIB_DIR);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>$(OPENCV_LIBS);$(SIXENSE_LIBS);$(VLC_LIBS);$(ASSIMP_LIBS);$(EXTRA_IBEX_LIBS);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /y $(ProjectDir)*.dll $(OutDir)
@@ -39,7 +51,9 @@ xcopy /iys $(ProjectDir)resources $(OutDir)resources
 xcopy /y $(SIXENSE_DLL_DIR)\*.dll $(OutDir)
 xcopy /y $(OPENCV_DLL_DIR)\*$(OPENCV_VERSION).dll $(OutDir)
 xcopy /y "$(VLC_LIB_DIR)\*.dll" "$(OutDir)"
-xcopy /ey "$(VLC_LIB_DIR)\plugins" "$(OutDir)\plugins\"</Command>
+xcopy /ey "$(VLC_LIB_DIR)\plugins" "$(OutDir)\plugins\"
+xcopy /y "$(ASSIMP_DLL_DIR)\*.dll" "$(OutDir)"
+xcopy /y "$(GLFW_LIB_DIR)\*.dll" "$(OutDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -117,6 +131,54 @@ xcopy /ey "$(VLC_LIB_DIR)\plugins" "$(OutDir)\plugins\"</Command>
     </BuildMacro>
     <BuildMacro Include="VLC_LIBS">
       <Value>$(VLC_LIBS)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="ASSIMP_ROOT">
+      <Value>$(ASSIMP_ROOT)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="GLM_INCLUDES">
+      <Value>$(GLM_INCLUDES)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="ASSIMP_INCLUDES">
+      <Value>$(ASSIMP_INCLUDES)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="ASSIMP_LIB_DIR">
+      <Value>$(ASSIMP_LIB_DIR)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="ASSIMP_LIBS">
+      <Value>$(ASSIMP_LIBS)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="ASSIMP_DLL_DIR">
+      <Value>$(ASSIMP_DLL_DIR)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="GL_GLEXT_PROTOTYPES">
+      <Value>$(GL_GLEXT_PROTOTYPES)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="GLFW_ROOT">
+      <Value>$(GLFW_ROOT)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="GLFW_LIB_DIR">
+      <Value>$(GLFW_LIB_DIR)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="GLFW_INCLUDES">
+      <Value>$(GLFW_INCLUDES)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="GLFW_LIBS">
+      <Value>$(GLFW_LIBS)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="EXTRA_IBEX_LIBS">
+      <Value>$(EXTRA_IBEX_LIBS)</Value>
       <EnvironmentVariable>true</EnvironmentVariable>
     </BuildMacro>
   </ItemGroup>

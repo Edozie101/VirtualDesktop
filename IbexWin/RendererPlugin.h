@@ -24,6 +24,8 @@ public:
 
   // initialization after OpenGL set up
   virtual void init();
+    
+  virtual void reset();
 
   // what is the WindowHandle or XID of the renderer plugin, return 0 for default
   virtual Window getWindowID();
@@ -41,13 +43,15 @@ public:
   virtual void move(int forward_, int right_, bool jump_, double relativeMouseX_, double relativeMouseY_) {}
 
   // single step in engine/world simulation
-  virtual void step(const Desktop3DLocation &loc_, double timeDiff_) {}
+    virtual void step(const Desktop3DLocation &loc_, double timeDiff_, const double &time_) = 0;
 
   // do we need to swap the GLX buffer for double-buffering at the end of a render?
   virtual bool needsSwapBuffers() { return false; }
     
+    virtual void bringUpIbexDisplay() {}
+    
 public:
-  Ibex::Window window;
+    ::Ibex::Window window;
 };
 
 #endif /* RENDERERPLUGIN_H_ */

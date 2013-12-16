@@ -1,19 +1,16 @@
-#version 120
+#version 330
 
 #define highp
 
-//precision highp float;
+uniform sampler2D Texture0;
+uniform sampler2D lensTexture1;
+uniform sampler2D lensTexture2;
 
-uniform sampler2D texture;
-uniform sampler2D lensTexture;
+in vec2 oTexCoord;
 
-varying vec2 texcoord;
+layout (location = 0) out vec4 fragColor;
 
 void main()
 {
-   vec2 tc = texture2D(lensTexture, texcoord).rg;
-   if(tc == vec2(-1,-1))
-       gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
-   else
-       gl_FragColor = texture2D(texture, tc);
+    fragColor = texture(Texture0, oTexCoord);
 }

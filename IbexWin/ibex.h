@@ -8,11 +8,11 @@
 #ifndef IBEX_H_
 #define IBEX_H_
 
+#include "opengl_helpers.h"
+
 #if !defined(__APPLE__) && !defined(WIN32)
 #include "opengl_setup_x11.h"
 #endif
-
-#include "opengl_helpers.h"
 
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -31,23 +31,16 @@ enum DisplayShape {
 
 extern DisplayShape displayShape;
 
-extern OVR::Ptr<OVR::DeviceManager>	pManager;
-extern OVR::Ptr<OVR::HMDDevice>		pHMD;
-extern OVR::Ptr<OVR::SensorDevice>	pSensor;
-extern OVR::SensorFusion			FusionResult;
-extern OVR::HMDInfo				Info;
-
-extern bool					InfoLoaded;
-extern bool					riftConnected;
 extern bool                 lensParametersChanged;
 
 extern char fpsString[32];
 extern char mResourcePath[1024];
 
 extern char RiftMonitorName[33];
-extern int RiftDisplayId;
+extern long RiftDisplayId;
 extern float EyeDistance;
 extern float DistortionK[4];
+extern float DistortionChromaticAberration[4];
 
 #if defined(__APPLE__) || defined(WIN32)
 typedef unsigned int Display;
@@ -95,14 +88,19 @@ extern bool USE_FBO;
 extern bool OGRE3D;
 extern bool IRRLICHT;
 extern bool SBS;
+extern bool CACHED_SHADER;
+extern bool useLightPerspective;
 
 extern bool controlDesktop;
 extern bool showDialog;
+extern bool bringUpIbexDisplay;
 
 extern double relativeMouseX;
 extern double relativeMouseY;
+extern bool   running;
 extern double walkForward;
 extern double strafeRight;
+extern bool   jump;
 
 // ---------------------------------------------------------------------------
 // Class:    Desktop3DLocation
@@ -115,11 +113,13 @@ class Desktop3DLocation
 public:
   // Prevent unforeseen copying
   explicit Desktop3DLocation()
-    : WALK_SPEED(0.2),//1),
+    : WALK_SPEED(10),
       m_xRotation(0.0), m_yRotation(0.0), m_zRotation(0.0),
-      m_xPosition(0.0), m_yPosition(0.0), m_zPosition(0.0) {};
+      m_xPosition(0.0), m_yPosition(0.0), m_zPosition(0.0),
+      yVelocity(0.0) {}
+    
   // Class not intended for inheritence
-  ~Desktop3DLocation() {};
+  ~Desktop3DLocation() {}
 
   // Resets the state
   inline void resetState()
@@ -130,6 +130,8 @@ public:
     m_xPosition = 0.0;
     m_yPosition = 0.0;
     m_zPosition = 0.0;
+      
+    yVelocity = 0.0;
   }
 
   // Get methods for position and rotation
@@ -151,15 +153,23 @@ public:
   inline void setZPosition(const double zPosition) { m_zPosition = zPosition; }
 
   // Modify location of the desktop in 3D
-  inline void walk(double forward, double right, double seconds)
+  inline void walk(double forward, double right, bool jump, double seconds)
   {
-    const double walkSpeedSec = WALK_SPEED * seconds;
+    const double walkSpeedSec = WALK_SPEED * ((running)?10.0:1.0) * seconds;
 
     m_xPosition -= sin(m_yRotation / 90.0 * M_PI_2) * walkSpeedSec * forward;
     m_zPosition += cos(m_yRotation / 90.0 * M_PI_2) * walkSpeedSec * forward;
 
     m_xPosition -= cos(-m_yRotation / 90.0 * M_PI_2) * walkSpeedSec * right;
     m_zPosition += sin(-m_yRotation / 90.0 * M_PI_2) * walkSpeedSec * right;
+    
+    if(m_yPosition <= 0 && jump) yVelocity = (running)?50.0:25.0;
+    m_yPosition += yVelocity*seconds;
+    yVelocity -= 40*seconds;
+    if(m_yPosition <= 0) {
+        m_yPosition = 0;
+        yVelocity = 0;
+    }
   }
 
   void setWalkSpeed(double WALK_SPEED_) {
@@ -181,6 +191,8 @@ private:
   double m_xPosition;
   double m_yPosition;
   double m_zPosition;
+    
+  double yVelocity;
 };
 
 void getCursorTexture();
@@ -189,6 +201,7 @@ bool didInitOpenGL();
 
 void renderSkybox();
 void renderDesktopToTexture();
+void regenerateMainFBORenderDepthBuffer();
 
 void resizeGL(unsigned int width, unsigned int height);
 namespace Ibex {
@@ -204,6 +217,7 @@ public:
     
     Ibex(int argc, char ** argv);
     void render(double timeDiff);
+    
 public:
     RendererPlugin *renderer;
 };

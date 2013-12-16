@@ -1,12 +1,12 @@
-#version 120
+#version 330
 
-attribute vec4 a_position;
-attribute vec2 a_texCoord;
+layout (location = 0) in vec4 a_position;
+in vec2 a_texCoord;
 
-varying vec2 texcoord;
+out vec2 oTexCoord;
 
 void main()
 {
-    texcoord = a_texCoord.xy; //gl_TexCoord = a_texCoord;//gl_MultiTexCoord0;
-	gl_Position = a_position;//gl_Vertex;
+    oTexCoord = a_texCoord.xy;
+	gl_Position = a_position;
 }

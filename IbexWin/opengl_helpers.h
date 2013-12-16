@@ -8,8 +8,6 @@
 #ifndef OPENGL_HELPERS_H_
 #define OPENGL_HELPERS_H_
 
-#include <stdio.h>
-
 // --- OpenGL ----------------------------------------------------------------
 
 #ifndef GLX_GLXEXT_PROTOTYPES
@@ -18,21 +16,26 @@
 
 #ifdef __APPLE__
 
+#ifdef USE_GLEW
 #include "GL/glew.h"
-#include <OpenGL/gl.h>
-#include <OpenGL/glu.h>
-#include <OpenGL/glext.h>
-#include <GLUT/glut.h>
+#endif
+
+#include <OpenGL/gl3.h>
+#include <OpenGL/gl3ext.h>
 
 #else
 #ifdef _WIN32
 
+//#ifdef USE_GLEW
+//#include "GL/glew.h"
+//#endif
+//
+//#include "GL/glcorearb.h"
+//#include "GL/glext.h"
+//#include "GL/wglext.h"
+//#define GLFW_INCLUDE_GLCOREARB
 #include "GL/glew.h"
-#include "GL/wglew.h"
-#include <GL/gl.h>
-#include <GL/glu.h>
-//#include <GL/glext.h>
-#include <GL/glut.h>
+#include <GLFW/glfw3.h>
 
 #else
 
@@ -55,6 +58,8 @@
 
 #endif
 
+#include <stdio.h>
+
 bool gluInvertMatrix(const double m[16], double invOut[16]);
 double distort2ShaderScaleFactor(double ax, double ay);
 void saveState();
@@ -71,7 +76,7 @@ inline static bool checkForErrors()
   static bool doCheck = true;
 
   if (!doCheck)
-    return false;
+    return true;
 
   const char* errorString = 0;
   bool retVal = false;

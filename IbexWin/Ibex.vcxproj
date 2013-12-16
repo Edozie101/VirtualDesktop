@@ -63,13 +63,13 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\OculusSDK\LibOVR\Include;include;..\..\ffmpeg\include;msinttypes-r26;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;..\..\OculusSDK\LibOVR\Include;include;..\..\ffmpeg\include;msinttypes-r26;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;freeglut.lib;glew32.lib;libovr.lib;Winmm.lib;avcodec.lib;avdevice.lib;avfilter.lib;avformat.lib;avutil.lib;postproc.lib;swresample.lib;swscale.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;freeglut.lib;glew32.lib;libovr.lib;Winmm.lib;avcodec.lib;avdevice.lib;avfilter.lib;avformat.lib;avutil.lib;postproc.lib;swresample.lib;swscale.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\..\OculusSDK\LibOVR\Lib\Win32;lib;..\..\ffmpeg\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
@@ -78,25 +78,28 @@
   <ItemGroup>
     <ClInclude Include="distortions.h" />
     <ClInclude Include="filesystem\Filesystem.h" />
+    <ClInclude Include="GLSLShaderProgram.h" />
+    <ClInclude Include="GL\glcorearb.h" />
+    <ClInclude Include="GL\glext.h" />
+    <ClInclude Include="GL\wglext.h" />
     <ClInclude Include="guicon.h" />
     <ClInclude Include="ibex.h" />
     <ClInclude Include="IbexWinNative.h" />
     <ClInclude Include="ibex_win_utils.h" />
-    <ClInclude Include="include\GL\freeglut.h" />
-    <ClInclude Include="include\GL\freeglut_ext.h" />
-    <ClInclude Include="include\GL\freeglut_std.h" />
     <ClInclude Include="include\GL\glew.h" />
-    <ClInclude Include="include\GL\glut.h" />
     <ClInclude Include="include\GL\glxew.h" />
     <ClInclude Include="include\GL\wglew.h" />
     <ClInclude Include="iphone_orientation_plugin\iphone_orientation_listener.h" />
     <ClInclude Include="math_3d.h" />
     <ClInclude Include="msinttypes-r26\inttypes.h" />
     <ClInclude Include="msinttypes-r26\stdint.h" />
+    <ClInclude Include="oculus\Rift.h" />
     <ClInclude Include="opengl_helpers.h" />
     <ClInclude Include="RendererPlugin.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="ServerController.h" />
+    <ClInclude Include="simpleworld_plugin\Model.h" />
+    <ClInclude Include="simpleworld_plugin\ShadowBufferRenderer.h" />
     <ClInclude Include="simpleworld_plugin\SimpleWorldRendererPlugin.h" />
     <ClInclude Include="sixense\sixense_controller.h" />
     <ClInclude Include="SOIL\image_DXT.h" />
@@ -105,8 +108,9 @@
     <ClInclude Include="SOIL\stb_image_aug.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="tinystr.h" />
-    <ClInclude Include="tinyxml.h" />
+    <ClInclude Include="terrain\Terrain.h" />
+    <ClInclude Include="tinyxml\tinystr.h" />
+    <ClInclude Include="tinyxml\tinyxml.h" />
     <ClInclude Include="utils.h" />
     <ClInclude Include="video\VLCVideoPlayer.h" />
     <ClInclude Include="windows\Window.h" />
@@ -114,13 +118,17 @@
   <ItemGroup>
     <ClCompile Include="distortions.cpp" />
     <ClCompile Include="filesystem\Filesystem.cpp" />
+    <ClCompile Include="GLSLShaderProgram.cpp" />
     <ClCompile Include="guicon.cpp" />
     <ClCompile Include="ibex.cpp" />
     <ClCompile Include="IbexWinNative.cpp" />
     <ClCompile Include="IbexWinUtils.cpp" />
     <ClCompile Include="iphone_orientation_plugin\iphone_orientation_listener.cpp" />
+    <ClCompile Include="oculus\Rift.cpp" />
     <ClCompile Include="opengl_helpers.cpp" />
     <ClCompile Include="RendererPlugin.cpp" />
+    <ClCompile Include="simpleworld_plugin\Model.cpp" />
+    <ClCompile Include="simpleworld_plugin\ShadowBufferRenderer.cpp" />
     <ClCompile Include="simpleworld_plugin\SimpleWorldRendererPlugin.cpp" />
     <ClCompile Include="sixense\sixense_controller.cpp" />
     <ClCompile Include="SOIL\image_DXT.c" />
@@ -128,10 +136,11 @@
     <ClCompile Include="SOIL\SOIL.c" />
     <ClCompile Include="SOIL\stb_image_aug.c" />
     <ClCompile Include="stdafx.cpp" />
-    <ClCompile Include="tinystr.cpp" />
-    <ClCompile Include="tinyxml.cpp" />
-    <ClCompile Include="tinyxmlerror.cpp" />
-    <ClCompile Include="tinyxmlparser.cpp" />
+    <ClCompile Include="terrain\Terrain.cpp" />
+    <ClCompile Include="tinyxml\tinystr.cpp" />
+    <ClCompile Include="tinyxml\tinyxml.cpp" />
+    <ClCompile Include="tinyxml\tinyxmlerror.cpp" />
+    <ClCompile Include="tinyxml\tinyxmlparser.cpp" />
     <ClCompile Include="utils.cpp" />
     <ClCompile Include="video\VLCVideoPlayer.cpp" />
     <ClCompile Include="windows\Window.cpp" />

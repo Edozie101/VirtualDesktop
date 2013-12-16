@@ -9,40 +9,13 @@
 #ifndef IbexMac_ibex_win_utils_h
 #define IbexMac_ibex_win_utils_h
 
-#ifdef __APPLE__
-
-#include "GL/glew.h"
-#include <OpenGL/gl.h>
-#include <OpenGL/glu.h>
-#include <OpenGL/glext.h>
-#include <GLUT/glut.h>
-
-#else
-#ifdef _WIN32
-
-#include "GL/glew.h"
-#include <GL/gl.h>
-#include <GL/glu.h>
-//#include <GL/glext.h>
-#include <GL/glut.h>
-
-#else
-
-#include <GL/glew.h>
-#include <GL/glxew.h>
-#include <GL/gl.h>
-#include <GL/glx.h>
-#include <GL/glext.h>
-#include <GL/glxext.h>
-#include <GL/glut.h>
-#include <GL/glu.h>
-
-#endif
-#endif
+#include "opengl_helpers.h"
 
 extern bool doubleBuffered;
 extern char mResourcePath[1024];
 
-GLuint loadTexture(const char *path_);
+extern "C" GLuint loadNormalTexture(const char *path_);
+extern "C" GLuint loadTexture(const char *path_, bool flip=true, bool isAbsolutePath=false, bool disableAlpha=false);
+extern "C" GLuint loadCubemapTextures(const char *path_[6]);
 
 #endif

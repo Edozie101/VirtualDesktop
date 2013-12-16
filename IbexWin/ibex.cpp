@@ -22,39 +22,7 @@
 #include <map>
 #include <vector>
 
-// --- OpenGL ----------------------------------------------------------------
-#define GLX_GLXEXT_PROTOTYPES
-#ifdef __APPLE__
-
-#include "GL/glew.h"
-#include <OpenGL/gl.h>
-#include <OpenGL/glu.h>
-#include <OpenGL/glext.h>
-#include <GLUT/glut.h>
-
-#else
-#ifdef _WIN32
-
-#include "GL/glew.h"
-#include "GL/wglew.h"
-#include <GL/gl.h>
-#include <GL/glu.h>
-//#include <GL/glext.h>
-#include <GL/glut.h>
-
-#else
-
-#include <GL/glew.h>
-#include <GL/glxew.h>
-#include <GL/gl.h>
-#include <GL/glx.h>
-#include <GL/glext.h>
-#include <GL/glxext.h>
-#include <GL/glut.h>
-#include <GL/glu.h>
-
-#endif
-#endif
+#include "opengl_helpers.h"
 
 // --- X11 -------------------------------------------------------------------
 //#include "opengl_setup_x11.h"
@@ -84,6 +52,7 @@
 
 #include "ibex.h"
 
+#include "oculus/Rift.h"
 #include "sixense/sixense_controller.h"
 
 GLfloat top, bottom;
@@ -93,10 +62,11 @@ DisplayShape displayShape = FlatDisplay;
 
 bool controlDesktop  = 1;
 bool showDialog = false;
+bool bringUpIbexDisplay = false;
 
 // external variables
 bool resetPosition          = 0;
-bool showGround             = 0;
+bool showGround             = 1;
 bool barrelDistort          = 1;
 bool ortho                  = 1;
 bool renderToTexture        = 1;
@@ -108,13 +78,15 @@ bool OGRE3D                 = 0;
 #endif
 bool IRRLICHT               = 0;
 bool SBS                    = 1;
+bool CACHED_SHADER          = 0;
+bool useLightPerspective    = 0;
 
-GLuint fbos[2];
-GLuint textures[2];
+GLuint fbos[2] = {0, 0};
+GLuint textures[2] = {0, 0};
 
-GLuint depthBuffer;
+GLuint depthBuffer = 0;
 
-GLuint desktopFBO;
+GLuint desktopFBO = 0;
 GLuint desktopTexture(0);
 GLuint videoTexture[2] = {0,0};
 #ifdef _WIN32
@@ -130,8 +102,10 @@ GLfloat cursorPosY(0);
 
 GLuint cursorTexture(0);
 
+bool   running     = false;
 double walkForward = 0;
 double strafeRight = 0;
+bool   jump        = false;
 
 int dpy = 0;
 int display = 0;
@@ -189,18 +163,18 @@ glTranslatef(eye * parallax_factor * convergence_distance, 0, 0);
 // ---------------------------------------------------------------------------
 void prep_framebuffers()
 {
-  if (!GL_ARB_framebuffer_object ||
-      !glewGetExtension("GL_ARB_framebuffer_object")) {
-    std::cerr << "NO FBO SUPPORT" << std::endl;
-    exit(EXIT_FAILURE);
-  } else {
-    std::cout << "GL_ARB_framebuffer_object SUPPORT" << std::endl;
-  }
+//  if (!GL_ARB_framebuffer_object ||
+//      !glewGetExtension("GL_ARB_framebuffer_object")) {
+//    std::cerr << "NO FBO SUPPORT" << std::endl;
+//    exit(EXIT_FAILURE);
+//  } else {
+//    std::cout << "GL_ARB_framebuffer_object SUPPORT" << std::endl;
+//  }
 
-//    if (!checkForErrors()) {
-//        std::cerr << "Stage 0w - Problem generating desktop FBO" << std::endl;
-//        exit(EXIT_FAILURE);
-//    }
+    if (!checkForErrors()) {
+        std::cerr << "Stage 0w - Problem generating desktop FBO" << std::endl;
+        exit(EXIT_FAILURE);
+    }
     checkForErrors();
     
   glGenFramebuffers(1, &desktopFBO);
@@ -227,8 +201,8 @@ void prep_framebuffers()
         exit(EXIT_FAILURE);
     }
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     if (!checkForErrors()) {
         std::cerr << "Stage 0c - Problem generating desktop FBO" << std::endl;
         exit(EXIT_FAILURE);
@@ -248,43 +222,60 @@ void prep_framebuffers()
   }
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
   glBindTexture(GL_TEXTURE_2D, 0);
+    
+    regenerateMainFBORenderDepthBuffer();
+}
 
-  glGenFramebuffers(2, fbos);
-  glGenRenderbuffers(1, &depthBuffer);
-  glGenTextures(2, textures);
-
-    for (int i = 0; i < 1; ++i) {//2; ++i) {
-    glBindFramebuffer(GL_FRAMEBUFFER, fbos[i]);
-    glBindTexture(GL_TEXTURE_2D, textures[i]);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, textureWidth, textureHeight, 0,
-                 GL_RGBA, GL_UNSIGNED_BYTE, 0);
-    glFramebufferTexture2D (GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-                            GL_TEXTURE_2D, textures[i], 0);
-
-    glBindRenderbuffer(GL_RENDERBUFFER, depthBuffer);
-    if (i == 0) {
-      glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24,
-                            textureWidth, textureHeight);
+void regenerateMainFBORenderDepthBuffer() {
+    renderScaleChanged = false;
+    
+    const int numBuffers = 1;
+    if(fbos[0] != 0) {
+        glDeleteBuffers(numBuffers, fbos);
     }
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
-                              GL_RENDERBUFFER, depthBuffer);
-    if (!checkForErrors()) {
-      std::cerr << "Stage 1 - Problem generating FBO " << i << std::endl;
-      exit(EXIT_FAILURE);
+    if(depthBuffer != 0) {
+        glDeleteRenderbuffers(1, &depthBuffer);
     }
-
-    std::cout << "Generating FBO #" << i << std::endl;
-    std::cout << "FBO: " << textureWidth << "x" << textureHeight << std::endl;
-
-    if (!checkForErrors() ||
-        glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-      std::cerr << "Stage 2 - Problem generating FBO " << i << std::endl;
-      exit(EXIT_FAILURE);
+    if(textures[0] != 0) {
+        glDeleteTextures(numBuffers, textures);
     }
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-  }
+    
+    glGenFramebuffers(numBuffers, fbos);
+    glGenRenderbuffers(1, &depthBuffer);
+    glGenTextures(numBuffers, textures);
+    
+    for (int i = 0; i < numBuffers; ++i) {
+        glBindFramebuffer(GL_FRAMEBUFFER, fbos[i]);
+        glBindTexture(GL_TEXTURE_2D, textures[i]);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB, textureWidth, textureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+        //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, textureWidth, textureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+        glFramebufferTexture2D (GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                                GL_TEXTURE_2D, textures[i], 0);
+        
+        glBindRenderbuffer(GL_RENDERBUFFER, depthBuffer);
+        if (i == 0) {
+            glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT32,//24,
+                                  textureWidth, textureHeight);
+        }
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+                                  GL_RENDERBUFFER, depthBuffer);
+        if (!checkForErrors()) {
+            std::cerr << "Stage 1 - Problem generating FBO " << i << std::endl;
+            exit(EXIT_FAILURE);
+        }
+        
+        std::cout << "Generating FBO #" << i << std::endl;
+        std::cout << "FBO: " << textureWidth << "x" << textureHeight << std::endl;
+        
+        if (!checkForErrors() ||
+            glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+            std::cerr << "Stage 2 - Problem generating FBO " << i << std::endl;
+            exit(EXIT_FAILURE);
+        }
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -322,18 +313,27 @@ bool didInitOpenGL() {
 // ---------------------------------------------------------------------------
 void renderGL(Desktop3DLocation& loc, double timeDiff_, RendererPlugin *renderer)
 {
+    static double time = 0;
+    time += timeDiff_;
+    
   if (!initedOpenGL) {
     initedOpenGL = true;
 
     if(renderer->getWindowID()) window = renderer->getWindowID();
 //    if (OGRE3D || IRRLICHT) {
-      glewExperimental = true;
+      
+#ifdef USE_GLEW
+      glewExperimental = GL_TRUE;
       GLenum err = glewInit();
       std::cerr << "Inited GLEW: " << err << std::endl;
+      checkForErrors();
+      std::cerr << "Inited GLEW, may have invalid enum above, that's alright" << std::endl;
       if (GLEW_OK != err) {
         // GLEW failed!
         exit(1);
       }
+#endif
+
 #ifdef _WIN32
 	  //bool r = wglSwapIntervalEXT(5);
 	  //std::cerr << "wglSwapIntervalEXT: " << r << std::endl;
@@ -342,8 +342,12 @@ void renderGL(Desktop3DLocation& loc, double timeDiff_, RendererPlugin *renderer
       
       if(!OGRE3D) {
           checkForErrors();
+          std::cerr << "checked errors 2" << std::endl;
+          
           std::cerr << "init_distortion_shader" << std::endl;
           bool success = init_distortion_shader();
+          checkForErrors();
+          std::cerr << "checked errors 3" << std::endl;
           if (!success) {
               std::cerr << "Failed to init distortion shader!" << std::endl;
               exit(1);
@@ -358,7 +362,7 @@ void renderGL(Desktop3DLocation& loc, double timeDiff_, RendererPlugin *renderer
       }
   }
 
-  renderer->step(loc, timeDiff_);
+  renderer->step(loc, timeDiff_, time);
 }
 
 void resizeGL(unsigned int width, unsigned int height)
@@ -370,12 +374,14 @@ void resizeGL(unsigned int width, unsigned int height)
     if (height == 0)
         height = 1;
     glViewport(0, 0, width, height);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    //    gluPerspective(45.0f, 1, 0.1f, 100.0f);//(GLfloat)width / (GLfloat)height, 0.1f, 100.0f);
-    gluPerspective(110.0f, 0.81818181, 0.01f, 1000.0f);
-    //    gluPerspective(120.0f, 0.75, 0.1f, 100.0f);//(GLfloat)width / (GLfloat)height, 0.1f, 100.0f);
-    glMatrixMode(GL_MODELVIEW);
+    
+    return;
+//    
+//    // gone in OpenGL 3.3+
+//    glMatrixMode(GL_PROJECTION);
+//    glLoadIdentity();
+////    gluPerspective(110.0f, 0.81818181, 0.01f, 1000.0f);
+//    glMatrixMode(GL_MODELVIEW);
 }
 
 // ---------------------------------------------------------------------------
@@ -386,13 +392,13 @@ void resizeGL(unsigned int width, unsigned int height)
 // ---------------------------------------------------------------------------
 void initGL()
 {
-  glShadeModel(GL_SMOOTH);
+  //glShadeModel(GL_SMOOTH);
   glClearColor(0.0f, 0.1f, 0.0f, 1.0f);
   glClearDepth(1.0f);
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LEQUAL);
-  glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
-
+  //glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+    
   // We use resizeGL once to set up our initial perspective
   resizeGL(windowWidth, windowHeight);//physicalWidth,physicalHeight);//width, height);
 
@@ -408,8 +414,6 @@ void initGL()
 
 double relativeMouseX = 0;
 double relativeMouseY = 0;
-
-static bool jump = false;
 
 Ibex::Ibex::Ibex(int argc, char ** argv) {
     int c;
@@ -478,10 +482,6 @@ Ibex::Ibex::Ibex(int argc, char ** argv) {
     
     std::cerr << "Physical Width x Height: " << physicalWidth << "x" << physicalHeight << std::endl;
     
-#ifdef __APPLE__
-    glutInit(&argc, argv);
-#endif
-    
     //  prep_overlay();
     if(renderer->getWindowID()) {
         window = renderer->getWindowID();
@@ -518,21 +518,29 @@ void Ibex::Ibex::render(double timeDiff) {
         processRawMotion(ry, rx, desktop3DLocation);
         relativeMouseX = 0;
         relativeMouseY = 0;
-        desktop3DLocation.walk(walkForward+sixenseWalkForward, strafeRight+sixenseStrafeRight, timeDiff);
+        desktop3DLocation.walk(walkForward+sixenseWalkForward, strafeRight+sixenseStrafeRight, jump, timeDiff);
     }
     
     if(resetPosition) {
         resetPosition = 0;
         desktop3DLocation.resetState();
+        renderer->reset();
     }
     
     renderer->setDesktopTexture(desktopTexture);
     if(OGRE3D) {
         renderer->move(walkForward+sixenseWalkForward, strafeRight+sixenseStrafeRight, jump, ry, rx);
     }
+    if(bringUpIbexDisplay) {
+        bringUpIbexDisplay = false;
+        renderer->bringUpIbexDisplay();
+    }
     renderer->processEvents();
     
     renderGL(desktop3DLocation, timeDiff, renderer);
+    
+    checkForErrors();
+//    std::cerr << "checked errors FRAME DONE!" << std::endl;
     
 //    ts_start = ts_current;
 }
