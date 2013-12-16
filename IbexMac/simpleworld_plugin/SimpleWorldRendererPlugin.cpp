@@ -906,7 +906,7 @@ void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &
         //model = glm::mat4();
         //renderGround(PV*model, view, model, shadowPass, depthBiasMVP*model, time);
         model = glm::mat4();
-        terrain.renderGround(PV*model, view, model, shadowPass, depthBiasMVP*model, time);
+        terrain.renderGround(PV*model, view, model, shadowPass, depthBiasMVP*model, time, playerPosition_);
         
         glm::mat4 treeMat;// = glm::scale(glm::mat4(), 10.0f, 10.0f, 10.0f);
         glDisable(GL_CULL_FACE);

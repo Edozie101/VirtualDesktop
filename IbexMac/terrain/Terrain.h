@@ -31,7 +31,7 @@ public:
     template <class T> void loadTerrain(T *data, int width, int height);
     void loadHeightmap(const char * filename, int width=-1, int height=-1);
     
-    void renderGround(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP, const double &time);
+    void renderGround(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP, const double &time, const glm::vec3 &playerPosition);
     
 private:
     GLSLShaderProgram groundShaderProgram;
@@ -51,7 +51,7 @@ private:
     GLuint vboGroundVertices = 0;
     GLuint vboGroundIndices = 0;
     
-    GLint GroundUniformLocations[13] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    GLint GroundUniformLocations[14] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     GLint GroundAttribLocations[5] = {0, 0, 0, 0, 0};
 };
 

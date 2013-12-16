@@ -235,7 +235,8 @@ void Terrain::loadTerrain(T *data, int width, int height) {
     }
     
     if(useNormalMappedTextures) {
-        groundShaderProgram.loadShaderProgram(mResourcePath, "/resources/shaders/ground-normalmapped.v.glsl", "/resources/shaders/ground-normalmapped.f.glsl");
+        //groundShaderProgram.loadShaderProgram(mResourcePath, "/resources/shaders/ground-normalmapped.v.glsl", "/resources/shaders/ground-normalmapped.f.glsl");
+        groundShaderProgram.loadShaderProgram(mResourcePath, "/resources/shaders/ground-infinite-normalmapped.v.glsl", "/resources/shaders/ground-normalmapped.f.glsl");
     } else {
         groundShaderProgram.loadShaderProgram(mResourcePath, "/resources/shaders/standard.v.glsl", "/resources/shaders/ground.f.glsl");
     }
@@ -258,6 +259,7 @@ void Terrain::loadTerrain(T *data, int width, int height) {
     GroundUniformLocations[10] = glGetUniformLocation(groundShaderProgram.shader.program, "time");
     GroundUniformLocations[11] = glGetUniformLocation(groundShaderProgram.shader.program, "LightPosition_worldspace");
     GroundUniformLocations[12] = glGetUniformLocation(groundShaderProgram.shader.program, "MV3x3");
+    GroundUniformLocations[13] = glGetUniformLocation(groundShaderProgram.shader.program, "playerPosition_modelspace");
     
     if(useNormalMappedTextures) {
         GroundAttribLocations[0] = glGetAttribLocation(groundShaderProgram.shader.program, "vertexPosition_modelspace");
@@ -340,7 +342,7 @@ void Terrain::loadHeightmap(const char *filename, int width, int height)
     data = 0;
 }
 
-void Terrain::renderGround(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP, const double &time) {
+void Terrain::renderGround(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP, const double &time, const glm::vec3 &playerPosition) {
     //    checkForErrors();
     //    std::cerr << "Loading ground texture" << std::endl;
 #ifdef _WIN32
@@ -408,6 +410,8 @@ void Terrain::renderGround(const glm::mat4 &MVP, const glm::mat4 &V, const glm::
         
         glm::mat3 MV3x3 = glm::mat3(V*M);
         if(GroundUniformLocations[12] > -1) glUniformMatrix3fv(GroundUniformLocations[12], 1, GL_FALSE, &MV3x3[0][0]);
+        
+        if(GroundUniformLocations[13] > -1) glUniform3f(GroundUniformLocations[13], playerPosition.x,playerPosition.y,playerPosition.z);
     }
     
     glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, 0);
