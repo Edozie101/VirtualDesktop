@@ -146,7 +146,6 @@
     <ClCompile Include="windows\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="freeglut.dll" />
     <None Include="glew32.dll" />
     <None Include="glew32mx.dll" />
     <None Include="IbexProperties.props" />

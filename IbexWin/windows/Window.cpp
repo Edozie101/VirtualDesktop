@@ -442,6 +442,24 @@ int Ibex::Window::processKey(unsigned short keyCode, int down) {
 int Ibex::Window::processKey(unsigned char key, int down) {
 	int processed = 0;
     switch(key) {
+		case GLFW_KEY_UP:
+            if(down) {
+                --selectedFile;
+                if(selectedFile < 0 && directoryList.size() > 0) selectedFile += directoryList.size();
+                else if(directoryList.size() <= 0 && selectedFile < 0)selectedFile = 0;
+            }
+            processed = 1;
+            break;
+        case GLFW_KEY_DOWN:
+            if(down) {
+                ++selectedFile;
+                if(directoryList.size() > 0) {
+                    selectedFile %= directoryList.size();
+                }
+            }
+
+            processed = 1;
+            break;
 		case 'W':
         case 'w':
             if(down) {
@@ -553,26 +571,7 @@ int Ibex::Window::processKey(unsigned char key, int down) {
 }
 int Ibex::Window::processSpecialKey(unsigned char key, int down) {
 	int processed = 0;
-    //switch(key) {
-        //case GLUT_KEY_UP:
-        //    if(down) {
-        //        --selectedFile;
-        //        if(selectedFile < 0 && directoryList.size() > 0) selectedFile += directoryList.size();
-        //        else if(directoryList.size() <= 0 && selectedFile < 0)selectedFile = 0;
-        //    }
-        //    processed = 1;
-        //    break;
-        //case GLUT_KEY_DOWN:
-        //    if(down) {
-        //        ++selectedFile;
-        //        if(directoryList.size() > 0) {
-        //            selectedFile %= directoryList.size();
-        //        }
-        //    }
-
-        //    processed = 1;
-        //    break;
-    //}
+	// special keys processed as regular keys now that using GLFW not GLUT
     return processed;
 }
 #else

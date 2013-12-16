@@ -54,41 +54,10 @@ GLuint VBO(0);
 std::condition_variable screenshotCondition;
 
 Ibex::Ibex *ibex = 0;
-
-static inline void processSpecialKey(int key, int down) {
-	if(showDialog) ibex->renderer->window.processSpecialKey(key, down);
-	else {
-		//switch(key) {
-  //      case GLUT_KEY_UP:
-		//	walkForward = 1 * down;
-  //          break;
-  //      case GLUT_KEY_DOWN:
-  //          walkForward = -1 * down;
-  //          break;
-		//case GLUT_KEY_RIGHT:
-  //          strafeRight = 1 * down;
-  //          break;
-		//case GLUT_KEY_LEFT:
-  //          strafeRight = -1 * down;
-  //          break;
-		//}
-	}
-}
-static void processSpecialKeyDown(int key, int x, int y) {
-	processSpecialKey(key, 1);
-}
-static void processSpecialKeyUp(int key, int x, int y) {
-	processSpecialKey(key, 0);
-}
+GLFWwindow* glfwWindow;
 
 static inline void Keyboard(GLFWwindow* window, int key, int scancode, int action, int mods) {//int key, int action) {
-	int down = action != GLFW_RELEASE; //(action == GLFW_PRESS || action == GLFW_REPEAT);
-	//if (key == GLFW_KEY_ESC && action == GLFW_PRESS)
- //   quit_the_program = 1;
- // else if (key == 'A' and action == GLFW_PRESS)
- //   printf("A was pressed");
-
-
+	int down = action != GLFW_RELEASE;
 	int processed = 0;
 	if(showDialog) {
 		processed = ibex->renderer->window.processKey(key, down);
@@ -103,6 +72,18 @@ static inline void Keyboard(GLFWwindow* window, int key, int scancode, int actio
 		case GLFW_KEY_SPACE:
 			jump = down;
 			break;
+        case GLFW_KEY_UP:
+			walkForward = 1 * down;
+            break;
+        case GLFW_KEY_DOWN:
+            walkForward = -1 * down;
+            break;
+		case GLFW_KEY_RIGHT:
+            strafeRight = 1 * down;
+            break;
+		case GLFW_KEY_LEFT:
+            strafeRight = -1 * down;
+            break;
 		case 'w':
 		case 'W':
 			walkForward = 1*down;
@@ -119,6 +100,12 @@ static inline void Keyboard(GLFWwindow* window, int key, int scancode, int actio
 		case 'D':
 			strafeRight = 1*down;
 			break;
+		case 'l':
+		case 'L':
+			if(down) {
+				useLightPerspective = !useLightPerspective;
+			}
+			break;
 		case '=':
 		case '+':
 			if(down) {
@@ -129,11 +116,10 @@ static inline void Keyboard(GLFWwindow* window, int key, int scancode, int actio
 		case 'Q':
 		case 'q':
 			if(down) {
-				////glfwGetKey(glfwWindow, GLFW_KEY_LEFT_CONTROL)
-				//if(glutGetModifiers() == GLFW_KEY_LEFT_CONTROL) {
-				//	exit(0); 
-				//	break; 
-				//}
+				if(mods & GLFW_MOD_CONTROL) {
+					exit(0);
+					break;
+				}
 				displayShape = (displayShape == FlatDisplay) ? SphericalDisplay : FlatDisplay;
 			}
 			break;
@@ -171,14 +157,6 @@ static inline void Keyboard(GLFWwindow* window, int key, int scancode, int actio
 		}
 	}
 }
-//static void KeyboardDown(unsigned char key, int x, int y)
-//{
-//	Keyboard(key, 1);
-//}
-//static void KeyboardUp(unsigned char key, int x, int y)
-//{
-//	Keyboard(key, 0);
-//}
 
 static inline void cursor_callback(GLFWwindow *window, double x, double y)
 {
@@ -405,20 +383,20 @@ static void loopScreenshot() {
 		getScreenshot();
 
 #ifdef _DEBUG
-		//static double timeprev = glutGet(GLUT_ELAPSED_TIME);
-		//const double time = glutGet(GLUT_ELAPSED_TIME);
-		//timeprev = time;
+		static double timeprev = glfwGetTime();
+		const double time = glfwGetTime();
+		timeprev = time;
 
-		//static double timebase = glutGet(GLUT_ELAPSED_TIME);
-		//static double frame = 0;
-		//++frame;
-		//static char fpsString[64];
-		//if (time - timebase >= 5000.0) {
-		//	sprintf(fpsString,"FPS:%4.2f", frame*5000.0/(time-timebase));
-		//	std::cerr << "Capture " << fpsString << std::endl;
-		//	timebase = time;
-		//	frame = 0;
-		//}
+		static double timebase = glfwGetTime();
+		static double frame = 0;
+		++frame;
+		static char fpsString[64];
+		if (time - timebase >= 5.0) {
+			sprintf(fpsString,"FPS:%4.2f", frame*5.0/(time-timebase));
+			std::cerr << "Capture " << fpsString << std::endl;
+			timebase = time;
+			frame = 0;
+		}
 #endif
 	}
 }
@@ -448,22 +426,22 @@ static void playCamera() {
 static void RenderSceneCB()
 {
 	screenshotCondition.notify_all();
-	static double timeprev = 0;//glutGet(GLUT_ELAPSED_TIME);
-	double time = 0;//glutGet(GLUT_ELAPSED_TIME);
-	double timeDiff = 0.033;//(time - timeprev)/1000.0;
+	static double timeprev = glfwGetTime();
+	double time = glfwGetTime();
+	double timeDiff = (time - timeprev);
 	timeprev = time;
 
 #ifdef _DEBUG
-	//static double timebase = glutGet(GLUT_ELAPSED_TIME);
-	//static double frame = 0;
-	//++frame;
-	//static char fpsString[64];
-	//if (time - timebase >= 5000.0) {
-	//	sprintf(fpsString,"FPS:%4.2f", frame*5000.0/(time-timebase));
-	//	std::cerr << fpsString << std::endl;
-	//	timebase = time;
-	//	frame = 0;
-	//}
+	static double timebase = glfwGetTime();
+	static double frame = 0;
+	++frame;
+	static char fpsString[64];
+	if (time - timebase >= 5.0) {
+		sprintf(fpsString,"FPS:%4.2f", frame*5.0/(time-timebase));
+		std::cerr << fpsString << std::endl;
+		timebase = time;
+		frame = 0;
+	}
 #endif
 
 	if(modifiedDesktop) {
@@ -475,9 +453,9 @@ static void RenderSceneCB()
 		//}
 	}
 
-	if(!controlDesktop) {
-		//glutWarpPointer(500, 500);
-	}
+	/*if(!controlDesktop) {
+		glfwSetCursorPos(glfwWindow, 500,500);
+	}*/
 
 	// Add your drawing codes here
     if(ibex == 0) {
@@ -771,7 +749,6 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	//glutInitWindowPosition(riftX, riftY);
  //   glutCreateWindow("Ibex");
 
-	GLFWwindow* glfwWindow;
 	glfwSetErrorCallback(error_callback);
 	if (!glfwInit())
         exit(EXIT_FAILURE);
@@ -786,6 +763,19 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 			break;
 		}
 	}
+	if(monitor == NULL) {
+		width = 1280;
+		height = 800;
+	} else {
+		int iWidth = width;
+		int iHeight = height;
+		glfwGetMonitorPhysicalSize(monitor, &iWidth, &iHeight);
+		width = iWidth;
+		height = iHeight;
+	}
+
+	initRift();
+	//FusionResult.Reset();
 
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -800,9 +790,6 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	glfwMakeContextCurrent(glfwWindow);
     glfwSetKeyCallback(glfwWindow, Keyboard);
 	glfwSetCursorPosCallback(glfwWindow, cursor_callback);
-
-	initRift();
-	//FusionResult.Reset();
 
     InitializeGlutCallbacks();
 
@@ -837,7 +824,9 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 		RenderSceneCB();
         glfwSwapBuffers(glfwWindow);
         glfwPollEvents();
-		glfwSetCursorPos(glfwWindow, 500,500);
+		if(!controlDesktop) {
+			glfwSetCursorPos(glfwWindow, 500,500);
+		}
     }
     glfwDestroyWindow(glfwWindow);
     glfwTerminate();
