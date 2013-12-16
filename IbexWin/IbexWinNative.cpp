@@ -446,16 +446,12 @@ static void RenderSceneCB()
 
 	if(modifiedDesktop) {
 		modifiedDesktop = false;
-		//if(controlDesktop) {
-		//	glutSetCursor(GLUT_CURSOR_INHERIT);
-		//} else {
-		//	glutSetCursor(GLUT_CURSOR_NONE);
-		//}
+		if(controlDesktop) {
+			glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		} else {
+			glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+		}
 	}
-
-	/*if(!controlDesktop) {
-		glfwSetCursorPos(glfwWindow, 500,500);
-	}*/
 
 	// Add your drawing codes here
     if(ibex == 0) {
@@ -497,27 +493,11 @@ static void RenderSceneCB()
     ibex->render(timeDiff);
 	//checkForErrors();
 
-	//glutSwapBuffers();
-	//glutPostRedisplay();
-
 	//screenshotCondition.notify_all();
 }
 
-void ReshapeFunc(int width, int height) {
+void window_size_callback(GLFWwindow* window, int width, int height) {
 	resizeGL(width, height);
-}
-
-static void InitializeGlutCallbacks()
-{
-	//glutWarpPointer(500, 500);
-
- //   glutDisplayFunc(RenderSceneCB);
-	//glutKeyboardFunc (KeyboardDown);
-	//glutKeyboardUpFunc (KeyboardUp);
-	//glutSpecialFunc(processSpecialKeyDown);
-	//glutSpecialUpFunc(processSpecialKeyUp);
-	//glutPassiveMotionFunc (MouseMoved);
-	//glutReshapeFunc(ReshapeFunc);
 }
 
 static HWND hwnd;
@@ -788,10 +768,9 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
         exit(EXIT_FAILURE);
     }
 	glfwMakeContextCurrent(glfwWindow);
+	glfwSetWindowSizeCallback(glfwWindow, window_size_callback);
     glfwSetKeyCallback(glfwWindow, Keyboard);
 	glfwSetCursorPosCallback(glfwWindow, cursor_callback);
-
-    InitializeGlutCallbacks();
 
     // Must be done after GLFW is initialized!
 	// Initialize GLEW
