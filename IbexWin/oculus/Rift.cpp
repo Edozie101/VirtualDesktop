@@ -2,10 +2,10 @@
 
 #include "../ibex.h"
 
-OVR::Ptr<OVR::DeviceManager>	pManager;
-OVR::Ptr<OVR::HMDDevice>	pHMD;
+OVR::Ptr<OVR::DeviceManager>	pManager = 0;
+OVR::Ptr<OVR::HMDDevice>	pHMD = 0;
 OVR::Util::Render::StereoConfig stereo;
-OVR::Ptr<OVR::SensorDevice>	pSensor;
+OVR::Ptr<OVR::SensorDevice>	pSensor = 0;
 OVR::SensorFusion*		pFusionResult = 0;
 OVR::HMDInfo			Info;
 bool				InfoLoaded = false;
@@ -145,11 +145,11 @@ void initRift() {
 #endif
 }
 void cleanUpRift() {
-    pSensor.Clear();
-    pHMD.Clear();
-    pManager.Clear();
+	if(pSensor) pSensor.Clear();
+    if(pHMD) pHMD.Clear();
+    if(pManager) pManager.Clear();
     
-    delete pFusionResult;
+    if(pFusionResult) delete pFusionResult;
     
     OVR::System::Destroy();
 }

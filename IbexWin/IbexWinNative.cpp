@@ -102,20 +102,25 @@ static inline void key_callback(GLFWwindow* window, int key, int scancode, int a
 			break;
 		case 'l':
 		case 'L':
-			if(down) {
+			if(!down) {
 				useLightPerspective = !useLightPerspective;
+			}
+			break;
+		case GLFW_KEY_BACKSLASH:
+			if(!down) {
+				bringUpIbexDisplay = true;
 			}
 			break;
 		case '=':
 		case '+':
-			if(down) {
+			if(!down) {
 				IOD += 0.0005;
 				lensParametersChanged = true;
 			}
 			break;
 		case 'Q':
 		case 'q':
-			if(down) {
+			if(!down) {
 				if(mods & GLFW_MOD_CONTROL) {
 					exit(0);
 					break;
@@ -124,14 +129,14 @@ static inline void key_callback(GLFWwindow* window, int key, int scancode, int a
 			}
 			break;
 		case '/':
-			if(down) {
+			if(!down) {
 				showDialog = !showDialog;
 				ibex->renderer->window.reset();
 			}
 			break;
 		case '-':
 		case '_':
-			if(down) {
+			if(!down) {
 				IOD -= 0.0005;
 				lensParametersChanged = true;
 			}
@@ -631,7 +636,7 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	glfwWindow = glfwCreateWindow(width, height, "Ibex", monitor, NULL);
+	glfwWindow = glfwCreateWindow(width, height, "Ibex", (riftConnected) ? monitor : NULL, NULL);
 	if (!glfwWindow)
 	{
 		glfwTerminate();
