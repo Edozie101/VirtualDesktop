@@ -72,18 +72,18 @@ static inline void Keyboard(GLFWwindow* window, int key, int scancode, int actio
 		case GLFW_KEY_SPACE:
 			jump = down;
 			break;
-        case GLFW_KEY_UP:
+		case GLFW_KEY_UP:
 			walkForward = 1 * down;
-            break;
-        case GLFW_KEY_DOWN:
-            walkForward = -1 * down;
-            break;
+			break;
+		case GLFW_KEY_DOWN:
+			walkForward = -1 * down;
+			break;
 		case GLFW_KEY_RIGHT:
-            strafeRight = 1 * down;
-            break;
+			strafeRight = 1 * down;
+			break;
 		case GLFW_KEY_LEFT:
-            strafeRight = -1 * down;
-            break;
+			strafeRight = -1 * down;
+			break;
 		case 'w':
 		case 'W':
 			walkForward = 1*down;
@@ -164,11 +164,12 @@ static inline void cursor_callback(GLFWwindow *window, double x, double y)
 		relativeMouseX = x-500;
 		relativeMouseY = y-500;
 	}
-    //std::cerr << relativeMouseX << ", " << relativeMouseY << std::endl;
+	//std::cerr << relativeMouseX << ", " << relativeMouseY << std::endl;
 }
 
 static inline void getMouseCursor(HDC hdcScreen)
 {
+	return;
 	static CURSORINFO cursorinfo = { 0 };
 	static HCURSOR prevCursor = 0;
 	cursorinfo.cbSize = sizeof(cursorinfo);
@@ -246,69 +247,120 @@ static inline void getMouseCursor(HDC hdcScreen)
 	}
 }
 
+static inline void mergeMouseCursor(HDC hdcScreen, HDC hdcMemDC)
+{
+	static CURSORINFO cursorinfo = { 0 };
+	static HCURSOR prevCursor = 0;
+	cursorinfo.cbSize = sizeof(cursorinfo);
+	static ICONINFO ii = {0};
+	static BYTE* bits = 0;
+	static BITMAP bitmap = {0};
+	bool hasCursorInfo = GetCursorInfo(&cursorinfo);
+	if(hasCursorInfo && cursorinfo.hCursor != prevCursor)  {
+		prevCursor = cursorinfo.hCursor;
+		if(GetIconInfo(cursorinfo.hCursor, &ii)) {
+			if(ii.hbmColor != 0) {
+				mouseBlendAlternate = false;
+				GetObject(ii.hbmColor, sizeof(bitmap), &bitmap);
+			} else if(ii.hbmMask != 0) {
+				mouseBlendAlternate = true;
+				GetObject(ii.hbmMask, sizeof(bitmap), &bitmap);
+			}
+		}
+	}
+	if(hasCursorInfo) 
+	{
+		static HDC hdcCursor = CreateCompatibleDC(hdcMemDC);
+		//if(mouseBlendAlternate) {
+			SelectObject(hdcCursor, ii.hbmMask);
+			if(!BitBlt(hdcMemDC, 
+				cursorPosX-ii.xHotspot, physicalHeight-cursorPosY-ii.yHotspot,
+				bitmap.bmWidth,bitmap.bmHeight/((mouseBlendAlternate)?2:1),
+				hdcCursor, 
+				0,0,
+				(mouseBlendAlternate) ? SRCAND:SRCAND))
+			{
+				//MessageBox(hWnd, L"BitBlt has failed", L"Failed", MB_OK);
+				//goto done;
+			}
+		//}
+		SelectObject(hdcCursor, ii.hbmColor);
+		if(!BitBlt(hdcMemDC, 
+			cursorPosX-ii.xHotspot,  physicalHeight-cursorPosY-ii.yHotspot,//-((bitmap.bmHeight/2)*mouseBlendAlternate),
+			bitmap.bmWidth,bitmap.bmHeight/((mouseBlendAlternate)?2:1),
+			hdcCursor, 
+			0,bitmap.bmHeight/2*mouseBlendAlternate,
+			(mouseBlendAlternate) ? SRCINVERT:SRCINVERT))
+		{
+			//MessageBox(hWnd, L"BitBlt has failed", L"Failed", MB_OK);
+			//goto done;
+		}
+	}
+}
+
 static inline int CaptureAnImage(HWND hWnd)
 {
-    HDC hdcScreen;
-    HDC hdcWindow;
-    HDC hdcMemDC = NULL;
-    HBITMAP hbmScreen = NULL;
-    BITMAP bmpScreen;
+	HDC hdcScreen;
+	HDC hdcWindow;
+	HDC hdcMemDC = NULL;
+	HBITMAP hbmScreen = NULL;
+	BITMAP bmpScreen;
 
-    // Retrieve the handle to a display device context for the client 
-    // area of the window. 
-    hdcScreen = GetDC(NULL);
-    hdcWindow = GetDC(hWnd);
+	// Retrieve the handle to a display device context for the client 
+	// area of the window. 
+	hdcScreen = GetDC(NULL);
+	hdcWindow = GetDC(hWnd);
 
-    // Create a compatible DC which is used in a BitBlt from the window DC
-    hdcMemDC = CreateCompatibleDC(hdcWindow); 
+	// Create a compatible DC which is used in a BitBlt from the window DC
+	hdcMemDC = CreateCompatibleDC(hdcWindow); 
 
-    if(!hdcMemDC)
-    {
-        MessageBox(hWnd, L"CreateCompatibleDC has failed",L"Failed", MB_OK);
-        goto done;
-    }
+	if(!hdcMemDC)
+	{
+		MessageBox(hWnd, L"CreateCompatibleDC has failed",L"Failed", MB_OK);
+		goto done;
+	}
 
-    // Get the client area for size calculation
-    RECT rcClient;
-    GetClientRect(hWnd, &rcClient);
-    
-    // Create a compatible bitmap from the Window DC
-    hbmScreen = CreateCompatibleBitmap(hdcWindow, rcClient.right-rcClient.left, rcClient.bottom-rcClient.top);
-    
-    if(!hbmScreen)
-    {
-        MessageBox(hWnd, L"CreateCompatibleBitmap Failed",L"Failed", MB_OK);
-        goto done;
-    }
+	// Get the client area for size calculation
+	RECT rcClient;
+	GetClientRect(hWnd, &rcClient);
 
-    // Select the compatible bitmap into the compatible memory DC.
-    SelectObject(hdcMemDC,hbmScreen);
+	// Create a compatible bitmap from the Window DC
+	hbmScreen = CreateCompatibleBitmap(hdcWindow, rcClient.right-rcClient.left, rcClient.bottom-rcClient.top);
 
-    // Get the BITMAP from the HBITMAP
-    GetObject(hbmScreen,sizeof(BITMAP),&bmpScreen);
-     
-    BITMAPFILEHEADER   bmfHeader;    
-    BITMAPINFOHEADER   bi;
-     
-    bi.biSize = sizeof(BITMAPINFOHEADER);    
-    bi.biWidth = bmpScreen.bmWidth;    
-    bi.biHeight = bmpScreen.bmHeight;  
-    bi.biPlanes = 1;    
-    bi.biBitCount = 24;    
-    bi.biCompression = BI_RGB;    
-    bi.biSizeImage = 0;  
-    bi.biXPelsPerMeter = 0;    
-    bi.biYPelsPerMeter = 0;    
-    bi.biClrUsed = 0;    
-    bi.biClrImportant = 0;
+	if(!hbmScreen)
+	{
+		MessageBox(hWnd, L"CreateCompatibleBitmap Failed",L"Failed", MB_OK);
+		goto done;
+	}
 
-    DWORD dwBmpSize = ((bmpScreen.bmWidth * bi.biBitCount + 23) / 24) * 3 * bmpScreen.bmHeight;
+	// Select the compatible bitmap into the compatible memory DC.
+	SelectObject(hdcMemDC,hbmScreen);
 
-    // Starting with 32-bit Windows, GlobalAlloc and LocalAlloc are implemented as wrapper functions that 
-    // call HeapAlloc using a handle to the process's default heap. Therefore, GlobalAlloc and LocalAlloc 
-    // have greater overhead than HeapAlloc.
-    //HANDLE hDIB = GlobalAlloc(GHND,dwBmpSize); 
-    //char *lpbitmap = (char *)GlobalLock(hDIB);    
+	// Get the BITMAP from the HBITMAP
+	GetObject(hbmScreen,sizeof(BITMAP),&bmpScreen);
+
+	BITMAPFILEHEADER   bmfHeader;    
+	BITMAPINFOHEADER   bi;
+
+	bi.biSize = sizeof(BITMAPINFOHEADER);    
+	bi.biWidth = bmpScreen.bmWidth;    
+	bi.biHeight = bmpScreen.bmHeight;  
+	bi.biPlanes = 1;    
+	bi.biBitCount = 24;    
+	bi.biCompression = BI_RGB;    
+	bi.biSizeImage = 0;  
+	bi.biXPelsPerMeter = 0;    
+	bi.biYPelsPerMeter = 0;    
+	bi.biClrUsed = 0;    
+	bi.biClrImportant = 0;
+
+	DWORD dwBmpSize = ((bmpScreen.bmWidth * bi.biBitCount + 23) / 24) * 3 * bmpScreen.bmHeight;
+
+	// Starting with 32-bit Windows, GlobalAlloc and LocalAlloc are implemented as wrapper functions that 
+	// call HeapAlloc using a handle to the process's default heap. Therefore, GlobalAlloc and LocalAlloc 
+	// have greater overhead than HeapAlloc.
+	//HANDLE hDIB = GlobalAlloc(GHND,dwBmpSize); 
+	//char *lpbitmap = (char *)GlobalLock(hDIB);    
 	static char *lpbitmap = new char[dwBmpSize];
 
 	static std::mutex screenshotMutex;
@@ -316,23 +368,25 @@ static inline int CaptureAnImage(HWND hWnd)
 	screenshotCondition.wait(screenshotLock);
 
 	// Bit block transfer into our compatible memory DC.
-    if(!BitBlt(hdcMemDC, 
-               0,0, 
-               rcClient.right-rcClient.left, rcClient.bottom-rcClient.top, 
-               hdcWindow, 
-               0,0,
-               SRCCOPY | CAPTUREBLT))
-    {
-        MessageBox(hWnd, L"BitBlt has failed", L"Failed", MB_OK);
-        goto done;
-    }
+	if(!BitBlt(hdcMemDC, 
+		0,0, 
+		rcClient.right-rcClient.left, rcClient.bottom-rcClient.top, 
+		hdcWindow, 
+		0,0,
+		SRCCOPY | CAPTUREBLT))
+	{
+		MessageBox(hWnd, L"BitBlt has failed", L"Failed", MB_OK);
+		goto done;
+	}
+	mergeMouseCursor(hdcScreen, hdcMemDC);
 
-    // Gets the "bits" from the bitmap and copies them into a buffer 
-    // which is pointed to by lpbitmap.
-    GetDIBits(hdcWindow, hbmScreen, 0,
-				(UINT)bmpScreen.bmHeight,
-				lpbitmap,
-				(BITMAPINFO *)&bi, DIB_RGB_COLORS);
+
+	// Gets the "bits" from the bitmap and copies them into a buffer 
+	// which is pointed to by lpbitmap.
+	GetDIBits(hdcWindow, hbmScreen, 0,
+		(UINT)bmpScreen.bmHeight,
+		lpbitmap,
+		(BITMAPINFO *)&bi, DIB_RGB_COLORS);
 
 	if(desktopTexture) {
 		static bool used = false;
@@ -342,7 +396,7 @@ static inline int CaptureAnImage(HWND hWnd)
 		} else {
 			used = true;
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, bmpScreen.bmWidth, bmpScreen.bmHeight, 0,
-               GL_BGR, GL_UNSIGNED_BYTE, lpbitmap);
+				GL_BGR, GL_UNSIGNED_BYTE, lpbitmap);
 			//glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_FALSE);
 		}
 		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
@@ -353,18 +407,18 @@ static inline int CaptureAnImage(HWND hWnd)
 
 	// free []lpbitmap;
 
-    //Unlock and Free the DIB from the heap
-    //GlobalUnlock(hDIB);    
-    //GlobalFree(hDIB);
+	//Unlock and Free the DIB from the heap
+	//GlobalUnlock(hDIB);    
+	//GlobalFree(hDIB);
 
 	getMouseCursor(hdcScreen);
 
-    //Clean up
+	//Clean up
 done:
-    DeleteObject(hbmScreen);
-    DeleteObject(hdcMemDC);
-    ReleaseDC(NULL,hdcScreen);
-    ReleaseDC(hWnd,hdcWindow);
+	DeleteObject(hbmScreen);
+	DeleteObject(hdcMemDC);
+	ReleaseDC(NULL,hdcScreen);
+	ReleaseDC(hWnd,hdcWindow);
 
 	return 0;
 }
@@ -454,11 +508,11 @@ static void RenderSceneCB()
 	}
 
 	// Add your drawing codes here
-    if(ibex == 0) {
+	if(ibex == 0) {
 		char *argv[] = {""};
-        ibex = new Ibex::Ibex(0,0);
-    }
-    
+		ibex = new Ibex::Ibex(0,0);
+	}
+
 	POINT p;
 	if (GetCursorPos(&p))
 	{
@@ -470,12 +524,12 @@ static void RenderSceneCB()
 		if(ibex->renderer->window.getSelectedVideo()) {
 			std::thread videoThread(playVideo);
 			videoThread.detach();
-        } else {
+		} else {
 			std::thread videoThread(playCamera);
 			videoThread.detach();
-        }
-        ibex->renderer->window.setSelectedVideo(false);
-        ibex->renderer->window.setSelectedCamera(false);
+		}
+		ibex->renderer->window.setSelectedVideo(false);
+		ibex->renderer->window.setSelectedCamera(false);
 	}
 	if(_ibexVideoPlayer != NULL) {
 		videoTexture[0] = _ibexVideoPlayer->videoTexture[0];
@@ -490,7 +544,7 @@ static void RenderSceneCB()
 	mySixenseRefresh();
 #endif
 
-    ibex->render(timeDiff);
+	ibex->render(timeDiff);
 	//checkForErrors();
 
 	//screenshotCondition.notify_all();
@@ -513,10 +567,10 @@ static void globalHotkeyListener() {
 	RegisterHotKey(NULL, 2, MOD_CONTROL | MOD_SHIFT | MOD_NOREPEAT, VK_F2);
 
 	MSG msg = {0};
-    while (GetMessage(&msg, NULL, 0, 0) && captureInput)
-    {
-        //TranslateMessage(&msg);
-        //DispatchMessage(&msg);
+	while (GetMessage(&msg, NULL, 0, 0) && captureInput)
+	{
+		//TranslateMessage(&msg);
+		//DispatchMessage(&msg);
 		if(msg.message == WM_HOTKEY) {
 			controlDesktop = !controlDesktop;
 			modifiedDesktop = true;
@@ -527,7 +581,7 @@ static void globalHotkeyListener() {
 				SetFocus(hwnd);
 			}
 		}
-    }
+	}
 	return;
 }
 
@@ -599,16 +653,16 @@ static void globalHotkeyListener() {
 // Get the horizontal and vertical screen sizes in pixel
 static void GetDesktopResolution(int& horizontal, int& vertical)
 {
-   RECT desktop;
-   // Get a handle to the desktop window
-   const HWND hDesktop = GetDesktopWindow();
-   // Get the size of screen to the variable desktop
-   GetWindowRect(hDesktop, &desktop);
-   // The top left corner will have coordinates (0,0)
-   // and the bottom right corner will have coordinates
-   // (horizontal, vertical)
-   horizontal = desktop.right-desktop.left;
-   vertical = desktop.bottom-desktop.top;
+	RECT desktop;
+	// Get a handle to the desktop window
+	const HWND hDesktop = GetDesktopWindow();
+	// Get the size of screen to the variable desktop
+	GetWindowRect(hDesktop, &desktop);
+	// The top left corner will have coordinates (0,0)
+	// and the bottom right corner will have coordinates
+	// (horizontal, vertical)
+	horizontal = desktop.right-desktop.left;
+	vertical = desktop.bottom-desktop.top;
 }
 
 ///////////////// compositing management (from comments on http://weblogs.asp.net/kennykerr/comments/429272.aspx) ///////////////////////////////
@@ -623,7 +677,7 @@ struct DWMAPILib {
 	DWMAPILib() : lib((HMODULE)0xFFFFFFFF), fIsEnabled(NULL), fEnable(NULL) {}
 	~DWMAPILib() {
 		if (lib != NULL && lib != (HMODULE)0xFFFFFFFF)
-		::FreeLibrary(lib);
+			::FreeLibrary(lib);
 		lib = (HMODULE)0xFFFFFFFF;
 	}
 
@@ -651,12 +705,12 @@ void disableCompositing()
 {
 	if (!dwmapiLib.Load()) return;
 	if ((compositingWasEnabled = dwmapiLib.IsCompositionEnabled()) == true)
-	dwmapiLib.EnableComposition(FALSE);	 // DWM_EC_DISABLECOMPOSITION
+		dwmapiLib.EnableComposition(FALSE);	 // DWM_EC_DISABLECOMPOSITION
 }
 
 void restoreCompositing() {
 	if (compositingWasEnabled && dwmapiLib.Load())
-	dwmapiLib.EnableComposition(TRUE);	 // DWM_EC_ENABLECOMPOSITION
+		dwmapiLib.EnableComposition(TRUE);	 // DWM_EC_ENABLECOMPOSITION
 }
 /////////////////
 
@@ -664,12 +718,12 @@ void restoreCompositing() {
 
 static void error_callback(int error, const char* description)
 {
-    fputs(description, stderr);
+	fputs(description, stderr);
 }
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, GL_TRUE);
+	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+		glfwSetWindowShouldClose(window, GL_TRUE);
 }
 
 
@@ -679,14 +733,14 @@ static void exiting() {
 }
 
 int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
-                     _In_opt_ HINSTANCE hPrevInstance,
-                     _In_ LPTSTR    lpCmdLine,
-                     _In_ int       nCmdShow)
+					   _In_opt_ HINSTANCE hPrevInstance,
+					   _In_ LPTSTR    lpCmdLine,
+					   _In_ int       nCmdShow)
 {
 	atexit(exiting);
-	#ifdef _DEBUG
+#ifdef _DEBUG
 	RedirectIOToConsole();
-	#endif
+#endif
 
 #if _USE_SIXENSE
 	myInitSixense();
@@ -701,11 +755,11 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	windowWidth = 1280;
 	windowHeight = 800;
 	if(riftConnected) {
-        width = riftResolutionX;
-        height = riftResolutionY;
-        
-        windowWidth = width;
-        windowHeight = height;
+		width = riftResolutionX;
+		height = riftResolutionY;
+
+		windowWidth = width;
+		windowHeight = height;
 	}
 	physicalWidth = mainScreenHorizontal;//1280;//1920;//(false) ? 1920 : width;
 	physicalHeight = mainScreenVertical;//800;//1080;//(false) ? 1080 : height;
@@ -722,18 +776,18 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 
 	//int argc = 0;
 	//char **argv = 0;
- //   glutInit(&argc, argv);
+	//   glutInit(&argc, argv);
 	//glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGB|GLUT_FULL_SCREEN);
- //   glutInitWindowSize(width, height);
- //   glutInitWindowPosition(0, 0);
+	//   glutInitWindowSize(width, height);
+	//   glutInitWindowPosition(0, 0);
 	//glutInitWindowPosition(riftX, riftY);
- //   glutCreateWindow("Ibex");
+	//   glutCreateWindow("Ibex");
 
 	glfwSetErrorCallback(error_callback);
 	if (!glfwInit())
-        exit(EXIT_FAILURE);
+		exit(EXIT_FAILURE);
 
-	
+
 	int monitorCount = 0;
 	GLFWmonitor* monitor = NULL;//glfwGetPrimaryMonitor();
 	GLFWmonitor** monitors = glfwGetMonitors	(&monitorCount);
@@ -763,28 +817,28 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindow = glfwCreateWindow(width, height, "Ibex", monitor, NULL);
 	if (!glfwWindow)
-    {
-        glfwTerminate();
-        exit(EXIT_FAILURE);
-    }
+	{
+		glfwTerminate();
+		exit(EXIT_FAILURE);
+	}
 	glfwMakeContextCurrent(glfwWindow);
 	glfwSetWindowSizeCallback(glfwWindow, window_size_callback);
-    glfwSetKeyCallback(glfwWindow, Keyboard);
+	glfwSetKeyCallback(glfwWindow, Keyboard);
 	glfwSetCursorPosCallback(glfwWindow, cursor_callback);
 
-    // Must be done after GLFW is initialized!
+	// Must be done after GLFW is initialized!
 	// Initialize GLEW
 	glewExperimental=true; // Needed in core profile
-    GLenum res = glewInit();
-    if (res != GLEW_OK) {
-      fprintf(stderr, "Error: '%s'\n", glewGetErrorString(res));
-      return 1;
-    }
+	GLenum res = glewInit();
+	if (res != GLEW_OK) {
+		fprintf(stderr, "Error: '%s'\n", glewGetErrorString(res));
+		return 1;
+	}
 
 	hwnd = GetActiveWindow();
 	hdc = GetDC(hwnd);
 	HGLRC mainContext = wglGetCurrentContext();
-    
+
 	loaderContext = wglCreateContext(hdc);
 	wglShareLists(loaderContext, mainContext); // Order matters
 
@@ -797,18 +851,18 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	std::thread hotkeyThread(globalHotkeyListener);
 
 	disableCompositing();
-    // main loop
+	// main loop
 	while (!glfwWindowShouldClose(glfwWindow))
-    {
+	{
 		RenderSceneCB();
-        glfwSwapBuffers(glfwWindow);
-        glfwPollEvents();
+		glfwSwapBuffers(glfwWindow);
+		glfwPollEvents();
 		if(!controlDesktop) {
 			glfwSetCursorPos(glfwWindow, 500,500);
 		}
-    }
-    glfwDestroyWindow(glfwWindow);
-    glfwTerminate();
+	}
+	glfwDestroyWindow(glfwWindow);
+	glfwTerminate();
 
 	restoreCompositing();
 
