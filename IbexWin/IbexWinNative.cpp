@@ -167,134 +167,22 @@ static inline void cursor_callback(GLFWwindow *window, double x, double y)
 	//std::cerr << relativeMouseX << ", " << relativeMouseY << std::endl;
 }
 
-static inline void getMouseCursor(HDC hdcScreen)
-{
-	return;
-	static CURSORINFO cursorinfo = { 0 };
-	static HCURSOR prevCursor = 0;
-	cursorinfo.cbSize = sizeof(cursorinfo);
-	if(GetCursorInfo(&cursorinfo) && cursorinfo.hCursor != prevCursor)  {
-		prevCursor = cursorinfo.hCursor;
-		ICONINFO ii = {0};
-		if(GetIconInfo(cursorinfo.hCursor, &ii)) {
-			BITMAP bitmap = {0};
-			if(ii.hbmColor != 0) {
-				mouseBlendAlternate = false;
-				GetObject(ii.hbmColor, sizeof(bitmap), &bitmap);
-
-				int w = ((bitmap.bmWidth * bitmap.bmBitsPixel) + 31) / 8;
-				static BYTE* bits = new BYTE[w * bitmap.bmHeight];
-				static int size = w * bitmap.bmHeight;
-				memset(bits, 0, size);//sizeof(bits));
-
-				BITMAPINFO bmi;
-				memset(&bmi, 0, sizeof(BITMAPINFO)); 
-				bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-				bmi.bmiHeader.biWidth =  bitmap.bmWidth;
-				bmi.bmiHeader.biHeight =  bitmap.bmHeight;
-				bmi.bmiHeader.biBitCount = 32;
-				bmi.bmiHeader.biPlanes = 1;
-				bmi.bmiHeader.biCompression = BI_RGB;
-				int rv = ::GetDIBits(hdcScreen, ii.hbmColor, 0, bitmap.bmHeight, bits, (BITMAPINFO *)&bmi, DIB_RGB_COLORS);
-
-				if(cursor == 0) {
-					glGenTextures(1, &cursor);
-				}
-				glBindTexture(GL_TEXTURE_2D, cursor);
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, bitmap.bmWidth, bitmap.bmHeight, 0,
-					GL_BGRA, GL_UNSIGNED_BYTE, bits);
-				glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-				glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-				//glBindTexture(GL_TEXTURE_2D, 0);
-
-				//delete []bits;
-			} else if(ii.hbmMask != 0) {
-				mouseBlendAlternate = true;
-				GetObject(ii.hbmMask, sizeof(bitmap), &bitmap);
-
-				int w = ((bitmap.bmWidth * /*bitmap.bmBitsPixel*/ 32) + 31) / 8;
-				static BYTE *bits = new BYTE[w * bitmap.bmHeight];
-				static int size = w * bitmap.bmHeight;
-				memset(bits, 0, size);//sizeof(bits));
-
-				BITMAPV5HEADER bmi;
-				memset(&bmi, 0, sizeof(BITMAPV5HEADER)); 
-				bmi.bV5Size = sizeof(BITMAPV5HEADER);
-				bmi.bV5Width =  bitmap.bmWidth;
-				bmi.bV5Height =  bitmap.bmHeight;
-				bmi.bV5BitCount = 32;
-				bmi.bV5Planes = 1;
-				bmi.bV5Compression = BI_BITFIELDS; //BI_RGB;
-				bmi.bV5RedMask   =  0x00FF0000;
-				bmi.bV5GreenMask =  0x0000FF00;
-				bmi.bV5BlueMask  =  0x000000FF;
-				bmi.bV5AlphaMask =  0xFF000000;
-				int rv = ::GetDIBits(hdcScreen, ii.hbmMask, 0, bitmap.bmHeight/2, bits, (BITMAPINFO *)&bmi, DIB_RGB_COLORS);
-
-				if(cursor == 0) {
-					glGenTextures(1, &cursor);
-				}
-				glBindTexture(GL_TEXTURE_2D, cursor);
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, bitmap.bmWidth, bitmap.bmHeight/2, 0,
-					GL_BGRA, GL_UNSIGNED_BYTE, bits);
-				glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-				glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-				//glBindTexture(GL_TEXTURE_2D, 0);
-
-				//delete []bits;
-			}
-		}
-	}
-}
-
-static inline void mergeMouseCursor(HDC hdcScreen, HDC hdcMemDC)
+static inline void mergeMouseCursor(HDC hdcMemDC)
 {
 	static CURSORINFO cursorinfo = { 0 };
-	static HCURSOR prevCursor = 0;
-	cursorinfo.cbSize = sizeof(cursorinfo);
 	static ICONINFO ii = {0};
-	static BYTE* bits = 0;
-	static BITMAP bitmap = {0};
-	bool hasCursorInfo = GetCursorInfo(&cursorinfo);
+	static HCURSOR prevCursor = 0;
+	cursorinfo.cbSize = sizeof(cursorinfo);
+
+	const bool hasCursorInfo = GetCursorInfo(&cursorinfo);
 	if(hasCursorInfo && cursorinfo.hCursor != prevCursor)  {
 		prevCursor = cursorinfo.hCursor;
-		if(GetIconInfo(cursorinfo.hCursor, &ii)) {
-			if(ii.hbmColor != 0) {
-				mouseBlendAlternate = false;
-				GetObject(ii.hbmColor, sizeof(bitmap), &bitmap);
-			} else if(ii.hbmMask != 0) {
-				mouseBlendAlternate = true;
-				GetObject(ii.hbmMask, sizeof(bitmap), &bitmap);
-			}
-		}
+		GetIconInfo(cursorinfo.hCursor, &ii);
 	}
+
 	if(hasCursorInfo) 
 	{
-		static HDC hdcCursor = CreateCompatibleDC(hdcMemDC);
-		//if(mouseBlendAlternate) {
-			SelectObject(hdcCursor, ii.hbmMask);
-			if(!BitBlt(hdcMemDC, 
-				cursorPosX-ii.xHotspot, physicalHeight-cursorPosY-ii.yHotspot,
-				bitmap.bmWidth,bitmap.bmHeight/((mouseBlendAlternate)?2:1),
-				hdcCursor, 
-				0,0,
-				(mouseBlendAlternate) ? SRCAND:SRCAND))
-			{
-				//MessageBox(hWnd, L"BitBlt has failed", L"Failed", MB_OK);
-				//goto done;
-			}
-		//}
-		SelectObject(hdcCursor, ii.hbmColor);
-		if(!BitBlt(hdcMemDC, 
-			cursorPosX-ii.xHotspot,  physicalHeight-cursorPosY-ii.yHotspot,//-((bitmap.bmHeight/2)*mouseBlendAlternate),
-			bitmap.bmWidth,bitmap.bmHeight/((mouseBlendAlternate)?2:1),
-			hdcCursor, 
-			0,bitmap.bmHeight/2*mouseBlendAlternate,
-			(mouseBlendAlternate) ? SRCINVERT:SRCINVERT))
-		{
-			//MessageBox(hWnd, L"BitBlt has failed", L"Failed", MB_OK);
-			//goto done;
-		}
+		DrawIcon(hdcMemDC, cursorinfo.ptScreenPos.x-ii.xHotspot,  cursorinfo.ptScreenPos.y-ii.yHotspot, cursorinfo.hCursor);
 	}
 }
 
@@ -378,7 +266,7 @@ static inline int CaptureAnImage(HWND hWnd)
 		MessageBox(hWnd, L"BitBlt has failed", L"Failed", MB_OK);
 		goto done;
 	}
-	mergeMouseCursor(hdcScreen, hdcMemDC);
+	mergeMouseCursor(hdcMemDC);
 
 
 	// Gets the "bits" from the bitmap and copies them into a buffer 
@@ -410,8 +298,6 @@ static inline int CaptureAnImage(HWND hWnd)
 	//Unlock and Free the DIB from the heap
 	//GlobalUnlock(hDIB);    
 	//GlobalFree(hDIB);
-
-	getMouseCursor(hdcScreen);
 
 	//Clean up
 done:
