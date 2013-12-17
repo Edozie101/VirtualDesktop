@@ -56,7 +56,7 @@ std::condition_variable screenshotCondition;
 Ibex::Ibex *ibex = 0;
 GLFWwindow* glfwWindow;
 
-static inline void Keyboard(GLFWwindow* window, int key, int scancode, int action, int mods) {//int key, int action) {
+static inline void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {//int key, int action) {
 	int down = action != GLFW_RELEASE;
 	int processed = 0;
 	if(showDialog) {
@@ -182,7 +182,7 @@ static inline void mergeMouseCursor(HDC hdcMemDC)
 
 	if(hasCursorInfo) 
 	{
-		DrawIcon(hdcMemDC, cursorinfo.ptScreenPos.x-ii.xHotspot,  cursorinfo.ptScreenPos.y-ii.yHotspot, cursorinfo.hCursor);
+		DrawIconEx(hdcMemDC, cursorinfo.ptScreenPos.x-ii.xHotspot,  cursorinfo.ptScreenPos.y-ii.yHotspot, cursorinfo.hCursor, 0, 0, 0, NULL, DI_NORMAL);
 	}
 }
 
@@ -471,71 +471,6 @@ static void globalHotkeyListener() {
 	return;
 }
 
-
-
-//static int riftX = 0;
-//static int riftY = 0;
-//static int riftResolutionX = 0;
-//static int riftResolutionY = 0;
-
-//static void initRift() {
-//	OVR::System::Init(OVR::Log::ConfigureDefaultLog(OVR::LogMask_All));
-//
-//	pManager = *OVR::DeviceManager::Create();
-//
-//	//pManager->SetMessageHandler(this);
-//
-//	pHMD = *pManager->EnumerateDevices<OVR::HMDDevice>().CreateDevice();
-//
-//	if (pHMD)
-//    {
-//		pSensor = *pHMD->GetSensor();
-//
-//        InfoLoaded = pHMD->GetDeviceInfo(&Info);
-//
-//		strncpy(Info.DisplayDeviceName, RiftMonitorName, 32);
-//
-//		RiftDisplayId = Info.DisplayId;
-//
-//		EyeDistance = Info.InterpupillaryDistance;
-//		DistortionK[0] = Info.DistortionK[0];
-//		DistortionK[1] = Info.DistortionK[1];
-//		DistortionK[2] = Info.DistortionK[2];
-//		DistortionK[3] = Info.DistortionK[3];
-//	}
-//	else
-//	{
-//		pSensor = *pManager->EnumerateDevices<OVR::SensorDevice>().CreateDevice();
-//	}
-//
-//	if (pSensor)
-//	{
-//	   FusionResult.AttachToSensor(pSensor);
-//	   FusionResult.SetPredictionEnabled(true);
-//	   float motionPred = FusionResult.GetPredictionDelta(); // adjust in 0.01 increments
-//	   if(motionPred < 0) motionPred = 0;
-//	   FusionResult.SetPrediction(motionPred);
-//
-//	   if(InfoLoaded) {
-//		   riftConnected = true;
-//
-//		   riftX = Info.DesktopX;
-//		   riftY = Info.DesktopY;
-//
-//		   riftResolutionX = Info.HResolution;
-//		   riftResolutionY = Info.VResolution;
-//	   }
-//	}
-//
-//	getRiftDisplay();
-//}
-//static void cleanUpRift() {
-//	pSensor.Clear();
-//	pManager.Clear();
-//
-//	OVR::System::Destroy();
-//}
-
 // Get the horizontal and vertical screen sizes in pixel
 static void GetDesktopResolution(int& horizontal, int& vertical)
 {
@@ -604,14 +539,8 @@ void restoreCompositing() {
 
 static void error_callback(int error, const char* description)
 {
-	fputs(description, stderr);
+	std::cerr << "GLFW Error(" << error << "): " << description << std::endl;
 }
-static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
-{
-	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-		glfwSetWindowShouldClose(window, GL_TRUE);
-}
-
 
 static void exiting() {
 	captureDesktop = false;
@@ -676,9 +605,13 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 
 	int monitorCount = 0;
 	GLFWmonitor* monitor = NULL;//glfwGetPrimaryMonitor();
-	GLFWmonitor** monitors = glfwGetMonitors	(&monitorCount);
+	GLFWmonitor** monitors = glfwGetMonitors(&monitorCount);
 	for(int i = 0; i < monitorCount; ++i) {
-		if(strcmp(glfwGetMonitorName(monitors[i]), /*RiftMonitorName*/"RiftDK") == 0) {
+		std::cerr << "Monitor Name[" << i << "]: " << (monitors[i]) << std::endl;
+		const char *monitorName = glfwGetMonitorName(monitors[i]);
+		const GLFWvidmode* mode = glfwGetVideoMode(monitors[i]);
+		if((strcmp(monitorName, /*RiftMonitorName*/"Rift DK") == 0)
+			|| (mode->width == 1280 && mode->height == 800)) {
 			monitor = monitors[i];
 			break;
 		}
@@ -687,15 +620,12 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 		width = 1280;
 		height = 800;
 	} else {
-		int iWidth = width;
-		int iHeight = height;
-		glfwGetMonitorPhysicalSize(monitor, &iWidth, &iHeight);
-		width = iWidth;
-		height = iHeight;
+		const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+		width = mode->width;
+		height = mode->height;
 	}
 
 	initRift();
-	//FusionResult.Reset();
 
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -709,7 +639,7 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	}
 	glfwMakeContextCurrent(glfwWindow);
 	glfwSetWindowSizeCallback(glfwWindow, window_size_callback);
-	glfwSetKeyCallback(glfwWindow, Keyboard);
+	glfwSetKeyCallback(glfwWindow, key_callback);
 	glfwSetCursorPosCallback(glfwWindow, cursor_callback);
 
 	// Must be done after GLFW is initialized!
