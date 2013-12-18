@@ -113,6 +113,7 @@
     <ClInclude Include="tinyxml\tinyxml.h" />
     <ClInclude Include="utils.h" />
     <ClInclude Include="video\VLCVideoPlayer.h" />
+    <ClInclude Include="windows\stb_truetype.h" />
     <ClInclude Include="windows\Window.h" />
   </ItemGroup>
   <ItemGroup>
@@ -143,6 +144,7 @@
     <ClCompile Include="tinyxml\tinyxmlparser.cpp" />
     <ClCompile Include="utils.cpp" />
     <ClCompile Include="video\VLCVideoPlayer.cpp" />
+    <ClCompile Include="windows\stb_truetype.cpp" />
     <ClCompile Include="windows\Window.cpp" />
   </ItemGroup>
   <ItemGroup>

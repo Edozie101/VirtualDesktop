@@ -38,6 +38,8 @@
 
 #include "Model.h"
 
+#include "../windows/stb_truetype.h"
+
 glm::vec3 lightInvDir;
 
 void copyMatrix(glm::mat4 &modelView, float M[4][4]) {
@@ -119,7 +121,7 @@ void renderCylindricalDisplay(double r, double numHorizontalLines, double numVer
     //    glPopMatrix();
 }
 
-SimpleWorldRendererPlugin::SimpleWorldRendererPlugin() : _bringUpIbexDisplay(false) {
+SimpleWorldRendererPlugin::SimpleWorldRendererPlugin() : _bringUpIbexDisplay(true) {
     reset();
 }
 SimpleWorldRendererPlugin::~SimpleWorldRendererPlugin() {
@@ -886,6 +888,14 @@ void SimpleWorldRendererPlugin::reset() {
 void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &view_, const glm::mat4 &playerCamera_, const glm::mat4 &playerRotation_, const glm::vec3 &playerPosition_, bool shadowPass, const glm::mat4 &depthBiasMVP, const double &time) {
     glm::mat4 view(view_);
     glm::mat4 model;
+
+	static bool first = true;
+	if(first) {
+		first = false;
+		loadProgram();
+		my_stbtt_initfont();
+		my_stbtt_generate(0,0,"Hello World");
+	}
     
     if(!shadowPass) {
         glDepthMask(GL_FALSE);
@@ -902,7 +912,8 @@ void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &
     
     glDisable(GL_CULL_FACE);
     //glCullFace(GL_BACK);
-    model = glm::translate(ibexDisplayModelTransform, glm::vec3(0,-getPlayerHeightAtPosition(-ibexDisplayModelTransform[3][0], -ibexDisplayModelTransform[3][2]-10),0));
+    //model = glm::translate(ibexDisplayModelTransform, glm::vec3(0,-getPlayerHeightAtPosition(-ibexDisplayModelTransform[3][0], -ibexDisplayModelTransform[3][2]-10),0));
+	model = ibexDisplayModelTransform;
     renderIbexDisplayFlat(PV*model, view, model, shadowPass, depthBiasMVP*model);
     //    renderVideoDisplayFlat(PV*model, view, model, depthBiasMVP*model);
     glEnable(GL_CULL_FACE);
@@ -959,6 +970,17 @@ void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &
             
             model = glm::translate(model, -glm::vec3(playerPosition_.x, 0, playerPosition_.z));
             renderWater(PV*model, view, model, shadowPass, depthBiasMVP*model, time);
+
+
+			//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			//glDisable(GL_CULL_FACE);
+			//model = glm::mat4();
+			//view = glm::mat4();
+
+			//glm::mat4 orth = glm::ortho(-512.0f,512.0f,-512.0f,512.0f,-100.0f,100.0f);
+			//renderText(/*PV*model*/orth, view, model, shadowPass, depthBiasMVP*model);
+			//glEnable(GL_CULL_FACE);
+
             glDisable(GL_BLEND);
         }
     }
@@ -1023,7 +1045,10 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
     
     if(_bringUpIbexDisplay) {
         _bringUpIbexDisplay = false;
-        ibexDisplayModelTransform = glm::translate(glm::mat4(), glm::vec3(-playerPosition.x, 0, -playerPosition.z-10));//glm::inverse(playerCamera), glm::vec3(0,0,-10));
+
+		glm::vec3 p(glm::mat4(glm::inverse(playerCamera)) * glm::vec4(0,0,-10,1));
+		ibexDisplayModelTransform = glm::translate(glm::mat4(),
+												   glm::vec3(p.x,p.y,p.z))*glm::inverse(playerRotation);
     }
     
     

@@ -132,6 +132,9 @@
     <ClInclude Include="include\GL\wglew.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="windows\stb_truetype.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="distortions.cpp">
@@ -216,6 +219,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="oculus\Rift.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="windows\stb_truetype.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
