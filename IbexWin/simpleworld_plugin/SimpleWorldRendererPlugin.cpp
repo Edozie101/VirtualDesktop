@@ -884,17 +884,17 @@ void SimpleWorldRendererPlugin::init() {
 
 void SimpleWorldRendererPlugin::reset() {
     ibexDisplayModelTransform = glm::mat4(glm::translate(glm::mat4(), glm::vec3(0.0f, 0.0f, -10.0f)));
+	_bringUpIbexDisplay = true;
 }
 void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &view_, const glm::mat4 &playerCamera_, const glm::mat4 &playerRotation_, const glm::vec3 &playerPosition_, bool shadowPass, const glm::mat4 &depthBiasMVP, const double &time) {
     glm::mat4 view(view_);
     glm::mat4 model;
 
 	static bool first = true;
+	static TextRenderer textRenderer;
 	if(first) {
 		first = false;
-		loadProgram();
-		my_stbtt_initfont();
-		my_stbtt_generate(0,0,"Hello World");
+		textRenderer.precompileText(0,0,"Hello World!");
 	}
     
     if(!shadowPass) {
@@ -971,14 +971,13 @@ void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &
             model = glm::translate(model, -glm::vec3(playerPosition_.x, 0, playerPosition_.z));
             renderWater(PV*model, view, model, shadowPass, depthBiasMVP*model, time);
 
-
 			//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			//glDisable(GL_CULL_FACE);
 			//model = glm::mat4();
 			//view = glm::mat4();
-
 			//glm::mat4 orth = glm::ortho(-512.0f,512.0f,-512.0f,512.0f,-100.0f,100.0f);
-			//renderText(/*PV*model*/orth, view, model, shadowPass, depthBiasMVP*model);
+			////renderText(/*PV*model*/orth, view, model, shadowPass, depthBiasMVP*model);
+			//textRenderer.renderText(/*PV*model*/orth, view, model, shadowPass, depthBiasMVP*model);
 			//glEnable(GL_CULL_FACE);
 
             glDisable(GL_BLEND);

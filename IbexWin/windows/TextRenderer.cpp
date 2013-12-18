@@ -1,29 +1,11 @@
 #include "TextRenderer.h"
 
-#include <vector>
+GLSLShaderProgram TextRenderer::textShaderProgram;
 
-#include "../opengl_helpers.h"
-#include "../GLSLShaderProgram.h"
-#include "../simpleworld_plugin/SimpleWorldRendererPlugin.h"
-
-static unsigned char ttf_buffer[1<<20];
-static unsigned char temp_bitmap[512*512];
-
-static stbtt_bakedchar cdata[96]; // ASCII 32..126 is 95 glyphs
-static GLuint ftex;
-
-static GLint IbexTextUniformLocations[5] = { 0, 0, 0, 0, 0};
-static GLint IbexTextAttribLocations[2] = { 0, 0 };
-
-static GLuint vaoTextRenderer = 0;
-static std::vector<GLfloat> vertices;
-static std::vector<GLuint> indices;
-static GLuint vboTextVertices = 0;
-static GLuint vboTextIndices = 0;
-
-static GLSLShaderProgram textShaderProgram;
-void loadProgram() {
-	textShaderProgram.loadShaderProgram(mResourcePath, "/resources/shaders/text.v.glsl", "/resources/shaders/text.f.glsl");
+void TextRenderer::loadProgram() {
+	if(textShaderProgram.shader.program == 0) {
+		textShaderProgram.loadShaderProgram(mResourcePath, "/resources/shaders/text.v.glsl", "/resources/shaders/text.f.glsl");
+	}
     glUseProgram(textShaderProgram.shader.program);
         
         
@@ -39,7 +21,7 @@ void loadProgram() {
 
 int ascent,baseline,ch=0;
 float scale, xpos=0;
-void my_stbtt_initfont(void)
+void TextRenderer::initializeFont()
 {
 	fread(ttf_buffer, 1, 1<<20, fopen("c:/windows/fonts/times.ttf", "rb"));
 	stbtt_fontinfo font;
@@ -59,8 +41,13 @@ void my_stbtt_initfont(void)
 	// can free temp_bitmap at this point
 }
 
-void my_stbtt_generate(float x, float y, char *text)
+void TextRenderer::precompileText(float x, float y, char *text)
 {
+	if(!initialized) {
+		initialized = true;
+		loadProgram();
+		initializeFont();
+	}
 	checkForErrors();
 	
 	x = 0;
@@ -71,11 +58,7 @@ void my_stbtt_generate(float x, float y, char *text)
 	while (*text) {
 		if (*text >= 32 && *text < 128) {
 			stbtt_aligned_quad q;
-			stbtt_GetBakedQuad(cdata, 512,512, *text-32, &x,&y,&q,1);//1=opengl,0=old d3d
-			//glTexCoord2f(q.s0,q.t1); glVertex2f(q.x0,q.y0);
-			//glTexCoord2f(q.s1,q.t1); glVertex2f(q.x1,q.y0);
-			//glTexCoord2f(q.s1,q.t0); glVertex2f(q.x1,q.y1);
-			//glTexCoord2f(q.s0,q.t0); glVertex2f(q.x0,q.y1);
+			stbtt_GetBakedQuad(cdata, 512,512, *text-32, &x,&y,&q,1);
 
 			// bottom right triangle
 			vertices.push_back(q.x0);
@@ -149,7 +132,7 @@ void my_stbtt_generate(float x, float y, char *text)
 	}
 }
 
-void renderText(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP)
+void TextRenderer::renderText(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP)
 {
 	if(shadowPass) {
 		//glUseProgram(shadowProgram.shader.program);
@@ -177,11 +160,16 @@ void renderText(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bo
 	glUseProgram(0);
 }
 
-TextRenderer::TextRenderer(void)
+TextRenderer::TextRenderer() : initialized(false),
+	vaoTextRenderer(0),
+	vboTextVertices(0),
+	vboTextIndices(0)
 {
+	memset(IbexTextUniformLocations,0,sizeof(IbexTextUniformLocations));
+	memset(IbexTextAttribLocations,0,sizeof(IbexTextAttribLocations));
 }
 
 
-TextRenderer::~TextRenderer(void)
+TextRenderer::~TextRenderer()
 {
 }
