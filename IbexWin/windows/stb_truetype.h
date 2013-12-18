@@ -1,24 +1,3 @@
-#ifndef __IBEX_STB_INCLUDE_STB_TRUETYPE_H__
-#define __IBEX_STB_INCLUDE_STB_TRUETYPE_H__
-
-#include <glm/glm.hpp>
-#include <glm/ext.hpp>
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-void loadProgram();
-void my_stbtt_initfont(void);
-void my_stbtt_generate(float x, float y, char *text);
-void renderText(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP);
-
-#ifdef __cplusplus
-}
-#endif
-
-#endif // __IBEX_STB_INCLUDE_STB_TRUETYPE_H__
-
 // stb_truetype.h - v0.7 - public domain
 // authored from 2009-2013 by Sean Barrett / RAD Game Tools
 //

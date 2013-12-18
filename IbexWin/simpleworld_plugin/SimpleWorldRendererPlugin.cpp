@@ -38,7 +38,7 @@
 
 #include "Model.h"
 
-#include "../windows/stb_truetype.h"
+#include "../windows/TextRenderer.h"
 
 glm::vec3 lightInvDir;
 
