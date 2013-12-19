@@ -894,7 +894,14 @@ void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &
 	static TextRenderer textRenderer;
 	if(first) {
 		first = false;
-		textRenderer.precompileText(0,0,"Hello World!");
+		std::vector<std::string> lines;
+		lines.push_back("Hello World!");
+		lines.push_back("This is Hesham writing second line.");
+		lines.push_back("1. blah");
+		lines.push_back("2. blah blah");
+		lines.push_back("3. blah blah blah");
+		lines.push_back("4. blah?");
+		textRenderer.precompileText(0,0,lines);
 	}
     
     if(!shadowPass) {
@@ -973,11 +980,11 @@ void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &
 
 			//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			//glDisable(GL_CULL_FACE);
-			//model = glm::mat4();
-			//view = glm::mat4();
-			//glm::mat4 orth = glm::ortho(-512.0f,512.0f,-512.0f,512.0f,-100.0f,100.0f);
-			////renderText(/*PV*model*/orth, view, model, shadowPass, depthBiasMVP*model);
-			//textRenderer.renderText(/*PV*model*/orth, view, model, shadowPass, depthBiasMVP*model);
+			////model = glm::mat4();
+			////view = glm::mat4();
+			////glm::mat4 orth = glm::ortho(-512.0f,512.0f,-512.0f,512.0f,-100.0f,100.0f);
+			//////renderText(/*PV*model*/orth, view, model, shadowPass, depthBiasMVP*model);
+			//textRenderer.renderText(PV*model, view, model, shadowPass, depthBiasMVP*model);
 			//glEnable(GL_CULL_FACE);
 
             glDisable(GL_BLEND);

@@ -3,6 +3,7 @@
 
 #include "stb_truetype.h"
 
+#include <string>
 #include <vector>
 
 #include <glm/glm.hpp>
@@ -21,7 +22,7 @@ public:
 	void loadProgram();
 	void initializeFont(void);
 
-	void precompileText(float x, float y, char *text);
+	void precompileText(float x, float y, std::vector<std::string> lines);
 	void renderText(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP);
 private:
 	bool initialized;
@@ -42,6 +43,10 @@ private:
 	GLuint vboTextIndices;
 
 	static GLSLShaderProgram textShaderProgram;
+	float minX, maxX, minY,maxY;
+
+	int ascent,baseline,descent,lineGap;
+	float scale;
 };
 
 #endif // __IBEX_TEXT_RENDERER_H__
