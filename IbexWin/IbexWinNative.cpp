@@ -128,7 +128,7 @@ static inline void key_callback(GLFWwindow* window, int key, int scancode, int a
 				displayShape = (displayShape == FlatDisplay) ? SphericalDisplay : FlatDisplay;
 			}
 			break;
-		case '/':
+		case GLFW_KEY_SLASH:
 			if(!down) {
 				showDialog = !showDialog;
 				ibex->renderer->window.reset();
