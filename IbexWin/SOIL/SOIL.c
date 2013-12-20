@@ -12,6 +12,10 @@
 	* Dan Venkitachalam - for finding some non-compliant DDS files, and patching some explicit casts
 	* everybody at gamedev.net
 */
+//#include "../opengl_helpers.h"
+#include "GL/glew.h"
+#include <GLFW/glfw3.h>
+
 #define _CRT_SECURE_NO_WARNINGS
 #define SOIL_CHECK_FOR_GL_ERRORS 0
 
@@ -1259,70 +1263,75 @@ unsigned int
 		/*	are any MIPmaps desired?	*/
 		if( flags & SOIL_FLAG_MIPMAPS )
 		{
-			int MIPlevel = 1;
-			int MIPwidth = (width+1) / 2;
-			int MIPheight = (height+1) / 2;
-			unsigned char *resampled = (unsigned char*)malloc( channels*MIPwidth*MIPheight );
-			while( ((1<<MIPlevel) <= width) || ((1<<MIPlevel) <= height) )
-			{
-				/*	do this MIPmap level	*/
-				mipmap_image(
-						img, width, height, channels,
-						resampled,
-						(1 << MIPlevel), (1 << MIPlevel) );
-				/*  upload the MIPmaps	*/
-				if( DXT_mode == SOIL_CAPABILITY_PRESENT )
-				{
-					/*	user wants me to do the DXT conversion!	*/
-					int DDS_size;
-					unsigned char *DDS_data = NULL;
-					if( (channels & 1) == 1 )
-					{
-						/*	RGB, use DXT1	*/
-						DDS_data = convert_image_to_DXT1(
-								resampled, MIPwidth, MIPheight, channels, &DDS_size );
-					} else
-					{
-						/*	RGBA, use DXT5	*/
-						DDS_data = convert_image_to_DXT5(
-								resampled, MIPwidth, MIPheight, channels, &DDS_size );
-					}
-					if( DDS_data )
-					{
-						soilGlCompressedTexImage2D(
-							opengl_texture_target, MIPlevel,
-							internal_texture_format, MIPwidth, MIPheight, 0,
-							DDS_size, DDS_data );
-						check_for_GL_errors( "glCompressedTexImage2D" );
-						SOIL_free_image_data( DDS_data );
-					} else
-					{
-						/*	my compression failed, try the OpenGL driver's version	*/
-						glTexImage2D(
-							opengl_texture_target, MIPlevel,
-							internal_texture_format, MIPwidth, MIPheight, 0,
-							original_texture_format, GL_UNSIGNED_BYTE, resampled );
-						check_for_GL_errors( "glTexImage2D" );
-					}
-				} else
-				{
-					/*	user want OpenGL to do all the work!	*/
-					glTexImage2D(
-						opengl_texture_target, MIPlevel,
-						internal_texture_format, MIPwidth, MIPheight, 0,
-						original_texture_format, GL_UNSIGNED_BYTE, resampled );
-					check_for_GL_errors( "glTexImage2D" );
-				}
-				/*	prep for the next level	*/
-				++MIPlevel;
-				MIPwidth = (MIPwidth + 1) / 2;
-				MIPheight = (MIPheight + 1) / 2;
+			if(opengl_texture_type == SOIL_TEXTURE_CUBE_MAP) {
+				glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+			} else {
+				glGenerateMipmap(GL_TEXTURE_2D);
 			}
-			SOIL_free_image_data( resampled );
-			/*	instruct OpenGL to use the MIPmaps	*/
-			glTexParameteri( opengl_texture_type, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-			glTexParameteri( opengl_texture_type, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR );
-			check_for_GL_errors( "GL_TEXTURE_MIN/MAG_FILTER" );
+			//int MIPlevel = 1;
+			//int MIPwidth = (width+1) / 2;
+			//int MIPheight = (height+1) / 2;
+			//unsigned char *resampled = (unsigned char*)malloc( channels*MIPwidth*MIPheight );
+			//while( ((1<<MIPlevel) <= width) || ((1<<MIPlevel) <= height) )
+			//{
+			//	/*	do this MIPmap level	*/
+			//	mipmap_image(
+			//			img, width, height, channels,
+			//			resampled,
+			//			(1 << MIPlevel), (1 << MIPlevel) );
+			//	/*  upload the MIPmaps	*/
+			//	if( DXT_mode == SOIL_CAPABILITY_PRESENT )
+			//	{
+			//		/*	user wants me to do the DXT conversion!	*/
+			//		int DDS_size;
+			//		unsigned char *DDS_data = NULL;
+			//		if( (channels & 1) == 1 )
+			//		{
+			//			/*	RGB, use DXT1	*/
+			//			DDS_data = convert_image_to_DXT1(
+			//					resampled, MIPwidth, MIPheight, channels, &DDS_size );
+			//		} else
+			//		{
+			//			/*	RGBA, use DXT5	*/
+			//			DDS_data = convert_image_to_DXT5(
+			//					resampled, MIPwidth, MIPheight, channels, &DDS_size );
+			//		}
+			//		if( DDS_data )
+			//		{
+			//			soilGlCompressedTexImage2D(
+			//				opengl_texture_target, MIPlevel,
+			//				internal_texture_format, MIPwidth, MIPheight, 0,
+			//				DDS_size, DDS_data );
+			//			check_for_GL_errors( "glCompressedTexImage2D" );
+			//			SOIL_free_image_data( DDS_data );
+			//		} else
+			//		{
+			//			/*	my compression failed, try the OpenGL driver's version	*/
+			//			glTexImage2D(
+			//				opengl_texture_target, MIPlevel,
+			//				internal_texture_format, MIPwidth, MIPheight, 0,
+			//				original_texture_format, GL_UNSIGNED_BYTE, resampled );
+			//			check_for_GL_errors( "glTexImage2D" );
+			//		}
+			//	} else
+			//	{
+			//		/*	user want OpenGL to do all the work!	*/
+			//		glTexImage2D(
+			//			opengl_texture_target, MIPlevel,
+			//			internal_texture_format, MIPwidth, MIPheight, 0,
+			//			original_texture_format, GL_UNSIGNED_BYTE, resampled );
+			//		check_for_GL_errors( "glTexImage2D" );
+			//	}
+			//	/*	prep for the next level	*/
+			//	++MIPlevel;
+			//	MIPwidth = (MIPwidth + 1) / 2;
+			//	MIPheight = (MIPheight + 1) / 2;
+			//}
+			//SOIL_free_image_data( resampled );
+			///*	instruct OpenGL to use the MIPmaps	*/
+			//glTexParameteri( opengl_texture_type, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+			//glTexParameteri( opengl_texture_type, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR );
+			//check_for_GL_errors( "GL_TEXTURE_MIN/MAG_FILTER" );
 		} else
 		{
 			/*	instruct OpenGL _NOT_ to use the MIPmaps	*/
@@ -1897,7 +1906,7 @@ int query_NPOT_capability( void )
 
 int query_tex_rectangle_capability( void )
 {
-	return SOIL_CAPABILITY_PRESENT;
+	return SOIL_CAPABILITY_NONE;//SOIL_CAPABILITY_PRESENT;
 	///*	check for the capability	*/
 	//if( has_tex_rectangle_capability == SOIL_CAPABILITY_UNKNOWN )
 	//{
