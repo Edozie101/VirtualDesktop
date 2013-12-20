@@ -271,7 +271,7 @@ void SimpleWorldRendererPlugin::renderIbexDisplayFlat(const glm::mat4 &MVP, cons
                 IbexDisplayFlatVertices[i] *= height/width;
         }
         
-        standardShaderProgram.loadShaderProgram(mResourcePath, "/resources/shaders/emissive.v.glsl", "/resources/shaders/emissive.f.glsl");
+		if(standardShaderProgram.shader.program == 0) standardShaderProgram.loadShaderProgram(mResourcePath, "/resources/shaders/emissive.v.glsl", "/resources/shaders/emissive.f.glsl");
         glUseProgram(standardShaderProgram.shader.program);
         
         
@@ -886,23 +886,10 @@ void SimpleWorldRendererPlugin::reset() {
     ibexDisplayModelTransform = glm::mat4(glm::translate(glm::mat4(), glm::vec3(0.0f, 0.0f, -10.0f)));
 	_bringUpIbexDisplay = true;
 }
+static TextRenderer textRenderer;
 void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &view_, const glm::mat4 &playerCamera_, const glm::mat4 &playerRotation_, const glm::vec3 &playerPosition_, bool shadowPass, const glm::mat4 &depthBiasMVP, const double &time) {
     glm::mat4 view(view_);
     glm::mat4 model;
-
-	static bool first = true;
-	static TextRenderer textRenderer;
-	if(first) {
-		first = false;
-		std::vector<std::string> lines;
-		lines.push_back("Hello World!");
-		lines.push_back("This is Hesham writing second line.");
-		lines.push_back("1. blah");
-		lines.push_back("2. blah blah");
-		lines.push_back("3. blah blah blah");
-		lines.push_back("4. blah?");
-		textRenderer.precompileText(0,0,lines);
-	}
     
     if(!shadowPass) {
         glDepthMask(GL_FALSE);
@@ -980,11 +967,14 @@ void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &
 
 			//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			//glDisable(GL_CULL_FACE);
+			//glDisable(GL_DEPTH_TEST);
 			////model = glm::mat4();
 			////view = glm::mat4();
 			////glm::mat4 orth = glm::ortho(-512.0f,512.0f,-512.0f,512.0f,-100.0f,100.0f);
 			//////renderText(/*PV*model*/orth, view, model, shadowPass, depthBiasMVP*model);
 			//textRenderer.renderText(PV*model, view, model, shadowPass, depthBiasMVP*model);
+			////textRenderer.renderTextDirect(PV*model, view, model, shadowPass, depthBiasMVP*model);
+			//glEnable(GL_DEPTH_TEST);
 			//glEnable(GL_CULL_FACE);
 
             glDisable(GL_BLEND);
@@ -1032,6 +1022,18 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
                                      -20.0,500.0,
                                      //0.7/256., 1.4/256., 3./256.);
                                      0.7, 1.4, 3.);
+
+
+
+		std::vector<std::string> lines;
+		lines.push_back("Hello World!");
+		lines.push_back("This is Hesham writing second line.");
+		lines.push_back("1. blah");
+		lines.push_back("2. blah blah");
+		lines.push_back("3. blah blah blah");
+		lines.push_back("4. blah?");
+		textRenderer.precompileText(0,0,lines);
+		textRenderer.renderTextToFrameBuffer();
     }
     
     glm::mat4 modelView;

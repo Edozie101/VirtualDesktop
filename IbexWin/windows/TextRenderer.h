@@ -21,9 +21,13 @@ public:
 
 	void loadProgram();
 	void initializeFont(void);
-
+	
+	void bindTextFBO();
+	void generateTextFBO();
 	void precompileText(float x, float y, std::vector<std::string> lines);
+	void renderTextToFrameBuffer();
 	void renderText(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP);
+	void renderTextDirect(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP);
 private:
 	bool initialized;
 
@@ -39,14 +43,32 @@ private:
 	GLuint vaoTextRenderer;
 	std::vector<GLfloat> vertices;
 	std::vector<GLuint> indices;
+
+	GLuint vaoTextTextureRenderer;
+	std::vector<GLfloat> verticesTexture;
+	std::vector<GLuint> indicesTexture;
 	GLuint vboTextVertices;
 	GLuint vboTextIndices;
+	GLuint vboTextTextureVertices;
+	GLuint vboTextTextureIndices;
 
 	static GLSLShaderProgram textShaderProgram;
 	float minX, maxX, minY,maxY;
 
 	int ascent,baseline,descent,lineGap;
 	float scale;
+
+
+	/////////////
+	GLint IbexDisplayFlatUniformLocations[5];
+    GLint IbexDisplayFlatAttribLocations[3];
+
+	GLfloat IbexDisplayFlatVertices[20];
+	GLushort IbexDisplayFlatIndices[6];
+	GLuint fboText;
+	GLuint textTextureId;
+	GLuint textTextureWidth;
+	GLuint textTextureHeight;
 };
 
 #endif // __IBEX_TEXT_RENDERER_H__

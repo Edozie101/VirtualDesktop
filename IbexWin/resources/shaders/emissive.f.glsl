@@ -7,12 +7,12 @@ in vec2 UV;
 in vec3 Position_worldspace;
 
 // Ouput data
-layout (location = 0) out vec3 color;
+layout (location = 0) out vec4 color;
 
 // Values that stay constant for the whole mesh.
 uniform sampler2D textureIn;
 
 void main()
 {
-	color = texture(textureIn, UV).rgb;
+	color = texture(textureIn, UV).rgba;
 }
