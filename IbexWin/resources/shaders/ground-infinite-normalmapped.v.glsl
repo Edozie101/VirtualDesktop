@@ -48,21 +48,21 @@ float getNoiseHeight(const float x_, const float z_) {
     vec2 v = vec2((x_-translateX)/scaleX, (z_-translateZ)/scaleZ);
     
     return ((snoise(v*f1)
-             +snoise(v*f2)*0.2
-             +snoise(v*f3)*0.1))*(maxHeight-minHeight) + minHeight;
+             +snoise(v*f2)*0.2f
+             +snoise(v*f3)*0.1f))*(maxHeight-minHeight) + minHeight;
 }
 
 vec3 getPos(float x, float z) {
-    return vec3(x, getNoiseHeight(x/50.0f, z/50.0f)+playerHeight, z);
+    return vec3(x, getNoiseHeight(x/scaleX, z/scaleX)+playerHeight, z);
 }
 vec2 getUV(float x, float z) {
-    return vec2(x,z)*2.0/scaleX;
+    return vec2(x,z)*2.0f/scaleX;
 }
 void main()
 {
-    //vec3 newVert_modelSpace = vertexPosition_modelspace+round(playerPosition_modelspace);
-    
-    vec2 p = vertexPosition_modelspace.xz-round(playerPosition_modelspace.xz);
+    //vec3 newVert_modelSpace = vertexPosition_modelspace+floor(playerPosition_modelspace/scaleX)*scaleX;
+    vec2 p = vertexPosition_modelspace.xz-floor(playerPosition_modelspace.xz/scaleX)*scaleX;
+
     // Shortcuts for vertices
     vec3 v0 = getPos(p.x,p.y);
     vec3 v1 = getPos(p.x+1,p.y);
@@ -81,7 +81,7 @@ void main()
 	// Vector that goes from the vertex to the camera, in camera space.
 	// In camera space, the camera is at the origin (0,0,0).
 	vec3 vertexPosition_cameraspace = ( V * M * vert_Modelspace).xyz;//vec4(vertexPosition_modelspace,1)).xyz;
-	vec3 EyeDirection_cameraspace = vec3(0,0,0) - vertexPosition_cameraspace;
+	vec3 EyeDirection_cameraspace = vec3(0.0f,0.0f,0.0f) - vertexPosition_cameraspace;
     
 	// Vector that goes from the vertex to the light, in camera space. M is ommited because it's identity.
 	vec3 LightPosition_cameraspace = ( V * vec4(LightPosition_worldspace,1)).xyz;
