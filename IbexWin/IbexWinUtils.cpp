@@ -38,9 +38,9 @@ GLuint loadTexture(const char *path_, bool flip, bool isAbsolutePath, bool disab
 		path,
 		SOIL_LOAD_AUTO,
 		SOIL_CREATE_NEW_ID,
-		SOIL_FLAG_MIPMAPS |
-		/*| SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT*/ 
-		((flip) ? 0 : SOIL_FLAG_INVERT_Y)
+		SOIL_FLAG_MIPMAPS
+		// | SOIL_FLAG_NTSC_SAFE_RGB //| SOIL_FLAG_COMPRESS_TO_DXT
+		| ((flip) ? 0 : SOIL_FLAG_INVERT_Y)
 		| SOIL_FLAG_MULTIPLY_ALPHA | SOIL_FLAG_TEXTURE_REPEATS
 		);
 	glBindTexture(GL_TEXTURE_2D, tex_2d);
@@ -70,10 +70,10 @@ extern "C" GLuint loadCubemapTextures(const char *path_[6]) {
 		0,//SOIL_LOAD_RGB,
 		SOIL_CREATE_NEW_ID,
 		SOIL_FLAG_MIPMAPS | /*SOIL_FLAG_INVERT_Y | */SOIL_FLAG_MULTIPLY_ALPHA /*| SOIL_FLAG_TEXTURE_REPEATS*/);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, tex_2d);
-	GLfloat fLargest;
-    glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &fLargest);
-    glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAX_ANISOTROPY_EXT, fLargest);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+	//glBindTexture(GL_TEXTURE_CUBE_MAP, tex_2d);
+	//GLfloat fLargest;
+ //   glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &fLargest);
+ //   glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAX_ANISOTROPY_EXT, fLargest);
+	//glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 	return tex_2d;
 }
