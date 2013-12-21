@@ -10,6 +10,26 @@
 
 #include "SimpleWorldRendererPlugin.h"
 
+#ifdef __APPLE__
+#include <boost/filesystem.hpp>
+#else
+#include "Shlwapi.h"
+#endif
+
+Model::Model() :
+	vertexLoc(0),
+	normalLoc(1),
+	texCoordLoc(2),
+	matricesUniLoc(1),
+	materialUniLoc(2),
+	texUnit(0),
+	modelShaderProgram(),
+    ModelUniformLocations(),
+    ModelAttribLocations()
+{
+	memset(ModelUniformLocations,0,sizeof(ModelUniformLocations));
+	memset(ModelAttribLocations,0,sizeof(ModelAttribLocations));
+}
 GLuint Model::setupShaders() {
     modelShaderProgram.loadShaderProgram(mResourcePath, "/resources/shaders/standard.v.glsl", "/resources/shaders/standard.f.glsl");
     
@@ -89,8 +109,20 @@ bool Model::Import3DFromFile( const std::string& pFile)
     // Now we can access the file's contents.
     printf("Import of scene %s succeeded.\n",pFile.c_str());
     
+#ifdef __APPLE__
     boost::filesystem::path p(pFile);
     std::string basePath = p.parent_path().string()+"/";
+#else
+	char path[2000];
+	wchar_t wpath[2000];
+	strcpy(path, pFile.c_str());
+	mbstowcs(wpath, path, strlen(path)+1);//Plus null
+	LPWSTR ptr = wpath;
+	PathRemoveFileSpec(ptr);
+	std::wstring backToString(ptr);
+	std::string basePath(std::string(backToString.begin(),backToString.end())+"\\");
+#endif
+
     printf("Import textures of scene %s...\n",pFile.c_str());
     LoadGLTextures(scene, basePath);
     printf("Import textures of scene %s done.\n",pFile.c_str());

@@ -26,11 +26,16 @@
 #else
 #ifdef _WIN32
 
+//#ifdef USE_GLEW
+//#include "GL/glew.h"
+//#endif
+//
+//#include "GL/glcorearb.h"
+//#include "GL/glext.h"
+//#include "GL/wglext.h"
+//#define GLFW_INCLUDE_GLCOREARB
 #include "GL/glew.h"
-#include "GL/wglew.h"
-#include <GL/gl.h>
-#include <GL/glu.h>
-#include <GL/glut.h>
+#include <GLFW/glfw3.h>
 
 #else
 

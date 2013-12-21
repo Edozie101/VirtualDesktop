@@ -299,6 +299,14 @@
 		4CB7987E168AB41E00EF5260 /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4CB7987D168AB41E00EF5260 /* AppDelegate.mm */; };
 		4CB79881168AB41E00EF5260 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4CB7987F168AB41E00EF5260 /* MainMenu.xib */; };
 		4CB8423016FD7FD7009B3DDE /* RenderSystem_GL.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6411A916F4C30200132076 /* RenderSystem_GL.dylib */; };
+		4CC559AA1865C26F002F7BC6 /* TextRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CC559A61865C26F002F7BC6 /* TextRenderer.cpp */; };
+		4CC559AB1865C26F002F7BC6 /* TextRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CC559A61865C26F002F7BC6 /* TextRenderer.cpp */; };
+		4CC559AC1865C26F002F7BC6 /* TextRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CC559A61865C26F002F7BC6 /* TextRenderer.cpp */; };
+		4CC559AD1865C26F002F7BC6 /* TextRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CC559A61865C26F002F7BC6 /* TextRenderer.cpp */; };
+		4CC559AE1865C26F002F7BC6 /* stb_truetype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CC559A81865C26F002F7BC6 /* stb_truetype.cpp */; };
+		4CC559AF1865C26F002F7BC6 /* stb_truetype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CC559A81865C26F002F7BC6 /* stb_truetype.cpp */; };
+		4CC559B01865C26F002F7BC6 /* stb_truetype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CC559A81865C26F002F7BC6 /* stb_truetype.cpp */; };
+		4CC559B11865C26F002F7BC6 /* stb_truetype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CC559A81865C26F002F7BC6 /* stb_truetype.cpp */; };
 		4CEEED58178777830067405F /* libopencv_calib3d.2.4.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CEEED45178777830067405F /* libopencv_calib3d.2.4.5.dylib */; };
 		4CEEED59178777830067405F /* libopencv_contrib.2.4.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CEEED46178777830067405F /* libopencv_contrib.2.4.5.dylib */; };
 		4CEEED5A178777830067405F /* libopencv_core.2.4.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CEEED47178777830067405F /* libopencv_core.2.4.5.dylib */; };
@@ -611,6 +619,10 @@
 		4CB7987C168AB41E00EF5260 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		4CB7987D168AB41E00EF5260 /* AppDelegate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AppDelegate.mm; sourceTree = "<group>"; };
 		4CB79880168AB41E00EF5260 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		4CC559A61865C26F002F7BC6 /* TextRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextRenderer.cpp; sourceTree = "<group>"; };
+		4CC559A71865C26F002F7BC6 /* TextRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextRenderer.h; sourceTree = "<group>"; };
+		4CC559A81865C26F002F7BC6 /* stb_truetype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = stb_truetype.cpp; sourceTree = "<group>"; };
+		4CC559A91865C26F002F7BC6 /* stb_truetype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stb_truetype.h; sourceTree = "<group>"; };
 		4CD81A4117C98C1200C94D83 /* FindIrrlicht.cmake */ = {isa = PBXFileReference; lastKnownFileType = text; path = FindIrrlicht.cmake; sourceTree = "<group>"; };
 		4CD81A4217C98C1200C94D83 /* FindOculusSDK.cmake */ = {isa = PBXFileReference; lastKnownFileType = text; path = FindOculusSDK.cmake; sourceTree = "<group>"; };
 		4CD81A4317C98C1200C94D83 /* FindOgre.cmake */ = {isa = PBXFileReference; lastKnownFileType = text; path = FindOgre.cmake; sourceTree = "<group>"; };
@@ -845,6 +857,10 @@
 			isa = PBXGroup;
 			children = (
 				4C961B1D17B8949C0028D242 /* CMakeLists.txt */,
+				4CC559A61865C26F002F7BC6 /* TextRenderer.cpp */,
+				4CC559A71865C26F002F7BC6 /* TextRenderer.h */,
+				4CC559A81865C26F002F7BC6 /* stb_truetype.cpp */,
+				4CC559A91865C26F002F7BC6 /* stb_truetype.h */,
 				4C961B1E17B8949C0028D242 /* Window.cpp */,
 				4C961B1F17B8949C0028D242 /* Window.h */,
 			);
@@ -1366,6 +1382,7 @@
 				4C09379017B1F9CE004EA291 /* AppDelegate.mm in Sources */,
 				4C961B3217B895330028D242 /* IbexVideoPlayer.mm in Sources */,
 				4C09379117B1F9CE004EA291 /* ScreenGrabber.m in Sources */,
+				4CC559B11865C26F002F7BC6 /* stb_truetype.cpp in Sources */,
 				4C09379217B1F9CE004EA291 /* MyOpenGLView.mm in Sources */,
 				4C09379417B1F9CE004EA291 /* distortions.cpp in Sources */,
 				4C09379517B1F9CE004EA291 /* opengl_helpers.cpp in Sources */,
@@ -1375,6 +1392,7 @@
 				4C961B5617B89A780028D242 /* SimpleWorldRendererPlugin.cpp in Sources */,
 				4C09379717B1F9CE004EA291 /* iphone_orientation_listener.cpp in Sources */,
 				4C09379817B1F9CE004EA291 /* glew.c in Sources */,
+				4CC559AD1865C26F002F7BC6 /* TextRenderer.cpp in Sources */,
 				4C961B3A17B895330028D242 /* VLCVideoPlayer.cpp in Sources */,
 				4C09379917B1F9CE004EA291 /* IbexMacUtils.mm in Sources */,
 				4C09379A17B1F9CE004EA291 /* utils.cpp in Sources */,
@@ -1403,6 +1421,7 @@
 				4C961B2517B8949C0028D242 /* Window.cpp in Sources */,
 				4C0D589B16AD656A007BC9CD /* distortions.cpp in Sources */,
 				4C0D589C16AD656A007BC9CD /* opengl_helpers.cpp in Sources */,
+				4CC559AF1865C26F002F7BC6 /* stb_truetype.cpp in Sources */,
 				4C0D589D16AD656A007BC9CD /* RendererPlugin.cpp in Sources */,
 				4C961B4617B899860028D242 /* Filesystem.cpp in Sources */,
 				4C0D589E16AD656A007BC9CD /* iphone_orientation_listener.cpp in Sources */,
@@ -1417,6 +1436,7 @@
 				4C961B4D17B899F10028D242 /* sixense_controller.cpp in Sources */,
 				4C0D58A216AD656A007BC9CD /* ibex.cpp in Sources */,
 				4C0D58A316AD656A007BC9CD /* MyWindow.mm in Sources */,
+				4CC559AB1865C26F002F7BC6 /* TextRenderer.cpp in Sources */,
 				4C0D58A416AD656A007BC9CD /* ServerController.mm in Sources */,
 				4C936065172A282100A94980 /* ScreenshotView.mm in Sources */,
 			);
@@ -1434,6 +1454,7 @@
 				4C6B99D716F4C17E00C5C725 /* MyOpenGLView.mm in Sources */,
 				4C6B99D916F4C17E00C5C725 /* distortions.cpp in Sources */,
 				4C6B99DA16F4C17E00C5C725 /* opengl_helpers.cpp in Sources */,
+				4CC559B01865C26F002F7BC6 /* stb_truetype.cpp in Sources */,
 				4C6B99DB16F4C17E00C5C725 /* RendererPlugin.cpp in Sources */,
 				4C6B99DC16F4C17E00C5C725 /* iphone_orientation_listener.cpp in Sources */,
 				4C6B99DD16F4C17E00C5C725 /* glew.c in Sources */,
@@ -1451,6 +1472,7 @@
 				4C6F781E16F4D6150089101F /* BaseApplication.cpp in Sources */,
 				4C6F782416F4D6150089101F /* DotSceneLoader.cpp in Sources */,
 				4C011F9B1840388A002583AD /* GLSLShaderProgram.cpp in Sources */,
+				4CC559AC1865C26F002F7BC6 /* TextRenderer.cpp in Sources */,
 				4C49791417CCC6A0008DC26E /* tinyxml.cpp in Sources */,
 				4C961B6117B89DB50028D242 /* Rift.cpp in Sources */,
 				4C6F782716F4D6150089101F /* TutorialApplication.cpp in Sources */,
@@ -1479,6 +1501,7 @@
 				4CF354B9168D0D5000EAA2FE /* MyOpenGLView.mm in Sources */,
 				4CFB0B43168E5D840025AF0F /* distortions.cpp in Sources */,
 				4CFB0B44168E5D840025AF0F /* opengl_helpers.cpp in Sources */,
+				4CC559AE1865C26F002F7BC6 /* stb_truetype.cpp in Sources */,
 				4CFB0B48168E5D960025AF0F /* RendererPlugin.cpp in Sources */,
 				4C961B4517B899860028D242 /* Filesystem.cpp in Sources */,
 				4CAC8D541690A26500341AA0 /* iphone_orientation_listener.cpp in Sources */,
@@ -1493,6 +1516,7 @@
 				4C961B4C17B899F10028D242 /* sixense_controller.cpp in Sources */,
 				4CFB0B4B168E5DFA0025AF0F /* ibex.cpp in Sources */,
 				4C4C3C0A1694689400D2285F /* MyWindow.mm in Sources */,
+				4CC559AA1865C26F002F7BC6 /* TextRenderer.cpp in Sources */,
 				4CACE17216A236710085DA5E /* ServerController.mm in Sources */,
 				4C936064172A282100A94980 /* ScreenshotView.mm in Sources */,
 			);

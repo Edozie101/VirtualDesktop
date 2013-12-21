@@ -12,6 +12,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
+#include <algorithm>
+#include <string>
 
 #include "utils.h"
 
@@ -91,14 +93,26 @@ int GLSLShaderProgram::loadShaderProgram(const char *mResourcePath, const char *
 {
     char path[2048];
     strcpy(path, mResourcePath);
+#ifdef WIN32
+	std::string tmp(vertexShaderName);
+	std::replace(tmp.begin(), tmp.end(), '/', '\\');
+	strcat(path, tmp.c_str());
+#else
     strcat(path, vertexShaderName);
+#endif
     std::cerr << "loading vertex shader: " << path << std::endl;
     shader.vertex_shader = make_shader(GL_VERTEX_SHADER, path);
     if (shader.vertex_shader == 0)
         return 0;
     
     strcpy(path, mResourcePath);
+#ifdef WIN32
+	tmp = std::string(fragmentShaderName);
+	std::replace(tmp.begin(), tmp.end(), '/', '\\');
+	strcat(path, tmp.c_str());
+#else
     strcat(path, fragmentShaderName);
+#endif
     std::cerr << "loading fragment shader: " << path << std::endl;
     shader.fragment_shader = make_shader(GL_FRAGMENT_SHADER, path);
     if (shader.fragment_shader == 0)

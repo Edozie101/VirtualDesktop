@@ -10,12 +10,28 @@
 
 #include "../simpleworld_plugin/SimpleWorldRendererPlugin.h"
 #include "../simpleworld_plugin/ShadowBufferRenderer.h"
+
+#ifdef __APPLE__
 #include "../ibex_mac_utils.h"
+#else
+#include "../ibex_win_utils.h"
+#endif
+
 #include "../ibex.h"
 
 #include <glm/gtc/noise.hpp>
+#include <iostream>
+#include <string>
 
-Terrain::Terrain() : data(0),vertices(0),indices(0),scaleX(30),scaleY(.2),scaleZ(30),translateX(-10),translateY(0),translateZ(-10) {
+Terrain::Terrain() : data(0),vertices(0),indices(0),scaleX(30),scaleY(.2),scaleZ(30),translateX(-10),translateY(0),translateZ(-10),
+	vaoGround(0),
+    vboGroundVertices(0),
+    vboGroundIndices(0),
+    GroundUniformLocations(),
+    GroundAttribLocations()
+{
+	memset(GroundUniformLocations,0,sizeof(GroundUniformLocations));
+	memset(GroundAttribLocations,0,sizeof(GroundAttribLocations));
 }
 
 float Terrain::getNoiseHeight(const float &x_, const float &z_) const {
@@ -152,22 +168,22 @@ void Terrain::loadTerrain(T *data, int width, int height) {
                 glm::vec2 deltaUV2 = uv2-uv0;
                 
                 float r = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV1.y * deltaUV2.x);
-                if(!isinf(r) && !isnan(r)) {
-                    //                    std::cerr << r << std::endl;
-                } else {
-//                    for(int i2 = 0; i2 < 3; ++i2) {
-//                        // tangents
-//                        vertices[index+i2*vertexBufferStep+8] = 0;
-//                        vertices[index+i2*vertexBufferStep+9] = 0;
-//                        vertices[index+i2*vertexBufferStep+10] = 0;
-//                        
-//                        // bitangents
-//                        vertices[index+i2*vertexBufferStep+11] = 0;
-//                        vertices[index+i2*vertexBufferStep+12] = 0;
-//                        vertices[index+i2*vertexBufferStep+13] = 0;
-//                    }
-                    continue;
-                }
+//                if(!isinf(r) && !isnan(r)) {
+//                    //                    std::cerr << r << std::endl;
+//                } else {
+////                    for(int i2 = 0; i2 < 3; ++i2) {
+////                        // tangents
+////                        vertices[index+i2*vertexBufferStep+8] = 0;
+////                        vertices[index+i2*vertexBufferStep+9] = 0;
+////                        vertices[index+i2*vertexBufferStep+10] = 0;
+////                        
+////                        // bitangents
+////                        vertices[index+i2*vertexBufferStep+11] = 0;
+////                        vertices[index+i2*vertexBufferStep+12] = 0;
+////                        vertices[index+i2*vertexBufferStep+13] = 0;
+////                    }
+//                    continue;
+//                }
                 glm::vec3 tangent = glm::normalize((deltaPos1 * deltaUV2.y   - deltaPos2 * deltaUV1.y)*r);
                 glm::vec3 bitangent = glm::normalize((deltaPos2 * deltaUV1.x   - deltaPos1 * deltaUV2.x)*r);
                 
@@ -346,8 +362,10 @@ void Terrain::renderGround(const glm::mat4 &MVP, const glm::mat4 &V, const glm::
     //    checkForErrors();
     //    std::cerr << "Loading ground texture" << std::endl;
 #ifdef _WIN32
-    static const GLuint groundTexture = loadTexture("\\resources\\humus-skybox\\negy.jpg");
-    //        orientation = getRiftOrientation();
+    static const GLuint groundTexture = loadTexture("\\resources\\textures\\grass1\\grass1-diffuse.png");
+    static const GLuint groundTexture1 = loadNormalTexture("\\resources\\textures\\grass1\\grass1-normal.png");
+    static const GLuint groundTexture2 = loadTexture("\\resources\\textures\\brown1\\brown1-diffuse.png");
+    static const GLuint groundTexture3 = loadNormalTexture("\\resources\\textures\\brown1\\brown1-normal.png");
 #else
 #ifdef __APPLE__
     static const GLuint groundTexture = loadTexture("/resources/textures/grass1/grass1-diffuse.png");

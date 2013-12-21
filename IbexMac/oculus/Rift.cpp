@@ -2,10 +2,10 @@
 
 #include "../ibex.h"
 
-OVR::Ptr<OVR::DeviceManager>	pManager;
-OVR::Ptr<OVR::HMDDevice>	pHMD;
+OVR::Ptr<OVR::DeviceManager>	pManager = 0;
+OVR::Ptr<OVR::HMDDevice>	pHMD = 0;
 OVR::Util::Render::StereoConfig stereo;
-OVR::Ptr<OVR::SensorDevice>	pSensor;
+OVR::Ptr<OVR::SensorDevice>	pSensor = 0;
 OVR::SensorFusion*		pFusionResult = 0;
 OVR::HMDInfo			Info;
 bool				InfoLoaded = false;
@@ -31,6 +31,39 @@ int riftX = 0;
 int riftY = 0;
 int riftResolutionX = 0;
 int riftResolutionY = 0;
+
+#ifdef WIN32
+BOOL CALLBACK MonitorEnumProc(
+  _In_  HMONITOR hMonitor,
+  _In_  HDC hdcMonitor,
+  _In_  LPRECT lprcMonitor,
+  _In_  LPARAM dwData
+) {
+	MONITORINFOEX lpmi;
+	MONITORINFO l;
+	lpmi.cbSize = sizeof(MONITORINFOEX);
+	char name[32];
+	DISPLAY_DEVICE d;
+	
+	if(GetMonitorInfo(hMonitor, &lpmi)) {
+		
+		//strncpy(name, (const char*)lpmi.szDevice, 32);
+		//if(strstr(name, "Rift") != NULL) {
+		if( ((lpmi.rcMonitor.right-lpmi.rcMonitor.left) == riftResolutionX) &&
+					((lpmi.rcMonitor.bottom-lpmi.rcMonitor.top) == riftResolutionY)) {
+			riftX = lpmi.rcMonitor.left;
+			riftY = lpmi.rcMonitor.top;
+		}
+	}
+	return true;
+}
+
+static void getRiftDisplay() {
+	if(InfoLoaded) {
+		EnumDisplayMonitors(NULL, NULL, MonitorEnumProc, 0);
+	}
+}
+#endif
 
 void initRift() {
     OVR::System::Init(OVR::Log::ConfigureDefaultLog(OVR::LogMask_All));
@@ -112,11 +145,11 @@ void initRift() {
 #endif
 }
 void cleanUpRift() {
-    pSensor.Clear();
-    pHMD.Clear();
-    pManager.Clear();
+	if(pSensor) pSensor.Clear();
+    if(pHMD) pHMD.Clear();
+    if(pManager) pManager.Clear();
     
-    delete pFusionResult;
+    if(pFusionResult) delete pFusionResult;
     
     OVR::System::Destroy();
 }

@@ -10,7 +10,12 @@
 #define __IbexMac__Model__
 
 #include "../opengl_helpers.h"
+
+#ifdef __APPLE__
 #include "../ibex_mac_utils.h"
+#else
+#include "../ibex_win_utils.h"
+#endif
 
 #include "../GLSLShaderProgram.h"
 
@@ -28,10 +33,11 @@
 #include <vector>
 #include <iostream>
 
-#include <boost/filesystem.hpp>
+//#include <boost/filesystem.hpp>
 
 class Model {
 public:
+	Model();
     GLuint setupShaders();
     bool Import3DFromFile( const std::string& pFile);
     int LoadGLTextures(const aiScene* scene, const std::string &basePath);
@@ -99,15 +105,15 @@ private:
     std::vector<float *> matrixStack;
     
     // Vertex Attribute Locations
-    GLuint vertexLoc=0, normalLoc=1, texCoordLoc=2;
+    GLuint vertexLoc, normalLoc, texCoordLoc;
     
     // Uniform Bindings Points
-    GLuint matricesUniLoc = 1, materialUniLoc = 2;
+    GLuint matricesUniLoc, materialUniLoc;
     
     // The sampler uniform for textured models
     // we are assuming a single texture so this will
     //always be texture unit 0
-    GLuint texUnit = 0;
+    GLuint texUnit;
     
     // Uniform Buffer for Matrices
     // this buffer will contain 3 matrices: projection, view and model
@@ -121,8 +127,8 @@ private:
     
     
     GLSLShaderProgram modelShaderProgram;
-    GLint ModelUniformLocations[6] = { 0, 0, 0, 0, 0, 0};
-    GLint ModelAttribLocations[3] = { 0, 0, 0 };
+    GLint ModelUniformLocations[6];
+    GLint ModelAttribLocations[3];
 };
 
 #endif /* defined(__IbexMac__Model__) */

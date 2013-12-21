@@ -11,7 +11,7 @@
 
 #include "opengl_helpers.h"
 
-typedef struct {
+typedef struct __glsl_shader__ {
     GLuint vertex_shader, fragment_shader, program;
     
     struct {
@@ -24,6 +24,9 @@ typedef struct {
     } attributes;
     
     GLfloat fade_factor;
+
+	__glsl_shader__() : vertex_shader(0), fragment_shader(0),program(0) {}
+
 } glsl_shader;
 
 class GLSLShaderProgram {

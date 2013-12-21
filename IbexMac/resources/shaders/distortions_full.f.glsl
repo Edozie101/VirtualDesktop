@@ -21,8 +21,8 @@ void main()
 {
    vec2  theta = (oTexCoord - LensCenter) * ScaleIn; // Scales to [-1, 1]
    float rSq= theta.x * theta.x + theta.y * theta.y;
-   vec2  theta1 = theta * (HmdWarpParam.x + HmdWarpParam.y * rSq + 
-                  HmdWarpParam.z * rSq * rSq + HmdWarpParam.w * rSq * rSq * rSq);
+   //vec2  theta1 = theta * (HmdWarpParam.x + HmdWarpParam.y * rSq + HmdWarpParam.z * rSq * rSq + HmdWarpParam.w * rSq * rSq * rSq);
+   vec2  theta1 = theta * (HmdWarpParam.x + rSq * (HmdWarpParam.y + rSq * (HmdWarpParam.z + HmdWarpParam.w * rSq) ) );
    
    // Detect whether blue texture coordinates are out of range since these will scaled out the furthest.
    vec2 thetaBlue = theta1 * (ChromAbParam.z + ChromAbParam.w * rSq);

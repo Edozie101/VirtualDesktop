@@ -213,8 +213,11 @@ void prep_framebuffers()
         std::cerr << "Stage 0d - Problem generating desktop FBO" << std::endl;
         exit(EXIT_FAILURE);
     }
-  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-                        GL_TEXTURE_2D, desktopTexture, 0);
+  glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, desktopTexture, 0);
+  // Set the list of draw buffers.
+  GLenum DrawBuffers[1] = {GL_COLOR_ATTACHMENT0};
+  glDrawBuffers(1, DrawBuffers); // "1" is the size of DrawBuffers
+
   if (!checkForErrors() ||
       glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
     std::cerr << "Stage 0e - Problem generating desktop FBO" << std::endl;
@@ -251,8 +254,10 @@ void regenerateMainFBORenderDepthBuffer() {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB, textureWidth, textureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
         //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, textureWidth, textureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
-        glFramebufferTexture2D (GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-                                GL_TEXTURE_2D, textures[i], 0);
+        glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, textures[i], 0);
+		// Set the list of draw buffers.
+		GLenum DrawBuffers[1] = {GL_COLOR_ATTACHMENT0};
+		glDrawBuffers(1, DrawBuffers); // "1" is the size of DrawBuffers
         
         glBindRenderbuffer(GL_RENDERBUFFER, depthBuffer);
         if (i == 0) {

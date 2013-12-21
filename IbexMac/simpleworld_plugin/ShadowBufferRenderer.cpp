@@ -10,7 +10,7 @@
 
 #include <iostream>
 
-#include "ibex.h"
+#include "../ibex.h"
 
 GLuint fboShadowMap = 0;
 GLuint shadowMapDepthTextureId = 0;

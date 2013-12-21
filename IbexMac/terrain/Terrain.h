@@ -47,12 +47,12 @@ private:
     GLfloat minHeight, maxHeight;
     GLfloat f1, f2, f3;
     
-    GLuint vaoGround = 0;
-    GLuint vboGroundVertices = 0;
-    GLuint vboGroundIndices = 0;
+    GLuint vaoGround;
+    GLuint vboGroundVertices;
+    GLuint vboGroundIndices;
     
-    GLint GroundUniformLocations[14] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    GLint GroundAttribLocations[5] = {0, 0, 0, 0, 0};
+    GLint GroundUniformLocations[14];
+    GLint GroundAttribLocations[5];
 };
 
 #endif /* defined(__IbexMac__Terrain__) */

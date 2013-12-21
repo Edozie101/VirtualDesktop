@@ -12,6 +12,7 @@
 #include <iostream>
 #include <math.h>
 #include <stdio.h>
+#include <list>
 
 #include "../distortions.h"
 #include "../opengl_helpers.h"
@@ -31,12 +32,14 @@
 
 #include "SimpleWorldRendererPlugin.h"
 
-#include "oculus/Rift.h"
+#include "../oculus/Rift.h"
 
 #include "../GLSLShaderProgram.h"
 #include "ShadowBufferRenderer.h"
 
 #include "Model.h"
+
+#include "../windows/TextRenderer.h"
 
 glm::vec3 lightInvDir;
 
@@ -119,7 +122,7 @@ void renderCylindricalDisplay(double r, double numHorizontalLines, double numVer
     //    glPopMatrix();
 }
 
-SimpleWorldRendererPlugin::SimpleWorldRendererPlugin() : _bringUpIbexDisplay(false) {
+SimpleWorldRendererPlugin::SimpleWorldRendererPlugin() : _bringUpIbexDisplay(true) {
     reset();
 }
 SimpleWorldRendererPlugin::~SimpleWorldRendererPlugin() {
@@ -151,12 +154,12 @@ GLSLShaderProgram waterShaderProgram;
 void SimpleWorldRendererPlugin::loadSkybox()
 {
 #ifdef _WIN32
-    _skybox[0] = loadTexture("\\resources\\humus-skybox\\negz.jpg");
-    _skybox[1] = loadTexture("\\resources\\humus-skybox\\posx.jpg");
-    _skybox[2] = loadTexture("\\resources\\humus-skybox\\posz.jpg");
-    _skybox[3] = loadTexture("\\resources\\humus-skybox\\negx.jpg");
-    _skybox[4] = loadTexture("\\resources\\humus-skybox\\posy.jpg");
-    _skybox[5] = loadTexture("\\resources\\humus-skybox\\negy.jpg");
+    _skybox[0] = loadTexture("\\resources\\humus-skybox\\smaller\\negz.jpg");
+    _skybox[1] = loadTexture("\\resources\\humus-skybox\\smaller\\posx.jpg");
+    _skybox[2] = loadTexture("\\resources\\humus-skybox\\smaller\\posz.jpg");
+    _skybox[3] = loadTexture("\\resources\\humus-skybox\\smaller\\negx.jpg");
+    _skybox[4] = loadTexture("\\resources\\humus-skybox\\smaller\\posy.jpg");
+    _skybox[5] = loadTexture("\\resources\\humus-skybox\\smaller\\negy.jpg");
 #else
 #ifdef __APPLE__
     _skybox[0] = loadTexture("/resources/humus-skybox/smaller/negz.jpg");
@@ -269,7 +272,7 @@ void SimpleWorldRendererPlugin::renderIbexDisplayFlat(const glm::mat4 &MVP, cons
                 IbexDisplayFlatVertices[i] *= height/width;
         }
         
-        standardShaderProgram.loadShaderProgram(mResourcePath, "/resources/shaders/emissive.v.glsl", "/resources/shaders/emissive.f.glsl");
+		if(standardShaderProgram.shader.program == 0) standardShaderProgram.loadShaderProgram(mResourcePath, "/resources/shaders/emissive.v.glsl", "/resources/shaders/emissive.f.glsl");
         glUseProgram(standardShaderProgram.shader.program);
         
         
@@ -523,6 +526,16 @@ void SimpleWorldRendererPlugin::renderSkybox(const glm::mat4 &modelView, const g
             glVertexAttribPointer(SkyBoxAttribLocations[1], 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*5, (void*)(sizeof(GLfloat)*3));
         }
         
+#ifdef WIN32
+        const char *paths[6] = {
+            "\\resources\\humus-skybox\\smaller\\posx.jpg",
+            "\\resources\\humus-skybox\\smaller\\negx.jpg",
+			"\\resources\\humus-skybox\\smaller\\posy.jpg",
+			"\\resources\\humus-skybox\\smaller\\negy.jpg",
+            "\\resources\\humus-skybox\\smaller\\posz.jpg",
+            "\\resources\\humus-skybox\\smaller\\negz.jpg"
+        };
+#else
         const char *paths[6] = {
             "/resources/humus-skybox/smaller/posx.jpg",
             "/resources/humus-skybox/smaller/negx.jpg",
@@ -531,6 +544,7 @@ void SimpleWorldRendererPlugin::renderSkybox(const glm::mat4 &modelView, const g
             "/resources/humus-skybox/smaller/posz.jpg",
             "/resources/humus-skybox/smaller/negz.jpg"
         };
+#endif
         _skycube = loadCubemapTextures(paths);
         if(!useCubemap) {
             loadSkybox();
@@ -793,8 +807,8 @@ void SimpleWorldRendererPlugin::renderGround(const glm::mat4 &MVP, const glm::ma
         
         glUseProgram(0);
         
+		checkForErrors();
         std::cerr << "setup_buffers" << std::endl;
-        checkForErrors();
         glGenVertexArrays(1,&vaoGround);
         
         checkForErrors();
@@ -871,7 +885,9 @@ void SimpleWorldRendererPlugin::init() {
 
 void SimpleWorldRendererPlugin::reset() {
     ibexDisplayModelTransform = glm::mat4(glm::translate(glm::mat4(), glm::vec3(0.0f, 0.0f, -10.0f)));
+	_bringUpIbexDisplay = true;
 }
+static TextRenderer textRenderer;
 void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &view_, const glm::mat4 &playerCamera_, const glm::mat4 &playerRotation_, const glm::vec3 &playerPosition_, bool shadowPass, const glm::mat4 &depthBiasMVP, const double &time) {
     glm::mat4 view(view_);
     glm::mat4 model;
@@ -891,7 +907,8 @@ void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &
     
     glDisable(GL_CULL_FACE);
     //glCullFace(GL_BACK);
-    model = glm::translate(ibexDisplayModelTransform, glm::vec3(0,-getPlayerHeightAtPosition(-ibexDisplayModelTransform[3][0], -ibexDisplayModelTransform[3][2]-10),0));
+    //model = glm::translate(ibexDisplayModelTransform, glm::vec3(0,-getPlayerHeightAtPosition(-ibexDisplayModelTransform[3][0], -ibexDisplayModelTransform[3][2]-10),0));
+	model = ibexDisplayModelTransform;
     renderIbexDisplayFlat(PV*model, view, model, shadowPass, depthBiasMVP*model);
     //    renderVideoDisplayFlat(PV*model, view, model, depthBiasMVP*model);
     glEnable(GL_CULL_FACE);
@@ -948,6 +965,19 @@ void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &
             
             model = glm::translate(model, -glm::vec3(playerPosition_.x, 0, playerPosition_.z));
             renderWater(PV*model, view, model, shadowPass, depthBiasMVP*model, time);
+
+			//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			//glDisable(GL_CULL_FACE);
+			//glDisable(GL_DEPTH_TEST);
+			////model = glm::mat4();
+			////view = glm::mat4();
+			////glm::mat4 orth = glm::ortho(-512.0f,512.0f,-512.0f,512.0f,-100.0f,100.0f);
+			//////renderText(/*PV*model*/orth, view, model, shadowPass, depthBiasMVP*model);
+			//textRenderer.renderText(PV*model, view, model, shadowPass, depthBiasMVP*model);
+			////textRenderer.renderTextDirect(PV*model, view, model, shadowPass, depthBiasMVP*model);
+			//glEnable(GL_DEPTH_TEST);
+			//glEnable(GL_CULL_FACE);
+
             glDisable(GL_BLEND);
         }
     }
@@ -976,7 +1006,11 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
         
         char path[2048];
         strcpy(path, mResourcePath);
+#ifdef WIN32
+        strcat(path, "\\resources\\tree3\\tree3.dae");
+#else
         strcat(path, "/resources/tree3/tree3.dae");
+#endif
         treeModel.Import3DFromFile(path);
         
         glClearColor(0, 0, 0, 1);
@@ -993,6 +1027,18 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
                                      -20.0,500.0,
                                      //0.7/256., 1.4/256., 3./256.);
                                      0.7, 1.4, 3.);
+
+
+
+		std::vector<std::string> lines;
+		lines.push_back("Hello World!");
+		lines.push_back("This is Hesham writing second line.");
+		lines.push_back("1. blah");
+		lines.push_back("2. blah blah");
+		lines.push_back("3. blah blah blah");
+		lines.push_back("4. blah?");
+		textRenderer.precompileText(0,0,lines);
+		textRenderer.renderTextToFrameBuffer();
     }
     
     glm::mat4 modelView;
@@ -1012,7 +1058,10 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
     
     if(_bringUpIbexDisplay) {
         _bringUpIbexDisplay = false;
-        ibexDisplayModelTransform = glm::translate(glm::mat4(), glm::vec3(-playerPosition.x, 0, -playerPosition.z-10));//glm::inverse(playerCamera), glm::vec3(0,0,-10));
+
+		glm::vec3 p(glm::mat4(glm::inverse(playerCamera)) * glm::vec4(0,0,-10,1));
+		ibexDisplayModelTransform = glm::translate(glm::mat4(),
+												   glm::vec3(p.x,p.y,p.z))*glm::inverse(playerRotation);
     }
     
     
