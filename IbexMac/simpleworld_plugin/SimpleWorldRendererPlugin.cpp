@@ -888,7 +888,7 @@ void SimpleWorldRendererPlugin::reset() {
 	_bringUpIbexDisplay = true;
 }
 static TextRenderer textRenderer;
-void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &view_, const glm::mat4 &playerCamera_, const glm::mat4 &playerRotation_, const glm::vec3 &playerPosition_, bool shadowPass, const glm::mat4 &depthBiasMVP, const double &time) {
+void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &orthoProj, const glm::mat4 &view_, const glm::mat4 &playerCamera_, const glm::mat4 &playerRotation_, const glm::vec3 &playerPosition_, bool shadowPass, const glm::mat4 &depthBiasMVP, const double &time) {
     glm::mat4 view(view_);
     glm::mat4 model;
     
@@ -966,17 +966,17 @@ void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &
             model = glm::translate(model, -glm::vec3(playerPosition_.x, 0, playerPosition_.z));
             renderWater(PV*model, view, model, shadowPass, depthBiasMVP*model, time);
 
-//            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-//            glDisable(GL_CULL_FACE);
-//            glDisable(GL_DEPTH_TEST);
-//            //model = glm::mat4();
-//            //view = glm::mat4();
-//            //glm::mat4 orth = glm::ortho(-512.0f,512.0f,-512.0f,512.0f,-100.0f,100.0f);
-//            ////renderText(/*PV*model*/orth, view, model, shadowPass, depthBiasMVP*model);
-//            textRenderer.renderText(PV*model, view, model, shadowPass, depthBiasMVP*model);
-//            //textRenderer.renderTextDirect(PV*model, view, model, shadowPass, depthBiasMVP*model);
-//            glEnable(GL_DEPTH_TEST);
-//            glEnable(GL_CULL_FACE);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            glDisable(GL_CULL_FACE);
+            glDisable(GL_DEPTH_TEST);
+            //model = glm::mat4();
+            //view = glm::mat4();
+            //glm::mat4 orth = glm::ortho(-512.0f,512.0f,-512.0f,512.0f,-100.0f,100.0f);
+            ////renderText(/*PV*model*/orth, view, model, shadowPass, depthBiasMVP*model);
+            textRenderer.renderText(orthoProj*model, view, model, shadowPass, depthBiasMVP*model);
+            //textRenderer.renderTextDirect(PV*model, view, model, shadowPass, depthBiasMVP*model);
+            glEnable(GL_DEPTH_TEST);
+            glEnable(GL_CULL_FACE);
 
             glDisable(GL_BLEND);
         }
@@ -1044,6 +1044,7 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
     glm::mat4 modelView;
     glm::mat4 view;
     glm::mat4 proj;
+    glm::mat4 orthoProj;
     //    copyMatrix(view, lightsourceMatrix);
     //    copyMatrix(proj, (getRiftOrientationNative()*stereo.Projection.Transposed()).M);
     
@@ -1103,7 +1104,7 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
         
         // render shadowmap
         bindShadowFBO();
-        render(lightProj, lightView, glm::mat4(), glm::mat4(), glm::vec3(), true, depthBiasMVP, time_);
+        render(lightProj, orthoProj, lightView, glm::mat4(), glm::mat4(), glm::vec3(), true, depthBiasMVP, time_);
     }
     
     glBindFramebuffer(GL_FRAMEBUFFER, fbos[0]);
@@ -1123,6 +1124,7 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
         
         copyMatrix(view,stereo.ViewAdjust.Transposed().M);
         copyMatrix(proj, (getRiftOrientationNative()*stereo.Projection.Transposed()).M);
+        copyMatrix(orthoProj, (stereo.OrthoProjection.Transposed()).M);
         
         if(useLightPerspective) {
             proj = lightProj;
@@ -1130,7 +1132,7 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
         }
         
         // render normally
-        render(proj, view, playerCamera, playerRotation, playerPosition, false, depthBiasMVP, time_);
+        render(proj, orthoProj, view, playerCamera, playerRotation, playerPosition, false, depthBiasMVP, time_);
     }
     glDisable(GL_SCISSOR_TEST);
     glDisable(GL_FRAMEBUFFER_SRGB);

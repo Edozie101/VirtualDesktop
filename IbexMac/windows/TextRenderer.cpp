@@ -183,10 +183,10 @@ void TextRenderer::precompileText(float x, float y, std::vector<std::string> lin
 
 	//////////////////////////////////////////////////////////////////////////////
 	static GLfloat IbexDisplayFlatVertices[] = {
-		-1.0, -1.0, 0.0, 0, 0,
-		1.0, -1.0, 0.0, 1, 0,
-		1.0,  1.0, 0.0, 1, 1,
-		-1.0,  1.0, 0.0, 0, 1
+		-1.0, -1.0, 0.0, 0, 1,
+		1.0, -1.0, 0.0, 1, 1,
+		1.0,  1.0, 0.0, 1, 0,
+		-1.0,  1.0, 0.0, 0, 0
 	};
 
 	static GLushort IbexDisplayFlatIndices[] = {
@@ -362,7 +362,8 @@ void TextRenderer::renderTextDirect(const glm::mat4 &MVP, const glm::mat4 &V, co
 
 void TextRenderer::renderText(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP)
 {
-	glm::mat4 orth = glm::ortho(-2.0f,2.0f,-2.0f,2.0f,-2.0f,2.0f);
+	glm::mat4 orth = MVP;//glm::ortho(-2.0f,2.0f,-2.0f,2.0f,-2.0f,2.0f);
+    //orth = glm::translate(orth, 0.0f, 0.0f, 0.0f);
 
 	if(shadowPass) {
 		//glUseProgram(shadowProgram.shader.program);
