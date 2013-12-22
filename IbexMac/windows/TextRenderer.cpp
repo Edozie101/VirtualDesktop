@@ -325,8 +325,7 @@ void TextRenderer::renderTextToFrameBuffer()
 
 void TextRenderer::renderTextDirect(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP)
 {
-
-	glm::mat4 orth = glm::ortho(minX,maxX,minY,maxY,-100.0f,100.0f);//-512.0f,512.0f,-512.0f,512.0f,-100.0f,100.0f);
+	glm::mat4 orth = MVP;//glm::ortho(minX,maxX,minY,maxY,-100.0f,100.0f);//-512.0f,512.0f,-512.0f,512.0f,-100.0f,100.0f);
 
 	if(shadowPass) {
 		//glUseProgram(shadowProgram.shader.program);
