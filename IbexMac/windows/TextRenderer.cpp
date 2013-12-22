@@ -180,8 +180,8 @@ void TextRenderer::precompileText(float x, float y, std::vector<std::string> lin
 	};
 
 	static GLushort IbexDisplayFlatIndices[] = {
-		0, 1, 2,
-		0, 2, 3
+		0, 2, 1,
+		0, 3, 2
 	};
 
     if(vaoTextTextureRenderer == 0) {
