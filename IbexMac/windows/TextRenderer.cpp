@@ -11,7 +11,6 @@ void TextRenderer::loadProgram() {
 	}
 	glUseProgram(textShaderProgram.shader.program);
 
-
 	IbexTextUniformLocations[0] = glGetUniformLocation(textShaderProgram.shader.program, "MVP");
 	IbexTextUniformLocations[1] = glGetUniformLocation(textShaderProgram.shader.program, "V");
 	IbexTextUniformLocations[2] = glGetUniformLocation(textShaderProgram.shader.program, "M");
@@ -24,16 +23,7 @@ void TextRenderer::loadProgram() {
 	IbexTextAttribLocations[1] = glGetAttribLocation(textShaderProgram.shader.program, "vertexUV");
 
 
-
-
-
-
-
-
-
-
-
-
+    // reusing emissive shader for text renderer
 	if(standardShaderProgram.shader.program == 0) standardShaderProgram.loadShaderProgram(mResourcePath, "/resources/shaders/emissive.v.glsl", "/resources/shaders/emissive.f.glsl");
 	glUseProgram(standardShaderProgram.shader.program);
 
@@ -238,7 +228,6 @@ void TextRenderer::bindTextFBO() {
     textColor[2] = 1;
     textColor[3] = 1;
     
-	//glClearColor(0.01, 0.1,0.3,0.7);
     glClearColor(backgroundColor[0], backgroundColor[1], backgroundColor[2], backgroundColor[3]);
 	glClear(GL_COLOR_BUFFER_BIT);
 }
@@ -252,8 +241,6 @@ void TextRenderer::generateTextFBO()
 	glBindTexture(GL_TEXTURE_2D, textTextureId);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, maxX-minX, maxY-minY, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
@@ -278,15 +265,11 @@ void TextRenderer::renderTextToFrameBuffer()
 	generateTextFBO();
 	bindTextFBO();
     
-	glm::mat4 orth = glm::ortho(minX,maxX,minY,maxY,-100.0f,100.0f);//-512.0f,512.0f,-512.0f,512.0f,-100.0f,100.0f);
-    //glm::mat4 orth = glm::ortho(-maxX,maxX,-maxY,maxY,-100.0f,100.0f);//-512.0f,512.0f,-512.0f,512.0f,-100.0f,100.0f);
-	//glm::mat4 orth = glm::ortho(-512.0f,512.0f,-512.0f,512.0f,-100.0f,100.0f);
-    //glm::mat4 orth = glm::ortho(-1024.0f,1024.0f,-1024.0f,1024.0f,-1024.0f,1024.0f);
-    //glm::mat4 orth = glm::ortho(-2.0f,2.0f,-2.0f,2.0f,-100.0f,100.0f);
+	glm::mat4 orth = glm::ortho(minX,maxX,minY,maxY,-100.0f,100.0f);
 
 	glUseProgram(textShaderProgram.shader.program);
 	if(IbexTextUniformLocations[0] >= 0) {
-        glUniformMatrix4fv(IbexTextUniformLocations[0], 1, GL_FALSE, &orth[0][0]);//MVP[0][0]);
+        glUniformMatrix4fv(IbexTextUniformLocations[0], 1, GL_FALSE, &orth[0][0]);
     }
 
 	if(IbexTextUniformLocations[3] >= 0)  {
@@ -301,23 +284,17 @@ void TextRenderer::renderTextToFrameBuffer()
         glUniform4fv(IbexTextUniformLocations[6], 1, textColor);
     }
 
-    //glDisable(GL_BLEND);
-	glEnable(GL_BLEND);
+    glDisable(GL_BLEND);
     glDisable(GL_CULL_FACE);
 	glDisable(GL_DEPTH_TEST);
 	glBindVertexArray(vaoTextRenderer);
     glDrawElements(GL_TRIANGLES, (int)indices.size(), GL_UNSIGNED_INT, 0);
-    
-    //glBindTexture(GL_TEXTURE_2D, ftex);//desktopTexture);
-    //glBindVertexArray(vaoTextTextureRenderer);
-	//glDrawElements(GL_TRIANGLES,  6, GL_UNSIGNED_SHORT, 0);
 
 	glBindVertexArray(0);	
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glUseProgram(0);
 
 	glEnable(GL_DEPTH_TEST);
-	glDisable(GL_BLEND);
     glEnable(GL_CULL_FACE);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
@@ -325,18 +302,13 @@ void TextRenderer::renderTextToFrameBuffer()
 
 void TextRenderer::renderTextDirect(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP)
 {
-	glm::mat4 orth = MVP;//glm::ortho(minX,maxX,minY,maxY,-100.0f,100.0f);//-512.0f,512.0f,-512.0f,512.0f,-100.0f,100.0f);
+	glm::mat4 orth = MVP;
 
 	if(shadowPass) {
-		//glUseProgram(shadowProgram.shader.program);
-		//glUniformMatrix4fv(ShadowUniformLocations[0], 1, GL_FALSE, &MVP[0][0]);
 		return;
 	} else {
 		glUseProgram(textShaderProgram.shader.program);
-		if(IbexTextUniformLocations[0] >= 0) glUniformMatrix4fv(IbexTextUniformLocations[0], 1, GL_FALSE, &orth[0][0]);//MVP[0][0]);
-		//if(IbexTextUniformLocations[1] >= 0) glUniformMatrix4fv(IbexTextUniformLocations[1], 1, GL_FALSE, &V[0][0]);
-		//if(IbexTextUniformLocations[2] >= 0) glUniformMatrix4fv(IbexTextUniformLocations[2], 1, GL_FALSE, &M[0][0]);
-		//if(IbexTextUniformLocations[4] >= 0) glUniformMatrix4fv(IbexTextUniformLocations[4], 1, GL_FALSE, &(V*M)[0][0]);
+		if(IbexTextUniformLocations[0] >= 0) glUniformMatrix4fv(IbexTextUniformLocations[0], 1, GL_FALSE, &orth[0][0]);
 
 		if(IbexTextUniformLocations[3] >= 0)  {
 			glActiveTexture(GL_TEXTURE0);
@@ -361,19 +333,13 @@ void TextRenderer::renderTextDirect(const glm::mat4 &MVP, const glm::mat4 &V, co
 
 void TextRenderer::renderText(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP)
 {
-	glm::mat4 orth = MVP;//glm::ortho(-2.0f,2.0f,-2.0f,2.0f,-2.0f,2.0f);
-    //orth = glm::translate(orth, 0.0f, 0.0f, 0.0f);
+	glm::mat4 orth = MVP;
 
 	if(shadowPass) {
-		//glUseProgram(shadowProgram.shader.program);
-		//glUniformMatrix4fv(ShadowUniformLocations[0], 1, GL_FALSE, &MVP[0][0]);
 		return;
 	} else {
 		glUseProgram(standardShaderProgram.shader.program);
-		if(IbexDisplayFlatUniformLocations[0] >= 0) glUniformMatrix4fv(IbexDisplayFlatUniformLocations[0], 1, GL_FALSE, &orth[0][0]);//MVP[0][0]);
-		/*if(IbexDisplayFlatUniformLocations[1] >= 0) glUniformMatrix4fv(IbexDisplayFlatUniformLocations[1], 1, GL_FALSE, &V[0][0]);
-		if(IbexDisplayFlatUniformLocations[2] >= 0) glUniformMatrix4fv(IbexDisplayFlatUniformLocations[2], 1, GL_FALSE, &M[0][0]);
-		if(IbexDisplayFlatUniformLocations[4] >= 0) glUniformMatrix4fv(IbexDisplayFlatUniformLocations[4], 1, GL_FALSE, &(V*M)[0][0]);*/
+		if(IbexDisplayFlatUniformLocations[0] >= 0) glUniformMatrix4fv(IbexDisplayFlatUniformLocations[0], 1, GL_FALSE, &orth[0][0]);
 
 		if(IbexDisplayFlatUniformLocations[3] >= 0)  {
 			glActiveTexture(GL_TEXTURE0);
@@ -384,10 +350,6 @@ void TextRenderer::renderText(const glm::mat4 &MVP, const glm::mat4 &V, const gl
 
 	glBindVertexArray(vaoTextTextureRenderer);
 	glDrawElements(GL_TRIANGLES,  6, GL_UNSIGNED_SHORT, 0);
-
-	//glBindVertexArray(0);	
-	//glBindTexture(GL_TEXTURE_2D, 0);
-	//glUseProgram(0);
 }
 
 TextRenderer::TextRenderer() : initialized(false),
@@ -409,4 +371,11 @@ TextRenderer::~TextRenderer()
 	if(vaoTextRenderer) glDeleteVertexArrays(1, &vaoTextRenderer);
 	if(vboTextVertices) glDeleteBuffers(1, &vboTextVertices);
 	if(vboTextIndices) glDeleteBuffers(1, &vboTextIndices);
+    
+    if(vaoTextTextureRenderer) glDeleteVertexArrays(1, &vaoTextTextureRenderer);
+	if(vboTextTextureVertices) glDeleteBuffers(1, &vboTextTextureVertices);
+	if(vboTextTextureIndices) glDeleteBuffers(1, &vboTextTextureIndices);
+    
+    if(ftex) glDeleteTextures(1, &ftex);
+    if(textTextureId) glDeleteTextures(1, &textTextureId);
 }
