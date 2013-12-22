@@ -37,7 +37,7 @@ private:
 	stbtt_bakedchar cdata[96]; // ASCII 32..126 is 95 glyphs
 	GLuint ftex;
 
-	GLint IbexTextUniformLocations[5];
+	GLint IbexTextUniformLocations[7];
 	GLint IbexTextAttribLocations[2];
 
 	GLuint vaoTextRenderer;
@@ -45,8 +45,6 @@ private:
 	std::vector<GLuint> indices;
 
 	GLuint vaoTextTextureRenderer;
-	std::vector<GLfloat> verticesTexture;
-	std::vector<GLuint> indicesTexture;
 	GLuint vboTextVertices;
 	GLuint vboTextIndices;
 	GLuint vboTextTextureVertices;
@@ -62,13 +60,14 @@ private:
 	/////////////
 	GLint IbexDisplayFlatUniformLocations[5];
     GLint IbexDisplayFlatAttribLocations[3];
-
-	GLfloat IbexDisplayFlatVertices[20];
-	GLushort IbexDisplayFlatIndices[6];
+    
 	GLuint fboText;
 	GLuint textTextureId;
 	GLuint textTextureWidth;
 	GLuint textTextureHeight;
+    
+    GLfloat backgroundColor[4];
+    GLfloat textColor[4];
 };
 
 #endif // __IBEX_TEXT_RENDERER_H__
