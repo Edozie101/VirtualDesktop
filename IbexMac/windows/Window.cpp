@@ -27,7 +27,7 @@ bool endsWith(std::string const &inputString, std::string const &ending)
         return false;
 }
 
-Ibex::Window::Window() : visibleWindow(InfoWindow) {
+Ibex::Window::Window() : visibleWindow(NoWindow),previousVisibleWindow(NoWindow) {
     directoryChanged = true;
     isStereoVideo = 0;
     selectedFile = 0;
@@ -35,6 +35,7 @@ Ibex::Window::Window() : visibleWindow(InfoWindow) {
     currentPath = Filesystem::getHomeDirectory();
     selectedCamera = 0;
     selectedCameraID = 0;
+    textRenderer = new TextRenderer();
     
     fileTypes.insert("3gp");
     fileTypes.insert("3iv2");
@@ -146,59 +147,20 @@ Ibex::Window::Window() : visibleWindow(InfoWindow) {
     fileTypes.insert("xvid");
 }
 
-void renderBitmapString(
-                        float x,
-                        float y,
-                        float z,
-                        void *font,
-                        const char *string) {
-//    glPushMatrix();
-//    glRasterPos3f(x, y,z);
-//    glScaled(0.001/2.0, 0.001/2.0, 0.001/2.0);
-//    for (const char *c=string; *c != '\0'; c++) {
-//        glutBitmapCharacter(font, *c);
-//    }
-//    glPopMatrix();
-}
-
-void renderStrokeFontString(
-                            float x,
-                            float y,
-                            float z,
-                            void *font,
-                            const char *string) {
-//    glPushMatrix();
-//    glTranslatef(x, y,z);
-//    
-//    glScaled(0.001/20.0, 0.001/20.0, 0.001/20.0);
-//    for (const char *c=string; *c != '\0'; c++) {
-//        glutStrokeCharacter(font, *c);
-//    }
-//    
-//    glPopMatrix();
-}
-
 void Ibex::Window::renderInfoWindow() {
-//    glBindTexture(GL_TEXTURE_2D, 0);
-//    glDisable(GL_DEPTH_TEST);
-//    glColor4f(0,0.1,0,0.5);
-//    glBegin(GL_QUADS);
-//    glVertex3d(-0.05, 0.45, -0.25);
-//    glVertex3d(0.05, 0.45, -0.25);
-//    glVertex3d(0.05, 0.55, -0.25);
-//    glVertex3d(-0.05, 0.55, -0.25);
-//    glEnd();
-//    glColor4f(1,1,1,1);
-//    renderBitmapString(-0.045, 0.54, -0.25, GLUT_BITMAP_HELVETICA_18, "1. Load Video");
-//    renderBitmapString(-0.045, 0.53, -0.25, GLUT_BITMAP_HELVETICA_18, "2. Load Stereo Video");
-//    renderBitmapString(-0.045, 0.52, -0.25, GLUT_BITMAP_HELVETICA_18, "3. Camera");
-//    renderBitmapString(-0.045, 0.51, -0.25, GLUT_BITMAP_HELVETICA_18, "4. Stereo Camera");
-//    //    renderStrokeFontString(0, 0.5, -0.25, GLUT_STROKE_ROMAN, fpsString);
-//    renderBitmapString(0.005, 0.465, -0.25, GLUT_BITMAP_HELVETICA_18, fpsString);
-//    glEnable(GL_DEPTH_TEST);
+    std::vector<std::string> lines;
+    lines.push_back("1. Load Video");
+    lines.push_back("2. Load Stereo Video");
+    lines.push_back("3. Camera");
+    lines.push_back("4. Stereo Camera");
+    lines.push_back(" ");
+    lines.push_back(fpsString);
+    textRenderer->precompileText(0, 0, lines);
+    textRenderer->renderTextToFrameBuffer();
 }
 
 void Ibex::Window::renderFileChooser() {
+    return;
 #ifdef _WIN32
 	uint listingOffset = 1;
 #else
@@ -277,6 +239,7 @@ void Ibex::Window::renderFileChooser() {
 }
 
 void Ibex::Window::renderCameraChooser() {
+    return;
 //    glBindTexture(GL_TEXTURE_2D, 0);
 //    glDisable(GL_DEPTH_TEST);
 //    glColor4f(0,0.1,0,0.5);
@@ -313,23 +276,43 @@ void Ibex::Window::reset() {
 	visibleWindow = InfoWindow;
 }
 
-void Ibex::Window::render() {
-    switch(visibleWindow) {
-        case FileChooser:
-            renderFileChooser();
-            break;
-        case CameraChooser:
-            renderCameraChooser();
-            break;
-        case InfoWindow:
-        default:
-            renderInfoWindow();
-            break;
+void Ibex::Window::update(double timeDelta) {
+    bool update = false;
+    static double time = 0;
+    if(time > 5.0) {
+        update = true;
+        time = fmod(time, 5.0);
+    }
+    time += timeDelta;
+    if(previousVisibleWindow != visibleWindow || updateRender) {
+        previousVisibleWindow = visibleWindow;
+        update = true;
+    }
+    
+    if(::showDialog && update) {
+        switch(visibleWindow) {
+            case FileChooser:
+                renderFileChooser();
+                break;
+            case CameraChooser:
+                renderCameraChooser();
+                break;
+            case InfoWindow:
+            default:
+                renderInfoWindow();
+                break;
+        }
+    }
+}
+void Ibex::Window::render(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP) {
+    if(visibleWindow != NoWindow) {
+        textRenderer->renderText(MVP, V, M, shadowPass, depthMVP);
     }
 }
 
 #ifdef __APPLE__
 int Ibex::Window::processKey(unsigned short keyCode, int down) {
+    updateRender = true;
     int processed = 0;
     switch(keyCode) {
         case kVK_UpArrow:
@@ -370,7 +353,7 @@ int Ibex::Window::processKey(unsigned short keyCode, int down) {
                             if(Filesystem::isFile(fullPath) && !Filesystem::isDirectory(fullPath)) {
                                 selectedVideo = true;
                                 videoPath = fullPath;
-                                showDialog = false;
+                                ::showDialog = false;
                             } else {
                                 currentPath = Filesystem::navigate(currentPath, directoryList[selectedFile]);
                             }
@@ -384,7 +367,7 @@ int Ibex::Window::processKey(unsigned short keyCode, int down) {
                         if(selectedFile < cameras.size()) {
                             selectedCamera = true;
                             selectedCameraID = cameras[selectedFile];
-                            showDialog = false;
+                            ::showDialog = false;
                             selectedFile = 0;
                         } else {
                             
@@ -430,7 +413,8 @@ int Ibex::Window::processKey(unsigned short keyCode, int down) {
             processed = 1;
             break;
         case kVK_Escape:
-            showDialog = false;
+            ::showDialog = false;
+            visibleWindow = NoWindow;
             
             processed = 1;
             break;

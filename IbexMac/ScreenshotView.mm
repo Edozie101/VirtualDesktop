@@ -252,12 +252,12 @@ static inline void copyImageToBytes(const CGImageRef &img, const CGImageRef &cur
     newContext = [[NSOpenGLContext alloc] initWithFormat:_pixelFormat shareContext:_share];
     static GLubyte *s = NULL;
     
-    //static
-    NSCursor *systemCursor;
-//    static dispatch_once_t onceToken;
-//    dispatch_once(&onceToken, ^{
-        systemCursor = NSCursor.currentSystemCursor;
-//    });
+//    //static
+//    NSCursor *systemCursor;
+////    static dispatch_once_t onceToken;
+////    dispatch_once(&onceToken, ^{
+//        systemCursor = NSCursor.currentSystemCursor;
+////    });
     [newContext makeCurrentContext];
     
     CGRect mainDisplayRect = NSScreen.mainScreen.frame;

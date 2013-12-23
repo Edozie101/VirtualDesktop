@@ -11,7 +11,7 @@
 
 #include <iostream>
 #include <math.h>
-#include <stdio.h>
+#include <cstdio>
 #include <list>
 
 #include "../distortions.h"
@@ -887,7 +887,7 @@ void SimpleWorldRendererPlugin::reset() {
     ibexDisplayModelTransform = glm::mat4(glm::translate(glm::mat4(), glm::vec3(0.0f, 0.0f, -10.0f)));
 	_bringUpIbexDisplay = true;
 }
-static TextRenderer textRenderer;
+//static ::Ibex::TextRenderer textRenderer;
 void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &orthoProj, const glm::mat4 &view_, const glm::mat4 &playerCamera_, const glm::mat4 &playerRotation_, const glm::vec3 &playerPosition_, bool shadowPass, const glm::mat4 &depthBiasMVP, const double &time) {
     glm::mat4 view(view_);
     glm::mat4 model;
@@ -967,7 +967,8 @@ void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &
             renderWater(PV*model, view, model, shadowPass, depthBiasMVP*model, time);
 
             if(showDialog) {
-                textRenderer.renderText(orthoProj*model, view, model, shadowPass, depthBiasMVP*model);
+//                textRenderer.renderText(orthoProj*model, view, model, shadowPass, depthBiasMVP*model);
+                window.render(orthoProj*model, view, model, shadowPass, depthBiasMVP*model);
             }
 
             glDisable(GL_BLEND);
@@ -1022,16 +1023,17 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
 
 
 
-		std::vector<std::string> lines;
-		lines.push_back("Hello World!");
-		lines.push_back("This is Hesham writing second line.");
-		lines.push_back("1. blah");
-		lines.push_back("2. blah blah");
-		lines.push_back("3. blah blah blah");
-		lines.push_back("4. blah?");
-		textRenderer.precompileText(0,0,lines);
-		textRenderer.renderTextToFrameBuffer();
+//		std::vector<std::string> lines;
+//		lines.push_back("Hello World!");
+//		lines.push_back("This is Hesham writing second line.");
+//		lines.push_back("1. blah");
+//		lines.push_back("2. blah blah");
+//		lines.push_back("3. blah blah blah");
+//		lines.push_back("4. blah?");
+//		textRenderer.precompileText(0,0,lines);
+//		textRenderer.renderTextToFrameBuffer();
     }
+    window.update(timeDiff_);
     
     glm::mat4 modelView;
     glm::mat4 view;

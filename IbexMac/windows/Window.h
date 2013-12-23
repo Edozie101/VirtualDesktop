@@ -23,10 +23,12 @@ typedef unsigned int uint;
 #include <unordered_set>
 #include <set>
 
+#include "TextRenderer.h"
+
 namespace Ibex {
     
 enum VisibleWindow {
-    InfoWindow,FileChooser,CameraChooser
+    NoWindow,InfoWindow,FileChooser,CameraChooser
 };
 
 class Window {
@@ -34,7 +36,8 @@ public:
     Window();
     
 	void reset();
-    void render();
+    void render(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP);
+    void update(double timeDelta);
     bool getIsStereoVideo() { return isStereoVideo; }
     bool getSelectedVideo() { return selectedVideo; }
     bool getSelectedCamera() { return selectedCamera; }
@@ -42,6 +45,7 @@ public:
     bool setSelectedCamera(bool selectedCamera_) { selectedCamera = selectedCamera_; return selectedCamera; }
     std::string getSelectedVideoPath() { return videoPath; }
     uint getSelectedCameraID() { return selectedCameraID; }
+    void showDialog(bool showDialog_) { visibleWindow = (showDialog_) ? InfoWindow : NoWindow; };
 
 #ifdef __APPLE__
     int processKey(unsigned short keyCode, int down);
@@ -67,6 +71,7 @@ public:
     
 private:
     VisibleWindow visibleWindow;
+    VisibleWindow previousVisibleWindow;
     std::string currentPath;
     bool directoryChanged;
     uint selectedFile;
@@ -75,6 +80,9 @@ private:
     std::vector<std::string> directoryList;
     std::vector<int> cameras;
     std::unordered_set<std::string> fileTypes;
+    
+    bool updateRender;
+    ::Ibex::TextRenderer *textRenderer;
 };
     
 }

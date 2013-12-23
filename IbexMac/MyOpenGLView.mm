@@ -576,6 +576,7 @@ static CGPoint cursorPos;
             case kVK_ANSI_Slash:
                 if(!controlDesktop) {
                     showDialog = !showDialog;
+                    ibex->renderer->window.showDialog(showDialog);
                 }
                 break;
             case kVK_ANSI_Backslash:

@@ -11,7 +11,8 @@
 
 #include "../opengl_helpers.h"
 #include "../GLSLShaderProgram.h"
-#include "../simpleworld_plugin/SimpleWorldRendererPlugin.h"
+
+namespace Ibex {
 
 class TextRenderer
 {
@@ -24,15 +25,12 @@ public:
 	
 	void bindTextFBO();
 	void generateTextFBO();
-	void precompileText(float x, float y, std::vector<std::string> lines);
+	void precompileText(float x, float y, const std::vector<std::string> &lines);
 	void renderTextToFrameBuffer();
 	void renderText(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP);
 	void renderTextDirect(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP);
 private:
 	bool initialized;
-
-	unsigned char ttf_buffer[1<<20];
-	unsigned char temp_bitmap[512*512];
 
 	stbtt_bakedchar cdata[96]; // ASCII 32..126 is 95 glyphs
 	GLuint ftex;
@@ -50,7 +48,7 @@ private:
 	GLuint vboTextTextureVertices;
 	GLuint vboTextTextureIndices;
 
-	static GLSLShaderProgram textShaderProgram;
+	GLSLShaderProgram textShaderProgram;
 	float minX, maxX, minY,maxY;
 
 	int ascent,baseline,descent,lineGap;
@@ -69,5 +67,7 @@ private:
     GLfloat backgroundColor[4];
     GLfloat textColor[4];
 };
+
+}
 
 #endif // __IBEX_TEXT_RENDERER_H__

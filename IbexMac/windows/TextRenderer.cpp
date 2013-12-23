@@ -1,11 +1,15 @@
 #include "TextRenderer.h"
 
+#include "../simpleworld_plugin/SimpleWorldRendererPlugin.h"
+
 #include <algorithm>
+#include <vector>
+#include <string>
 #include <math.h>
 
-GLSLShaderProgram TextRenderer::textShaderProgram;
+//GLSLShaderProgram Ibex::TextRenderer::textShaderProgram;
 
-void TextRenderer::loadProgram() {
+void Ibex::TextRenderer::loadProgram() {
 	if(textShaderProgram.shader.program == 0) {
 		textShaderProgram.loadShaderProgram(mResourcePath, "/resources/shaders/text.v.glsl", "/resources/shaders/text.f.glsl");
 	}
@@ -38,13 +42,18 @@ void TextRenderer::loadProgram() {
 	IbexDisplayFlatAttribLocations[2] = glGetAttribLocation(standardShaderProgram.shader.program, "vertexUV");
 }
 
-void TextRenderer::initializeFont()
+void Ibex::TextRenderer::initializeFont()
 {
+    unsigned char *ttf_buffer = new unsigned char[1<<20];
+	unsigned char *temp_bitmap = new unsigned char[512*512];
+    
 #ifdef WIN32
-	fread(ttf_buffer, 1, 1<<20, fopen("c:/windows/fonts/times.ttf", "rb"));
+	size_t read = fread(ttf_buffer, 1, 1<<20, fopen("c:/windows/fonts/times.ttf", "rb"));
 #else
-    fread(ttf_buffer, 1, 1<<20, fopen("/Library/Fonts/Georgia.ttf", "rb"));
+    size_t read = fread(ttf_buffer, 1, 1<<20, fopen("/Library/Fonts/Georgia.ttf", "rb"));
 #endif
+    std::cerr << "Read font bytes: " << read << std::endl;
+    
 	stbtt_fontinfo font;
 	stbtt_InitFont(&font, ttf_buffer, 0);
 	stbtt_BakeFontBitmap(ttf_buffer,0, 32.0, temp_bitmap,512,512, 32,96, cdata); // no guarantee this fits!
@@ -54,19 +63,25 @@ void TextRenderer::initializeFont()
 	baseline = (int) (ascent*scale);
 
 	// can free ttf_buffer at this point
-	glGenTextures(1, &ftex);
+    if(ftex == 0) glGenTextures(1, &ftex);
 	glBindTexture(GL_TEXTURE_2D, ftex);
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, 512,512, 0, GL_RED, GL_UNSIGNED_BYTE, temp_bitmap);
 	// can free temp_bitmap at this point
+    
+    if(!checkForErrors()) {
+        exit(1);
+    }
+    delete []ttf_buffer;
+    delete []temp_bitmap;
 }
 
-void TextRenderer::precompileText(float x, float y, std::vector<std::string> lines)
+void Ibex::TextRenderer::precompileText(float x, float y, const std::vector<std::string> &lines)
 {
 	if(!initialized) {
 		initialized = true;
-		loadProgram();
+        loadProgram();
 		initializeFont();
 	}
 	checkForErrors();
@@ -214,7 +229,7 @@ void TextRenderer::precompileText(float x, float y, std::vector<std::string> lin
     }
 }
 
-void TextRenderer::bindTextFBO() {
+void Ibex::TextRenderer::bindTextFBO() {
 	glBindFramebuffer(GL_FRAMEBUFFER, fboText);
 	glViewport(0,0,maxX-minX,maxY-minY);
 
@@ -232,7 +247,7 @@ void TextRenderer::bindTextFBO() {
 	glClear(GL_COLOR_BUFFER_BIT);
 }
 
-void TextRenderer::generateTextFBO()
+void Ibex::TextRenderer::generateTextFBO()
 {
 	if(fboText == 0) glGenFramebuffers(1, &fboText);
 	glBindFramebuffer(GL_FRAMEBUFFER, fboText);
@@ -260,7 +275,7 @@ void TextRenderer::generateTextFBO()
 }				
 
 
-void TextRenderer::renderTextToFrameBuffer()
+void Ibex::TextRenderer::renderTextToFrameBuffer()
 {
 	generateTextFBO();
 	bindTextFBO();
@@ -300,7 +315,7 @@ void TextRenderer::renderTextToFrameBuffer()
 }
 
 
-void TextRenderer::renderTextDirect(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP)
+void Ibex::TextRenderer::renderTextDirect(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP)
 {
 	glm::mat4 orth = MVP;
 
@@ -331,8 +346,10 @@ void TextRenderer::renderTextDirect(const glm::mat4 &MVP, const glm::mat4 &V, co
 	glUseProgram(0);
 }
 
-void TextRenderer::renderText(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP)
+void Ibex::TextRenderer::renderText(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP)
 {
+    if(!initialized) return;
+    
 	glm::mat4 orth = MVP;
 
 	if(shadowPass) {
@@ -352,21 +369,25 @@ void TextRenderer::renderText(const glm::mat4 &MVP, const glm::mat4 &V, const gl
 	glDrawElements(GL_TRIANGLES,  6, GL_UNSIGNED_SHORT, 0);
 }
 
-TextRenderer::TextRenderer() : initialized(false),
+Ibex::TextRenderer::TextRenderer() : initialized(false),
 	vaoTextRenderer(0),
 	vboTextVertices(0),
 	vboTextIndices(0),
 	fboText(0),
 	textTextureId(0),
 	textTextureWidth(0),
-	textTextureHeight(0)
+	textTextureHeight(0),
+    vaoTextTextureRenderer(0),
+    vboTextTextureVertices(0),
+    vboTextTextureIndices(0),
+    ftex(0)
 {
 	memset(IbexTextUniformLocations,0,sizeof(IbexTextUniformLocations));
 	memset(IbexTextAttribLocations,0,sizeof(IbexTextAttribLocations));
 }
 
 
-TextRenderer::~TextRenderer()
+Ibex::TextRenderer::~TextRenderer()
 {
 	if(vaoTextRenderer) glDeleteVertexArrays(1, &vaoTextRenderer);
 	if(vboTextVertices) glDeleteBuffers(1, &vboTextVertices);
