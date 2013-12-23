@@ -204,6 +204,7 @@ void Model::genVAOsAndUniformBuffer(const aiScene *sc) {
         glGenBuffers(1, &buffer);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * mesh->mNumFaces * 3, faceArray, GL_STATIC_DRAW);
+        free(faceArray);
         
         // buffer for vertex positions
         if (mesh->HasPositions()) {
