@@ -429,10 +429,14 @@ extern int stbtt_BakeFontBitmap(const unsigned char *data, int offset,  // font 
 // if return is 0, no characters fit and no rows were used
 // This uses a very crappy packing.
 
-typedef struct
+typedef struct _stbtt_aligned_quad
 {
    float x0,y0,s0,t0; // top-left
    float x1,y1,s1,t1; // bottom-right
+    _stbtt_aligned_quad() :
+    x0(0),y0(0),s0(0),t0(0),
+    x1(0),y1(0),s1(0),t1(0)
+    {}
 } stbtt_aligned_quad;
 
 extern void stbtt_GetBakedQuad(stbtt_bakedchar *chardata, int pw, int ph,  // same data as above
@@ -1867,12 +1871,12 @@ extern int stbtt_BakeFontBitmap(const unsigned char *data, int offset,  // font 
       stbtt_GetGlyphBitmapBox(&f, g, scale,scale, &x0,&y0,&x1,&y1);
       gw = x1-x0;
       gh = y1-y0;
-      if (x + gw + 1 >= pw)
+      if ((x + gw + 1) >= pw)
          y = bottom_y, x = 1; // advance to next row
-      if (y + gh + 1 >= ph) // check if it fits vertically AFTER potentially moving to next row
+      if ((y + gh + 1) >= ph) // check if it fits vertically AFTER potentially moving to next row
          return -i;
-      STBTT_assert(x+gw < pw);
-      STBTT_assert(y+gh < ph);
+      STBTT_assert((x+gw) < pw);
+      STBTT_assert((y+gh) < ph);
       stbtt_MakeGlyphBitmap(&f, pixels+x+y*pw, gw,gh,pw, scale,scale, g);
       chardata[i].x0 = (stbtt_int16) x;
       chardata[i].y0 = (stbtt_int16) y;
@@ -1882,7 +1886,7 @@ extern int stbtt_BakeFontBitmap(const unsigned char *data, int offset,  // font 
       chardata[i].xoff     = (float) x0;
       chardata[i].yoff     = (float) y0;
       x = x + gw + 2;
-      if (y+gh+2 > bottom_y)
+      if ((y+gh+2) > bottom_y)
          bottom_y = y+gh+2;
    }
    return bottom_y;
@@ -1891,7 +1895,7 @@ extern int stbtt_BakeFontBitmap(const unsigned char *data, int offset,  // font 
 void stbtt_GetBakedQuad(stbtt_bakedchar *chardata, int pw, int ph, int char_index, float *xpos, float *ypos, stbtt_aligned_quad *q, int opengl_fillrule)
 {
    float d3d_bias = opengl_fillrule ? 0 : -0.5f;
-   float ipw = 1.0f / pw, iph = 1.0f / ph;
+   float ipw = 1.0f / (float)pw, iph = 1.0f / (float)ph;
    stbtt_bakedchar *b = chardata + char_index;
    int round_x = STBTT_ifloor((*xpos + b->xoff) + 0.5);
    int round_y = STBTT_ifloor((*ypos + b->yoff) + 0.5);

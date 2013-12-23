@@ -45,7 +45,7 @@ void Ibex::TextRenderer::loadProgram() {
 void Ibex::TextRenderer::initializeFont()
 {
     unsigned char *ttf_buffer = new unsigned char[1<<20];
-	unsigned char *temp_bitmap = new unsigned char[512*512];
+	unsigned char *temp_bitmap = new unsigned char[1024*256];//512*512];
     
 #ifdef WIN32
 	size_t read = fread(ttf_buffer, 1, 1<<20, fopen("c:/windows/fonts/times.ttf", "rb"));
@@ -56,7 +56,11 @@ void Ibex::TextRenderer::initializeFont()
     
 	stbtt_fontinfo font;
 	stbtt_InitFont(&font, ttf_buffer, 0);
-	stbtt_BakeFontBitmap(ttf_buffer,0, 32.0, temp_bitmap,512,512, 32,96, cdata); // no guarantee this fits!
+	int r = stbtt_BakeFontBitmap(ttf_buffer,0, 32.0, temp_bitmap,1024,256, 32,96, cdata); // no guarantee this fits!
+    if(r <= 0) {
+        std::cerr << "stbtt_BackFontBitmap r: " << r << std::endl;
+     exit(0);
+    }
 
 	scale = stbtt_ScaleForPixelHeight(&font, 32);
 	stbtt_GetFontVMetrics(&font, &ascent,&descent,&lineGap);
@@ -67,7 +71,7 @@ void Ibex::TextRenderer::initializeFont()
 	glBindTexture(GL_TEXTURE_2D, ftex);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, 512,512, 0, GL_RED, GL_UNSIGNED_BYTE, temp_bitmap);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, 1024,256, 0, GL_RED, GL_UNSIGNED_BYTE, temp_bitmap);
 	// can free temp_bitmap at this point
     
     if(!checkForErrors()) {
@@ -101,7 +105,7 @@ void Ibex::TextRenderer::precompileText(float x, float y, const std::vector<std:
 		while (*text) {
 			if (*text >= 32 && *text < 128) {
 				stbtt_aligned_quad q;
-				stbtt_GetBakedQuad(cdata, 512,512, *text-32, &x,&y,&q,1);
+				stbtt_GetBakedQuad(cdata, 1024,256, *text-32, &x,&y,&q,1);
 
 				// bottom right triangle
 				vertices.push_back(q.x0);
@@ -158,13 +162,13 @@ void Ibex::TextRenderer::precompileText(float x, float y, const std::vector<std:
 		if(minY > maxY) std::swap(minY,maxY);
 	}
 
-	if(!vaoTextRenderer) glGenVertexArrays(1,&vaoTextRenderer);
+	if(vaoTextRenderer == 0) glGenVertexArrays(1,&vaoTextRenderer);
 	if(!checkForErrors()) {
 		exit(1);
 	}
 
 	glBindVertexArray(vaoTextRenderer);
-	if(!vboTextVertices) glGenBuffers(1, &vboTextVertices);
+	if(vboTextVertices == 0) glGenBuffers(1, &vboTextVertices);
 	glBindBuffer(GL_ARRAY_BUFFER, vboTextVertices);
 	glBufferData(GL_ARRAY_BUFFER, vertices.size()*sizeof(GLfloat), vertices.data(), GL_STATIC_DRAW);
 	if(!checkForErrors()) {
@@ -177,7 +181,7 @@ void Ibex::TextRenderer::precompileText(float x, float y, const std::vector<std:
 	if(!checkForErrors()) {
 		exit(1);
 	}
-	if(!vboTextIndices) glGenBuffers(1, &vboTextIndices);
+	if(vboTextIndices == 0) glGenBuffers(1, &vboTextIndices);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboTextIndices);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size()*sizeof(GLuint), indices.data(), GL_STATIC_DRAW);
 	if(!checkForErrors()) {
@@ -200,13 +204,13 @@ void Ibex::TextRenderer::precompileText(float x, float y, const std::vector<std:
 	};
 
     if(vaoTextTextureRenderer == 0) {
-        if(!vaoTextTextureRenderer) glGenVertexArrays(1,&vaoTextTextureRenderer);
+        if(vaoTextTextureRenderer == 0) glGenVertexArrays(1,&vaoTextTextureRenderer);
         if(!checkForErrors()) {
             exit(1);
         }
 
         glBindVertexArray(vaoTextTextureRenderer);
-        if(!vboTextTextureVertices) glGenBuffers(1, &vboTextTextureVertices);
+        if(vboTextTextureVertices == 0) glGenBuffers(1, &vboTextTextureVertices);
         glBindBuffer(GL_ARRAY_BUFFER, vboTextTextureVertices);
         glBufferData(GL_ARRAY_BUFFER, sizeof(IbexDisplayFlatVertices), IbexDisplayFlatVertices, GL_STATIC_DRAW);
         if(!checkForErrors()) {
@@ -219,7 +223,7 @@ void Ibex::TextRenderer::precompileText(float x, float y, const std::vector<std:
         if(!checkForErrors()) {
             exit(1);
         }
-        if(!vboTextTextureIndices) glGenBuffers(1, &vboTextTextureIndices);
+        if(vboTextTextureIndices == 0) glGenBuffers(1, &vboTextTextureIndices);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboTextTextureIndices);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(IbexDisplayFlatIndices), IbexDisplayFlatIndices, GL_STATIC_DRAW);
         if(!checkForErrors()) {
