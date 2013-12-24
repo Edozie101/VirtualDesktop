@@ -12,6 +12,7 @@
 #include "../ibex.h"
 #include "../filesystem/Filesystem.h"
 #include <algorithm>
+#include <sstream>
 #include <string>
 #include "../video/VLCVideoPlayer.h"
 
@@ -148,6 +149,7 @@ Ibex::Window::Window() : visibleWindow(NoWindow),previousVisibleWindow(NoWindow)
 }
 
 void Ibex::Window::renderInfoWindow() {
+    updateRender = false;
     std::vector<std::string> lines;
     lines.push_back("1. Load Video");
     lines.push_back("2. Load Stereo Video");
@@ -160,7 +162,7 @@ void Ibex::Window::renderInfoWindow() {
 }
 
 void Ibex::Window::renderFileChooser() {
-    return;
+    updateRender = false;
 #ifdef _WIN32
 	uint listingOffset = 1;
 #else
@@ -204,8 +206,14 @@ void Ibex::Window::renderFileChooser() {
 		}
         directoryChanged = false;
     }
-    glBindTexture(GL_TEXTURE_2D, 0);
-    glDisable(GL_DEPTH_TEST);
+    
+    uint startIndex = (selectedFile > 28/2) ? selectedFile-28/2 : 0;
+    uint endIndex = fmin(startIndex+28,directoryList.size());
+    textRenderer->precompileText(0, 0, std::vector<std::string>(directoryList.begin()+startIndex, directoryList.begin()+endIndex));
+    textRenderer->renderTextToFrameBuffer();
+    
+//    glBindTexture(GL_TEXTURE_2D, 0);
+//    glDisable(GL_DEPTH_TEST);
 //    glColor4f(0,0.1,0,0.5);
 //    glBegin(GL_QUADS);
 //    glVertex3d(-0.1, 0.35, -0.25);
@@ -235,11 +243,21 @@ void Ibex::Window::renderFileChooser() {
 //        glColor4f(1,1,1,1);
 //    }
 ////    renderBitmapString(0.055, 0.36, -0.25, GLUT_BITMAP_HELVETICA_18, fpsString);
-    glEnable(GL_DEPTH_TEST);
+//    glEnable(GL_DEPTH_TEST);
 }
 
 void Ibex::Window::renderCameraChooser() {
-    return;
+    updateRender = false;
+    std::vector<std::string> lines;
+    lines.push_back("~/Backspace: Back");
+    uint startIndex = (selectedFile > 28/2) ? selectedFile-28/2 : 0;
+    for(uint i = startIndex,index = 0; i < startIndex+28 && i < cameras.size(); ++i,++index) {
+        std::stringstream ss;
+        ss << i+1 << ". Camera " << cameras[i];
+        lines.push_back(ss.str());
+    }
+    textRenderer->precompileText(0, 0, lines);
+    textRenderer->renderTextToFrameBuffer();
 //    glBindTexture(GL_TEXTURE_2D, 0);
 //    glDisable(GL_DEPTH_TEST);
 //    glColor4f(0,0.1,0,0.5);
@@ -280,7 +298,9 @@ void Ibex::Window::update(double timeDelta) {
     bool update = false;
     static double time = 0;
     if(time > 5.0) {
-        update = true;
+        if(visibleWindow == InfoWindow) {
+            update = true;
+        }
         time = fmod(time, 5.0);
     }
     time += timeDelta;
@@ -312,7 +332,7 @@ void Ibex::Window::render(const glm::mat4 &MVP, const glm::mat4 &V, const glm::m
 
 #ifdef __APPLE__
 int Ibex::Window::processKey(unsigned short keyCode, int down) {
-    updateRender = true;
+    //updateRender = true;
     int processed = 0;
     switch(keyCode) {
         case kVK_UpArrow:
@@ -321,7 +341,7 @@ int Ibex::Window::processKey(unsigned short keyCode, int down) {
                 --selectedFile;
                 if(directoryList.size() < 1)selectedFile = 0;
                 else selectedFile %= directoryList.size();
-                
+                updateRender = true;
             }
             processed = 1;
             break;
@@ -334,6 +354,7 @@ int Ibex::Window::processKey(unsigned short keyCode, int down) {
                 } else {
                     selectedFile = 0;
                 }
+                updateRender = true;
             }
             
             processed = 1;
@@ -377,6 +398,7 @@ int Ibex::Window::processKey(unsigned short keyCode, int down) {
                     default:
                         break;
                 }
+                updateRender = true;
 //            showDialog = false;
             }
             
@@ -392,6 +414,7 @@ int Ibex::Window::processKey(unsigned short keyCode, int down) {
                     directoryChanged = true;
                 }
                 visibleWindow = FileChooser;
+                updateRender = true;
             }
             
             processed = 1;
@@ -408,6 +431,7 @@ int Ibex::Window::processKey(unsigned short keyCode, int down) {
                 }
                 visibleWindow = CameraChooser;
                 cameras = VLCVideoPlayer::listCameras();
+                updateRender = true;
             }
             
             processed = 1;
@@ -415,6 +439,7 @@ int Ibex::Window::processKey(unsigned short keyCode, int down) {
         case kVK_Escape:
             ::showDialog = false;
             visibleWindow = NoWindow;
+            updateRender = true;
             
             processed = 1;
             break;
@@ -494,6 +519,7 @@ int Ibex::Window::processKey(unsigned char key, int down) {
                 }
                 visibleWindow = CameraChooser;
                 cameras = VLCVideoPlayer::listCameras();
+                updateRender = true;
             }
             
             processed = 1;
