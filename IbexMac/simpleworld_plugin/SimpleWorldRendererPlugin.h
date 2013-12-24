@@ -41,8 +41,7 @@ public:
     void loadSkybox();
     void renderSkybox(const glm::mat4 &modelView, const glm::mat4 &proj);
     void renderGround(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP, const double &time);
-    void renderVideoDisplayFlat(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, const glm::mat4 &depthMVP);
-    void renderIbexDisplayFlat(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP);
+    void renderIbexDisplayFlat(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP, GLuint texture_);
     void renderWater(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP, const double &time);
     
     void init();
@@ -65,6 +64,8 @@ private:
     glm::mat4 ibexDisplayModelTransform;
     
     Model treeModel;
+    
+    GLuint renderVideoTexture;
 };
 
 #endif /* SIMPLEWORLDRENDERERPLUGIN_H_ */
