@@ -1,37 +1,33 @@
 #include "TextRenderer.h"
 
+#include "../simpleworld_plugin/SimpleWorldRendererPlugin.h"
+
 #include <algorithm>
+#include <vector>
+#include <string>
 #include <math.h>
 
-GLSLShaderProgram TextRenderer::textShaderProgram;
+//GLSLShaderProgram Ibex::TextRenderer::textShaderProgram;
 
-void TextRenderer::loadProgram() {
+void Ibex::TextRenderer::loadProgram() {
 	if(textShaderProgram.shader.program == 0) {
 		textShaderProgram.loadShaderProgram(mResourcePath, "/resources/shaders/text.v.glsl", "/resources/shaders/text.f.glsl");
 	}
 	glUseProgram(textShaderProgram.shader.program);
-
 
 	IbexTextUniformLocations[0] = glGetUniformLocation(textShaderProgram.shader.program, "MVP");
 	IbexTextUniformLocations[1] = glGetUniformLocation(textShaderProgram.shader.program, "V");
 	IbexTextUniformLocations[2] = glGetUniformLocation(textShaderProgram.shader.program, "M");
 	IbexTextUniformLocations[3] = glGetUniformLocation(textShaderProgram.shader.program, "textureIn");
 	IbexTextUniformLocations[4] = glGetUniformLocation(textShaderProgram.shader.program, "MV");
+    IbexTextUniformLocations[5] = glGetUniformLocation(textShaderProgram.shader.program, "backgroundColor");
+    IbexTextUniformLocations[6] = glGetUniformLocation(textShaderProgram.shader.program, "textColor");
 
 	IbexTextAttribLocations[0] = glGetAttribLocation(textShaderProgram.shader.program, "vertexPosition_modelspace");
 	IbexTextAttribLocations[1] = glGetAttribLocation(textShaderProgram.shader.program, "vertexUV");
 
 
-
-
-
-
-
-
-
-
-
-
+    // reusing emissive shader for text renderer
 	if(standardShaderProgram.shader.program == 0) standardShaderProgram.loadShaderProgram(mResourcePath, "/resources/shaders/emissive.v.glsl", "/resources/shaders/emissive.f.glsl");
 	glUseProgram(standardShaderProgram.shader.program);
 
@@ -46,27 +42,46 @@ void TextRenderer::loadProgram() {
 	IbexDisplayFlatAttribLocations[2] = glGetAttribLocation(standardShaderProgram.shader.program, "vertexUV");
 }
 
-void TextRenderer::initializeFont()
+void Ibex::TextRenderer::initializeFont()
 {
-	fread(ttf_buffer, 1, 1<<20, fopen("c:/windows/fonts/times.ttf", "rb"));
+    unsigned char *ttf_buffer = new unsigned char[1<<20];
+	unsigned char *temp_bitmap = new unsigned char[1024*256];//512*512];
+    
+#ifdef WIN32
+	size_t read = fread(ttf_buffer, 1, 1<<20, fopen("c:/windows/fonts/times.ttf", "rb"));
+#else
+    size_t read = fread(ttf_buffer, 1, 1<<20, fopen("/Library/Fonts/Georgia.ttf", "rb"));
+#endif
+    std::cerr << "Read font bytes: " << read << std::endl;
+    
 	stbtt_fontinfo font;
 	stbtt_InitFont(&font, ttf_buffer, 0);
-	stbtt_BakeFontBitmap(ttf_buffer,0, 32.0, temp_bitmap,512,512, 32,96, cdata); // no guarantee this fits!
+	int r = stbtt_BakeFontBitmap(ttf_buffer,0, 32.0, temp_bitmap,1024,256, 32,96, cdata); // no guarantee this fits!
+    if(r <= 0) {
+        std::cerr << "stbtt_BackFontBitmap r: " << r << std::endl;
+     exit(0);
+    }
 
 	scale = stbtt_ScaleForPixelHeight(&font, 32);
 	stbtt_GetFontVMetrics(&font, &ascent,&descent,&lineGap);
 	baseline = (int) (ascent*scale);
 
 	// can free ttf_buffer at this point
-	glGenTextures(1, &ftex);
+    if(ftex == 0) glGenTextures(1, &ftex);
 	glBindTexture(GL_TEXTURE_2D, ftex);
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, 512,512, 0, GL_RED, GL_UNSIGNED_BYTE, temp_bitmap);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, 1024,256, 0, GL_RED, GL_UNSIGNED_BYTE, temp_bitmap);
 	// can free temp_bitmap at this point
+    
+    if(!checkForErrors()) {
+        exit(1);
+    }
+    delete []ttf_buffer;
+    delete []temp_bitmap;
 }
 
-void TextRenderer::precompileText(float x, float y, std::vector<std::string> lines)
+void Ibex::TextRenderer::precompileText(float x, float y, const std::vector<std::string> &lines)
 {
 	if(!initialized) {
 		initialized = true;
@@ -77,18 +92,20 @@ void TextRenderer::precompileText(float x, float y, std::vector<std::string> lin
 
 	vertices.clear();
 	indices.clear();
+    minX = minY = INT_MAX;
+    maxX = maxY = INT_MIN;
 
 	// assume orthographic projection with units = screen pixels, origin at top left
 	int index = 0;
-	int lineNum = lines.size()-1;
+	int lineNum = (int)lines.size()-1;
 	for(std::string line : lines) {
 		x = 0;
 		y = -lineNum * (ascent-descent+lineGap)*scale;
-		char *text = (char *)line.data();
+		unsigned char *text = (unsigned char *)line.data();
 		while (*text) {
 			if (*text >= 32 && *text < 128) {
 				stbtt_aligned_quad q;
-				stbtt_GetBakedQuad(cdata, 512,512, *text-32, &x,&y,&q,1);
+				stbtt_GetBakedQuad(cdata, 1024,256, *text-32, &x,&y,&q,1);
 
 				// bottom right triangle
 				vertices.push_back(q.x0);
@@ -145,13 +162,13 @@ void TextRenderer::precompileText(float x, float y, std::vector<std::string> lin
 		if(minY > maxY) std::swap(minY,maxY);
 	}
 
-	if(!vaoTextRenderer) glGenVertexArrays(1,&vaoTextRenderer);
+	if(vaoTextRenderer == 0) glGenVertexArrays(1,&vaoTextRenderer);
 	if(!checkForErrors()) {
 		exit(1);
 	}
 
 	glBindVertexArray(vaoTextRenderer);
-	if(!vboTextVertices) glGenBuffers(1, &vboTextVertices);
+	if(vboTextVertices == 0) glGenBuffers(1, &vboTextVertices);
 	glBindBuffer(GL_ARRAY_BUFFER, vboTextVertices);
 	glBufferData(GL_ARRAY_BUFFER, vertices.size()*sizeof(GLfloat), vertices.data(), GL_STATIC_DRAW);
 	if(!checkForErrors()) {
@@ -164,76 +181,85 @@ void TextRenderer::precompileText(float x, float y, std::vector<std::string> lin
 	if(!checkForErrors()) {
 		exit(1);
 	}
-	if(!vboTextIndices) glGenBuffers(1, &vboTextIndices);
+	if(vboTextIndices == 0) glGenBuffers(1, &vboTextIndices);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboTextIndices);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size()*sizeof(GLuint), indices.data(), GL_STATIC_DRAW);
 	if(!checkForErrors()) {
 		exit(1);
 	}
-
+    glBindVertexArray(0);
 
 
 	//////////////////////////////////////////////////////////////////////////////
 	static GLfloat IbexDisplayFlatVertices[] = {
-		-1.0, -1.0, 0.0, 0, 0,
-		1.0, -1.0, 0.0, 1, 0,
-		1.0,  1.0, 0.0, 1, 1,
-		-1.0,  1.0, 0.0, 0, 1
+		-1.0, -1.0, 0.0, 0, 1,
+		1.0, -1.0, 0.0, 1, 1,
+		1.0,  1.0, 0.0, 1, 0,
+		-1.0,  1.0, 0.0, 0, 0
 	};
 
 	static GLushort IbexDisplayFlatIndices[] = {
-		0, 1, 2,
-		0, 2, 3
+		0, 2, 1,
+		0, 3, 2
 	};
 
-	if(!vaoTextTextureRenderer) glGenVertexArrays(1,&vaoTextTextureRenderer);
-	if(!checkForErrors()) {
-		exit(1);
-	}
+    if(vaoTextTextureRenderer == 0) {
+        if(vaoTextTextureRenderer == 0) glGenVertexArrays(1,&vaoTextTextureRenderer);
+        if(!checkForErrors()) {
+            exit(1);
+        }
 
-	glBindVertexArray(vaoTextTextureRenderer);
-	if(!vboTextTextureVertices) glGenBuffers(1, &vboTextTextureVertices);
-	glBindBuffer(GL_ARRAY_BUFFER, vboTextTextureVertices);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(IbexDisplayFlatVertices), IbexDisplayFlatVertices, GL_STATIC_DRAW);
-	if(!checkForErrors()) {
-		exit(1);
-	}
-	glEnableVertexAttribArray(IbexDisplayFlatAttribLocations[0]);
-	glVertexAttribPointer(IbexDisplayFlatAttribLocations[0], 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*5, 0);
-	glEnableVertexAttribArray(IbexDisplayFlatAttribLocations[2]);
-	glVertexAttribPointer(IbexDisplayFlatAttribLocations[2], 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*5, (GLvoid*) (sizeof(GLfloat) * 3));
-	if(!checkForErrors()) {
-		exit(1);
-	}
-	if(!vboTextTextureIndices) glGenBuffers(1, &vboTextTextureIndices);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboTextTextureIndices);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(IbexDisplayFlatIndices), IbexDisplayFlatIndices, GL_STATIC_DRAW);
-	if(!checkForErrors()) {
-		exit(1);
-	}
-	glBindVertexArray(0);
+        glBindVertexArray(vaoTextTextureRenderer);
+        if(vboTextTextureVertices == 0) glGenBuffers(1, &vboTextTextureVertices);
+        glBindBuffer(GL_ARRAY_BUFFER, vboTextTextureVertices);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(IbexDisplayFlatVertices), IbexDisplayFlatVertices, GL_STATIC_DRAW);
+        if(!checkForErrors()) {
+            exit(1);
+        }
+        glEnableVertexAttribArray(IbexDisplayFlatAttribLocations[0]);
+        glVertexAttribPointer(IbexDisplayFlatAttribLocations[0], 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*5, 0);
+        glEnableVertexAttribArray(IbexDisplayFlatAttribLocations[2]);
+        glVertexAttribPointer(IbexDisplayFlatAttribLocations[2], 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*5, (GLvoid*) (sizeof(GLfloat) * 3));
+        if(!checkForErrors()) {
+            exit(1);
+        }
+        if(vboTextTextureIndices == 0) glGenBuffers(1, &vboTextTextureIndices);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboTextTextureIndices);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(IbexDisplayFlatIndices), IbexDisplayFlatIndices, GL_STATIC_DRAW);
+        if(!checkForErrors()) {
+            exit(1);
+        }
+        glBindVertexArray(0);
+    }
 }
 
-void TextRenderer::bindTextFBO() {
+void Ibex::TextRenderer::bindTextFBO() {
 	glBindFramebuffer(GL_FRAMEBUFFER, fboText);
 	glViewport(0,0,maxX-minX,maxY-minY);
 
-	glClearColor(0.01, 0.1,0.3,0.7);
+    backgroundColor[0] = 0.1;
+    backgroundColor[1] = 0.5;
+    backgroundColor[2] = 0.8;
+    backgroundColor[3] = 0.7;
+    
+    textColor[0] = 1;
+    textColor[1] = 1;
+    textColor[2] = 1;
+    textColor[3] = 1;
+    
+    glClearColor(backgroundColor[0], backgroundColor[1], backgroundColor[2], backgroundColor[3]);
 	glClear(GL_COLOR_BUFFER_BIT);
 }
 
-void TextRenderer::generateTextFBO()
+void Ibex::TextRenderer::generateTextFBO()
 {
-	glGenFramebuffers(1, &fboText);
+	if(fboText == 0) glGenFramebuffers(1, &fboText);
 	glBindFramebuffer(GL_FRAMEBUFFER, fboText);
-	if(textTextureId == 0) {
-		glGenTextures(1, &textTextureId);
-	}
+    
+	if(textTextureId == 0) glGenTextures(1, &textTextureId);
 	glBindTexture(GL_TEXTURE_2D, textTextureId);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, maxX-minX, maxY-minY, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
@@ -253,84 +279,88 @@ void TextRenderer::generateTextFBO()
 }				
 
 
-void TextRenderer::renderTextToFrameBuffer()
+void Ibex::TextRenderer::renderTextToFrameBuffer()
 {
 	generateTextFBO();
 	bindTextFBO();
-
-	glm::mat4 orth = glm::ortho(minX,maxX,minY,maxY,-100.0f,100.0f);//-512.0f,512.0f,-512.0f,512.0f,-100.0f,100.0f);
-	//glm::mat4 orth = glm::ortho(-512.0f,512.0f,-512.0f,512.0f,-100.0f,100.0f);
+    
+	glm::mat4 orth = glm::ortho(minX,maxX,minY,maxY,-100.0f,100.0f);
 
 	glUseProgram(textShaderProgram.shader.program);
-	if(IbexTextUniformLocations[0] >= 0) glUniformMatrix4fv(IbexTextUniformLocations[0], 1, GL_FALSE, &orth[0][0]);//MVP[0][0]);
+	if(IbexTextUniformLocations[0] >= 0) {
+        glUniformMatrix4fv(IbexTextUniformLocations[0], 1, GL_FALSE, &orth[0][0]);
+    }
 
 	if(IbexTextUniformLocations[3] >= 0)  {
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, ftex);
 		glUniform1i(IbexTextUniformLocations[3], 0);
 	}
+    if(IbexTextUniformLocations[5] >= 0) {
+        glUniform4fv(IbexTextUniformLocations[5], 1, backgroundColor);
+    }
+    if(IbexTextUniformLocations[6] >= 0) {
+        glUniform4fv(IbexTextUniformLocations[6], 1, textColor);
+    }
 
-	glEnable(GL_BLEND);
+    glDisable(GL_BLEND);
+    glDisable(GL_CULL_FACE);
 	glDisable(GL_DEPTH_TEST);
 	glBindVertexArray(vaoTextRenderer);
-	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, (int)indices.size(), GL_UNSIGNED_INT, 0);
 
 	glBindVertexArray(0);	
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glUseProgram(0);
 
 	glEnable(GL_DEPTH_TEST);
-	glDisable(GL_BLEND);
-
+    glEnable(GL_CULL_FACE);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 
-void TextRenderer::renderTextDirect(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP)
+void Ibex::TextRenderer::renderTextDirect(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP)
 {
-
-	glm::mat4 orth = glm::ortho(minX,maxX,minY,maxY,-100.0f,100.0f);//-512.0f,512.0f,-512.0f,512.0f,-100.0f,100.0f);
+	glm::mat4 orth = MVP;
 
 	if(shadowPass) {
-		//glUseProgram(shadowProgram.shader.program);
-		//glUniformMatrix4fv(ShadowUniformLocations[0], 1, GL_FALSE, &MVP[0][0]);
 		return;
 	} else {
 		glUseProgram(textShaderProgram.shader.program);
-		if(IbexTextUniformLocations[0] >= 0) glUniformMatrix4fv(IbexTextUniformLocations[0], 1, GL_FALSE, &orth[0][0]);//MVP[0][0]);
-		//if(IbexTextUniformLocations[1] >= 0) glUniformMatrix4fv(IbexTextUniformLocations[1], 1, GL_FALSE, &V[0][0]);
-		//if(IbexTextUniformLocations[2] >= 0) glUniformMatrix4fv(IbexTextUniformLocations[2], 1, GL_FALSE, &M[0][0]);
-		//if(IbexTextUniformLocations[4] >= 0) glUniformMatrix4fv(IbexTextUniformLocations[4], 1, GL_FALSE, &(V*M)[0][0]);
+		if(IbexTextUniformLocations[0] >= 0) glUniformMatrix4fv(IbexTextUniformLocations[0], 1, GL_FALSE, &orth[0][0]);
 
 		if(IbexTextUniformLocations[3] >= 0)  {
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, ftex);
 			glUniform1i(IbexTextUniformLocations[3], 0);
 		}
+        if(IbexTextUniformLocations[5] >= 0) {
+            glUniform4fv(IbexTextUniformLocations[5], 1, backgroundColor);
+        }
+        if(IbexTextUniformLocations[6] >= 0) {
+            glUniform4fv(IbexTextUniformLocations[6], 1, textColor);
+        }
 	}
 
 	glBindVertexArray(vaoTextRenderer);
-	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, (int)indices.size(), GL_UNSIGNED_INT, 0);
 
 	glBindVertexArray(0);	
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glUseProgram(0);
 }
 
-void TextRenderer::renderText(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP)
+void Ibex::TextRenderer::renderText(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP)
 {
-	glm::mat4 orth = glm::ortho(-2.0f,2.0f,-2.0f,2.0f,-2.0f,2.0f);
+    if(!initialized) return;
+    
+	glm::mat4 orth = MVP;
 
 	if(shadowPass) {
-		//glUseProgram(shadowProgram.shader.program);
-		//glUniformMatrix4fv(ShadowUniformLocations[0], 1, GL_FALSE, &MVP[0][0]);
 		return;
 	} else {
 		glUseProgram(standardShaderProgram.shader.program);
-		if(IbexDisplayFlatUniformLocations[0] >= 0) glUniformMatrix4fv(IbexDisplayFlatUniformLocations[0], 1, GL_FALSE, &orth[0][0]);//MVP[0][0]);
-		/*if(IbexDisplayFlatUniformLocations[1] >= 0) glUniformMatrix4fv(IbexDisplayFlatUniformLocations[1], 1, GL_FALSE, &V[0][0]);
-		if(IbexDisplayFlatUniformLocations[2] >= 0) glUniformMatrix4fv(IbexDisplayFlatUniformLocations[2], 1, GL_FALSE, &M[0][0]);
-		if(IbexDisplayFlatUniformLocations[4] >= 0) glUniformMatrix4fv(IbexDisplayFlatUniformLocations[4], 1, GL_FALSE, &(V*M)[0][0]);*/
+		if(IbexDisplayFlatUniformLocations[0] >= 0) glUniformMatrix4fv(IbexDisplayFlatUniformLocations[0], 1, GL_FALSE, &orth[0][0]);
 
 		if(IbexDisplayFlatUniformLocations[3] >= 0)  {
 			glActiveTexture(GL_TEXTURE0);
@@ -341,29 +371,36 @@ void TextRenderer::renderText(const glm::mat4 &MVP, const glm::mat4 &V, const gl
 
 	glBindVertexArray(vaoTextTextureRenderer);
 	glDrawElements(GL_TRIANGLES,  6, GL_UNSIGNED_SHORT, 0);
-
-	//glBindVertexArray(0);	
-	//glBindTexture(GL_TEXTURE_2D, 0);
-	//glUseProgram(0);
 }
 
-TextRenderer::TextRenderer() : initialized(false),
+Ibex::TextRenderer::TextRenderer() : initialized(false),
 	vaoTextRenderer(0),
 	vboTextVertices(0),
 	vboTextIndices(0),
 	fboText(0),
 	textTextureId(0),
 	textTextureWidth(0),
-	textTextureHeight(0)
+	textTextureHeight(0),
+    vaoTextTextureRenderer(0),
+    vboTextTextureVertices(0),
+    vboTextTextureIndices(0),
+    ftex(0)
 {
 	memset(IbexTextUniformLocations,0,sizeof(IbexTextUniformLocations));
 	memset(IbexTextAttribLocations,0,sizeof(IbexTextAttribLocations));
 }
 
 
-TextRenderer::~TextRenderer()
+Ibex::TextRenderer::~TextRenderer()
 {
 	if(vaoTextRenderer) glDeleteVertexArrays(1, &vaoTextRenderer);
 	if(vboTextVertices) glDeleteBuffers(1, &vboTextVertices);
 	if(vboTextIndices) glDeleteBuffers(1, &vboTextIndices);
+    
+    if(vaoTextTextureRenderer) glDeleteVertexArrays(1, &vaoTextTextureRenderer);
+	if(vboTextTextureVertices) glDeleteBuffers(1, &vboTextTextureVertices);
+	if(vboTextTextureIndices) glDeleteBuffers(1, &vboTextTextureIndices);
+    
+    if(ftex) glDeleteTextures(1, &ftex);
+    if(textTextureId) glDeleteTextures(1, &textTextureId);
 }

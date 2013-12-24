@@ -11,7 +11,7 @@
 #include "SimpleWorldRendererPlugin.h"
 
 #ifdef __APPLE__
-#include <boost/filesystem>
+#include <boost/filesystem.hpp>
 #else
 #include "Shlwapi.h"
 #endif
@@ -110,7 +110,7 @@ bool Model::Import3DFromFile( const std::string& pFile)
     printf("Import of scene %s succeeded.\n",pFile.c_str());
     
 #ifdef __APPLE__
-    std::filesystem::path p(pFile);
+    boost::filesystem::path p(pFile);
     std::string basePath = p.parent_path().string()+"/";
 #else
 	char path[2000];
@@ -204,6 +204,7 @@ void Model::genVAOsAndUniformBuffer(const aiScene *sc) {
         glGenBuffers(1, &buffer);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * mesh->mNumFaces * 3, faceArray, GL_STATIC_DRAW);
+        free(faceArray);
         
         // buffer for vertex positions
         if (mesh->HasPositions()) {

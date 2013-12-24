@@ -11,7 +11,8 @@
 
 #include <iostream>
 #include <math.h>
-#include <stdio.h>
+#include <cstdio>
+#include <list>
 
 #include "../distortions.h"
 #include "../opengl_helpers.h"
@@ -195,35 +196,6 @@ void SimpleWorldRendererPlugin::loadSkybox()
 }
 
 /////////////////////
-void SimpleWorldRendererPlugin::renderVideoDisplayFlat(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, const glm::mat4 &depthMVP)
-{
-    //    ySize = videoHeight/videoWidth/2.0;
-    //    glBindTexture(GL_TEXTURE_2D, videoTexture[i2]);
-    //    glUseProgram(standardShaderProgram.shader.program);
-    //    glUniformMatrix4fv(IbexDisplayFlatUniformLocations[0], 1, GL_FALSE, &MVP[0][0]);
-    //    glUniformMatrix4fv(IbexDisplayFlatUniformLocations[1], 1, GL_FALSE, &V[0][0]);
-    //    glUniformMatrix4fv(IbexDisplayFlatUniformLocations[2], 1, GL_FALSE, &M[0][0]);
-    //    glUniformMatrix4fv(IbexDisplayFlatUniformLocations[4], 1, GL_FALSE, &(V*M)[0][0]);
-    //
-    //    glActiveTexture(GL_TEXTURE0);
-    //    glBindTexture(GL_TEXTURE_2D, desktopTexture);
-    //    glUniform1i(IbexDisplayFlatUniformLocations[3], 0);
-    //
-    //    glBindVertexArray(vaoIbexDisplayFlat);
-    //    glDrawElements(GL_TRIANGLES, sizeof(IbexDisplayFlatIndices)/sizeof(GLushort), GL_UNSIGNED_SHORT, 0);
-    //    glBindVertexArray(0);
-    //
-    //    glBindTexture(GL_TEXTURE_2D, 0);
-    //
-    //    glUseProgram(0);
-    //
-    //    if(!checkForErrors()) {
-    //        std::cerr << "IbexVideoFlat failed, exiting" << std::endl;
-    //        exit(0);
-    //    }
-    //    //    std::cerr << "Done IbexVideoFlat" << std::endl;
-}
-
 GLint ShadowUniformLocations[1];
 GLint ShadowAttribLocations[3];
 void loadShadowProgram() {
@@ -235,7 +207,7 @@ void loadShadowProgram() {
     ShadowAttribLocations[1] = glGetAttribLocation(shadowProgram.shader.program, "vertexNormal_modelspace");
     ShadowAttribLocations[2] = glGetAttribLocation(shadowProgram.shader.program, "vertexUV");
 }
-void SimpleWorldRendererPlugin::renderIbexDisplayFlat(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP)
+void SimpleWorldRendererPlugin::renderIbexDisplayFlat(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP, GLuint texture_)
 {
     //    checkForErrors();
     //    std::cerr << "start IbexDisplayFlat" << std::endl;
@@ -323,7 +295,7 @@ void SimpleWorldRendererPlugin::renderIbexDisplayFlat(const glm::mat4 &MVP, cons
         glUniformMatrix4fv(IbexDisplayFlatUniformLocations[4], 1, GL_FALSE, &(V*M)[0][0]);
         
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, desktopTexture);
+        glBindTexture(GL_TEXTURE_2D, texture_);
         glUniform1i(IbexDisplayFlatUniformLocations[3], 0);
     }
     
@@ -886,8 +858,8 @@ void SimpleWorldRendererPlugin::reset() {
     ibexDisplayModelTransform = glm::mat4(glm::translate(glm::mat4(), glm::vec3(0.0f, 0.0f, -10.0f)));
 	_bringUpIbexDisplay = true;
 }
-static TextRenderer textRenderer;
-void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &view_, const glm::mat4 &playerCamera_, const glm::mat4 &playerRotation_, const glm::vec3 &playerPosition_, bool shadowPass, const glm::mat4 &depthBiasMVP, const double &time) {
+//static ::Ibex::TextRenderer textRenderer;
+void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &orthoProj, const glm::mat4 &view_, const glm::mat4 &playerCamera_, const glm::mat4 &playerRotation_, const glm::vec3 &playerPosition_, bool shadowPass, const glm::mat4 &depthBiasMVP, const double &time) {
     glm::mat4 view(view_);
     glm::mat4 model;
     
@@ -900,16 +872,13 @@ void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &
     
     glm::mat4 PV(proj_*view);
     
-    //    static int i = 0;
-    //    i = ++i%(int)(360./0.5);
-    //    model = model*glm::rotate(0.5f*i, 0.f, 1.f, 0.f);
-    
     glDisable(GL_CULL_FACE);
-    //glCullFace(GL_BACK);
-    //model = glm::translate(ibexDisplayModelTransform, glm::vec3(0,-getPlayerHeightAtPosition(-ibexDisplayModelTransform[3][0], -ibexDisplayModelTransform[3][2]-10),0));
 	model = ibexDisplayModelTransform;
-    renderIbexDisplayFlat(PV*model, view, model, shadowPass, depthBiasMVP*model);
-    //    renderVideoDisplayFlat(PV*model, view, model, depthBiasMVP*model);
+    renderIbexDisplayFlat(PV*model, view, model, shadowPass, depthBiasMVP*model, desktopTexture);
+    if(renderVideoTexture) {
+        model = glm::translate(model, glm::vec3(30.0f, 0.0f, 0.0f));
+        renderIbexDisplayFlat(PV*model, view, model, shadowPass, depthBiasMVP*model, renderVideoTexture);
+    }
     glEnable(GL_CULL_FACE);
     
     if(shadowPass) {
@@ -965,17 +934,11 @@ void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &
             model = glm::translate(model, -glm::vec3(playerPosition_.x, 0, playerPosition_.z));
             renderWater(PV*model, view, model, shadowPass, depthBiasMVP*model, time);
 
-			//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-			//glDisable(GL_CULL_FACE);
-			//glDisable(GL_DEPTH_TEST);
-			////model = glm::mat4();
-			////view = glm::mat4();
-			////glm::mat4 orth = glm::ortho(-512.0f,512.0f,-512.0f,512.0f,-100.0f,100.0f);
-			//////renderText(/*PV*model*/orth, view, model, shadowPass, depthBiasMVP*model);
-			//textRenderer.renderText(PV*model, view, model, shadowPass, depthBiasMVP*model);
-			////textRenderer.renderTextDirect(PV*model, view, model, shadowPass, depthBiasMVP*model);
-			//glEnable(GL_DEPTH_TEST);
-			//glEnable(GL_CULL_FACE);
+            if(showDialog) {
+                model = glm::mat4();
+//                textRenderer.renderText(orthoProj*model, view, model, shadowPass, depthBiasMVP*model);
+                window.render(orthoProj*model, view, model, shadowPass, depthBiasMVP*model);
+            }
 
             glDisable(GL_BLEND);
         }
@@ -1005,7 +968,11 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
         
         char path[2048];
         strcpy(path, mResourcePath);
+#ifdef WIN32
         strcat(path, "\\resources\\tree3\\tree3.dae");
+#else
+        strcat(path, "/resources/tree3/tree3.dae");
+#endif
         treeModel.Import3DFromFile(path);
         
         glClearColor(0, 0, 0, 1);
@@ -1025,20 +992,22 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
 
 
 
-		std::vector<std::string> lines;
-		lines.push_back("Hello World!");
-		lines.push_back("This is Hesham writing second line.");
-		lines.push_back("1. blah");
-		lines.push_back("2. blah blah");
-		lines.push_back("3. blah blah blah");
-		lines.push_back("4. blah?");
-		textRenderer.precompileText(0,0,lines);
-		textRenderer.renderTextToFrameBuffer();
+//		std::vector<std::string> lines;
+//		lines.push_back("Hello World!");
+//		lines.push_back("This is Hesham writing second line.");
+//		lines.push_back("1. blah");
+//		lines.push_back("2. blah blah");
+//		lines.push_back("3. blah blah blah");
+//		lines.push_back("4. blah?");
+//		textRenderer.precompileText(0,0,lines);
+//		textRenderer.renderTextToFrameBuffer();
     }
+    window.update(timeDiff_);
     
     glm::mat4 modelView;
     glm::mat4 view;
     glm::mat4 proj;
+    glm::mat4 orthoProj;
     //    copyMatrix(view, lightsourceMatrix);
     //    copyMatrix(proj, (getRiftOrientationNative()*stereo.Projection.Transposed()).M);
     
@@ -1098,7 +1067,7 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
         
         // render shadowmap
         bindShadowFBO();
-        render(lightProj, lightView, glm::mat4(), glm::mat4(), glm::vec3(), true, depthBiasMVP, time_);
+        render(lightProj, orthoProj, lightView, glm::mat4(), glm::mat4(), glm::vec3(), true, depthBiasMVP, time_);
     }
     
     glBindFramebuffer(GL_FRAMEBUFFER, fbos[0]);
@@ -1118,6 +1087,7 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
         
         copyMatrix(view,stereo.ViewAdjust.Transposed().M);
         copyMatrix(proj, (getRiftOrientationNative()*stereo.Projection.Transposed()).M);
+        copyMatrix(orthoProj, (stereo.OrthoProjection.Transposed()).M);
         
         if(useLightPerspective) {
             proj = lightProj;
@@ -1125,7 +1095,8 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
         }
         
         // render normally
-        render(proj, view, playerCamera, playerRotation, playerPosition, false, depthBiasMVP, time_);
+        renderVideoTexture = videoTexture[i2];
+        render(proj, orthoProj, view, playerCamera, playerRotation, playerPosition, false, depthBiasMVP, time_);
     }
     glDisable(GL_SCISSOR_TEST);
     glDisable(GL_FRAMEBUFFER_SRGB);

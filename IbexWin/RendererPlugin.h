@@ -12,10 +12,8 @@
 #include "windows/Window.h"
 
 #if defined(__APPLE__) || defined(WIN32)
-
 typedef unsigned long Window;
 typedef unsigned long GLXContext;
-
 #endif
 
 class RendererPlugin {
