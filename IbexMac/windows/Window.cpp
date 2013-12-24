@@ -157,8 +157,7 @@ void Ibex::Window::renderInfoWindow() {
     lines.push_back("4. Stereo Camera");
     lines.push_back(" ");
     lines.push_back(fpsString);
-    textRenderer->precompileText(0, 0, lines);
-    textRenderer->renderTextToFrameBuffer();
+    textRenderer->renderTextToFramebuffer(0, 0, lines, std::vector<bool>());
 }
 
 void Ibex::Window::renderFileChooser() {
@@ -209,8 +208,11 @@ void Ibex::Window::renderFileChooser() {
     
     uint startIndex = (selectedFile > 28/2) ? selectedFile-28/2 : 0;
     uint endIndex = fmin(startIndex+28,directoryList.size());
-    textRenderer->precompileText(0, 0, std::vector<std::string>(directoryList.begin()+startIndex, directoryList.begin()+endIndex));
-    textRenderer->renderTextToFrameBuffer();
+    std::vector<bool> highlighted;
+    for(int i = 0; i < endIndex-startIndex; ++i) {
+        highlighted.push_back(i == ((selectedFile > 28/2)?(28/2):selectedFile));
+    }
+    textRenderer->renderTextToFramebuffer(0, 0, std::vector<std::string>(directoryList.begin()+startIndex, directoryList.begin()+endIndex), highlighted);
     
 //    glBindTexture(GL_TEXTURE_2D, 0);
 //    glDisable(GL_DEPTH_TEST);
@@ -256,8 +258,7 @@ void Ibex::Window::renderCameraChooser() {
         ss << i+1 << ". Camera " << cameras[i];
         lines.push_back(ss.str());
     }
-    textRenderer->precompileText(0, 0, lines);
-    textRenderer->renderTextToFrameBuffer();
+    textRenderer->renderTextToFramebuffer(0, 0, lines, std::vector<bool>());
 //    glBindTexture(GL_TEXTURE_2D, 0);
 //    glDisable(GL_DEPTH_TEST);
 //    glColor4f(0,0.1,0,0.5);

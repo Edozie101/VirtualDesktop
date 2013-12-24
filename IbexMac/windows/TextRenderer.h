@@ -25,8 +25,8 @@ public:
 	
 	void bindTextFBO();
 	void generateTextFBO();
-	void precompileText(float x, float y, const std::vector<std::string> &lines);
-	void renderTextToFrameBuffer();
+	void precompileText(float x, float y, const std::vector<std::string> &lines, const std::vector<bool> &highlighted);
+    void renderTextToFramebuffer(float x, float y, const std::vector<std::string> &lines, const std::vector<bool> &highlighted);
 	void renderText(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP);
 	void renderTextDirect(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP);
 private:
@@ -35,8 +35,8 @@ private:
 	stbtt_bakedchar cdata[96]; // ASCII 32..126 is 95 glyphs
 	GLuint ftex;
 
-	GLint IbexTextUniformLocations[7];
-	GLint IbexTextAttribLocations[2];
+	GLint IbexTextUniformLocations[6];
+	GLint IbexTextAttribLocations[3];
 
 	GLuint vaoTextRenderer;
 	std::vector<GLfloat> vertices;
@@ -66,6 +66,7 @@ private:
     
     GLfloat backgroundColor[4];
     GLfloat textColor[4];
+    GLfloat highlightedTextColor[4];
 };
 
 }

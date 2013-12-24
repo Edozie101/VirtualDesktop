@@ -21,10 +21,10 @@ void Ibex::TextRenderer::loadProgram() {
 	IbexTextUniformLocations[3] = glGetUniformLocation(textShaderProgram.shader.program, "textureIn");
 	IbexTextUniformLocations[4] = glGetUniformLocation(textShaderProgram.shader.program, "MV");
     IbexTextUniformLocations[5] = glGetUniformLocation(textShaderProgram.shader.program, "backgroundColor");
-    IbexTextUniformLocations[6] = glGetUniformLocation(textShaderProgram.shader.program, "textColor");
 
 	IbexTextAttribLocations[0] = glGetAttribLocation(textShaderProgram.shader.program, "vertexPosition_modelspace");
 	IbexTextAttribLocations[1] = glGetAttribLocation(textShaderProgram.shader.program, "vertexUV");
+    IbexTextAttribLocations[2] = glGetAttribLocation(textShaderProgram.shader.program, "textColor");
 
 
     // reusing emissive shader for text renderer
@@ -81,7 +81,7 @@ void Ibex::TextRenderer::initializeFont()
     delete []temp_bitmap;
 }
 
-void Ibex::TextRenderer::precompileText(float x, float y, const std::vector<std::string> &lines)
+void Ibex::TextRenderer::precompileText(float x, float y, const std::vector<std::string> &lines, const std::vector<bool> &highlighted)
 {
 	if(!initialized) {
 		initialized = true;
@@ -98,7 +98,10 @@ void Ibex::TextRenderer::precompileText(float x, float y, const std::vector<std:
 	// assume orthographic projection with units = screen pixels, origin at top left
 	int index = 0;
 	int lineNum = (int)lines.size()-1;
-	for(std::string line : lines) {
+	//for(std::string line : lines) {
+    for(int i = 0; i < lines.size(); ++i) {
+        std::string line = lines[i];
+        const GLfloat *color = (highlighted.size() > i && highlighted[i]) ? highlightedTextColor : textColor;
 		x = 0;
 		y = -lineNum * (ascent-descent+lineGap)*scale;
 		unsigned char *text = (unsigned char *)line.data();
@@ -113,18 +116,30 @@ void Ibex::TextRenderer::precompileText(float x, float y, const std::vector<std:
 				vertices.push_back(0);
 				vertices.push_back(q.s0);
 				vertices.push_back(q.t0);
+                vertices.push_back(color[0]);
+                vertices.push_back(color[1]);
+                vertices.push_back(color[2]);
+                vertices.push_back(color[3]);
 
 				vertices.push_back(q.x1);
 				vertices.push_back((baseline-q.y0));
 				vertices.push_back(0);
 				vertices.push_back(q.s1);
 				vertices.push_back(q.t0);
+                vertices.push_back(color[0]);
+                vertices.push_back(color[1]);
+                vertices.push_back(color[2]);
+                vertices.push_back(color[3]);
 
 				vertices.push_back(q.x1);
 				vertices.push_back((baseline-q.y1));
 				vertices.push_back(0);
 				vertices.push_back(q.s1);
 				vertices.push_back(q.t1);
+                vertices.push_back(color[0]);
+                vertices.push_back(color[1]);
+                vertices.push_back(color[2]);
+                vertices.push_back(color[3]);
 
 				// top left triangle
 				vertices.push_back(q.x0);
@@ -132,18 +147,30 @@ void Ibex::TextRenderer::precompileText(float x, float y, const std::vector<std:
 				vertices.push_back(0);
 				vertices.push_back(q.s0);
 				vertices.push_back(q.t0);
-
+                vertices.push_back(color[0]);
+                vertices.push_back(color[1]);
+                vertices.push_back(color[2]);
+                vertices.push_back(color[3]);
+                
 				vertices.push_back(q.x1);
 				vertices.push_back((baseline-q.y1));
 				vertices.push_back(0);
 				vertices.push_back(q.s1);
 				vertices.push_back(q.t1);
+                vertices.push_back(color[0]);
+                vertices.push_back(color[1]);
+                vertices.push_back(color[2]);
+                vertices.push_back(color[3]);
 
 				vertices.push_back(q.x0);
 				vertices.push_back((baseline-q.y1));
 				vertices.push_back(0);
 				vertices.push_back(q.s0);
 				vertices.push_back(q.t1);
+                vertices.push_back(color[0]);
+                vertices.push_back(color[1]);
+                vertices.push_back(color[2]);
+                vertices.push_back(color[3]);
 
 				minX = std::min(minX,std::min(q.x0,q.x1));
 				maxX = std::max(maxX,std::max(q.x0,q.x1));
@@ -175,9 +202,11 @@ void Ibex::TextRenderer::precompileText(float x, float y, const std::vector<std:
 		exit(1);
 	}
 	glEnableVertexAttribArray(IbexTextAttribLocations[0]);
-	glVertexAttribPointer(IbexTextAttribLocations[0], 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*5, 0);
+	glVertexAttribPointer(IbexTextAttribLocations[0], 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*9, 0);
 	glEnableVertexAttribArray(IbexTextAttribLocations[1]);
-	glVertexAttribPointer(IbexTextAttribLocations[1], 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*5, (GLvoid*) (sizeof(GLfloat) * 3));
+	glVertexAttribPointer(IbexTextAttribLocations[1], 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*9, (GLvoid*) (sizeof(GLfloat)*3));
+    glEnableVertexAttribArray(IbexTextAttribLocations[2]);
+	glVertexAttribPointer(IbexTextAttribLocations[2], 4, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*9, (GLvoid*) (sizeof(GLfloat)*5));
 	if(!checkForErrors()) {
 		exit(1);
 	}
@@ -247,6 +276,11 @@ void Ibex::TextRenderer::bindTextFBO() {
     textColor[2] = 1;
     textColor[3] = 1;
     
+    highlightedTextColor[0] = 1;
+    highlightedTextColor[1] = 0;
+    highlightedTextColor[2] = 0;
+    highlightedTextColor[3] = 1;
+    
     glClearColor(backgroundColor[0], backgroundColor[1], backgroundColor[2], backgroundColor[3]);
 	glClear(GL_COLOR_BUFFER_BIT);
 }
@@ -276,21 +310,21 @@ void Ibex::TextRenderer::generateTextFBO()
 	}
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-}				
+}
 
-
-void Ibex::TextRenderer::renderTextToFrameBuffer()
-{
-	generateTextFBO();
+void Ibex::TextRenderer::renderTextToFramebuffer(float x, float y, const std::vector<std::string> &lines, const std::vector<bool> &highlighted) {
+    precompileText(x, y, lines, highlighted);
+    
+    generateTextFBO();
 	bindTextFBO();
     
 	glm::mat4 orth = glm::ortho(minX,maxX,minY,maxY,-100.0f,100.0f);
-
+    
 	glUseProgram(textShaderProgram.shader.program);
 	if(IbexTextUniformLocations[0] >= 0) {
         glUniformMatrix4fv(IbexTextUniformLocations[0], 1, GL_FALSE, &orth[0][0]);
     }
-
+    
 	if(IbexTextUniformLocations[3] >= 0)  {
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, ftex);
@@ -302,17 +336,17 @@ void Ibex::TextRenderer::renderTextToFrameBuffer()
     if(IbexTextUniformLocations[6] >= 0) {
         glUniform4fv(IbexTextUniformLocations[6], 1, textColor);
     }
-
+    
     glDisable(GL_BLEND);
     glDisable(GL_CULL_FACE);
 	glDisable(GL_DEPTH_TEST);
 	glBindVertexArray(vaoTextRenderer);
     glDrawElements(GL_TRIANGLES, (int)indices.size(), GL_UNSIGNED_INT, 0);
-
-	glBindVertexArray(0);	
+    
+	glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glUseProgram(0);
-
+    
 	glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
