@@ -1895,7 +1895,7 @@ extern int stbtt_BakeFontBitmap(const unsigned char *data, int offset,  // font 
 void stbtt_GetBakedQuad(stbtt_bakedchar *chardata, int pw, int ph, int char_index, float *xpos, float *ypos, stbtt_aligned_quad *q, int opengl_fillrule)
 {
    float d3d_bias = opengl_fillrule ? 0 : -0.5f;
-   float ipw = 1.0f / (float)pw, iph = 1.0f / (float)ph;
+   float ipw = 1.0f / pw, iph = 1.0f / ph;
    stbtt_bakedchar *b = chardata + char_index;
    int round_x = STBTT_ifloor((*xpos + b->xoff) + 0.5);
    int round_y = STBTT_ifloor((*ypos + b->yoff) + 0.5);
