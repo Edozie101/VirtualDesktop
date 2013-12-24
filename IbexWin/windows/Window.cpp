@@ -14,6 +14,7 @@
 #include <algorithm>
 #include <sstream>
 #include <string>
+#include <cmath>
 #include "../video/VLCVideoPlayer.h"
 
 #ifdef __APPLE__
@@ -208,7 +209,7 @@ void Ibex::Window::renderFileChooser() {
     }
     
     uint startIndex = (selectedFile > 28/2) ? selectedFile-28/2 : 0;
-    uint endIndex = fmin(startIndex+28,directoryList.size());
+    uint endIndex = min(startIndex+28,directoryList.size());
     textRenderer->precompileText(0, 0, std::vector<std::string>(directoryList.begin()+startIndex, directoryList.begin()+endIndex));
     textRenderer->renderTextToFrameBuffer();
     
@@ -540,7 +541,7 @@ int Ibex::Window::processKey(unsigned char key, int down) {
                             if(Filesystem::isFile(fullPath) && !Filesystem::isDirectory(fullPath)) {
                                 selectedVideo = true;
                                 videoPath = fullPath;
-                                showDialog = false;
+                                ::showDialog = false;
                             } else {
                                 currentPath = Filesystem::navigate(currentPath, directoryList[selectedFile]);
                             }
@@ -556,7 +557,7 @@ int Ibex::Window::processKey(unsigned char key, int down) {
 							directoryList.clear();
                             selectedCamera = true;
                             selectedCameraID = cameras[selectedFile];
-                            showDialog = false;
+                            ::showDialog = false;
                             selectedFile = 0;
                         } else {
                             
@@ -572,11 +573,18 @@ int Ibex::Window::processKey(unsigned char key, int down) {
             processed = 1;
             break;
         case 27: // ESCAPE
-            showDialog = false;
+            ::showDialog = false;
+			visibleWindow = NoWindow;
             
             processed = 1;
             break;
     }
+	
+	if(processed) {
+		updateRender = true;
+		if(!::showDialog) visibleWindow = NoWindow;
+	}
+
     return processed;
 }
 int Ibex::Window::processSpecialKey(unsigned char key, int down) {
