@@ -1314,7 +1314,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "install_name_tool -change /usr/local/lib/libx264.125.dylib @executable_path/../Frameworks/libx264.125.dylib \"$TARGET_BUILD_DIR/$EXECUTABLE_NAME.app/Contents/MacOS/$PRODUCT_NAME\"\n\ninstall_name_tool -change /usr/local/lib/libsixense_utils_x64.dylib @executable_path/../Frameworks/libsixense_utils_x64.dylib \"$TARGET_BUILD_DIR/$EXECUTABLE_NAME.app/Contents/MacOS/$PRODUCT_NAME\"\n\ninstall_name_tool -change /usr/local/lib/libsixense_x64.dylib @executable_path/../Frameworks/libsixense_x64.dylib \"$TARGET_BUILD_DIR/$EXECUTABLE_NAME.app/Contents/MacOS/$PRODUCT_NAME\"\n\ninstall_name_tool -change /usr/local/lib/libsixense_x64.dylib @executable_path/../Frameworks/libsixense_x64.dylib \"$TARGET_BUILD_DIR/$EXECUTABLE_NAME.app/Contents/Frameworks/libsixense_utils_x64.dylib\"\n\nmkdir -p \"$TARGET_BUILD_DIR/$EXECUTABLE_NAME.app/Contents/MacOS/lib\"\n#cp /Applications/VLC.app/Contents/MacOS/lib/* \"$TARGET_BUILD_DIR/$EXECUTABLE_NAME.app/Contents/MacOS/lib\"\n                                            \n#cp -Rf /Applications/VLC.app/Contents/MacOS/plugins \"$TARGET_BUILD_DIR/$EXECUTABLE_NAME.app/Contents/MacOS/\"\n                                            \ncp /Users/hesh/Downloads/vlc/build/VLC.app/Contents/MacOS/lib/* \"$TARGET_BUILD_DIR/$EXECUTABLE_NAME.app/Contents/MacOS/lib\"\n\ncp -Rf /Users/hesh/Downloads/vlc/build/VLC.app/Contents/MacOS/plugins \"$TARGET_BUILD_DIR/$EXECUTABLE_NAME.app/Contents/MacOS/plugins\"\n";
+			shellScript = "install_name_tool -change /usr/local/lib/libx264.125.dylib @executable_path/../Frameworks/libx264.125.dylib \"$TARGET_BUILD_DIR/$EXECUTABLE_NAME.app/Contents/MacOS/$PRODUCT_NAME\"\n\ninstall_name_tool -change /usr/local/lib/libsixense_utils_x64.dylib @executable_path/../Frameworks/libsixense_utils_x64.dylib \"$TARGET_BUILD_DIR/$EXECUTABLE_NAME.app/Contents/MacOS/$PRODUCT_NAME\"\n\ninstall_name_tool -change /usr/local/lib/libsixense_x64.dylib @executable_path/../Frameworks/libsixense_x64.dylib \"$TARGET_BUILD_DIR/$EXECUTABLE_NAME.app/Contents/MacOS/$PRODUCT_NAME\"\n\ninstall_name_tool -change /usr/local/lib/libsixense_x64.dylib @executable_path/../Frameworks/libsixense_x64.dylib \"$TARGET_BUILD_DIR/$EXECUTABLE_NAME.app/Contents/Frameworks/libsixense_utils_x64.dylib\"\n\nmkdir -p \"$TARGET_BUILD_DIR/$EXECUTABLE_NAME.app/Contents/MacOS/lib\"\ncp /Applications/VLC.app/Contents/MacOS/lib/* \"$TARGET_BUILD_DIR/$EXECUTABLE_NAME.app/Contents/MacOS/lib\"\n                                            \ncp -Rf /Applications/VLC.app/Contents/MacOS/plugins \"$TARGET_BUILD_DIR/$EXECUTABLE_NAME.app/Contents/MacOS/\"\n                                            \n#cp /Users/hesh/Downloads/vlc/build/VLC.app/Contents/MacOS/lib/* \"$TARGET_BUILD_DIR/$EXECUTABLE_NAME.app/Contents/MacOS/lib\"\n\n#cp -Rf /Users/hesh/Downloads/vlc/build/VLC.app/Contents/MacOS/plugins \"$TARGET_BUILD_DIR/$EXECUTABLE_NAME.app/Contents/MacOS/plugins\"\n";
 		};
 		4C0937EF17B1F9CE004EA291 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1571,7 +1571,7 @@
 				GCC_PREFIX_HEADER = "IbexMac/IbexMac-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
-					"_USE_SIXENSE=1",
+					"_USE_SIXENSE=0",
 					"$(inherited)",
 				);
 				HEADER_SEARCH_PATHS = (
@@ -1581,8 +1581,8 @@
 					"$(PROJECT_DIR)/../OculusSDK/LibOVR/Src",
 					"$(PROJECT_DIR)/../sixenseSDK_linux_OSX/include",
 					/usr/local/include,
-					/Applications/VLC.app/Contents/MacOS/includee,
-					/Users/hesh/Downloads/vlc/build/VLC.app/Contents/MacOS/include,
+					/Applications/VLC.app/Contents/MacOS/include,
+					/Users/hesh/Downloads/vlc/build/VLC.app/Contents/MacOS/includee,
 				);
 				INFOPLIST_FILE = "IbexMacReleaseVLC-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks @rpath/../Frameworks";
@@ -1590,13 +1590,12 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/../OculusSDK/LibOVR/Lib/MacOS/Debug",
 					/usr/lib,
-					/usr/local/Cellar/boost/1.53.0/lib,
 					"$(PROJECT_DIR)/../sixenseSDK_linux_OSX/lib/osx_x64/release_dll",
 					/usr/local/Cellar/opencv/2.4.5/lib,
-					/Applications/VLC.app/Contents/MacOS/pluginss,
-					/Applications/VLC.app/Contents/MacOS/libb,
-					/Users/hesh/Downloads/vlc/build/VLC.app/Contents/MacOS/lib,
-					/Users/hesh/Downloads/vlc/build/VLC.app/Contents/MacOS/pluginss,
+					/Applications/VLC.app/Contents/MacOS/plugins,
+					/Applications/VLC.app/Contents/MacOS/lib,
+					/Users/hesh/Downloads/vlc/build/VLC.app/Contents/MacOS/libb,
+					/Users/hesh/Downloads/vlc/build/VLC.app/Contents/MacOS/pluginsss,
 					/usr/local/Cellar/assimp/3.0.1270/lib,
 					/usr/local/Cellar/boost/1.55.0/lib,
 				);
@@ -1640,7 +1639,7 @@
 				GCC_ENABLE_CPP_RTTI = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "IbexMac/IbexMac-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = "_USE_SIXENSE=1";
+				GCC_PREPROCESSOR_DEFINITIONS = "_USE_SIXENSE=0";
 				HEADER_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/IbexMac",
 					"$(PROJECT_DIR)/../bullet-2.81-rev2613/src",
@@ -1648,8 +1647,8 @@
 					"$(PROJECT_DIR)/../OculusSDK/LibOVR/Src",
 					"$(PROJECT_DIR)/../sixenseSDK_linux_OSX/include",
 					/usr/local/include,
-					/Applications/VLC.app/Contents/MacOS/includee,
-					/Users/hesh/Downloads/vlc/build/VLC.app/Contents/MacOS/include,
+					/Applications/VLC.app/Contents/MacOS/include,
+					/Users/hesh/Downloads/vlc/build/VLC.app/Contents/MacOS/includee,
 				);
 				INFOPLIST_FILE = "IbexMacReleaseVLC-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks @rpath/../Frameworks";
@@ -1657,13 +1656,12 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/../OculusSDK/LibOVR/Lib/MacOS/Debug",
 					/usr/lib,
-					/usr/local/Cellar/boost/1.53.0/lib,
 					"$(PROJECT_DIR)/../sixenseSDK_linux_OSX/lib/osx_x64/release_dll",
 					/usr/local/Cellar/opencv/2.4.5/lib,
-					/Applications/VLC.app/Contents/MacOS/pluginss,
-					/Applications/VLC.app/Contents/MacOS/libb,
-					/Users/hesh/Downloads/vlc/build/VLC.app/Contents/MacOS/lib,
-					/Users/hesh/Downloads/vlc/build/VLC.app/Contents/MacOS/pluginss,
+					/Applications/VLC.app/Contents/MacOS/plugins,
+					/Applications/VLC.app/Contents/MacOS/lib,
+					/Users/hesh/Downloads/vlc/build/VLC.app/Contents/MacOS/libb,
+					/Users/hesh/Downloads/vlc/build/VLC.app/Contents/MacOS/pluginsss,
 					/usr/local/Cellar/assimp/3.0.1270/lib,
 					/usr/local/Cellar/boost/1.55.0/lib,
 				);

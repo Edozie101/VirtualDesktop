@@ -24,11 +24,11 @@ else (VLC_LIBRARIES AND VLC_INCLUDE_DIRS AND VLC_LIBRARY_DIR)
       /usr/local/include
       /opt/local/include
       /sw/include
+      /Applications/VLC.app/Contents/MacOS/include
+      ~/Applications/VLC.app/Contents/MacOS/include
       ~/Downloads/vlc/build/VLC.app/Contents/MacOS/include
       ~/Documents/vlc/build/VLC.app/Contents/MacOS/include
       ~/Downloads/vlc/build//vlc_install_dir/include
-      /Applications/VLC.app/Contents/MacOS/include
-      ~/Applications/VLC.app/Contents/MacOS/include
   )
 
 find_path(VLC_LIBRARY_DIR
@@ -40,11 +40,11 @@ find_path(VLC_LIBRARY_DIR
       /usr/local/lib
       /opt/local/lib
       /sw/lib
+      /Applications/VLC.app/Contents/MacOS/lib
+      ~/Applications/VLC.app/Contents/MacOS/lib
       ~/Downloads/vlc/build/VLC.app/Contents/MacOS/lib
       ~/Documents/vlc/build/VLC.app/Contents/MacOS/lib
       ~/Downloads/vlc/build//vlc_install_dir/lib/
-      /Applications/VLC.app/Contents/MacOS/lib
-      ~/Applications/VLC.app/Contents/MacOS/lib
   )
 
   find_library(VLC_LIBRARY
@@ -56,11 +56,11 @@ find_path(VLC_LIBRARY_DIR
       /usr/local/lib
       /opt/local/lib
       /sw/lib
+      /Applications/VLC.app/Contents/MacOS/lib
+      ~/Applications/VLC.app/Contents/MacOS/lib
       ~/Downloads/vlc/build/VLC.app/Contents/MacOS/lib
       ~/Documents/vlc/build/VLC.app/Contents/MacOS/lib
       ~/Downloads/vlc/build//vlc_install_dir/lib/
-      /Applications/VLC.app/Contents/MacOS/lib
-      ~/Applications/VLC.app/Contents/MacOS/lib
   )
 
   if (VLC_LIBRARY)
