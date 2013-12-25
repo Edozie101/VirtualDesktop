@@ -170,6 +170,7 @@ static void vlcdisplay(void *data, void *id) {
 		      GL_BGRA, GL_UNSIGNED_BYTE, pixels);
     }
   }
+  first = false;
   glFlush();
 
   //struct context *c = (context *)data;
@@ -208,7 +209,7 @@ int Ibex::VLCVideoPlayer::playVLCVideo(const char *fileName, Display *dpy, GLXDr
     context.data = data;
 
     // create texture/mutex
-
+    //setenv("VLC_PLUGIN_PATH", "/Applications/VLC.app/Contents/MacOS/plugins", 1);
     // If you don't have this variable set you must have plugins directory
     // with the executable or libvlc_new() will not work!
     printf("VLC_PLUGIN_PATH=%s\n", getenv("VLC_PLUGIN_PATH"));
