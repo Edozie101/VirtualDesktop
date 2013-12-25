@@ -142,34 +142,40 @@ static void vlcdisplay(void *data, void *id) {
 
   const GLuint width = VIDEOWIDTH;
   const GLuint height = VIDEOHEIGHT;
-  bool first = true;
+  static bool first = true;
   if(isStereo) {
+#if __APPLE__
+#define IBEX_VIDEO_GL_PIX_FORMAT GL_UNSIGNED_INT_8_8_8_8_REV
+#else
+#define IBEX_VIDEO_GL_PIX_FORMAT GL_UNSIGNED_BYTE
+#endif
     glBindTexture(GL_TEXTURE_2D, videoTexture[1]);
     int stride = width*2;
     glPixelStorei(GL_UNPACK_ROW_LENGTH,stride);
     if(first) {
-      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, width, height/2, 0,
-		   GL_BGRA, GL_UNSIGNED_BYTE, pixels);
+      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height/2, 0,
+		   GL_BGRA, IBEX_VIDEO_GL_PIX_FORMAT, pixels);
       glBindTexture(GL_TEXTURE_2D, videoTexture[0]);
-      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, width, height/2, 0,
-		   GL_BGRA, GL_UNSIGNED_BYTE, pixels+(width*3));
+      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height/2, 0,
+		   GL_BGRA, IBEX_VIDEO_GL_PIX_FORMAT, pixels+(width*3));
     } else {
       glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height/2,
-		      GL_RGB, GL_UNSIGNED_BYTE, pixels);
+		      GL_BGRA, IBEX_VIDEO_GL_PIX_FORMAT, pixels);
       glBindTexture(GL_TEXTURE_2D, videoTexture[0]);
       glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height/2,
-		      GL_RGB, GL_UNSIGNED_BYTE, pixels+(width*3));
+		      GL_BGRA, IBEX_VIDEO_GL_PIX_FORMAT , pixels+(width*3));
     }
   } else {
     glBindTexture(GL_TEXTURE_2D, videoTexture[0]);
     if(first) {
-      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, width, height, 0,
-      	   GL_BGRA, GL_UNSIGNED_BYTE, pixels);
+      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0,
+      	   GL_BGRA, IBEX_VIDEO_GL_PIX_FORMAT, pixels);
     } else {
       glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height,
-		      GL_BGRA, GL_UNSIGNED_BYTE, pixels);
+		      GL_BGRA, IBEX_VIDEO_GL_PIX_FORMAT, pixels);
     }
   }
+  first = false;
   glFlush();
 
   //struct context *c = (context *)data;
@@ -208,7 +214,7 @@ int Ibex::VLCVideoPlayer::playVLCVideo(const char *fileName, Display *dpy, GLXDr
     context.data = data;
 
     // create texture/mutex
-
+    //setenv("VLC_PLUGIN_PATH", "/Applications/VLC.app/Contents/MacOS/plugins", 1);
     // If you don't have this variable set you must have plugins directory
     // with the executable or libvlc_new() will not work!
     printf("VLC_PLUGIN_PATH=%s\n", getenv("VLC_PLUGIN_PATH"));

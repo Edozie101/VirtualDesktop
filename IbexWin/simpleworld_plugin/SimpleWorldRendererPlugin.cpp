@@ -39,8 +39,6 @@
 
 #include "Model.h"
 
-#include "../windows/TextRenderer.h"
-
 glm::vec3 lightInvDir;
 
 void copyMatrix(glm::mat4 &modelView, float M[4][4]) {
@@ -209,9 +207,6 @@ void loadShadowProgram() {
 }
 void SimpleWorldRendererPlugin::renderIbexDisplayFlat(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP, GLuint texture_)
 {
-    //    checkForErrors();
-    //    std::cerr << "start IbexDisplayFlat" << std::endl;
-    
     static GLuint vaoIbexDisplayFlat = 0;
     static const GLfloat IbexDisplayFlatScale = 10;
     
@@ -273,8 +268,6 @@ void SimpleWorldRendererPlugin::renderIbexDisplayFlat(const glm::mat4 &MVP, cons
         
         glEnableVertexAttribArray(IbexDisplayFlatAttribLocations[0]);
         glVertexAttribPointer(IbexDisplayFlatAttribLocations[0], 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*8, 0);
-        //        glEnableVertexAttribArray(IbexDisplayFlatAttribLocations[1]);
-        //        glVertexAttribPointer(IbexDisplayFlatAttribLocations[1], 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*8, (GLvoid*) (sizeof(GLfloat) * 3));
         glEnableVertexAttribArray(IbexDisplayFlatAttribLocations[2]);
         glVertexAttribPointer(IbexDisplayFlatAttribLocations[2], 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*8, (GLvoid*) (sizeof(GLfloat) * 6));
         
@@ -301,17 +294,6 @@ void SimpleWorldRendererPlugin::renderIbexDisplayFlat(const glm::mat4 &MVP, cons
     
     glBindVertexArray(vaoIbexDisplayFlat);
     glDrawElements(GL_TRIANGLES, sizeof(IbexDisplayFlatIndices)/sizeof(GLushort), GL_UNSIGNED_SHORT, 0);
-    //    glBindVertexArray(0);
-    //
-    //    glBindTexture(GL_TEXTURE_2D, 0);
-    //
-    //    glUseProgram(0);
-    //
-    //    if(!checkForErrors()) {
-    //        std::cerr << "IbexDisplayFlat failed, exiting" << std::endl;
-    //        exit(0);
-    //    }
-    //    std::cerr << "Done IbexDisplayFlat" << std::endl;
 }
 
 // ---------------------------------------------------------------------------
@@ -830,24 +812,6 @@ void SimpleWorldRendererPlugin::renderGround(const glm::mat4 &MVP, const glm::ma
     }
     
     glDrawElements(GL_TRIANGLES, sizeof(GroundIndices)/sizeof(GLushort), GL_UNSIGNED_SHORT, 0);
-    //    glBindVertexArray(0);
-    //
-    //    if(GroundUniformLocations[3] > -1) {
-    //        glActiveTexture(GL_TEXTURE0);
-    //        glBindTexture(GL_TEXTURE_2D, 0);
-    //    }
-    //    if(GroundUniformLocations[6] > -1) {
-    //        glActiveTexture(GL_TEXTURE1);
-    //        glBindTexture(GL_TEXTURE_2D, 0);
-    //    }
-    //
-    //    glUseProgram(0);
-    //
-    //    if(!checkForErrors()) {
-    //        std::cerr << "Ground failed, exiting" << std::endl;
-    //        exit(0);
-    //    }
-    //    std::cerr << "Done Ground" << std::endl;
 }
 
 void SimpleWorldRendererPlugin::init() {
@@ -858,7 +822,7 @@ void SimpleWorldRendererPlugin::reset() {
     ibexDisplayModelTransform = glm::mat4(glm::translate(glm::mat4(), glm::vec3(0.0f, 0.0f, -10.0f)));
 	_bringUpIbexDisplay = true;
 }
-//static ::Ibex::TextRenderer textRenderer;
+
 void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &orthoProj, const glm::mat4 &view_, const glm::mat4 &playerCamera_, const glm::mat4 &playerRotation_, const glm::vec3 &playerPosition_, bool shadowPass, const glm::mat4 &depthBiasMVP, const double &time) {
     glm::mat4 view(view_);
     glm::mat4 model;
@@ -876,7 +840,7 @@ void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &
 	model = ibexDisplayModelTransform;
     renderIbexDisplayFlat(PV*model, view, model, shadowPass, depthBiasMVP*model, desktopTexture);
     if(renderVideoTexture) {
-        model = glm::translate(model, glm::vec3(30.0f, 0.0f, 0.0f));
+        model = glm::translate(model, glm::vec3(30.0f, 0.0f, 0.0f))*glm::scale(1.0f,-1.0f,1.0f);
         renderIbexDisplayFlat(PV*model, view, model, shadowPass, depthBiasMVP*model, renderVideoTexture);
     }
     glEnable(GL_CULL_FACE);
@@ -888,8 +852,6 @@ void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &
 //    glDisable(GL_CULL_FACE);
     }
     if(showGround) {
-        //model = glm::mat4();
-        //renderGround(PV*model, view, model, shadowPass, depthBiasMVP*model, time);
         model = glm::mat4();
         terrain.renderGround(PV*model, view, model, shadowPass, depthBiasMVP*model, time, playerPosition_);
         
@@ -936,7 +898,6 @@ void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &
 
             if(showDialog) {
                 model = glm::mat4();
-//                textRenderer.renderText(orthoProj*model, view, model, shadowPass, depthBiasMVP*model);
                 window.render(orthoProj*model, view, model, shadowPass, depthBiasMVP*model);
             }
 
@@ -989,18 +950,6 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
                                      -20.0,500.0,
                                      //0.7/256., 1.4/256., 3./256.);
                                      0.7, 1.4, 3.);
-
-
-
-//		std::vector<std::string> lines;
-//		lines.push_back("Hello World!");
-//		lines.push_back("This is Hesham writing second line.");
-//		lines.push_back("1. blah");
-//		lines.push_back("2. blah blah");
-//		lines.push_back("3. blah blah blah");
-//		lines.push_back("4. blah?");
-//		textRenderer.precompileText(0,0,lines);
-//		textRenderer.renderTextToFrameBuffer();
     }
     window.update(timeDiff_);
     
