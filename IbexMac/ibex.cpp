@@ -207,8 +207,12 @@ void prep_framebuffers()
         std::cerr << "Stage 0c - Problem generating desktop FBO" << std::endl;
         exit(EXIT_FAILURE);
     }
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, physicalWidth, physicalHeight, 0,
-               GL_RGBA, GL_UNSIGNED_BYTE, 0);
+#ifdef __APPLE__
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, physicalWidth, physicalHeight, 0, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, 0);
+#else
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, physicalWidth, physicalHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+#endif
+    
     if (!checkForErrors()) {
         std::cerr << "Stage 0d - Problem generating desktop FBO" << std::endl;
         exit(EXIT_FAILURE);

@@ -202,8 +202,8 @@ static inline void copyImageToBytes(const CGImageRef &img, const CGImageRef &cur
 //        glPixelStorei(GL_UNPACK_CLIENT_STORAGE_APPLE, GL_TRUE);
         
         // Specify a 2D texture image, providing the a pointer to the image data in memory
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, texW, texH, 0, GL_RGBA, GL_UNSIGNED_BYTE, *spriteData);
-//        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, texW, texH, 0, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, *spriteData);
+//        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, texW, texH, 0, GL_RGBA, GL_UNSIGNED_BYTE, *spriteData);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texW, texH, 0, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, *spriteData);
     } else {
         glBindTexture(GL_TEXTURE_2D, *texName);
 
@@ -216,11 +216,9 @@ static inline void copyImageToBytes(const CGImageRef &img, const CGImageRef &cur
 //        glPixelStorei(GL_UNPACK_CLIENT_STORAGE_APPLE, GL_TRUE);
         
 //        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, texW, texH, GL_RGBA, GL_UNSIGNED_BYTE, *spriteData);
-//        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, texW, texH, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8_REV, *spriteData);
+        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, texW, texH, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8_REV, *spriteData);
         // to resize texture, need to check if it changed and only update then then
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, texW, texH, 0, GL_RGBA, GL_UNSIGNED_BYTE, *spriteData);
-//        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, texW, texH, 0, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, *spriteData);
-//        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, texW, texH, 0, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, *spriteData);
+//        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, texW, texH, 0, GL_RGBA, GL_UNSIGNED_BYTE, *spriteData);
     }
 //    glGenerateMipmap(GL_TEXTURE_2D);
     
