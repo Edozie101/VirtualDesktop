@@ -163,7 +163,7 @@ static inline void copyImageToBytes(const CGImageRef &img, const CGImageRef &cur
     
 	// Uses the bitmatp creation function provided by the Core Graphics framework.
     if(spriteContext == nil) {
-        spriteContext = CGBitmapContextCreate(*spriteData, texW, texH, 8, texW * 4, /*CGImageGetColorSpace(img)*/space, kCGImageAlphaNoneSkipLast);
+        spriteContext = CGBitmapContextCreate(*spriteData, texW, texH, 8, texW * 4, /*CGImageGetColorSpace(img)*/space, kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host);
         
         // Translate and scale the context to draw the image upside-down (conflict in flipped-ness between GL textures and CG contexts)
         CGContextTranslateCTM(spriteContext, 0., texH);
@@ -216,7 +216,7 @@ static inline void copyImageToBytes(const CGImageRef &img, const CGImageRef &cur
 //        glPixelStorei(GL_UNPACK_CLIENT_STORAGE_APPLE, GL_TRUE);
         
 //        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, texW, texH, GL_RGBA, GL_UNSIGNED_BYTE, *spriteData);
-        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, texW, texH, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8_REV, *spriteData);
+        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, texW, texH, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, *spriteData);
         // to resize texture, need to check if it changed and only update then then
 //        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, texW, texH, 0, GL_RGBA, GL_UNSIGNED_BYTE, *spriteData);
     }
