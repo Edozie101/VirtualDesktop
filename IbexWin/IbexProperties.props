@@ -42,7 +42,7 @@
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(GLFW_LIB_DIR);$(ASSIMP_LIB_DIR);$(OPENCV_LIB_DIR);$(VLC_LIB_DIR);$(SIXENSE_LIB_DIR);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>$(OPENCV_LIBS);$(SIXENSE_LIBS);$(VLC_LIBS);$(ASSIMP_LIBS);$(EXTRA_IBEX_LIBS);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(OPENCV_LIBS);$(SIXENSE_LIBS);$(VLC_LIBS);$(ASSIMP_LIBS);$(EXTRA_IBEX_LIBS);libovr.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /y $(ProjectDir)*.dll $(OutDir)
