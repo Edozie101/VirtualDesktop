@@ -80,6 +80,7 @@ bool IRRLICHT               = 0;
 bool SBS                    = 1;
 bool CACHED_SHADER          = 0;
 bool useLightPerspective    = 0;
+bool lockHeadTracking       = 0;
 
 GLuint fbos[2] = {0, 0};
 GLuint textures[2] = {0, 0};

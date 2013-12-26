@@ -75,6 +75,7 @@ void initRift() {
     
     pHMD = *pManager->EnumerateDevices<OVR::HMDDevice>().CreateDevice();
     
+	stereo.Set2DAreaFov(OVR::DegreeToRad(85.0f));
     stereo.SetFullViewport(OVR::Util::Render::Viewport(0,0, width, height));
     stereo.SetStereoMode(OVR::Util::Render::Stereo_LeftRight_Multipass);
     stereo.SetDistortionFitPointVP(-1.0f, 0.0f);
