@@ -90,6 +90,7 @@ extern bool IRRLICHT;
 extern bool SBS;
 extern bool CACHED_SHADER;
 extern bool useLightPerspective;
+extern bool lockHeadTracking;
 
 extern bool controlDesktop;
 extern bool showDialog;

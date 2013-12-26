@@ -946,9 +946,8 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
         //terrain.loadHeightmap("/resources/terrain.raw", 1024, 1024);
         //terrain.loadHeightmap("/resources/terrain-128.raw", 128,128);
         terrain.generateNoiseTerrain(128,128,
-                                     50.0, 1.0, 50.0,//50.,1.,50.,
+                                     50.0, 1.0, 50.0,
                                      -20.0,500.0,
-                                     //0.7/256., 1.4/256., 3./256.);
                                      0.7, 1.4, 3.);
     }
     window.update(timeDiff_);
@@ -967,8 +966,7 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
     playerPosition.y = getPlayerHeightAtPosition(playerPosition.x, playerPosition.z)-playerPosition.y;
     glm::mat4 playerCamera(glm::translate(playerRotation,
                                           playerPosition));
-    
-    
+
     if(_bringUpIbexDisplay) {
         _bringUpIbexDisplay = false;
 
@@ -977,31 +975,19 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
 												   glm::vec3(p.x,p.y,p.z))*glm::inverse(playerRotation);
     }
     
-    
     //    static glm::mat4 lightView = glm::lookAt(glm::vec3(0.f,0.f,0.f), glm::vec3(4.f,4.f,4.f), glm::vec3(0,1,0));
     //    static glm::mat4 lightProj = glm::ortho(-100.f, 100.f, -100.f, 100.f, -100.f, 100.f);
-    
-    //lightInvDir = glm::vec3(0.0f,300.0f,250.0f);//playerPosition.x, playerPosition.y, playerPosition.z);//0,1000,1000);///0.5f,2,2);
     lightInvDir = glm::vec3(0.0f,300.0f*4,250.0f*4);//playerPosition.x, playerPosition.y, playerPosition.z);//0,1000,1000);///0.5f,2,2);
     
     // Compute the MVP matrix from the light's point of view
-    glm::mat4 lightProj = glm::ortho<float>(-4000,4000,-4000,4000,-4000,4000);//-10,10,-10,10,-10,20);
-    //glm::mat4 lightView = glm::lookAt(lightInvDir, glm::vec3(playerPosition.x-1,playerPosition.y-1,playerPosition.z-1), glm::vec3(0,1,0));//glm::vec3(-1,-1,-1), glm::vec3(0,1,0));
-    glm::mat4 lightView = glm::lookAt(lightInvDir, glm::vec3(0.0f,0.0f, 0.0f), glm::vec3(0.0f,1.0f,0.0f));//glm::vec3(-1,-1,-1), glm::vec3(0,1,0));
+    glm::mat4 lightProj = glm::ortho<float>(-4000,4000,-4000,4000,-4000,4000);
+    glm::mat4 lightView = glm::lookAt(lightInvDir, glm::vec3(0.0f,0.0f, 0.0f), glm::vec3(0.0f,1.0f,0.0f));
     glm::mat4 depthMVP = lightProj*lightView;
-    //    // spotlight
-    //    glm::vec3 lightPos(5, 20, 20);
-    //    lightProj = glm::perspective<float>(45.0f, 1.0f, 2.0f, 50.0f);
-    //    lightView = glm::lookAt(lightPos, lightPos-lightInvDir, glm::vec3(0,1,0));
-    //    depthMVP = lightProj*lightView;
-    
-//    lightInvDir = glm::vec3(4,4,4);///0.5f,2,2);
-//    
-//    // Compute the MVP matrix from the light's point of view
-//    lightProj = glm::ortho<float>(-30,30,-30,30,-100,3000);//-10,10,-10,10,-10,20);
-//    lightView = glm::lookAt(lightInvDir, glm::vec3(-1,-1,-1), glm::vec3(0,1,0));
+//    // spotlight
+//    glm::vec3 lightPos(5, 20, 20);
+//    lightProj = glm::perspective<float>(45.0f, 1.0f, 2.0f, 50.0f);
+//    lightView = glm::lookAt(lightPos, lightPos-lightInvDir, glm::vec3(0,1,0));
 //    depthMVP = lightProj*lightView;
-
     
     static glm::mat4 biasMatrix(
                                 0.5, 0.0, 0.0, 0.0,

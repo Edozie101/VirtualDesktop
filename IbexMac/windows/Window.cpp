@@ -20,6 +20,10 @@
 #include <Carbon/Carbon.h>
 #endif
 
+#ifdef WIN32
+#define fmin min
+#endif
+
 bool endsWith(std::string const &inputString, std::string const &ending)
 {
     if (inputString.length() >= ending.length())
@@ -541,7 +545,7 @@ int Ibex::Window::processKey(unsigned char key, int down) {
                             if(Filesystem::isFile(fullPath) && !Filesystem::isDirectory(fullPath)) {
                                 selectedVideo = true;
                                 videoPath = fullPath;
-                                showDialog = false;
+                                ::showDialog = false;
                             } else {
                                 currentPath = Filesystem::navigate(currentPath, directoryList[selectedFile]);
                             }
@@ -557,7 +561,7 @@ int Ibex::Window::processKey(unsigned char key, int down) {
 							directoryList.clear();
                             selectedCamera = true;
                             selectedCameraID = cameras[selectedFile];
-                            showDialog = false;
+                            ::showDialog = false;
                             selectedFile = 0;
                         } else {
                             
@@ -573,7 +577,7 @@ int Ibex::Window::processKey(unsigned char key, int down) {
             processed = 1;
             break;
         case 27: // ESCAPE
-            showDialog = false;
+            ::showDialog = false;
             
             processed = 1;
             break;
