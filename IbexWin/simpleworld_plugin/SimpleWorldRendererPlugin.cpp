@@ -17,6 +17,7 @@
 #include "../distortions.h"
 #include "../opengl_helpers.h"
 #include "../iphone_orientation_plugin/iphone_orientation_listener.h"
+#include "../sixense/sixense_controller.h"
 
 #ifdef _WIN32
 #include "../ibex_win_utils.h"
@@ -41,7 +42,7 @@
 
 glm::vec3 lightInvDir;
 
-void copyMatrix(glm::mat4 &modelView, float M[4][4]) {
+void copyMatrix(glm::mat4 &modelView, const float M[4][4]) {
     for(int i = 0; i < 4; ++i) {
         for(int i2 = 0; i2 < 4; ++i2) {
             modelView[i][i2] = M[i][i2];
@@ -916,10 +917,13 @@ GLfloat SimpleWorldRendererPlugin::getPlayerHeightAtPosition(GLfloat x, GLfloat 
     if(y > -playerHeight) y = -playerHeight;
     return y-playerHeight;
 }
-void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDiff_, const double &time_) {
+void SimpleWorldRendererPlugin::step(Desktop3DLocation &loc, double timeDiff_, const double &time_) {
     static const bool ENABLE_SHADOWMAPPING = true;
     
     const OVR::Matrix4f &orientation = getRiftOrientationNative();
+	glm::mat4 orientationRift;
+	copyMatrix(orientationRift, orientation.M);
+	loc.walk(orientationRift, walkForward+sixenseWalkForward, strafeRight+sixenseStrafeRight, jump, timeDiff_);
     
     glDisable(GL_BLEND);
     glEnable(GL_CULL_FACE);

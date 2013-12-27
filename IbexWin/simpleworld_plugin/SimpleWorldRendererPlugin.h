@@ -46,7 +46,7 @@ public:
     
     void init();
     void reset();
-    void step(const Desktop3DLocation &loc_, double timeDiff_, const double &time_);
+    void step(Desktop3DLocation &loc_, double timeDiff_, const double &time_);
     bool needsSwapBuffers();
     
     void bringUpIbexDisplay();

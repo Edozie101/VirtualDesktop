@@ -19,6 +19,9 @@
 
 #include <time.h>
 
+#include <glm/glm.hpp>
+#include <glm/ext.hpp>
+
 #include <OVR.h>
 
 class RendererPlugin;
@@ -154,9 +157,11 @@ public:
   inline void setZPosition(const double zPosition) { m_zPosition = zPosition; }
 
   // Modify location of the desktop in 3D
-  inline void walk(double forward, double right, bool jump, double seconds)
+  inline void walk(const glm::mat4 &orientationRift, double forward, double right, bool jump, double seconds)
   {
     const double walkSpeedSec = WALK_SPEED * ((running)?10.0:1.0) * seconds;
+
+	//glm::vec3 rift = orientationRift*glm::vec4(0.0f,0.0f,-walkSpeedSec);
 
     m_xPosition -= sin(m_yRotation / 90.0 * M_PI_2) * walkSpeedSec * forward;
     m_zPosition += cos(m_yRotation / 90.0 * M_PI_2) * walkSpeedSec * forward;
