@@ -265,21 +265,6 @@ void Ibex::TextRenderer::precompileText(float x, float y, const std::vector<std:
 void Ibex::TextRenderer::bindTextFBO() {
 	glBindFramebuffer(GL_FRAMEBUFFER, fboText);
 	glViewport(0,0,maxX-minX,maxY-minY);
-
-    backgroundColor[0] = 0.1;
-    backgroundColor[1] = 0.5;
-    backgroundColor[2] = 0.8;
-    backgroundColor[3] = 0.7;
-    
-    textColor[0] = 1;
-    textColor[1] = 1;
-    textColor[2] = 1;
-    textColor[3] = 1;
-    
-    highlightedTextColor[0] = 1;
-    highlightedTextColor[1] = 0;
-    highlightedTextColor[2] = 0;
-    highlightedTextColor[3] = 1;
     
     glClearColor(backgroundColor[0], backgroundColor[1], backgroundColor[2], backgroundColor[3]);
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -422,6 +407,21 @@ Ibex::TextRenderer::TextRenderer() : initialized(false),
 {
 	memset(IbexTextUniformLocations,0,sizeof(IbexTextUniformLocations));
 	memset(IbexTextAttribLocations,0,sizeof(IbexTextAttribLocations));
+
+	backgroundColor[0] = 0.1;
+    backgroundColor[1] = 0.5;
+    backgroundColor[2] = 0.8;
+    backgroundColor[3] = 0.7;
+    
+    textColor[0] = 1;
+    textColor[1] = 1;
+    textColor[2] = 1;
+    textColor[3] = 1;
+    
+    highlightedTextColor[0] = 1;
+    highlightedTextColor[1] = 0;
+    highlightedTextColor[2] = 0;
+    highlightedTextColor[3] = 1;
 }
 
 
