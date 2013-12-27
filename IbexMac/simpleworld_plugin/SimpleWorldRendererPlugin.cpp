@@ -919,6 +919,8 @@ GLfloat SimpleWorldRendererPlugin::getPlayerHeightAtPosition(GLfloat x, GLfloat 
 void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDiff_, const double &time_) {
     static const bool ENABLE_SHADOWMAPPING = true;
     
+    const OVR::Matrix4f &orientation = getRiftOrientationNative();
+    
     glDisable(GL_BLEND);
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
@@ -1021,7 +1023,7 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
         glScissor(stereo.VP.x*renderScale,stereo.VP.y*renderScale,stereo.VP.w*renderScale,stereo.VP.h*renderScale);
         
         copyMatrix(view,stereo.ViewAdjust.Transposed().M);
-        copyMatrix(proj, (getRiftOrientationNative()*stereo.Projection.Transposed()).M);
+        copyMatrix(proj, (orientation*stereo.Projection.Transposed()).M);
         copyMatrix(orthoProj, (stereo.OrthoProjection.Transposed()).M);
         
         if(useLightPerspective) {
