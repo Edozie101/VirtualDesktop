@@ -920,11 +920,6 @@ GLfloat SimpleWorldRendererPlugin::getPlayerHeightAtPosition(GLfloat x, GLfloat 
 void SimpleWorldRendererPlugin::step(Desktop3DLocation &loc, double timeDiff_, const double &time_) {
     static const bool ENABLE_SHADOWMAPPING = true;
     
-    const OVR::Matrix4f &orientation = getRiftOrientationNative();
-	glm::mat4 orientationRift;
-	copyMatrix(orientationRift, orientation.M);
-	loc.walk(orientationRift, walkForward+sixenseWalkForward, strafeRight+sixenseStrafeRight, jump, timeDiff_);
-    
     glDisable(GL_BLEND);
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
@@ -962,12 +957,14 @@ void SimpleWorldRendererPlugin::step(Desktop3DLocation &loc, double timeDiff_, c
     glm::mat4 view;
     glm::mat4 proj;
     glm::mat4 orthoProj;
-    //    copyMatrix(view, lightsourceMatrix);
-    //    copyMatrix(proj, (getRiftOrientationNative()*stereo.Projection.Transposed()).M);
-    
     
     glm::mat4 playerRotation(glm::rotate(glm::mat4(1.0f), (float)loc.getXRotation(), glm::vec3(1, 0, 0)));
     playerRotation = glm::rotate(playerRotation, (float)loc.getYRotation(), glm::vec3(0, 1, 0));
+    const OVR::Matrix4f &orientation = getRiftOrientationNative();
+	glm::mat4 orientationRift;
+	copyMatrix(orientationRift, orientation.M);
+	loc.walk(orientationRift, playerRotation, walkForward+sixenseWalkForward, strafeRight+sixenseStrafeRight, jump, timeDiff_);
+    
     glm::vec3 playerPosition((float)loc.getXPosition(), loc.getYPosition(), loc.getZPosition());
     playerPosition.y = getPlayerHeightAtPosition(playerPosition.x, playerPosition.z)-playerPosition.y;
     glm::mat4 playerCamera(glm::translate(playerRotation,
