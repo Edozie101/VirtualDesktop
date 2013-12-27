@@ -160,18 +160,10 @@ public:
   inline void walk(const glm::mat4 &orientationRift, double forward, double right, bool jump, double seconds)
   {
     const float walkSpeedSec = WALK_SPEED * ((running)?10.0:1.0) * seconds;
+    glm::vec4 walkVec = glm::normalize(glm::inverse(orientationRift)*glm::vec4(-right,0.0f, forward, 1.0f))*walkSpeedSec;
 
-//	glm::vec4 forwardVec = orientationRift*glm::vec4(0.0f,0.0f,walkSpeedSec*(float)forward,1.0f);
-//  glm::vec4 strafeVec = orientationRift*glm::vec4(-walkSpeedSec*(float)right,0.0f, 0.0f, 1.0f);
-    glm::vec4 walkVec = glm::inverse(orientationRift)*glm::vec4(-walkSpeedSec*(float)right,0.0f, walkSpeedSec*(float)forward, 1.0f);
-
-    m_xPosition += walkVec.x;//forwardVec.x+strafeVec.x;
-    m_zPosition += walkVec.z;//forwardVec.z+strafeVec.z;
-    //m_xPosition -= sin(m_yRotation / 90.0 * M_PI_2) * walkSpeedSec * forward;
-    //m_zPosition += cos(m_yRotation / 90.0 * M_PI_2) * walkSpeedSec * forward;
-
-    //m_xPosition -= cos(-m_yRotation / 90.0 * M_PI_2) * walkSpeedSec * right;
-    //m_zPosition += sin(-m_yRotation / 90.0 * M_PI_2) * walkSpeedSec * right;
+    m_xPosition += walkVec.x;
+    m_zPosition += walkVec.z;
     
     if(m_yPosition <= 0 && jump) yVelocity = (running)?50.0:25.0;
     m_yPosition += yVelocity*seconds;
