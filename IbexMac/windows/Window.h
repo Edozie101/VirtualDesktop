@@ -51,8 +51,8 @@ public:
     int processKey(unsigned short keyCode, int down);
 #else
 #ifdef WIN32
-    int processKey(unsigned char key, int down);
-    int processSpecialKey(unsigned char key, int down);
+    int processKey(int key, int down);
+    int processSpecialKey(int key, int down);
 #else
     int processKey(XIDeviceEvent *event, bool pressed);
 #endif

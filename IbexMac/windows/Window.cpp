@@ -453,29 +453,12 @@ int Ibex::Window::processKey(unsigned short keyCode, int down) {
 }
 #else
 #ifdef _WIN32
-int Ibex::Window::processKey(unsigned char key, int down) {
+int Ibex::Window::processKey(int key, int down) {
 	int processed = 0;
     switch(key) {
-		case GLFW_KEY_UP:
-            if(down) {
-                --selectedFile;
-                if(selectedFile < 0 && directoryList.size() > 0) selectedFile += directoryList.size();
-                else if(directoryList.size() <= 0 && selectedFile < 0)selectedFile = 0;
-            }
-            processed = 1;
-            break;
-        case GLFW_KEY_DOWN:
-            if(down) {
-                ++selectedFile;
-                if(directoryList.size() > 0) {
-                    selectedFile %= directoryList.size();
-                }
-            }
-
-            processed = 1;
-            break;
 		case 'W':
         case 'w':
+		case GLFW_KEY_UP:
             if(down) {
                 --selectedFile;
                 if(selectedFile < 0 && directoryList.size() > 0) selectedFile += directoryList.size();
@@ -483,6 +466,7 @@ int Ibex::Window::processKey(unsigned char key, int down) {
             }
             processed = 1;
             break;
+		case GLFW_KEY_DOWN:
 		case 'S':
 		case 's':
             if(down) {
@@ -529,13 +513,16 @@ int Ibex::Window::processKey(unsigned char key, int down) {
             
             processed = 1;
             break;
-		case 8: // BACKSPACE
-        case 127: // DELETE
+		// case 8: // BACKSPACE
+        // case 127: // DELETE
+		case GLFW_KEY_BACKSPACE:
+		case GLFW_KEY_DELETE:
             visibleWindow = InfoWindow;
             
             processed = 1;
             break;
-        case 13: // ENTER KEY
+        // case 13: // ENTER KEY
+		case GLFW_KEY_ENTER:
 			if(down) {
                 switch(visibleWindow) {
                     case FileChooser:
@@ -576,15 +563,19 @@ int Ibex::Window::processKey(unsigned char key, int down) {
             
             processed = 1;
             break;
-        case 27: // ESCAPE
+        // case 27: // ESCAPE
+		case GLFW_KEY_ESCAPE:
             ::showDialog = false;
+            visibleWindow = NoWindow;
+            updateRender = true;
             
             processed = 1;
-            break;
     }
+	if(processed) updateRender = true;
+
     return processed;
 }
-int Ibex::Window::processSpecialKey(unsigned char key, int down) {
+int Ibex::Window::processSpecialKey(int key, int down) {
 	int processed = 0;
 	// special keys processed as regular keys now that using GLFW not GLUT
     return processed;

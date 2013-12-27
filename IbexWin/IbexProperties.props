@@ -19,7 +19,7 @@
     <OPENCV_DLL_DIR>$(OPENCV_SDK)\build\x86\vc11\bin</OPENCV_DLL_DIR>
     <OPENCV_DLLS>opencv_core$(OPENCV_VERSION).dll;opencv_imgproc$(OPENCV_VERSION).dll;opencv_highgui$(OPENCV_VERSION).dll;opencv_ml$(OPENCV_VERSION).dll;opencv_video$(OPENCV_VERSION).dll;opencv_features2d$(OPENCV_VERSION).dll;opencv_calib3d$(OPENCV_VERSION).dll;opencv_objdetect$(OPENCV_VERSION).dll;opencv_contrib$(OPENCV_VERSION).dll;opencv_legacy$(OPENCV_VERSION).dll;opencv_flann$(OPENCV_VERSION).dll</OPENCV_DLLS>
     <VLC_INCLUDES>C:\Program Files (x86)\VideoLAN\VLC\sdk\include</VLC_INCLUDES>
-    <VLC_LIB_DIR>C:\Program Files (x86)\VideoLAN\VLC</VLC_LIB_DIR>
+    <VLC_LIB_DIR>C:\Program Files (x86)\VideoLAN\VLC\sdk\lib</VLC_LIB_DIR>
     <VLC_LIBS>libvlc.lib</VLC_LIBS>
     <ASSIMP_ROOT>C:\Program Files\Assimp</ASSIMP_ROOT>
     <GLM_INCLUDES>..\..\glm-0.9.4.6\glm</GLM_INCLUDES>
