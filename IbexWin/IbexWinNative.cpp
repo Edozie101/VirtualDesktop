@@ -120,11 +120,12 @@ static inline void key_callback(GLFWwindow* window, int key, int scancode, int a
 			break;
 		case 'Q':
 		case 'q':
+			if(mods & GLFW_MOD_CONTROL) {
+				exit(0);
+				break;
+			}
+
 			if(!down) {
-				if(mods & GLFW_MOD_CONTROL) {
-					exit(0);
-					break;
-				}
 				displayShape = (displayShape == FlatDisplay) ? SphericalDisplay : FlatDisplay;
 			}
 			break;
