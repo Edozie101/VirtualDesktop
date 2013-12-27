@@ -880,7 +880,7 @@ void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &
             glm::vec4 position(-p.x,-height-20.0f,-p.y,1);
             glm::vec4 viewablePosition = view * position;
             
-            if(viewablePosition.z > 0) continue;
+            if(viewablePosition.z > 200) continue;
             
             model = glm::translate(treeMat, glm::vec3(position));
             model = glm::scale(model, 40.0f, 40.0f, 40.0f);

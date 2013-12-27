@@ -880,7 +880,7 @@ void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &
             glm::vec4 position(-p.x,-height-20.0f,-p.y,1);
             glm::vec4 viewablePosition = view * position;
             
-            if(viewablePosition.z > 0) continue;
+            if(viewablePosition.z > 200) continue;
             
             model = glm::translate(treeMat, glm::vec3(position));
             model = glm::scale(model, 40.0f, 40.0f, 40.0f);
@@ -969,7 +969,8 @@ void SimpleWorldRendererPlugin::step(Desktop3DLocation &loc, double timeDiff_, c
     playerPosition.y = getPlayerHeightAtPosition(playerPosition.x, playerPosition.z)-playerPosition.y;
     glm::mat4 playerCamera(glm::translate(playerRotation,
                                           playerPosition));
-
+    
+    
     if(_bringUpIbexDisplay) {
         _bringUpIbexDisplay = false;
 
@@ -977,6 +978,7 @@ void SimpleWorldRendererPlugin::step(Desktop3DLocation &loc, double timeDiff_, c
 		ibexDisplayModelTransform = glm::translate(glm::mat4(),
 												   glm::vec3(p.x,p.y,p.z))*glm::inverse(playerRotation);
     }
+    
     
     //    static glm::mat4 lightView = glm::lookAt(glm::vec3(0.f,0.f,0.f), glm::vec3(4.f,4.f,4.f), glm::vec3(0,1,0));
     //    static glm::mat4 lightProj = glm::ortho(-100.f, 100.f, -100.f, 100.f, -100.f, 100.f);
@@ -986,11 +988,11 @@ void SimpleWorldRendererPlugin::step(Desktop3DLocation &loc, double timeDiff_, c
     glm::mat4 lightProj = glm::ortho<float>(-4000,4000,-4000,4000,-4000,4000);
     glm::mat4 lightView = glm::lookAt(lightInvDir, glm::vec3(0.0f,0.0f, 0.0f), glm::vec3(0.0f,1.0f,0.0f));
     glm::mat4 depthMVP = lightProj*lightView;
-//    // spotlight
-//    glm::vec3 lightPos(5, 20, 20);
-//    lightProj = glm::perspective<float>(45.0f, 1.0f, 2.0f, 50.0f);
-//    lightView = glm::lookAt(lightPos, lightPos-lightInvDir, glm::vec3(0,1,0));
-//    depthMVP = lightProj*lightView;
+    //    // spotlight
+    //    glm::vec3 lightPos(5, 20, 20);
+    //    lightProj = glm::perspective<float>(45.0f, 1.0f, 2.0f, 50.0f);
+    //    lightView = glm::lookAt(lightPos, lightPos-lightInvDir, glm::vec3(0,1,0));
+    //    depthMVP = lightProj*lightView;
     
     static glm::mat4 biasMatrix(
                                 0.5, 0.0, 0.0, 0.0,
