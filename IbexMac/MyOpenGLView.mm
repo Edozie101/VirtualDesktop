@@ -606,6 +606,9 @@ static CGPoint cursorPos;
             case kVK_ANSI_Semicolon:
                 useLightPerspective = !useLightPerspective;
                 break;
+            case kVK_ANSI_U:
+                walkLockedToView = !walkLockedToView;
+                break;
             case kVK_ANSI_L:
                 lockHeadTracking = !lockHeadTracking;
                 break;
