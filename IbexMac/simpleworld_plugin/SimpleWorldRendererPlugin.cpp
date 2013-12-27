@@ -957,8 +957,6 @@ void SimpleWorldRendererPlugin::step(Desktop3DLocation &loc, double timeDiff_, c
     glm::mat4 view;
     glm::mat4 proj;
     glm::mat4 orthoProj;
-    //    copyMatrix(view, lightsourceMatrix);
-    //    copyMatrix(proj, (getRiftOrientationNative()*stereo.Projection.Transposed()).M);
     
     glm::mat4 playerRotation(glm::rotate(glm::mat4(1.0f), (float)loc.getXRotation(), glm::vec3(1, 0, 0)));
     playerRotation = glm::rotate(playerRotation, (float)loc.getYRotation(), glm::vec3(0, 1, 0));
