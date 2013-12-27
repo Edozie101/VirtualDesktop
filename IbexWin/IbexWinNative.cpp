@@ -128,11 +128,13 @@ static inline void key_callback(GLFWwindow* window, int key, int scancode, int a
 				displayShape = (displayShape == FlatDisplay) ? SphericalDisplay : FlatDisplay;
 			}
 			break;
+        case 'h':
+        case 'H':
 		case GLFW_KEY_SLASH:
 			if(!down) {
 				showDialog = !showDialog;
-				ibex->renderer->window.showDialog(showDialog);
-				ibex->renderer->window.reset();
+                ibex->renderer->window.reset();
+                ibex->renderer->window.showDialog(showDialog, (key == 'h' || key == 'H')?::Ibex::HelpWindow : ::Ibex::InfoWindow);
 			}
 			break;
 		case '-':

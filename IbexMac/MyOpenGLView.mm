@@ -573,10 +573,12 @@ static CGPoint cursorPos;
             case kVK_ANSI_P:
                 SBS = !SBS;
                 break;
+            case kVK_ANSI_H:
             case kVK_ANSI_Slash:
                 if(!controlDesktop) {
                     showDialog = !showDialog;
-                    ibex->renderer->window.showDialog(showDialog);
+                    ibex->renderer->window.reset();
+                    ibex->renderer->window.showDialog(showDialog, (theEvent.keyCode == kVK_ANSI_H)?::Ibex::HelpWindow : ::Ibex::InfoWindow);
                 }
                 break;
             case kVK_ANSI_Backslash:

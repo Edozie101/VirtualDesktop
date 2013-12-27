@@ -160,7 +160,25 @@ void Ibex::Window::renderInfoWindow() {
     lines.push_back("3. Camera");
     lines.push_back("4. Stereo Camera");
     lines.push_back(" ");
+    lines.push_back("H. Help");
+    lines.push_back(" ");
     lines.push_back(fpsString);
+    textRenderer->renderTextToFramebuffer(0, 0, lines, std::vector<bool>());
+}
+
+void Ibex::Window::renderHelpWindow() {
+    updateRender = false;
+    std::vector<std::string> lines;
+    lines.push_back("Help: Backpace to go back");
+    lines.push_back("/ - toggle dialog (including help)");
+    lines.push_back("W/S - forward/back   A/D - left/right");
+    lines.push_back("Shift - run");
+    lines.push_back("R - reset");
+    lines.push_back("Fn+Shift+F1 - toggle control desktop");
+    lines.push_back("\\ - bring up desktop where looking");
+    lines.push_back("Fn+Shift+F2 - lower rendering quality");
+    lines.push_back("L - lock view and turn off head-tracking");
+    lines.push_back("U - toggle walking follows view");
     textRenderer->renderTextToFramebuffer(0, 0, lines, std::vector<bool>());
 }
 
@@ -322,6 +340,9 @@ void Ibex::Window::update(double timeDelta) {
             case CameraChooser:
                 renderCameraChooser();
                 break;
+            case HelpWindow:
+                renderHelpWindow();
+                break;
             case InfoWindow:
             default:
                 renderInfoWindow();
@@ -409,6 +430,20 @@ int Ibex::Window::processKey(unsigned short keyCode, int down) {
             
             processed = 1;
             break;
+        case kVK_ANSI_H:
+            if(down) {
+                if(::showDialog && visibleWindow == HelpWindow) {
+                    ::showDialog = false;
+                    visibleWindow = NoWindow;
+                    updateRender = true;
+                }
+                if(visibleWindow == InfoWindow) {
+                    visibleWindow = HelpWindow;
+                }
+            }
+            
+            processed = 1;
+            break;
         case kVK_ANSI_2:
         case kVK_ANSI_1:
             if(down) {
@@ -480,6 +515,21 @@ int Ibex::Window::processKey(int key, int down) {
             
             processed = 1;
             break;
+        case 'h':
+        case 'H':
+            if(down) {
+                if(::showDialog && visibleWindow == HelpWindow) {
+                    ::showDialog = false;
+                    visibleWindow = NoWindow;
+                    updateRender = true;
+                }
+                if(visibleWindow == InfoWindow) {
+                    visibleWindow = HelpWindow;
+                }
+            }
+            
+            processed = 1;
+            break;
         case '1':
         case '2':
             if(down) {
@@ -496,7 +546,7 @@ int Ibex::Window::processKey(int key, int down) {
             processed = 1;
             break;
         case '3':
-    case '4':
+        case '4':
             if(down) {
                 if(visibleWindow == InfoWindow) {
 					reset();

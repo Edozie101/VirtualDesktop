@@ -28,7 +28,7 @@ typedef unsigned int uint;
 namespace Ibex {
     
 enum VisibleWindow {
-    NoWindow,InfoWindow,FileChooser,CameraChooser
+    NoWindow,InfoWindow,FileChooser,CameraChooser,HelpWindow
 };
 
 class Window {
@@ -45,7 +45,7 @@ public:
     bool setSelectedCamera(bool selectedCamera_) { selectedCamera = selectedCamera_; return selectedCamera; }
     std::string getSelectedVideoPath() { return videoPath; }
     uint getSelectedCameraID() { return selectedCameraID; }
-    void showDialog(bool showDialog_) { visibleWindow = (showDialog_) ? InfoWindow : NoWindow; };
+    void showDialog(bool showDialog_, VisibleWindow startWindow=InfoWindow) { visibleWindow = (showDialog_) ? startWindow : NoWindow; };
 
 #ifdef __APPLE__
     int processKey(unsigned short keyCode, int down);
@@ -62,6 +62,7 @@ private:
     void renderFileChooser();
     void renderCameraChooser();
     void renderInfoWindow();
+    void renderHelpWindow();
     
 private:
     bool selectedVideo;
