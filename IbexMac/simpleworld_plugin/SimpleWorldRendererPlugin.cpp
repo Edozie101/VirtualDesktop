@@ -856,10 +856,8 @@ void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &
         model = glm::mat4();
         terrain.renderGround(PV*model, view, model, shadowPass, depthBiasMVP*model, time, playerPosition_);
         
-        glm::mat4 treeMat;// = glm::scale(glm::mat4(), 10.0f, 10.0f, 10.0f);
         glDisable(GL_CULL_FACE);
-        
-        
+
         static std::list<glm::vec2> treePositions;
         std::list<glm::vec2> renderedTreePositions;
         static bool initedTreePositions = false;
@@ -882,10 +880,9 @@ void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &
             
             if(viewablePosition.z > 200) continue;
             
-            model = glm::translate(treeMat, glm::vec3(position));
+            model = glm::translate(glm::mat4(), glm::vec3(position));
             model = glm::scale(model, 40.0f, 40.0f, 40.0f);
             treeModel.renderScene(standardShaderProgram.shader.program, PV*model, view, model, shadowPass, depthBiasMVP*model);
-            //                std::cerr << x << " " << z << std::endl;
         }
         glEnable(GL_CULL_FACE);
         
