@@ -494,7 +494,7 @@ int Ibex::Window::processKey(int key, int down) {
 		case 'W':
         case 'w':
 		case GLFW_KEY_UP:
-            if(down) {
+            if(!down) {
                 --selectedFile;
                 if(selectedFile < 0 && directoryList.size() > 0) selectedFile += directoryList.size();
 				if(directoryList.size() <= 0 && selectedFile < 0) selectedFile = 0;
@@ -504,7 +504,7 @@ int Ibex::Window::processKey(int key, int down) {
 		case GLFW_KEY_DOWN:
 		case 'S':
 		case 's':
-            if(down) {
+            if(!down) {
                 ++selectedFile;
 				if(directoryList.size() > 0) {
 					selectedFile %= directoryList.size();
@@ -517,7 +517,7 @@ int Ibex::Window::processKey(int key, int down) {
             break;
         case 'h':
         case 'H':
-            if(down) {
+            if(!down) {
                 if(::showDialog && visibleWindow == HelpWindow) {
                     ::showDialog = false;
                     visibleWindow = NoWindow;
@@ -532,7 +532,7 @@ int Ibex::Window::processKey(int key, int down) {
             break;
         case '1':
         case '2':
-            if(down) {
+            if(!down) {
                 if(visibleWindow == InfoWindow) {
 					reset();
                     directoryList.clear();
@@ -547,7 +547,7 @@ int Ibex::Window::processKey(int key, int down) {
             break;
         case '3':
 		case '4':
-            if(down) {
+            if(!down) {
                 if(visibleWindow == InfoWindow) {
 					reset();
                     directoryList.clear();
@@ -567,13 +567,14 @@ int Ibex::Window::processKey(int key, int down) {
         // case 127: // DELETE
 		case GLFW_KEY_BACKSPACE:
 		case GLFW_KEY_DELETE:
-            visibleWindow = InfoWindow;
-            
+			if(!down) {
+				visibleWindow = InfoWindow;
+			}
             processed = 1;
             break;
         // case 13: // ENTER KEY
 		case GLFW_KEY_ENTER:
-			if(down) {
+			if(!down) {
                 switch(visibleWindow) {
                     case FileChooser:
                     {
@@ -615,9 +616,11 @@ int Ibex::Window::processKey(int key, int down) {
             break;
         // case 27: // ESCAPE
 		case GLFW_KEY_ESCAPE:
-            ::showDialog = false;
-            visibleWindow = NoWindow;
-            updateRender = true;
+			if(!down) {
+				::showDialog = false;
+				visibleWindow = NoWindow;
+				updateRender = true;
+			}
             
             processed = 1;
     }
