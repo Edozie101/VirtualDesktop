@@ -41,7 +41,7 @@ public:
     virtual void move(int forward_, int right_, bool jump_, double relativeMouseX_, double relativeMouseY_) {}
 
   // single step in engine/world simulation
-    virtual void step(const Desktop3DLocation &loc_, double timeDiff_, const double &time_) = 0;
+    virtual void step(Desktop3DLocation &loc_, double timeDiff_, const double &time_) = 0;
 
   // do we need to swap the GLX buffer for double-buffering at the end of a render?
   virtual bool needsSwapBuffers() { return false; }

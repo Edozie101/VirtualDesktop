@@ -17,6 +17,7 @@
 #include "../distortions.h"
 #include "../opengl_helpers.h"
 #include "../iphone_orientation_plugin/iphone_orientation_listener.h"
+#include "../sixense/sixense_controller.h"
 
 #ifdef _WIN32
 #include "../ibex_win_utils.h"
@@ -41,7 +42,7 @@
 
 glm::vec3 lightInvDir;
 
-void copyMatrix(glm::mat4 &modelView, float M[4][4]) {
+void copyMatrix(glm::mat4 &modelView, const float M[4][4]) {
     for(int i = 0; i < 4; ++i) {
         for(int i2 = 0; i2 < 4; ++i2) {
             modelView[i][i2] = M[i][i2];
@@ -916,10 +917,8 @@ GLfloat SimpleWorldRendererPlugin::getPlayerHeightAtPosition(GLfloat x, GLfloat 
     if(y > -playerHeight) y = -playerHeight;
     return y-playerHeight;
 }
-void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDiff_, const double &time_) {
+void SimpleWorldRendererPlugin::step(Desktop3DLocation &loc, double timeDiff_, const double &time_) {
     static const bool ENABLE_SHADOWMAPPING = true;
-    
-    const OVR::Matrix4f &orientation = getRiftOrientationNative();
     
     glDisable(GL_BLEND);
     glEnable(GL_CULL_FACE);
@@ -961,9 +960,13 @@ void SimpleWorldRendererPlugin::step(const Desktop3DLocation &loc, double timeDi
     //    copyMatrix(view, lightsourceMatrix);
     //    copyMatrix(proj, (getRiftOrientationNative()*stereo.Projection.Transposed()).M);
     
-    
     glm::mat4 playerRotation(glm::rotate(glm::mat4(1.0f), (float)loc.getXRotation(), glm::vec3(1, 0, 0)));
     playerRotation = glm::rotate(playerRotation, (float)loc.getYRotation(), glm::vec3(0, 1, 0));
+    const OVR::Matrix4f &orientation = getRiftOrientationNative();
+	glm::mat4 orientationRift;
+	copyMatrix(orientationRift, orientation.M);
+	loc.walk(orientationRift*playerRotation, walkForward+sixenseWalkForward, strafeRight+sixenseStrafeRight, jump, timeDiff_);
+    
     glm::vec3 playerPosition((float)loc.getXPosition(), loc.getYPosition(), loc.getZPosition());
     playerPosition.y = getPlayerHeightAtPosition(playerPosition.x, playerPosition.z)-playerPosition.y;
     glm::mat4 playerCamera(glm::translate(playerRotation,

@@ -528,7 +528,7 @@ void Ibex::Ibex::render(double timeDiff) {
         processRawMotion(ry, rx, desktop3DLocation);
         relativeMouseX = 0;
         relativeMouseY = 0;
-        desktop3DLocation.walk(walkForward+sixenseWalkForward, strafeRight+sixenseStrafeRight, jump, timeDiff);
+		// desktop3DLocation.walk(walkForward+sixenseWalkForward, strafeRight+sixenseStrafeRight, jump, timeDiff);
     }
     
     if(resetPosition) {
