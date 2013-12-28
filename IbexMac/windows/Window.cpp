@@ -24,6 +24,8 @@
 #define fmin min
 #endif
 
+#define NUM_LINES 12
+
 bool endsWith(std::string const &inputString, std::string const &ending)
 {
     if (inputString.length() >= ending.length())
@@ -155,12 +157,11 @@ Ibex::Window::Window() : visibleWindow(NoWindow),previousVisibleWindow(NoWindow)
 void Ibex::Window::renderInfoWindow() {
     updateRender = false;
     std::vector<std::string> lines;
+	lines.push_back("H. Help");
     lines.push_back("1. Load Video");
     lines.push_back("2. Load Stereo Video");
     lines.push_back("3. Camera");
     lines.push_back("4. Stereo Camera");
-    lines.push_back(" ");
-    lines.push_back("H. Help");
     lines.push_back(" ");
     lines.push_back(fpsString);
     textRenderer->renderTextToFramebuffer(0, 0, lines, std::vector<bool>());
@@ -172,8 +173,7 @@ void Ibex::Window::renderHelpWindow() {
     lines.push_back("Help: Backpace to go back");
     lines.push_back("/ - toggle dialog (including help)");
     lines.push_back("W/S - forward/back   A/D - left/right");
-    lines.push_back("Shift - run");
-    lines.push_back("R - reset");
+    lines.push_back("Shift - run          R - reset");
     lines.push_back("Fn+Shift+F1 - toggle control desktop");
     lines.push_back("\\ - bring up desktop where looking");
     lines.push_back("Fn+Shift+F2 - lower rendering quality");
@@ -228,13 +228,13 @@ void Ibex::Window::renderFileChooser() {
         directoryChanged = false;
     }
     
-    uint startIndex = (selectedFile > 28/2) ? selectedFile-28/2 : 0;
-    uint endIndex = fmin(startIndex+28,directoryList.size());
+    uint startIndex = (selectedFile > NUM_LINES/2) ? selectedFile-NUM_LINES/2 : 0;
+    uint endIndex = fmin(startIndex+NUM_LINES-1,directoryList.size());
     std::vector<bool> highlighted;
     for(int i = 0; i < endIndex-startIndex; ++i) {
-        highlighted.push_back(i == ((selectedFile > 28/2)?(28/2):selectedFile));
+        highlighted.push_back(i == ((selectedFile > NUM_LINES/2)?(NUM_LINES/2):selectedFile));
     }
-    textRenderer->renderTextToFramebuffer(0, 0, std::vector<std::string>(directoryList.begin()+startIndex, directoryList.begin()+endIndex), highlighted);
+    textRenderer->renderTextToFramebuffer(0, 0, std::vector<std::string>(directoryList.begin()+startIndex, directoryList.begin()+endIndex), highlighted, 30);
     
 //    glBindTexture(GL_TEXTURE_2D, 0);
 //    glDisable(GL_DEPTH_TEST);
@@ -248,8 +248,8 @@ void Ibex::Window::renderFileChooser() {
 //    glColor4f(1,1,1,1);
 //    renderBitmapString(-0.095, 0.64, -0.25, GLUT_BITMAP_HELVETICA_18, "~/Backspace: Back");
 //    char blah[256];
-//    uint startIndex = (selectedFile > 28/2) ? selectedFile-28/2 : 0;
-//    for(uint i = startIndex,index = 0; i < startIndex+28 && i < directoryList.size(); ++i,++index) {
+//    uint startIndex = (selectedFile > NUM_LINES/2) ? selectedFile-NUM_LINES/2 : 0;
+//    for(uint i = startIndex,index = 0; i < startIndex+NUM_LINES && i < directoryList.size(); ++i,++index) {
 //        std::string pathWithoutDir = directoryList[i];
 //        if(directoryList[i].size() && directoryList[i][0] == '*') {
 //            pathWithoutDir = pathWithoutDir.substr(1);
@@ -274,8 +274,8 @@ void Ibex::Window::renderCameraChooser() {
     updateRender = false;
     std::vector<std::string> lines;
     lines.push_back("~/Backspace: Back");
-    uint startIndex = (selectedFile > 28/2) ? selectedFile-28/2 : 0;
-    for(uint i = startIndex,index = 0; i < startIndex+28 && i < cameras.size(); ++i,++index) {
+    uint startIndex = (selectedFile > NUM_LINES/2) ? selectedFile-NUM_LINES/2 : 0;
+    for(uint i = startIndex,index = 0; i < startIndex+NUM_LINES && i < cameras.size(); ++i,++index) {
         std::stringstream ss;
         ss << i+1 << ". Camera " << cameras[i];
         lines.push_back(ss.str());
@@ -293,8 +293,8 @@ void Ibex::Window::renderCameraChooser() {
 //    glColor4f(1,1,1,1);
 ////    renderBitmapString(-0.095, 0.64, -0.25, GLUT_BITMAP_HELVETICA_18, "~/Backspace: Back");
 //    char blah[256];
-//    uint startIndex = (selectedFile > 28/2) ? selectedFile-28/2 : 0;
-//    for(uint i = startIndex,index = 0; i < startIndex+28 && i < cameras.size(); ++i,++index) {
+//    uint startIndex = (selectedFile > NUM_LINES/2) ? selectedFile-NUM_LINES/2 : 0;
+//    for(uint i = startIndex,index = 0; i < startIndex+NUM_LINES && i < cameras.size(); ++i,++index) {
 //        sprintf(blah,"%d. Camera %d",i+1, cameras[i]);
 //        
 //        if(selectedFile == i) {
@@ -366,7 +366,7 @@ int Ibex::Window::processKey(unsigned short keyCode, int down) {
             if(down) {
                 --selectedFile;
                 if(directoryList.size() < 1)selectedFile = 0;
-                else selectedFile %= directoryList.size();
+                else if(selectedFile >= directoryList.size()) selectedFile = directoryList.size()-1;
                 updateRender = true;
             }
             processed = 1;
@@ -375,11 +375,8 @@ int Ibex::Window::processKey(unsigned short keyCode, int down) {
         case kVK_ANSI_S:
             if(down) {
                 ++selectedFile;
-                if(directoryList.size()) {
-                    selectedFile %= directoryList.size();
-                } else {
-                    selectedFile = 0;
-                }
+                if(directoryList.size() < 1)selectedFile = 0;
+                else selectedFile %= directoryList.size();
                 updateRender = true;
             }
             
@@ -494,23 +491,20 @@ int Ibex::Window::processKey(int key, int down) {
 		case 'W':
         case 'w':
 		case GLFW_KEY_UP:
-            if(!down) {
+            if(down) {
                 --selectedFile;
-                if(selectedFile < 0 && directoryList.size() > 0) selectedFile += directoryList.size();
-				if(directoryList.size() <= 0 && selectedFile < 0) selectedFile = 0;
+                if(directoryList.size() < 1)selectedFile = 0;
+                else if(selectedFile >= directoryList.size()) selectedFile = directoryList.size()-1;
             }
             processed = 1;
             break;
 		case GLFW_KEY_DOWN:
 		case 'S':
 		case 's':
-            if(!down) {
+            if(down) {
                 ++selectedFile;
-				if(directoryList.size() > 0) {
-					selectedFile %= directoryList.size();
-				} else {
-					//selectedFile = 0;
-				}
+				if(directoryList.size() < 1)selectedFile = 0;
+                else selectedFile %= directoryList.size();
             }
             
             processed = 1;

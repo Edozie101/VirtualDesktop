@@ -48,7 +48,9 @@ void Ibex::TextRenderer::initializeFont()
 	unsigned char *temp_bitmap = new unsigned char[1024*256];//512*512];
     
 #ifdef WIN32
-	size_t read = fread(ttf_buffer, 1, 1<<20, fopen("c:/windows/fonts/times.ttf", "rb"));
+	//size_t read = fread(ttf_buffer, 1, 1<<20, fopen("c:/windows/fonts/times.ttf", "rb"));
+	//size_t read = fread(ttf_buffer, 1, 1<<20, fopen("c:/windows/fonts/Courbd.ttf", "rb"));
+	size_t read = fread(ttf_buffer, 1, 1<<20, fopen("c:/windows/fonts/L_10646.ttf", "rb"));
 #else
     size_t read = fread(ttf_buffer, 1, 1<<20, fopen("/Library/Fonts/Georgia.ttf", "rb"));
 #endif
@@ -81,11 +83,11 @@ void Ibex::TextRenderer::initializeFont()
     delete []temp_bitmap;
 }
 
-void Ibex::TextRenderer::precompileText(float x, float y, const std::vector<std::string> &lines, const std::vector<bool> &highlighted)
+void Ibex::TextRenderer::precompileText(float x, float y, const std::vector<std::string> &lines, const std::vector<bool> &highlighted, int maxChars)
 {
 	if(!initialized) {
 		initialized = true;
-        loadProgram();
+		loadProgram();
 		initializeFont();
 	}
 	checkForErrors();
@@ -101,6 +103,9 @@ void Ibex::TextRenderer::precompileText(float x, float y, const std::vector<std:
 	//for(std::string line : lines) {
     for(int i = 0; i < lines.size(); ++i) {
         std::string line = lines[i];
+		if(maxChars > 0 && line.length() > maxChars) {
+			line.resize(maxChars);
+		}
         const GLfloat *color = (highlighted.size() > i && highlighted[i]) ? highlightedTextColor : textColor;
 		x = 0;
 		y = -lineNum * (ascent-descent+lineGap)*scale;
@@ -295,21 +300,21 @@ void Ibex::TextRenderer::generateTextFBO()
 	}
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-}
+}				
 
-void Ibex::TextRenderer::renderTextToFramebuffer(float x, float y, const std::vector<std::string> &lines, const std::vector<bool> &highlighted) {
-    precompileText(x, y, lines, highlighted);
+void Ibex::TextRenderer::renderTextToFramebuffer(float x, float y, const std::vector<std::string> &lines, const std::vector<bool> &highlighted, int maxChars) {
+    precompileText(x, y, lines, highlighted, maxChars);
     
     generateTextFBO();
 	bindTextFBO();
     
 	glm::mat4 orth = glm::ortho(minX,maxX,minY,maxY,-100.0f,100.0f);
-    
+
 	glUseProgram(textShaderProgram.shader.program);
 	if(IbexTextUniformLocations[0] >= 0) {
         glUniformMatrix4fv(IbexTextUniformLocations[0], 1, GL_FALSE, &orth[0][0]);
     }
-    
+
 	if(IbexTextUniformLocations[3] >= 0)  {
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, ftex);
@@ -321,17 +326,17 @@ void Ibex::TextRenderer::renderTextToFramebuffer(float x, float y, const std::ve
     if(IbexTextUniformLocations[6] >= 0) {
         glUniform4fv(IbexTextUniformLocations[6], 1, textColor);
     }
-    
+
     glDisable(GL_BLEND);
     glDisable(GL_CULL_FACE);
 	glDisable(GL_DEPTH_TEST);
 	glBindVertexArray(vaoTextRenderer);
     glDrawElements(GL_TRIANGLES, (int)indices.size(), GL_UNSIGNED_INT, 0);
-    
-	glBindVertexArray(0);
+
+	glBindVertexArray(0);	
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glUseProgram(0);
-    
+
 	glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
