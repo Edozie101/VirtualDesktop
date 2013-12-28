@@ -34,7 +34,7 @@ bool endsWith(std::string const &inputString, std::string const &ending)
         return false;
 }
 
-Ibex::Window::Window() : visibleWindow(NoWindow),previousVisibleWindow(NoWindow) {
+Ibex::Window::Window() : visibleWindow(NoWindow),previousVisibleWindow(NoWindow),sizeToFit(false) {
     directoryChanged = true;
     isStereoVideo = 0;
     selectedFile = 0;
@@ -167,6 +167,13 @@ void Ibex::Window::renderInfoWindow() {
     textRenderer->renderTextToFramebuffer(0, 0, lines, std::vector<bool>());
 }
 
+void Ibex::Window::renderSettingChangeMessage() {
+    updateRender = false;
+    fade = 2.0;
+    std::vector<std::string> lines;
+    lines.push_back("Head Tracking Locked: ON");
+    textRenderer->renderTextToFramebuffer(0, 0, lines, std::vector<bool>());
+}
 void Ibex::Window::renderHelpWindow() {
     updateRender = false;
     std::vector<std::string> lines;
@@ -235,39 +242,6 @@ void Ibex::Window::renderFileChooser() {
         highlighted.push_back(i == ((selectedFile > NUM_LINES/2)?(NUM_LINES/2):selectedFile));
     }
     textRenderer->renderTextToFramebuffer(0, 0, std::vector<std::string>(directoryList.begin()+startIndex, directoryList.begin()+endIndex), highlighted, 30);
-    
-//    glBindTexture(GL_TEXTURE_2D, 0);
-//    glDisable(GL_DEPTH_TEST);
-//    glColor4f(0,0.1,0,0.5);
-//    glBegin(GL_QUADS);
-//    glVertex3d(-0.1, 0.35, -0.25);
-//    glVertex3d(0.1, 0.35, -0.25);
-//    glVertex3d(0.1, 0.65, -0.25);
-//    glVertex3d(-0.1, 0.65, -0.25);
-//    glEnd();
-//    glColor4f(1,1,1,1);
-//    renderBitmapString(-0.095, 0.64, -0.25, GLUT_BITMAP_HELVETICA_18, "~/Backspace: Back");
-//    char blah[256];
-//    uint startIndex = (selectedFile > NUM_LINES/2) ? selectedFile-NUM_LINES/2 : 0;
-//    for(uint i = startIndex,index = 0; i < startIndex+NUM_LINES && i < directoryList.size(); ++i,++index) {
-//        std::string pathWithoutDir = directoryList[i];
-//        if(directoryList[i].size() && directoryList[i][0] == '*') {
-//            pathWithoutDir = pathWithoutDir.substr(1);
-//        }
-//        
-//        sprintf(blah,"%u. %s",i+1,(i < directoryList.size()) ? pathWithoutDir.c_str() : "---------");
-//        
-//        if(directoryList[i].size() && directoryList[i][0] == '*') {
-//            glColor4f(0.,0.,1,1);
-//        }
-//        if(selectedFile == i) {
-//            glColor4f(1,1,0,1);
-//        }
-////        renderBitmapString(-0.095, 0.63-index*0.01, -0.25, GLUT_BITMAP_HELVETICA_18, blah);
-//        glColor4f(1,1,1,1);
-//    }
-////    renderBitmapString(0.055, 0.36, -0.25, GLUT_BITMAP_HELVETICA_18, fpsString);
-//    glEnable(GL_DEPTH_TEST);
 }
 
 void Ibex::Window::renderCameraChooser() {
@@ -281,30 +255,6 @@ void Ibex::Window::renderCameraChooser() {
         lines.push_back(ss.str());
     }
     textRenderer->renderTextToFramebuffer(0, 0, lines, std::vector<bool>());
-//    glBindTexture(GL_TEXTURE_2D, 0);
-//    glDisable(GL_DEPTH_TEST);
-//    glColor4f(0,0.1,0,0.5);
-//    glBegin(GL_QUADS);
-//    glVertex3d(-0.1, 0.35, -0.25);
-//    glVertex3d(0.1, 0.35, -0.25);
-//    glVertex3d(0.1, 0.65, -0.25);
-//    glVertex3d(-0.1, 0.65, -0.25);
-//    glEnd();
-//    glColor4f(1,1,1,1);
-////    renderBitmapString(-0.095, 0.64, -0.25, GLUT_BITMAP_HELVETICA_18, "~/Backspace: Back");
-//    char blah[256];
-//    uint startIndex = (selectedFile > NUM_LINES/2) ? selectedFile-NUM_LINES/2 : 0;
-//    for(uint i = startIndex,index = 0; i < startIndex+NUM_LINES && i < cameras.size(); ++i,++index) {
-//        sprintf(blah,"%d. Camera %d",i+1, cameras[i]);
-//        
-//        if(selectedFile == i) {
-//            glColor4f(1,1,0,1);
-//        }
-////        renderBitmapString(-0.095, 0.63-index*0.01, -0.25, GLUT_BITMAP_HELVETICA_18, blah);
-//        glColor4f(1,1,1,1);
-//    }
-////    renderBitmapString(0.055, 0.36, -0.25, GLUT_BITMAP_HELVETICA_18, fpsString);
-//    glEnable(GL_DEPTH_TEST);
 }
 
 void Ibex::Window::reset() {
@@ -317,7 +267,7 @@ void Ibex::Window::reset() {
 	visibleWindow = InfoWindow;
 }
 
-void Ibex::Window::update(double timeDelta) {
+void Ibex::Window::update(const double &timeDelta) {
     bool update = false;
     static double time = 0;
     if(time > 5.0) {
@@ -343,6 +293,9 @@ void Ibex::Window::update(double timeDelta) {
             case HelpWindow:
                 renderHelpWindow();
                 break;
+            case SettingChangeMessage:
+                renderSettingChangeMessage();
+                break;
             case InfoWindow:
             default:
                 renderInfoWindow();
@@ -350,9 +303,15 @@ void Ibex::Window::update(double timeDelta) {
         }
     }
 }
-void Ibex::Window::render(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP) {
+void Ibex::Window::render(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP, const double &timeDelta) {
     if(visibleWindow != NoWindow) {
-        textRenderer->renderText(MVP, V, M, shadowPass, depthMVP);
+        double fadeLevel = (fade > 1) ? 1 : fade;
+        if(visibleWindow == SettingChangeMessage && fade < 0) {
+            visibleWindow = NoWindow;
+            return;
+        }
+        textRenderer->renderText(MVP, V, M, shadowPass, depthMVP, (visibleWindow == SettingChangeMessage) ? fadeLevel : 1.0);
+        fade -= timeDelta;
     }
 }
 
