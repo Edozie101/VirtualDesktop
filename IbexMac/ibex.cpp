@@ -83,6 +83,9 @@ bool useLightPerspective    = 0;
 bool lockHeadTracking       = 0;
 bool walkLockedToView       = 1;
 
+bool settingChanged         = 0;
+std::string settingChangedMessage = "";
+
 GLuint fbos[2] = {0, 0};
 GLuint textures[2] = {0, 0};
 

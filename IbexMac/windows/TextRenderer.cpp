@@ -326,9 +326,6 @@ void Ibex::TextRenderer::renderTextToFramebuffer(float x, float y, const std::ve
     if(IbexTextUniformLocations[5] >= 0) {
         glUniform4fv(IbexTextUniformLocations[5], 1, backgroundColor);
     }
-    if(IbexTextUniformLocations[6] >= 0) {
-        glUniform4fv(IbexTextUniformLocations[6], 1, textColor);
-    }
 
     glDisable(GL_BLEND);
     glDisable(GL_CULL_FACE);

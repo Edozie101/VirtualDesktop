@@ -948,6 +948,10 @@ void SimpleWorldRendererPlugin::step(Desktop3DLocation &loc, double timeDiff_, c
                                      -20.0,500.0,
                                      0.7, 1.4, 3.);
     }
+    if(settingChanged) {
+        settingChanged = false;
+        window.changedSettingMessage(settingChangedMessage);
+    }
     window.update(timeDiff_);
     
     glm::mat4 modelView;

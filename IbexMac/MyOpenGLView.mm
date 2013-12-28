@@ -94,6 +94,10 @@ static OSStatus hotKeyHandler(EventHandlerCallRef nextHandler,EventRef theEvent,
                 CGDisplayMoveCursorToPoint(kCGDirectMainDisplay, CGPointMake(cursorPosX, physicalHeight-cursorPosY));
             }
             controlDesktop = !controlDesktop;
+            
+            settingChangedMessage = "Control Desktop: "+std::string((controlDesktop)?"ON":"OFF");
+            settingChanged = true;
+            
             [obj controlDesktopUpdate];
             break;
         }
@@ -576,7 +580,7 @@ static CGPoint cursorPos;
             case kVK_ANSI_H:
             case kVK_ANSI_Slash:
                 if(!controlDesktop) {
-                    showDialog = !showDialog;
+                    showDialog = ibex->renderer->window.toggleShowDialog();
                     ibex->renderer->window.reset();
                     ibex->renderer->window.showDialog(showDialog, (theEvent.keyCode == kVK_ANSI_H)?::Ibex::HelpWindow : ::Ibex::InfoWindow);
                 }
@@ -610,15 +614,23 @@ static CGPoint cursorPos;
                 break;
             case kVK_ANSI_U:
                 walkLockedToView = !walkLockedToView;
+                settingChangedMessage = "Walking Locked to View: "+std::string((walkLockedToView)?"ON":"OFF");
+                settingChanged = true;
                 break;
             case kVK_ANSI_L:
                 lockHeadTracking = !lockHeadTracking;
+                settingChangedMessage = "Rift Head Tracking: "+std::string((lockHeadTracking)?"ON":"OFF");
+                settingChanged = true;
                 break;
             case kVK_ANSI_G:
                 showGround = !showGround;
+                settingChangedMessage = "Show Ground: "+std::string((showGround)?"ON":"OFF");
+                settingChanged = true;
                 break;
             case kVK_ANSI_R:
                 resetPosition = 1;
+                settingChangedMessage = "Reset Position";
+                settingChanged = true;
                 break;
             case kVK_UpArrow:
             case kVK_ANSI_W:

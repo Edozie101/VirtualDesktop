@@ -171,7 +171,7 @@ void Ibex::Window::renderSettingChangeMessage() {
     updateRender = false;
     fade = 2.0;
     std::vector<std::string> lines;
-    lines.push_back("Head Tracking Locked: ON");
+    lines.push_back(settingsChangedMessage);
     textRenderer->renderTextToFramebuffer(0, 0, lines, std::vector<bool>());
 }
 void Ibex::Window::renderHelpWindow() {
@@ -267,6 +267,19 @@ void Ibex::Window::reset() {
 	visibleWindow = InfoWindow;
 }
 
+bool Ibex::Window::toggleShowDialog() {
+    if(visibleWindow == SettingChangeMessage) ::showDialog = true;
+    else ::showDialog = !::showDialog;
+    return ::showDialog;
+}
+
+void Ibex::Window::changedSettingMessage(const std::string &message) {
+    updateRender = true;
+    settingsChangedMessage = message;
+    visibleWindow = SettingChangeMessage;
+    ::showDialog = true;
+}
+
 void Ibex::Window::update(const double &timeDelta) {
     bool update = false;
     static double time = 0;
@@ -305,8 +318,9 @@ void Ibex::Window::update(const double &timeDelta) {
 }
 void Ibex::Window::render(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP, const double &timeDelta) {
     if(visibleWindow != NoWindow) {
-        double fadeLevel = (fade > 1) ? 1 : fade;
+        double fadeLevel = (fade > 0.5) ? 1 : fade*2;
         if(visibleWindow == SettingChangeMessage && fade < 0) {
+            ::showDialog = false;
             visibleWindow = NoWindow;
             return;
         }
