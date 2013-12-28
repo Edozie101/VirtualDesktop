@@ -370,6 +370,7 @@ int Ibex::Window::processKey(unsigned short keyCode, int down) {
                             if(Filesystem::isFile(fullPath) && !Filesystem::isDirectory(fullPath)) {
                                 selectedVideo = true;
                                 videoPath = fullPath;
+                                visibleWindow = NoWindow;
                                 ::showDialog = false;
                             } else {
                                 currentPath = Filesystem::navigate(currentPath, directoryList[selectedFile]);
@@ -384,6 +385,7 @@ int Ibex::Window::processKey(unsigned short keyCode, int down) {
                         if(selectedFile < cameras.size()) {
                             selectedCamera = true;
                             selectedCameraID = cameras[selectedFile];
+                            visibleWindow = NoWindow;
                             ::showDialog = false;
                             selectedFile = 0;
                         } else {
@@ -550,6 +552,7 @@ int Ibex::Window::processKey(int key, int down) {
                             if(Filesystem::isFile(fullPath) && !Filesystem::isDirectory(fullPath)) {
                                 selectedVideo = true;
                                 videoPath = fullPath;
+                                visibleWindow = NoWindow;
                                 ::showDialog = false;
                             } else {
                                 currentPath = Filesystem::navigate(currentPath, directoryList[selectedFile]);
@@ -566,6 +569,7 @@ int Ibex::Window::processKey(int key, int down) {
 							directoryList.clear();
                             selectedCamera = true;
                             selectedCameraID = cameras[selectedFile];
+                            visibleWindow = NoWindow;
                             ::showDialog = false;
                             selectedFile = 0;
                         } else {
