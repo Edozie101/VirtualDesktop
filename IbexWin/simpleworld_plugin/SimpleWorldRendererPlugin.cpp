@@ -957,7 +957,9 @@ void SimpleWorldRendererPlugin::step(Desktop3DLocation &loc, double timeDiff_, c
     
     glm::mat4 playerRotation(glm::rotate(glm::mat4(1.0f), (float)loc.getXRotation(), glm::vec3(1, 0, 0)));
     playerRotation = glm::rotate(playerRotation, (float)loc.getYRotation(), glm::vec3(0, 1, 0));
-    const OVR::Matrix4f &orientation = getRiftOrientationNative();
+    static OVR::Matrix4f currentOrientation;
+    if(!lockHeadTracking) currentOrientation = getRiftOrientationNative();
+    const OVR::Matrix4f &orientation = currentOrientation;
 	glm::mat4 orientationRift;
 	copyMatrix(orientationRift, orientation.M);
 	loc.walk(orientationRift, playerRotation, walkForward+sixenseWalkForward, strafeRight+sixenseStrafeRight, jump, timeDiff_);
