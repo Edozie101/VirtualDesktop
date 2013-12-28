@@ -53,7 +53,7 @@ public:
     
     Window getWindowID();
 private:
-    void render(const glm::mat4 &proj_,  const glm::mat4 &orthoProj, const glm::mat4 &view_, const glm::mat4 &playerCamera_, const glm::mat4 &playerRotation_, const glm::vec3 &playerPosition_, bool shadowPass, const glm::mat4 &depthBiasMVP, const double &time);
+    void render(const glm::mat4 &proj_,  const glm::mat4 &orthoProj, const glm::mat4 &view_, const glm::mat4 &playerCamera_, const glm::mat4 &playerRotation_, const glm::vec3 &playerPosition_, bool shadowPass, const glm::mat4 &depthBiasMVP, const double &timeDiff_, const double &time);
     
     GLuint _skybox[6];
     GLuint _skycube;

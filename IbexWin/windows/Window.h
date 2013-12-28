@@ -28,7 +28,7 @@ typedef unsigned int uint;
 namespace Ibex {
     
 enum VisibleWindow {
-    NoWindow,InfoWindow,FileChooser,CameraChooser,HelpWindow
+    NoWindow,InfoWindow,FileChooser,CameraChooser,HelpWindow,SettingChangeMessage
 };
 
 class Window {
@@ -36,8 +36,9 @@ public:
     Window();
     
 	void reset();
-    void render(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP);
-    void update(double timeDelta);
+    void render(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP, const double &timeDelta);
+    void changedSettingMessage(const std::string &message);
+    void update(const double &timeDelta);
     bool getIsStereoVideo() { return isStereoVideo; }
     bool getSelectedVideo() { return selectedVideo; }
     bool getSelectedCamera() { return selectedCamera; }
@@ -46,6 +47,7 @@ public:
     std::string getSelectedVideoPath() { return videoPath; }
     uint getSelectedCameraID() { return selectedCameraID; }
     void showDialog(bool showDialog_, VisibleWindow startWindow=InfoWindow) { visibleWindow = (showDialog_) ? startWindow : NoWindow; };
+    bool toggleShowDialog();
 
 #ifdef __APPLE__
     int processKey(unsigned short keyCode, int down);
@@ -62,6 +64,7 @@ private:
     void renderFileChooser();
     void renderCameraChooser();
     void renderInfoWindow();
+    void renderSettingChangeMessage();
     void renderHelpWindow();
     
 private:
@@ -82,6 +85,10 @@ private:
     std::vector<int> cameras;
     std::unordered_set<std::string> fileTypes;
     
+    double fade;
+    std::string settingsChangedMessage;
+    
+    bool sizeToFit;
     bool updateRender;
     ::Ibex::TextRenderer *textRenderer;
 };

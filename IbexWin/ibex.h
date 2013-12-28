@@ -96,6 +96,9 @@ extern bool useLightPerspective;
 extern bool lockHeadTracking;
 extern bool walkLockedToView;
 
+extern bool settingChanged;
+extern std::string settingChangedMessage;
+
 extern bool controlDesktop;
 extern bool showDialog;
 extern bool bringUpIbexDisplay;
