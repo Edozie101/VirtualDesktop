@@ -354,7 +354,9 @@ HGLRC videoPlayerContext = NULL;
 Ibex::VLCVideoPlayer *_ibexVideoPlayer = NULL;
 void makeCurrentGL() {
 	bool success = wglMakeCurrent(hdc, videoPlayerContext);
-	std::cerr << "Video playing wglMakeCurrent: " << success << std::endl;
+	if(!success) {
+		std::cerr << "Video playing wglMakeCurrent: " << success << std::endl;
+	}
 }
 static void playVideo() {
 	//bool success = wglMakeCurrent(hdc, videoPlayerContext);
