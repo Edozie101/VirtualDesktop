@@ -177,7 +177,7 @@ void Ibex::Window::renderHelpWindow() {
     lines.push_back("Fn+Shift+F1 - toggle control desktop");
     lines.push_back("\\ - bring up desktop where looking");
     lines.push_back("Fn+Shift+F2 - lower rendering quality");
-    lines.push_back("L - lock view and turn off head-tracking");
+    lines.push_back("L - lock head-tracking   U - walk follows view");
     lines.push_back("U - toggle walking follows view");
     textRenderer->renderTextToFramebuffer(0, 0, lines, std::vector<bool>());
 }

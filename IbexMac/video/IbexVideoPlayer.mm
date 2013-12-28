@@ -19,6 +19,7 @@ static Ibex::VLCVideoPlayer *player = 0;
     self = [super init];
     if (self) {
         _videoTexture = new GLuint[2];
+        _videoTexture[0] = _videoTexture[1] = 0;
         player = new Ibex::VLCVideoPlayer();
     }
     return self;
