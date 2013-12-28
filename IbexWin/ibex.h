@@ -164,10 +164,11 @@ public:
     inline void walk(const glm::mat4 &orientationRift, const glm::mat4 &orientationMouse, double forward, double right, bool jump, double seconds)
   {
     const float walkSpeedSec = WALK_SPEED * ((running)?10.0:1.0) * seconds;
-      glm::vec4 walkVec = glm::normalize(glm::inverse(
-                                       (walkLockedToView)?orientationRift*orientationMouse:orientationMouse) *
-                                       glm::vec4(-right,0.0f, forward, 1.0f)) * walkSpeedSec;
-
+    glm::vec3 walkVec((glm::inverse(((walkLockedToView)?orientationRift*orientationMouse:orientationMouse))
+                       * glm::vec4(-right,0.0f, forward, 1.0f)));
+    walkVec.y = 0;
+    walkVec = ((walkVec != glm::vec3(0.0f)) ? glm::normalize(walkVec) : walkVec) * walkSpeedSec;
+    
     m_xPosition += walkVec.x;
     m_zPosition += walkVec.z;
     
