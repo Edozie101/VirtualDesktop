@@ -100,12 +100,23 @@ static inline void key_callback(GLFWwindow* window, int key, int scancode, int a
 		case 'D':
 			strafeRight = 1*down;
 			break;
-		case 'l':
-		case 'L':
+		case GLFW_KEY_SEMICOLON:
 			if(!down) {
 				useLightPerspective = !useLightPerspective;
 			}
 			break;
+		case 'l':
+		case 'L':
+            lockHeadTracking = !lockHeadTracking;
+            settingChangedMessage = "Rift Head Tracking: "+std::string((lockHeadTracking)?"ON":"OFF");
+            settingChanged = true;
+            break;
+		case 'u':
+		case 'U':
+            walkLockedToView = !walkLockedToView;
+            settingChangedMessage = "Walking Locked to View: "+std::string((walkLockedToView)?"ON":"OFF");
+            settingChanged = true;
+            break;
 		case GLFW_KEY_BACKSLASH:
 			if(!down) {
 				bringUpIbexDisplay = true;
@@ -133,7 +144,7 @@ static inline void key_callback(GLFWwindow* window, int key, int scancode, int a
         case 'H':
 		case GLFW_KEY_SLASH:
 			if(!down) {
-				showDialog = !showDialog;
+				showDialog = ibex->renderer->window.toggleShowDialog();
                 ibex->renderer->window.reset();
                 ibex->renderer->window.showDialog(showDialog, (key == 'h' || key == 'H')?::Ibex::HelpWindow : ::Ibex::InfoWindow);
 			}
@@ -155,12 +166,16 @@ static inline void key_callback(GLFWwindow* window, int key, int scancode, int a
 		case 'G':
 			if(!down) {
 				showGround = !showGround;
+				settingChangedMessage = "Show Ground: "+std::string((showGround)?"ON":"OFF");
+                settingChanged = true;
 			}
 			break;
 		case 'r':
 		case 'R':
 			if(!down) {
 				resetPosition = 1;
+				settingChangedMessage = "Reset Position";
+                settingChanged = true;
 			}
 			break;
 		}
@@ -470,6 +485,10 @@ static void globalHotkeyListener() {
 		//DispatchMessage(&msg);
 		if(msg.message == WM_HOTKEY) {
 			controlDesktop = !controlDesktop;
+
+			settingChangedMessage = "Control Desktop: "+std::string((controlDesktop)?"ON":"OFF");
+            settingChanged = true;
+
 			modifiedDesktop = true;
 			if(controlDesktop) {
 			} else {

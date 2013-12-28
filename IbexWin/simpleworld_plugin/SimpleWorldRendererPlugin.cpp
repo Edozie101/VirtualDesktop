@@ -885,23 +885,22 @@ void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &
             treeModel.renderScene(standardShaderProgram.shader.program, PV*model, view, model, shadowPass, depthBiasMVP*model);
         }
         glEnable(GL_CULL_FACE);
-        
-        if(!shadowPass) {
-            model = glm::mat4();
-            glEnable(GL_BLEND);
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-            
-            model = glm::translate(model, -glm::vec3(playerPosition_.x, 0, playerPosition_.z));
-            renderWater(PV*model, view, model, shadowPass, depthBiasMVP*model, time);
-
-            //if(showDialog) {
-                //model = glm::mat4();
-                window.render(orthoProj/**model*/, view, model, shadowPass, depthBiasMVP/**model*/, timeDiff_);
-            //}
-
-            glDisable(GL_BLEND);
-        }
     }
+	 if(!shadowPass) {
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		if(showGround) {
+			model = glm::translate(glm::mat4(), -glm::vec3(playerPosition_.x, 0, playerPosition_.z));
+			renderWater(PV*model, view, model, shadowPass, depthBiasMVP*model, time);
+		}
+
+		model = glm::mat4();
+        window.render(orthoProj/**model*/, view, model, shadowPass, depthBiasMVP/**model*/, timeDiff_);
+
+        glDisable(GL_BLEND);
+    }
+
     if(shadowPass) {
         glEnable(GL_CULL_FACE);
         glCullFace(GL_BACK);
