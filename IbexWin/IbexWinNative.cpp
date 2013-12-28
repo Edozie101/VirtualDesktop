@@ -531,14 +531,23 @@ struct DWMAPILib {
 
 static DWMAPILib	dwmapiLib;
 static BOOL	 compositingWasEnabled = false;
+bool isVistaOrLaterForDWMAPIDLL() {
+   OSVERSIONINFO osVersionInfo;
+   ZeroMemory(&osVersionInfo, sizeof(OSVERSIONINFO));
+   osVersionInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
+   GetVersionEx(&osVersionInfo);
+   return osVersionInfo.dwMajorVersion >= 6;
+}
 void disableCompositing()
 {
+	if(!isVistaOrLaterForDWMAPIDLL()) return;
 	if (!dwmapiLib.Load()) return;
 	if ((compositingWasEnabled = dwmapiLib.IsCompositionEnabled()) == true)
 		dwmapiLib.EnableComposition(FALSE);	 // DWM_EC_DISABLECOMPOSITION
 }
 
 void restoreCompositing() {
+	if(!isVistaOrLaterForDWMAPIDLL()) return;
 	if (compositingWasEnabled && dwmapiLib.Load())
 		dwmapiLib.EnableComposition(TRUE);	 // DWM_EC_ENABLECOMPOSITION
 }
