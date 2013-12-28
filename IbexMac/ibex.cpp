@@ -60,9 +60,9 @@ GLfloat top, bottom;
 // TODO: get rid of global variables
 DisplayShape displayShape = FlatDisplay;
 
-bool controlDesktop  = 1;
-bool showDialog = false;
-bool bringUpIbexDisplay = false;
+bool controlDesktop         = 0;
+bool showDialog             = false;
+bool bringUpIbexDisplay     = false;
 
 // external variables
 bool resetPosition          = 0;

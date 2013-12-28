@@ -44,15 +44,17 @@ void Ibex::TextRenderer::loadProgram() {
 
 void Ibex::TextRenderer::initializeFont()
 {
-    unsigned char *ttf_buffer = new unsigned char[1<<20];
+    unsigned char *ttf_buffer = new unsigned char[1<<22];
 	unsigned char *temp_bitmap = new unsigned char[1024*256];//512*512];
     
 #ifdef WIN32
-	//size_t read = fread(ttf_buffer, 1, 1<<20, fopen("c:/windows/fonts/times.ttf", "rb"));
-	//size_t read = fread(ttf_buffer, 1, 1<<20, fopen("c:/windows/fonts/Courbd.ttf", "rb"));
-	size_t read = fread(ttf_buffer, 1, 1<<20, fopen("c:/windows/fonts/L_10646.ttf", "rb"));
+	//size_t read = fread(ttf_buffer, 1, 1<<22, fopen("c:/windows/fonts/times.ttf", "rb"));
+	//size_t read = fread(ttf_buffer, 1, 1<<22, fopen("c:/windows/fonts/Courbd.ttf", "rb"));
+	size_t read = fread(ttf_buffer, 1, 1<<22, fopen("c:/windows/fonts/L_10646.ttf", "rb"));
 #else
-    size_t read = fread(ttf_buffer, 1, 1<<20, fopen("/Library/Fonts/Georgia.ttf", "rb"));
+    //size_t read = fread(ttf_buffer, 1, 1<<22, fopen("/Library/Fonts/Georgia.ttf", "rb"));
+    size_t read = fread(ttf_buffer, 1, 1<<22, fopen("/Library/Fonts/Andale Mono.ttf", "rb"));
+    //size_t read = fread(ttf_buffer, 1, 1<<22, fopen("/Library/Fonts/OsakaMono.ttf", "rb"));
 #endif
     std::cerr << "Read font bytes: " << read << std::endl;
     
