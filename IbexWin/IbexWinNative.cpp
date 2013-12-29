@@ -709,17 +709,6 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	hdc = GetDC(hwnd);
 	HGLRC mainContext = wglGetCurrentContext();
 
-	//SetWindowLongPtr(hwnd, GWL_EXSTYLE, WS_EX_APPWINDOW | WS_EX_TOPMOST);
- //   SetWindowLongPtr(hwnd, GWL_STYLE, WS_POPUP | WS_VISIBLE);
-	//::SetWindowPos(hwnd,       // handle to window
- //               HWND_TOPMOST,  // placement-order handle
- //               0,     // horizontal position
- //               0,      // vertical position
- //               0,  // width
- //               0, // height
- //               SWP_NOMOVE|SWP_NOSIZE | SWP_SHOWWINDOW // window-positioning options
-	//			);
-
 	loaderContext = wglCreateContext(hdc);
 	wglShareLists(loaderContext, mainContext); // Order matters
 
