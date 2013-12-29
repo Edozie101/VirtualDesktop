@@ -21,6 +21,7 @@
     <VLC_INCLUDES>C:\Program Files (x86)\VideoLAN\VLC\sdk\include</VLC_INCLUDES>
     <VLC_LIB_DIR>C:\Program Files (x86)\VideoLAN\VLC\sdk\lib</VLC_LIB_DIR>
     <VLC_LIBS>libvlc.lib</VLC_LIBS>
+    <VLC_DLL_DIR>C:\Program Files (x86)\VideoLAN\VLC</VLC_DLL_DIR>
     <ASSIMP_ROOT>C:\Program Files\Assimp</ASSIMP_ROOT>
     <GLM_INCLUDES>..\..\glm-0.9.4.6\glm</GLM_INCLUDES>
     <ASSIMP_INCLUDES>$(ASSIMP_ROOT)\include</ASSIMP_INCLUDES>
@@ -51,6 +52,7 @@ xcopy /iys $(ProjectDir)resources $(OutDir)resources
 xcopy /y $(SIXENSE_DLL_DIR)\*.dll $(OutDir)
 xcopy /y $(OPENCV_DLL_DIR)\*$(OPENCV_VERSION).dll $(OutDir)
 xcopy /y "$(VLC_LIB_DIR)\*.dll" "$(OutDir)"
+xcopy /y "$(VLC_DLL_DIR)\*.dll" "$(OutDir)"
 xcopy /ey "$(VLC_LIB_DIR)\plugins" "$(OutDir)\plugins\"
 xcopy /y "$(ASSIMP_DLL_DIR)\*.dll" "$(OutDir)"
 xcopy /y "$(GLFW_LIB_DIR)\*.dll" "$(OutDir)"</Command>
@@ -131,6 +133,10 @@ xcopy /y "$(GLFW_LIB_DIR)\*.dll" "$(OutDir)"</Command>
     </BuildMacro>
     <BuildMacro Include="VLC_LIBS">
       <Value>$(VLC_LIBS)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="VLC_DLL_DIR">
+      <Value>$(VLC_DLL_DIR)</Value>
       <EnvironmentVariable>true</EnvironmentVariable>
     </BuildMacro>
     <BuildMacro Include="ASSIMP_ROOT">
