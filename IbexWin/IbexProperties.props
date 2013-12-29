@@ -54,6 +54,7 @@ xcopy /y $(OPENCV_DLL_DIR)\*$(OPENCV_VERSION).dll $(OutDir)
 xcopy /y "$(VLC_LIB_DIR)\*.dll" "$(OutDir)"
 xcopy /y "$(VLC_DLL_DIR)\*.dll" "$(OutDir)"
 xcopy /ey "$(VLC_LIB_DIR)\plugins" "$(OutDir)\plugins\"
+xcopy /ey "$(VLC_DLL_DIR)\plugins" "$(OutDir)\plugins\"
 xcopy /y "$(ASSIMP_DLL_DIR)\*.dll" "$(OutDir)"
 xcopy /y "$(GLFW_LIB_DIR)\*.dll" "$(OutDir)"</Command>
     </PostBuildEvent>
