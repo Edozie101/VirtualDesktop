@@ -695,7 +695,7 @@ void SimpleWorldRendererPlugin::renderGround(const glm::mat4 &MVP, const glm::ma
     //    checkForErrors();
     //    std::cerr << "Loading ground texture" << std::endl;
 #ifdef _WIN32
-    static const GLuint groundTexture = loadTexture("\\resources\\humus-skybox\\negy.jpg");
+    static const GLuint groundTexture = loadTexture("\\resources\\humus-skybox\\smaller\\negy.jpg");
     //        orientation = getRiftOrientation();
 #else
 #ifdef __APPLE__
