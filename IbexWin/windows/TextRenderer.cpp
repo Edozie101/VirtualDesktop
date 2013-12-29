@@ -374,7 +374,7 @@ void Ibex::TextRenderer::renderTextDirect(const glm::mat4 &MVP, const glm::mat4 
 	glUseProgram(0);
 }
 
-void Ibex::TextRenderer::renderText(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP, const GLfloat &fade)
+void Ibex::TextRenderer::renderText(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP, const GLfloat &fade, const bool &sizeToFit)
 {
     if(!initialized) return;
     
@@ -383,6 +383,9 @@ void Ibex::TextRenderer::renderText(const glm::mat4 &MVP, const glm::mat4 &V, co
 	if(shadowPass) {
 		return;
 	} else {
+		if(sizeToFit) {
+			orth = orth * glm::scale(glm::mat4(), glm::vec3(1.0f, (maxY-minY)/(maxX-minX), 1.0f));
+		}
 		glUseProgram(standardShaderProgram.shader.program);
 		if(IbexDisplayFlatUniformLocations[0] >= 0) glUniformMatrix4fv(IbexDisplayFlatUniformLocations[0], 1, GL_FALSE, &orth[0][0]);
 

@@ -324,7 +324,8 @@ void Ibex::Window::render(const glm::mat4 &MVP, const glm::mat4 &V, const glm::m
             visibleWindow = NoWindow;
             return;
         }
-        textRenderer->renderText(MVP, V, M, shadowPass, depthMVP, (visibleWindow == SettingChangeMessage) ? fadeLevel : 1.0);
+		const bool sizeToFit = (visibleWindow == SettingChangeMessage);
+        textRenderer->renderText(MVP, V, M, shadowPass, depthMVP, (visibleWindow == SettingChangeMessage) ? fadeLevel : 1.0, sizeToFit);
         fade -= timeDelta;
     }
 }

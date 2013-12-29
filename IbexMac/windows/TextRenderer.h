@@ -27,7 +27,7 @@ public:
 	void generateTextFBO();
 	void precompileText(float x, float y, const std::vector<std::string> &lines, const std::vector<bool> &highlighted, int maxChars=0);
     void renderTextToFramebuffer(float x, float y, const std::vector<std::string> &lines, const std::vector<bool> &highlighted, int maxChars=0);
-	void renderText(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP, const GLfloat &fade);
+	void renderText(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP, const GLfloat &fade, const bool &sizeToFit);
 	void renderTextDirect(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP);
 private:
 	bool initialized;
