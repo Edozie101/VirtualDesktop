@@ -655,6 +655,9 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 			break;
 		}
 	}
+
+	int xpos = 0;
+	int ypos = 0;
 	if(monitor == NULL) {
 		width = 1280;
 		height = 800;
@@ -662,6 +665,7 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 		const GLFWvidmode* mode = glfwGetVideoMode(monitor);
 		width = mode->width;
 		height = mode->height;
+		glfwGetMonitorPos(monitor, &xpos, &ypos);
 	}
 
 	initRift();
@@ -670,12 +674,23 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	glfwWindow = glfwCreateWindow(width, height, "Ibex", (riftConnected) ? monitor : NULL, NULL);
+
+	
+	if(riftConnected) {
+		glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+		glfwWindowHint(GLFW_DECORATED, GL_FALSE);
+	}
+	//glfwWindow = glfwCreateWindow(width, height, "Ibex", (riftConnected) ? monitor : NULL, NULL);
+	glfwWindow = glfwCreateWindow(width, height, "Ibex", NULL, NULL);
 	if (!glfwWindow)
 	{
 		glfwTerminate();
 		exit(EXIT_FAILURE);
 	}
+	if(riftConnected) {
+		glfwSetWindowPos(glfwWindow, xpos, ypos);
+	}
+
 	glfwMakeContextCurrent(glfwWindow);
 	glfwSetWindowSizeCallback(glfwWindow, window_size_callback);
 	glfwSetKeyCallback(glfwWindow, key_callback);
@@ -693,6 +708,17 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	hwnd = GetActiveWindow();
 	hdc = GetDC(hwnd);
 	HGLRC mainContext = wglGetCurrentContext();
+
+	//SetWindowLongPtr(hwnd, GWL_EXSTYLE, WS_EX_APPWINDOW | WS_EX_TOPMOST);
+ //   SetWindowLongPtr(hwnd, GWL_STYLE, WS_POPUP | WS_VISIBLE);
+	//::SetWindowPos(hwnd,       // handle to window
+ //               HWND_TOPMOST,  // placement-order handle
+ //               0,     // horizontal position
+ //               0,      // vertical position
+ //               0,  // width
+ //               0, // height
+ //               SWP_NOMOVE|SWP_NOSIZE | SWP_SHOWWINDOW // window-positioning options
+	//			);
 
 	loaderContext = wglCreateContext(hdc);
 	wglShareLists(loaderContext, mainContext); // Order matters
