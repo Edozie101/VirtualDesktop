@@ -28,7 +28,7 @@ Disable Side-by-Side rendering: -m (for mono)
     Run: Shift
     Jump: SPACE
     Show FPS and Info Dialog: / (Mac and Windows Only)
-    Choose movies: Show info dialog with ‘/‘ then press 1 or 2 for regular or stereo movies, then navigate using arrow keys and enter to select a movie
+    Choose movies: Show info dialog with / then press 1 or 2 for regular or stereo movies, then navigate using arrow keys and enter to select a movie
 
     Show Help: H
     Toggle Ground Layer: G
