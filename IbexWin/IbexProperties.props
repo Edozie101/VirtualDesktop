@@ -46,7 +46,8 @@
       <AdditionalDependencies>$(OPENCV_LIBS);$(SIXENSE_LIBS);$(VLC_LIBS);$(ASSIMP_LIBS);$(EXTRA_IBEX_LIBS);libovr.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /y $(ProjectDir)*.dll $(OutDir)
+      <Command>xcopy /y $(ProjectDir)*.ini $(OutDir)
+xcopy /y $(ProjectDir)*.dll $(OutDir)
 xcopy /y $(ProjectDir)..\..\ffmpeg-shared\bin\*.dll $(OutDir)
 xcopy /iys $(ProjectDir)resources $(OutDir)resources
 xcopy /y $(SIXENSE_DLL_DIR)\*.dll $(OutDir)

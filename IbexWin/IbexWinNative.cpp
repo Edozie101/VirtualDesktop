@@ -670,6 +670,9 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 		width = mode->width;
 		height = mode->height;
 		glfwGetMonitorPos(monitor, &xpos, &ypos);
+
+		windowWidth = width;
+		windowHeight = height;
 	}
 
 	initRift();

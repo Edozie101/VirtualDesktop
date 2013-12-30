@@ -154,6 +154,7 @@
     <None Include="glew32mx.dll" />
     <None Include="ibex.ini">
       <DeploymentContent>true</DeploymentContent>
+      <FileType>Document</FileType>
     </None>
     <None Include="IbexProperties.props" />
   </ItemGroup>
