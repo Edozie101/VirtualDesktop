@@ -38,6 +38,7 @@ TCHAR szTitle[MAX_LOADSTRING];					// The title bar text
 TCHAR szWindowClass[MAX_LOADSTRING];			// the main window class name
 
 #include <stdio.h>
+#include <wchar.h>
 
 typedef unsigned long Window;
 typedef unsigned long GLXContext;
@@ -672,6 +673,13 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	}
 
 	initRift();
+	_TCHAR renderScaleString[1000];
+	_TCHAR *stopString;
+	GetPrivateProfileString(L"rift", L"renderScale", L"0", renderScaleString, sizeof(renderScaleString), L".\\ibex.ini");
+	double overrideRenderScale = wcstod(renderScaleString, &stopString);
+	if(overrideRenderScale >= 1.0) {
+		setRenderScale(overrideRenderScale);
+	}
 
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
