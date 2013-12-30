@@ -235,5 +235,6 @@
     <None Include="glew32.dll" />
     <None Include="glew32mx.dll" />
     <None Include="IbexProperties.props" />
+    <None Include="ibex.ini" />
   </ItemGroup>
 </Project>

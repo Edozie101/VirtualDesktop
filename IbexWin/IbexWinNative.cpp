@@ -645,12 +645,15 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	int monitorCount = 0;
 	GLFWmonitor* monitor = NULL;//glfwGetPrimaryMonitor();
 	GLFWmonitor** monitors = glfwGetMonitors(&monitorCount);
+
+	int searchRiftResolutionX = GetPrivateProfileInt(L"rift", L"resolutionX", 1280, L".\\ibex.ini");
+	int searchRiftResolutionY = GetPrivateProfileInt(L"rift", L"resolutionY", 800, L".\\ibex.ini");
 	for(int i = 0; i < monitorCount; ++i) {
 		std::cerr << "Monitor Name[" << i << "]: " << (monitors[i]) << std::endl;
 		const char *monitorName = glfwGetMonitorName(monitors[i]);
 		const GLFWvidmode* mode = glfwGetVideoMode(monitors[i]);
 		if((strcmp(monitorName, /*RiftMonitorName*/"Rift DK") == 0)
-			|| (mode->width == 1280 && mode->height == 800)) {
+			|| (mode->width == searchRiftResolutionX && mode->height == searchRiftResolutionY)) {
 			monitor = monitors[i];
 			break;
 		}

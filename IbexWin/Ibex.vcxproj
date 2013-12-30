@@ -152,6 +152,9 @@
   <ItemGroup>
     <None Include="glew32.dll" />
     <None Include="glew32mx.dll" />
+    <None Include="ibex.ini">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
     <None Include="IbexProperties.props" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
