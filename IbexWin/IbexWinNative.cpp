@@ -399,18 +399,18 @@ static void RenderSceneCB()
 	double timeDiff = (time - timeprev);
 	timeprev = time;
 
-#ifdef _DEBUG
 	static double timebase = glfwGetTime();
 	static double frame = 0;
 	++frame;
-	static char fpsString[64];
+	//static char fpsString[64];
 	if (time - timebase >= 5.0) {
 		sprintf(fpsString,"FPS:%4.2f", frame*5.0/(time-timebase));
+		#ifdef _DEBUG
 		std::cerr << fpsString << std::endl;
+		#endif
 		timebase = time;
 		frame = 0;
 	}
-#endif
 
 	if(modifiedDesktop) {
 		modifiedDesktop = false;
