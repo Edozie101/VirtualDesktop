@@ -338,8 +338,24 @@ void Ibex::Window::render(const glm::mat4 &MVP, const glm::mat4 &V, const glm::m
 
 #ifdef __APPLE__
 int Ibex::Window::processKey(unsigned short keyCode, int down) {
-    //updateRender = true;
     int processed = 0;
+
+	if(visibleWindow == SettingChangeMessage) {
+		switch(keyCode) {
+			case kVK_Escape:
+			if(!down) {
+				::showDialog = false;
+				visibleWindow = NoWindow;
+				updateRender = true;
+			}
+            
+            processed = 1;
+		}
+		if(processed) updateRender = true;
+
+		return processed;
+	}
+
     switch(keyCode) {
         case kVK_UpArrow:
         case kVK_ANSI_W:
@@ -469,6 +485,21 @@ int Ibex::Window::processKey(unsigned short keyCode, int down) {
 #ifdef _WIN32
 int Ibex::Window::processKey(int key, int down) {
 	int processed = 0;
+	if(visibleWindow == SettingChangeMessage) {
+		switch(key) {
+			case GLFW_KEY_ESCAPE:
+			if(!down) {
+				::showDialog = false;
+				visibleWindow = NoWindow;
+				updateRender = true;
+			}
+            
+            processed = 1;
+		}
+		if(processed) updateRender = true;
+
+		return processed;
+	}
     switch(key) {
 		case 'W':
         case 'w':
