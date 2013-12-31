@@ -118,6 +118,8 @@ unsigned long window = 0;
 unsigned long context = 0;
 
 bool done = 0;
+int physicalOffsetX = 0;
+int physicalOffsetY = 0;
 GLfloat physicalWidth = 1440.0;
 GLfloat physicalHeight = 900.0;
 //GLfloat physicalWidth = 2560.0;

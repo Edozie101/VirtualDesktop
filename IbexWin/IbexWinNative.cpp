@@ -207,7 +207,7 @@ static inline void mergeMouseCursor(HDC hdcMemDC)
 
 	if(hasCursorInfo) 
 	{
-		DrawIconEx(hdcMemDC, cursorinfo.ptScreenPos.x-ii.xHotspot,  cursorinfo.ptScreenPos.y-ii.yHotspot, cursorinfo.hCursor, 0, 0, 0, NULL, DI_NORMAL);
+		DrawIconEx(hdcMemDC, cursorinfo.ptScreenPos.x-ii.xHotspot-physicalOffsetX,  cursorinfo.ptScreenPos.y-ii.yHotspot-physicalOffsetY, cursorinfo.hCursor, 0, 0, 0, NULL, DI_NORMAL);
 	}
 }
 
@@ -334,8 +334,9 @@ done:
 	return 0;
 }
 
+static HWND captureDesktopHWND = 0;
 static inline void getScreenshot() {
-	HWND hwnd = GetDesktopWindow();
+	HWND hwnd = (captureDesktopHWND) ? captureDesktopHWND : GetDesktopWindow();
 	CaptureAnImage(hwnd);
 }
 
@@ -429,8 +430,8 @@ static void RenderSceneCB()
 	POINT p;
 	if (GetCursorPos(&p))
 	{
-		cursorPosX = p.x;
-		cursorPosY = physicalHeight-p.y;
+		cursorPosX = p.x-physicalOffsetX;
+		cursorPosY = physicalHeight-p.y-physicalOffsetY;
 	}
 
 	if(ibex != NULL && (ibex->renderer->window.getSelectedVideo() || ibex->renderer->window.getSelectedCamera())) {
@@ -575,8 +576,6 @@ void restoreCompositing() {
 }
 /////////////////
 
-
-
 static void error_callback(int error, const char* description)
 {
 	std::cerr << "GLFW Error(" << error << "): " << description << std::endl;
@@ -601,10 +600,6 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	myInitSixense();
 #endif
 
-	int mainScreenHorizontal = 0;
-	int mainScreenVertical = 0;
-	GetDesktopResolution(mainScreenHorizontal, mainScreenVertical);
-
 	width = 1280;
 	height = 800;
 	windowWidth = 1280;
@@ -616,8 +611,6 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 		windowWidth = width;
 		windowHeight = height;
 	}
-	physicalWidth = mainScreenHorizontal;//1280;//1920;//(false) ? 1920 : width;
-	physicalHeight = mainScreenVertical;//800;//1080;//(false) ? 1080 : height;
 	textureWidth = width*1.4;
 	textureHeight = width*1.4;
 
@@ -629,15 +622,6 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	GetCurrentDirectory(1023, cwd);
 	wcstombs_s(&len, mResourcePath, cwd, 1023);
 
-	//int argc = 0;
-	//char **argv = 0;
-	//   glutInit(&argc, argv);
-	//glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGB|GLUT_FULL_SCREEN);
-	//   glutInitWindowSize(width, height);
-	//   glutInitWindowPosition(0, 0);
-	//glutInitWindowPosition(riftX, riftY);
-	//   glutCreateWindow("Ibex");
-
 	glfwSetErrorCallback(error_callback);
 	if (!glfwInit())
 		exit(EXIT_FAILURE);
@@ -646,7 +630,9 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	int monitorCount = 0;
 	GLFWmonitor* monitor = NULL;//glfwGetPrimaryMonitor();
 	GLFWmonitor** monitors = glfwGetMonitors(&monitorCount);
+	GLFWmonitor* primaryMonitor = glfwGetPrimaryMonitor();
 
+	bool isRiftPrimaryMonitor = false;
 	int searchRiftResolutionX = GetPrivateProfileInt(L"rift", L"resolutionX", 1280, L".\\ibex.ini");
 	int searchRiftResolutionY = GetPrivateProfileInt(L"rift", L"resolutionY", 800, L".\\ibex.ini");
 	for(int i = 0; i < monitorCount; ++i) {
@@ -656,9 +642,39 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 		if((strcmp(monitorName, /*RiftMonitorName*/"Rift DK") == 0)
 			|| (mode->width == searchRiftResolutionX && mode->height == searchRiftResolutionY)) {
 			monitor = monitors[i];
+			if(monitor == primaryMonitor) isRiftPrimaryMonitor = true;
 			break;
 		}
 	}
+
+	int mainScreenHorizontal = 0;
+	int mainScreenVertical = 0;
+	GetDesktopResolution(mainScreenHorizontal, mainScreenVertical);
+	if(isRiftPrimaryMonitor) {
+		for(int i = 0; i < monitorCount; ++i) {
+			std::cerr << "Monitor Name[" << i << "]: " << (monitors[i]) << std::endl;
+			const char *monitorName = glfwGetMonitorName(monitors[i]);
+			const GLFWvidmode* mode = glfwGetVideoMode(monitors[i]);
+			if(monitors[i] != monitor) {
+				int xpos=0,ypos=0;
+				glfwGetMonitorPos(monitors[i], &xpos, &ypos);
+
+				physicalOffsetX = xpos;
+				physicalOffsetY = ypos;
+				physicalWidth = mode->width;
+				physicalHeight = mode->height;
+
+				POINT p;
+				p.x = xpos;
+				p.y = ypos;
+				captureDesktopHWND = WindowFromPoint(p);
+
+				break;
+			}
+		}
+	}
+	physicalWidth = mainScreenHorizontal;//1280;//1920;//(false) ? 1920 : width;
+	physicalHeight = mainScreenVertical;//800;//1080;//(false) ? 1080 : height;
 
 	int xpos = 0;
 	int ypos = 0;

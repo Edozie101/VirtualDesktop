@@ -58,6 +58,7 @@ extern unsigned long context;
 extern unsigned long window;
 
 extern bool done;
+extern int physicalOffsetX,physicalOffsetY;
 extern float physicalWidth,physicalHeight;
 extern float windowWidth, windowHeight;
 extern float videoWidth,videoHeight;
