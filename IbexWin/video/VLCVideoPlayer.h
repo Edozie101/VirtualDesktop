@@ -28,6 +28,10 @@ typedef unsigned int GLXDrawable;
 
 struct CvCapture;
 
+class libvlc_instance_t;
+class libvlc_media_player_t;
+struct context;
+
 namespace Ibex {
     
 
@@ -48,6 +52,7 @@ public:
     unsigned int width,height;
     
     void createVideoTextures(bool isStereo, int width, int height);
+	bool isDone() { return done; }
 private:
     void initOpenCV(bool isStereo, int cameraId);
     int initVideo(const char *fileName_, bool isStereo);
@@ -57,6 +62,7 @@ private:
     bool videoDone;
     bool audioDone;
     void *data;
+	struct context *context;
 
     
 private:
@@ -70,6 +76,9 @@ private:
 
  private:
     int playVLCVideo(const char *fileName, Display *dpy, GLXDrawable root);
+
+	libvlc_instance_t *libvlc;
+    libvlc_media_player_t *mp;
 };
     
 }

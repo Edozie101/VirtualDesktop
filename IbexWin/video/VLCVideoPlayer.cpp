@@ -51,49 +51,31 @@ struct context {
     void *data;
   int n;
     libvlc_media_player_t *mp;
+	bool init;
+	context() : init(false) {
+	}
 };
 
 static uint32_t *pixels;
 // VLC prepares to render a video frame.
 static void *vlclock(void *data, void **p_pixels) {
-  //std::cerr << "lock" << std::endl;
-  //struct context *c = (context *)data;
-
-  //int pitch;
-    // lock mutex for texture update
+  // lock mutex for texture update
   *p_pixels = pixels;
 
-    return NULL; // Picture identifier, not needed here.
+  return NULL; // Picture identifier, not needed here.
 }
 
 // VLC just rendered a video frame.
 static void vlcunlock(void *data, void *id, void *const *p_pixels) {
-  //std::cerr << "unlock" << std::endl;
-  //return;
-  //struct context *c = (context *)data;
-
-//    uint32_t *pixels = (uint32_t *)*p_pixels;
-    /*
-    // We can also render stuff.
-    int x, y;
-    for(y = 10; y < 40; y++) {
-        for(x = 10; x < 40; x++) {
-            if(x < 13 || y < 13 || x > 36 || y > 36) {
-                pixels[y * VIDEOWIDTH + x] = 0xffff;
-            } else {
-                // RV16 = 5+6+5 pixels per color, BGR.
-                pixels[y * VIDEOWIDTH + x] = 0x02ff;
-            }
-        }
-	}*/
-
     // unlock texture update mutex
     assert(id == NULL); // picture identifier, not needed here
 }
 
 // VLC wants to display a video frame.
 static void vlcdisplay(void *data, void *id) {
+	try {
   struct context *c = (struct context*)data;
+  
   unsigned int *videoTexture = c->videoTexture;
   bool isStereo = c->isStereo;
   //std::cerr << "**** display: " << videoTexture[0] << std::endl;
@@ -122,9 +104,8 @@ static void vlcdisplay(void *data, void *id) {
 #endif
 #endif
     
-  static bool init = false;
-  if(!init) {
-        init = true;
+  if(!c->init) {
+        c->init = true;
       
         c->player->createVideoTextures(c->isStereo, VIDEOWIDTH, VIDEOHEIGHT);
         c->player->width = VIDEOWIDTH;
@@ -180,6 +161,8 @@ static void vlcdisplay(void *data, void *id) {
 
   //struct context *c = (context *)data;
     // WIDTH/HEIGHT VIDEOWIDTH/VIDEOHEIGHT
+	}catch(...) {
+	}
 }
 
 static void quit(int c) {
@@ -187,9 +170,20 @@ static void quit(int c) {
 }
 
 int Ibex::VLCVideoPlayer::playVLCVideo(const char *fileName, Display *dpy, GLXDrawable root) {
-    libvlc_instance_t *libvlc;
-    libvlc_media_t *m;
-    libvlc_media_player_t *mp;
+	if(mp != 0) {
+		try {
+			pixels = 0;
+			done = true;
+
+			// Stop stream and clean up libVLC.
+			libvlc_media_player_stop(mp);
+			libvlc_media_player_release(mp);
+			mp = 0;
+		} catch(...) {
+			mp = 0;
+		}
+	}
+
     char const *vlc_argv[] = {
         //"-H"
         "--text-renderer","none"
@@ -203,15 +197,15 @@ int Ibex::VLCVideoPlayer::playVLCVideo(const char *fileName, Display *dpy, GLXDr
         //"--sepia-intensity=200"
     };
     int vlc_argc = sizeof(vlc_argv) / sizeof(*vlc_argv);
-
-    int done = 0, action = 0, pause = 0;
-    struct context context;
-    context.isStereo = 0;
-    context.videoTexture = videoTexture;
-    context.player = this;
-    context.dpy = dpy;
-    context.root = root;
-    context.data = data;
+	
+    int action = 0, pause = 0;
+    context = new struct context();
+    context->isStereo = 0;
+    context->videoTexture = videoTexture;
+    context->player = this;
+    context->dpy = dpy;
+    context->root = root;
+    context->data = data;
 
     // create texture/mutex
     //setenv("VLC_PLUGIN_PATH", "/Applications/VLC.app/Contents/MacOS/plugins", 1);
@@ -220,18 +214,22 @@ int Ibex::VLCVideoPlayer::playVLCVideo(const char *fileName, Display *dpy, GLXDr
     printf("VLC_PLUGIN_PATH=%s\n", getenv("VLC_PLUGIN_PATH"));
 
     // Initialise libVLC.
-    libvlc = libvlc_new(vlc_argc, vlc_argv);
-    if(NULL == libvlc) {
-        printf("LibVLC initialization failure.\n");
-        return EXIT_FAILURE;
-    }
+	if(libvlc == 0) {
+		libvlc = libvlc_new(vlc_argc, vlc_argv);
+		if(NULL == libvlc) {
+			printf("LibVLC initialization failure.\n");
+			return EXIT_FAILURE;
+		}
+	}
 
-    m = libvlc_media_new_path(libvlc, fileName);
+    libvlc_media_t *m = libvlc_media_new_path(libvlc, fileName);
     mp = libvlc_media_player_new_from_media(m);
     libvlc_media_release(m);
+	m = 0;
+
     pixels = new uint32_t[VIDEOWIDTH*VIDEOHEIGHT*4];
     memset(pixels, 0, sizeof(uint32_t)*VIDEOWIDTH*VIDEOHEIGHT*4);
-    libvlc_video_set_callbacks(mp, vlclock, vlcunlock, vlcdisplay, &context);
+    libvlc_video_set_callbacks(mp, vlclock, vlcunlock, vlcdisplay, context);
     libvlc_video_set_format(mp, "RV32", VIDEOWIDTH, VIDEOHEIGHT, VIDEOWIDTH*sizeof(uint32_t));
     //libvlc_video_set_format(mp, "YUYV", VIDEOWIDTH, VIDEOHEIGHT, VIDEOWIDTH*2);
     
@@ -239,14 +237,18 @@ int Ibex::VLCVideoPlayer::playVLCVideo(const char *fileName, Display *dpy, GLXDr
         VIDEOWIDTH = width;
         VIDEOHEIGHT = height;
     }
-        context.mp = mp;
+    context->mp = mp;
     
+	done = false;
     libvlc_media_player_play(mp);
-    
+
     // Main loop.
     while(!done) {
         action = 0;
         switch(action) {
+			case 's':
+				libvlc_media_player_stop(mp);
+				break;
             case 'q':
                 done = 1;
                 break;
@@ -256,19 +258,10 @@ int Ibex::VLCVideoPlayer::playVLCVideo(const char *fileName, Display *dpy, GLXDr
                 break;
         }
 
-        if(!pause) { context.n++; }
+        if(!pause) { context->n++; }
 
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
-
-    // Stop stream and clean up libVLC.
-    libvlc_media_player_stop(mp);
-    libvlc_media_player_release(mp);
-    libvlc_release(libvlc);
-
-    // delete mutex/texture info
-
-    quit(0);
 
     return 0;
 }
@@ -280,23 +273,43 @@ Ibex::VLCVideoPlayer::VLCVideoPlayer() :  videoTexture(new unsigned int[2]),
                                     done(true),
                                     videoDone(true),
                                     audioDone(true),
-				    openCVInited(false),
-				    captureVideo(false),
-				    cvCapture(0) {
+									openCVInited(false),
+									captureVideo(false),
+									cvCapture(0),
+									libvlc(0),
+									mp(0),
+									context(0) {
   videoTexture[0] = videoTexture[1] = 0;
 }
 Ibex::VLCVideoPlayer::~VLCVideoPlayer() {
   stopCapturing();
   stopPlaying();
+
+  if(mp) {
+    // Stop stream and clean up libVLC.
+	while(libvlc_media_player_get_state(mp) != libvlc_Stopped) {
+		libvlc_media_player_stop(mp);
+	}
+    libvlc_media_player_release(mp);
+	mp = 0;
+  }
+  if(libvlc) {
+    libvlc_release(libvlc);
+	libvlc = 0;
+  }
+  if(context) {
+	  delete context;
+	  context = 0;
+  }
 }
 
 int Ibex::VLCVideoPlayer::playVideo(const char *fileName, bool isStereo, Display *dpy, GLXDrawable root, const void *data)
 {
     this->data = (void*)data;
-  //createVideoTextures(isStereo, VIDEOWIDTH, VIDEOHEIGHT);
-  this->isStereo = isStereo;
-  playVLCVideo(fileName, dpy, root);
-  return 0;
+	//createVideoTextures(isStereo, VIDEOWIDTH, VIDEOHEIGHT);
+	this->isStereo = isStereo;
+	playVLCVideo(fileName, dpy, root);
+	return 0;
 }
 
 std::vector<int> Ibex::VLCVideoPlayer::listCameras() {
@@ -316,14 +329,14 @@ std::vector<int> Ibex::VLCVideoPlayer::listCameras() {
   return cameras;
 }
 
-void Ibex::VLCVideoPlayer::stopCapturing() {
-  done = true;
-  captureVideo = false;
-  if(cvCapture) {
-    cvReleaseCapture(&cvCapture);
-    cvCapture = NULL;
-    openCVInited = false;
-  }
+void Ibex::VLCVideoPlayer::stopCapturing() {  
+	done = true;
+	captureVideo = false;
+	if(cvCapture) {
+		cvReleaseCapture(&cvCapture);
+		cvCapture = NULL;
+		openCVInited = false;
+	}
 }
 void Ibex::VLCVideoPlayer::stopPlaying() {
   done = true;
@@ -341,12 +354,13 @@ void Ibex::VLCVideoPlayer::initOpenCV(bool isStereo, int cameraId) {
 }
 
 int Ibex::VLCVideoPlayer::openCamera(bool isStereo, int cameraId) {
+  done = false;
   if(!openCVInited) {
     initOpenCV(isStereo, cameraId);
   }
   
   bool first = true;
-  while(captureVideo && cvCapture) {
+  while(captureVideo && cvCapture && !done) {
     IplImage* cameraCapture = cvQueryFrame(cvCapture);
         
     if( cameraCapture && (cameraCapture->width > 0) && (cameraCapture->height > 0)) {

@@ -383,15 +383,22 @@ static void playVideo() {
 	//bool success = wglMakeCurrent(hdc, videoPlayerContext);
 	//std::cerr << "Video playing wglMakeCurrent: " << success << std::endl;
 
+	if(_ibexVideoPlayer != NULL) {
+		delete _ibexVideoPlayer;
+	}
 	_ibexVideoPlayer = new Ibex::VLCVideoPlayer();
+
 	_ibexVideoPlayer->playVideo(ibex->renderer->window.getSelectedVideoPath().c_str(),ibex->renderer->window.getIsStereoVideo(), 0, 0, &makeCurrentGL);
-	//_ibexVideoPlayer->openCamera(ibex->renderer->window.getIsStereoVideo(), -1);
 }
 static void playCamera() {
 	bool success = wglMakeCurrent(hdc, videoPlayerContext);
 	std::cerr << "Video playing wglMakeCurrent: " << success << std::endl;
 
-	_ibexVideoPlayer = new Ibex::VLCVideoPlayer();
+	if(_ibexVideoPlayer == NULL) {
+		_ibexVideoPlayer = new Ibex::VLCVideoPlayer();
+	} else {
+		_ibexVideoPlayer->stopCapturing();
+	}
 	_ibexVideoPlayer->openCamera(ibex->renderer->window.getIsStereoVideo(), ibex->renderer->window.getSelectedCameraID());
 }
 
@@ -440,8 +447,13 @@ static void RenderSceneCB()
 
 	if(ibex != NULL && (ibex->renderer->window.getSelectedVideo() || ibex->renderer->window.getSelectedCamera())) {
 		if(ibex->renderer->window.getSelectedVideo()) {
-			std::thread videoThread(playVideo);
-			videoThread.detach();
+			static std::thread *videoThread = 0;
+			if(videoThread) {
+				delete videoThread;
+				videoThread = 0;
+			}
+			videoThread = new std::thread(playVideo);
+			videoThread->detach();
 		} else {
 			std::thread videoThread(playCamera);
 			videoThread.detach();
