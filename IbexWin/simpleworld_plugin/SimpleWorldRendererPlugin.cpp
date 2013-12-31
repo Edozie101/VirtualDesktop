@@ -973,12 +973,18 @@ void SimpleWorldRendererPlugin::step(Desktop3DLocation &loc, double timeDiff_, c
                                           playerPosition));
     
     
+	static bool firstBringUpDisplay = true;
     if(_bringUpIbexDisplay) {
         _bringUpIbexDisplay = false;
 
-		glm::vec3 p(glm::mat4(glm::inverse(playerCamera)) * glm::vec4(0,0,-10,1));
+		glm::mat4 rot(firstBringUpDisplay ? glm::mat4() : (orientationRift*playerRotation));
+		glm::mat4 playerCamera2(glm::translate(rot,
+									           playerPosition));
+		glm::vec3 p(glm::mat4(glm::inverse(playerCamera2)) * glm::vec4(0,0,-10,1));
 		ibexDisplayModelTransform = glm::translate(glm::mat4(),
-												   glm::vec3(p.x,p.y,p.z))*glm::inverse(playerRotation);
+												   glm::vec3(p.x,p.y,p.z))*glm::inverse(rot);
+
+		firstBringUpDisplay = false;
     }
     
     
