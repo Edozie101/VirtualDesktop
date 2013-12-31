@@ -695,7 +695,7 @@ void SimpleWorldRendererPlugin::renderGround(const glm::mat4 &MVP, const glm::ma
     //    checkForErrors();
     //    std::cerr << "Loading ground texture" << std::endl;
 #ifdef _WIN32
-    static const GLuint groundTexture = loadTexture("\\resources\\humus-skybox\\negy.jpg");
+    static const GLuint groundTexture = loadTexture("\\resources\\humus-skybox\\smaller\\negy.jpg");
     //        orientation = getRiftOrientation();
 #else
 #ifdef __APPLE__
@@ -876,9 +876,9 @@ void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &
             float height = getPlayerHeightAtPosition(p.x, p.y);
             
             glm::vec4 position(-p.x,-height-20.0f,-p.y,1);
-            glm::vec4 viewablePosition = view * position;
+            glm::vec4 viewablePosition = PV*position;
             
-            if(viewablePosition.z > 200) continue;
+            if(viewablePosition.z < -200) continue;
             
             model = glm::translate(glm::mat4(), glm::vec3(position));
             model = glm::scale(model, 40.0f, 40.0f, 40.0f);

@@ -118,6 +118,8 @@ unsigned long window = 0;
 unsigned long context = 0;
 
 bool done = 0;
+int physicalOffsetX = 0;
+int physicalOffsetY = 0;
 GLfloat physicalWidth = 1440.0;
 GLfloat physicalHeight = 900.0;
 //GLfloat physicalWidth = 2560.0;
@@ -332,7 +334,7 @@ void renderGL(Desktop3DLocation& loc, double timeDiff_, RendererPlugin *renderer
     
   if (!initedOpenGL) {
     initedOpenGL = true;
-      
+
     if(renderer->getWindowID()) window = renderer->getWindowID();
 //    if (OGRE3D || IRRLICHT) {
       
@@ -457,7 +459,7 @@ Ibex::Ibex::Ibex(int argc, char ** argv) {
     //  prep_root();
     
     std::cerr << "Virtual width: " << width << " height: " << height << std::endl;
-
+    
     if(!OGRE3D)
         initGL();
     
