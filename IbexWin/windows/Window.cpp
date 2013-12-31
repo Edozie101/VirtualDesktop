@@ -157,11 +157,11 @@ Ibex::Window::Window() : visibleWindow(NoWindow),previousVisibleWindow(NoWindow)
 void Ibex::Window::renderInfoWindow() {
     updateRender = false;
     std::vector<std::string> lines;
-	lines.push_back("H. Help");
-    lines.push_back("1. Load Video");
-    lines.push_back("2. Load Stereo Video");
-    lines.push_back("3. Camera");
-    lines.push_back("4. Stereo Camera");
+	lines.push_back(" H. Help ");
+    lines.push_back(" 1. Load Video ");
+    lines.push_back(" 2. Load Stereo Video ");
+    lines.push_back(" 3. Camera ");
+    lines.push_back(" 4. Stereo Camera ");
     lines.push_back(" ");
     lines.push_back(fpsString);
     textRenderer->renderTextToFramebuffer(0, 0, lines, std::vector<bool>());
@@ -177,15 +177,21 @@ void Ibex::Window::renderSettingChangeMessage() {
 void Ibex::Window::renderHelpWindow() {
     updateRender = false;
     std::vector<std::string> lines;
-    lines.push_back("Help: Backpace to go back");
-    lines.push_back("/ - toggle dialog (including help)");
-    lines.push_back("W/S - forward/back   A/D - left/right");
-    lines.push_back("Shift - run          R - reset");
-    lines.push_back("Fn+Shift+F1 - toggle control desktop");
-    lines.push_back("\\ - bring up desktop where looking");
-    lines.push_back("Fn+Shift+F2 - lower rendering quality");
-    lines.push_back("L - lock head-tracking   U - walk follows view");
-    lines.push_back("U - toggle walking follows view");
+    lines.push_back(" Help: Backpace to go back ");
+    lines.push_back(" / - toggle dialog (including help) ");
+    lines.push_back(" W/S - forward/back   A/D - left/right ");
+    lines.push_back(" Shift - run          R - reset ");
+#ifdef WIN32
+	lines.push_back(" Cntrl+Shift+G - toggle control desktop ");
+#else
+    lines.push_back(" Fn+Shift+F1 - toggle control desktop ");
+#endif
+    lines.push_back(" \\ - bring up desktop where looking ");
+#ifdef __APPLE__
+    lines.push_back(" Fn+Shift+F2 - lower rendering quality ");
+#endif
+    lines.push_back(" L - lock head-tracking   U - walk follows view ");
+    lines.push_back(" U - toggle walking follows view ");
     textRenderer->renderTextToFramebuffer(0, 0, lines, std::vector<bool>());
 }
 
@@ -247,11 +253,11 @@ void Ibex::Window::renderFileChooser() {
 void Ibex::Window::renderCameraChooser() {
     updateRender = false;
     std::vector<std::string> lines;
-    lines.push_back("~/Backspace: Back");
+    lines.push_back("~/Backspace: Back ");
     uint startIndex = (selectedFile > NUM_LINES/2) ? selectedFile-NUM_LINES/2 : 0;
     for(uint i = startIndex,index = 0; i < startIndex+NUM_LINES && i < cameras.size(); ++i,++index) {
         std::stringstream ss;
-        ss << i+1 << ". Camera " << cameras[i];
+        ss << i+1 << ". Camera " << cameras[i] << " ";
         lines.push_back(ss.str());
     }
     textRenderer->renderTextToFramebuffer(0, 0, lines, std::vector<bool>());
