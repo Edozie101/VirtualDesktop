@@ -61,12 +61,16 @@ The [Oculus SDK](https://developer.oculusvr.com) and [sixense SDK](http://sixens
 
 For math and video support you need to install the following:
 
-    brew install glm
+    brew install --build-bottle glm assimp freetype
     
-    brew install x264 xvid yasm faac
-    brew install ffmpeg --use-clang
+    brew install --build-bottle x264 xvid yasm faac
+    brew install --build-bottle ffmpeg --use-clang
     brew tap homebrew/science
-    brew install opencv --env=std
+    brew install --build-bottle opencv --env=std
+    brew install --build-bottle glfw3
+
+    # complete list of packages I have installed, probably don't need them all
+    brew install --build-bottle assimp freetype glm jpeg boost gmp lame libtool pkg-config xz cmake lua yasm faac glfw3 imagemagick libpng mad opencv
     
 bullet physics how to build:
 
