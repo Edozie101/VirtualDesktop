@@ -108,15 +108,19 @@ static inline void key_callback(GLFWwindow* window, int key, int scancode, int a
 			break;
 		case 'l':
 		case 'L':
-            lockHeadTracking = !lockHeadTracking;
-            settingChangedMessage = "Rift Head Tracking: "+std::string((lockHeadTracking)?"ON":"OFF");
-            settingChanged = true;
+			if(!down) {
+				lockHeadTracking = !lockHeadTracking;
+				settingChangedMessage = "Rift Head Tracking: "+std::string((lockHeadTracking)?"ON":"OFF");
+				settingChanged = true;
+			}
             break;
 		case 'u':
 		case 'U':
-            walkLockedToView = !walkLockedToView;
-            settingChangedMessage = "Walking Locked to View: "+std::string((walkLockedToView)?"ON":"OFF");
-            settingChanged = true;
+			if(!down) {
+				walkLockedToView = !walkLockedToView;
+				settingChangedMessage = "Walking Locked to View: "+std::string((walkLockedToView)?"ON":"OFF");
+				settingChanged = true;
+			}
             break;
 		case GLFW_KEY_BACKSLASH:
 			if(!down) {
