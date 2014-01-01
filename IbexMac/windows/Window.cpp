@@ -260,7 +260,12 @@ void Ibex::Window::renderCameraChooser() {
         ss << i+1 << ". Camera " << cameras[i] << " ";
         lines.push_back(ss.str());
     }
-    textRenderer->renderTextToFramebuffer(0, 0, lines, std::vector<bool>());
+    uint endIndex = fmin(startIndex+NUM_LINES-1,cameras.size());
+    std::vector<bool> highlighted;
+    for(int i = 0; i < endIndex-startIndex+1; ++i) {
+        highlighted.push_back((i-1) == ((selectedFile > NUM_LINES/2)?(NUM_LINES/2):selectedFile));
+    }
+    textRenderer->renderTextToFramebuffer(0, 0, lines, highlighted);
 }
 
 void Ibex::Window::reset() {
@@ -361,8 +366,13 @@ int Ibex::Window::processKey(unsigned short keyCode, int down) {
         case kVK_ANSI_W:
             if(down) {
                 --selectedFile;
-                if(directoryList.size() < 1)selectedFile = 0;
-                else if(selectedFile >= directoryList.size()) selectedFile = directoryList.size()-1;
+                if(visibleWindow == InfoWindow) {
+                    if(directoryList.size() < 1)selectedFile = 0;
+                    else if(selectedFile >= directoryList.size()) selectedFile = directoryList.size()-1;
+                } else if(visibleWindow == CameraChooser) {
+                    if(cameras.size() < 1)selectedFile = 0;
+                    else if(selectedFile >= cameras.size()) selectedFile = cameras.size()-1;
+                }
                 updateRender = true;
             }
             processed = 1;
@@ -371,8 +381,13 @@ int Ibex::Window::processKey(unsigned short keyCode, int down) {
         case kVK_ANSI_S:
             if(down) {
                 ++selectedFile;
-                if(directoryList.size() < 1)selectedFile = 0;
-                else selectedFile %= directoryList.size();
+                if(visibleWindow == InfoWindow) {
+                    if(directoryList.size() < 1)selectedFile = 0;
+                    else selectedFile %= directoryList.size();
+                } else if(visibleWindow == CameraChooser) {
+                    if(cameras.size() < 1)selectedFile = 0;
+                    else selectedFile %= cameras.size();
+                }
                 updateRender = true;
             }
             
@@ -448,7 +463,9 @@ int Ibex::Window::processKey(unsigned short keyCode, int down) {
                     isStereoVideo = (keyCode == kVK_ANSI_2);
                     directoryChanged = true;
                 }
-                visibleWindow = FileChooser;
+                if(visibleWindow == InfoWindow) {
+                    visibleWindow = FileChooser;
+                }
                 updateRender = true;
             }
             
@@ -464,8 +481,10 @@ int Ibex::Window::processKey(unsigned short keyCode, int down) {
                     isStereoVideo = (keyCode == kVK_ANSI_4);
                     directoryChanged = true;
                 }
-                visibleWindow = CameraChooser;
-                cameras = VLCVideoPlayer::listCameras();
+                if(visibleWindow == InfoWindow) {
+                    visibleWindow = CameraChooser;
+                    cameras = VLCVideoPlayer::listCameras();
+                }
                 updateRender = true;
             }
             
@@ -506,8 +525,13 @@ int Ibex::Window::processKey(int key, int down) {
 		case GLFW_KEY_UP:
             if(down) {
                 --selectedFile;
-                if(directoryList.size() < 1)selectedFile = 0;
-                else if(selectedFile >= directoryList.size()) selectedFile = directoryList.size()-1;
+                if(visibleWindow == InfoWindow) {
+                    if(directoryList.size() < 1)selectedFile = 0;
+                    else if(selectedFile >= directoryList.size()) selectedFile = directoryList.size()-1;
+                } else if(visibleWindow == CameraChooser) {
+                    if(cameras.size() < 1)selectedFile = 0;
+                    else if(selectedFile >= cameras.size()) selectedFile = cameras.size()-1;
+                }
             }
             processed = 1;
             break;
@@ -516,8 +540,13 @@ int Ibex::Window::processKey(int key, int down) {
 		case 's':
             if(down) {
                 ++selectedFile;
-				if(directoryList.size() < 1)selectedFile = 0;
-                else selectedFile %= directoryList.size();
+                if(visibleWindow == InfoWindow) {
+                    if(directoryList.size() < 1)selectedFile = 0;
+                    else selectedFile %= directoryList.size();
+                } else if(visibleWindow == CameraChooser) {
+                    if(cameras.size() < 1)selectedFile = 0;
+                    else selectedFile %= cameras.size();
+                }
             }
             
             processed = 1;
@@ -547,7 +576,9 @@ int Ibex::Window::processKey(int key, int down) {
                     isStereoVideo = (key == '2');
                     directoryChanged = true;
                 }
-                visibleWindow = FileChooser;
+                if(visibleWindow == InfoWindow) {
+                    visibleWindow = FileChooser;
+                }
             }
             
             processed = 1;
@@ -563,8 +594,10 @@ int Ibex::Window::processKey(int key, int down) {
                     isStereoVideo = (key == '4');
                     directoryChanged = true;
                 }
-                visibleWindow = CameraChooser;
-                cameras = VLCVideoPlayer::listCameras();
+                if(visibleWindow == InfoWindow) {
+                    visibleWindow = CameraChooser;
+                    cameras = VLCVideoPlayer::listCameras();
+                }
                 updateRender = true;
             }
             
