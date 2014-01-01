@@ -6,11 +6,13 @@
 //  Copyright (c) 2013 Hesham Wahba. All rights reserved.
 //
 
-#include "../opengl_helpers.h"
+#import "../opengl_helpers.h"
 
 #import <Foundation/Foundation.h>
 #import <OpenGL/OpenGL.h>
 #import <AppKit/AppKit.h>
+
+#import "VLCVideoPlayer.h"
 
 @interface IbexVideoPlayer : NSObject {
     NSOpenGLContext* newContext;
@@ -19,6 +21,7 @@
 @property (retain,nonatomic) NSOpenGLPixelFormat *pixelFormat;
 @property (retain,nonatomic) NSOpenGLContext *share;
 @property (nonatomic)        GLuint *videoTexture;
+@property (nonatomic)        Ibex::VLCVideoPlayer *player;
 
 - (int)loadVideo:(NSString*)fileName_ andIsStereo:(bool)isStereo;
 - (int)loadCamera:(NSNumber*)cameraID andIsStereo:(bool)isStereo;

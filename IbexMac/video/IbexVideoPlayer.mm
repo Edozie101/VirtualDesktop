@@ -13,14 +13,13 @@
 
 @implementation IbexVideoPlayer
 
-static Ibex::VLCVideoPlayer *player = 0;
 - (id)init
 {
     self = [super init];
     if (self) {
         _videoTexture = new GLuint[2];
         _videoTexture[0] = _videoTexture[1] = 0;
-        player = new Ibex::VLCVideoPlayer();
+        _player = 0;
     }
     return self;
 }
@@ -32,11 +31,17 @@ static Ibex::VLCVideoPlayer *player = 0;
         isStereo = ((NSNumber*)a[1]).integerValue;
     }
     
+    if(_player) {
+        delete _player;
+        _player = 0;
+    }
     newContext = [[NSOpenGLContext alloc] initWithFormat:_pixelFormat shareContext:_share];
     [newContext makeCurrentContext];
     
-    _videoTexture = player->videoTexture;
-    player->playVideo(fileName.UTF8String, isStereo, 0, 0, (__bridge_retained void*)newContext);//(__bridge_retained void *)self);
+    _player = new Ibex::VLCVideoPlayer();
+    
+    _videoTexture = _player->videoTexture;
+    _player->playVideo(fileName.UTF8String, isStereo, 0, 0, (__bridge_retained void*)newContext);//(__bridge_retained void *)self);
     //[NSOpenGLContext clearCurrentContext];
     
     //delete []player;
@@ -52,21 +57,26 @@ static Ibex::VLCVideoPlayer *player = 0;
         isStereo = ((NSNumber*)a[1]).integerValue;
     }
     
+    if(_player) {
+        delete _player;
+        _player = 0;
+    }
     newContext = [[NSOpenGLContext alloc] initWithFormat:_pixelFormat shareContext:_share];
     [newContext makeCurrentContext];
+    _player = new Ibex::VLCVideoPlayer();
     
-    _videoTexture = player->videoTexture;
-    player->openCamera(isStereo, cameraID.intValue);
+    _videoTexture = _player->videoTexture;
+    _player->openCamera(isStereo, cameraID.intValue);
     [NSOpenGLContext clearCurrentContext];
     
     return 0;
 }
 
 - (GLfloat)width {
-    return player->width;
+    return (_player) ? _player->width : 0;
 }
 - (GLfloat)height {
-    return player->height;
+    return (_player) ? _player->height : 0;
 }
 
 void setupVideoGLContext(void *data) {

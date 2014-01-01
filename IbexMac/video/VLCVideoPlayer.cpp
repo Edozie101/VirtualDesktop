@@ -82,16 +82,18 @@ static void vlcdisplay(void *data, void *id) {
 
 //setup GL context by OS
 #if __APPLE__
-    static bool init2 = false;
-    if(!init2) {
-        init2 = true;
-        setupVideoGLContext(c->data);
-    }
+    // TODO: probably delete this, confirm no static init and only run-once init needed before getting rid of
+    //static bool init2 = false;
+    //if(!init2) {
+    //    init2 = true;
+//        setupVideoGLContext(c->data);
+    //}
 #else
 #ifdef WIN32
   makeCurrentGL = (void(*)())c->data;
   makeCurrentGL();
 #else
+ // TODO: GET RID OF THIS STATIC STUFF!  MOVE INTO INIT FUNCTION OR SOMETHING
  // Create the pixmap, where one designs the scene
   static Pixmap pix = XCreatePixmap(c->dpy, c->root, VIDEOWIDTH, VIDEOHEIGHT, vi->depth);
   static GLXPixmap px = glXCreateGLXPixmap(c->dpy, vi, pix);
@@ -106,6 +108,10 @@ static void vlcdisplay(void *data, void *id) {
     
   if(!c->init) {
         c->init = true;
+      
+#if __APPLE__
+      setupVideoGLContext(c->data);
+#endif
       
         c->player->createVideoTextures(c->isStereo, VIDEOWIDTH, VIDEOHEIGHT);
         c->player->width = VIDEOWIDTH;
