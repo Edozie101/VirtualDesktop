@@ -178,6 +178,11 @@ void Ibex::Window::renderHelpWindow() {
     updateRender = false;
     std::vector<std::string> lines;
     lines.push_back(" Help: Backpace to go back ");
+#ifdef WIN32
+    lines.push_back(" Cntrl+Q - Quit ");
+#else
+    lines.push_back(" Cmd+Q - Quit ");
+#endif
     lines.push_back(" / - toggle dialog (including help) ");
     lines.push_back(" W/S - forward/back   A/D - left/right ");
     lines.push_back(" Shift - run          R - reset ");

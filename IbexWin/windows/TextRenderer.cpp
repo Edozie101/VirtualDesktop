@@ -37,6 +37,7 @@ void Ibex::TextRenderer::loadProgram() {
 	IbexDisplayFlatUniformLocations[3] = glGetUniformLocation(standardShaderProgram.shader.program, "textureIn");
 	IbexDisplayFlatUniformLocations[4] = glGetUniformLocation(standardShaderProgram.shader.program, "MV");
     IbexDisplayFlatUniformLocations[5] = glGetUniformLocation(standardShaderProgram.shader.program, "inFade");
+    IbexDisplayFlatUniformLocations[6] = glGetUniformLocation(standardShaderProgram.shader.program, "offset");
 
 	IbexDisplayFlatAttribLocations[0] = glGetAttribLocation(standardShaderProgram.shader.program, "vertexPosition_modelspace");
 	IbexDisplayFlatAttribLocations[1] = glGetAttribLocation(standardShaderProgram.shader.program, "vertexNormal_modelspace");
@@ -393,6 +394,10 @@ void Ibex::TextRenderer::renderText(const glm::mat4 &MVP, const glm::mat4 &V, co
 		}
         
         if(IbexDisplayFlatUniformLocations[5] >= 0) glUniform1f(IbexDisplayFlatUniformLocations[5], fade);
+        
+        if(IbexDisplayFlatUniformLocations[6] >= 0) {
+            glUniform2f(IbexDisplayFlatUniformLocations[6], 0,0);
+        }
 	}
 
 	glBindVertexArray(vaoTextTextureRenderer);

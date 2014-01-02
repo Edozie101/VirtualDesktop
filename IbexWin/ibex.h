@@ -71,6 +71,7 @@ extern Window overlay;
 extern float top, bottom;
 extern unsigned int desktopTexture;
 extern GLuint desktopFBO;
+extern bool videoIsNoise;
 extern GLuint videoTexture[2];
 extern bool mouseBlendAlternate;
 extern unsigned int cursor;

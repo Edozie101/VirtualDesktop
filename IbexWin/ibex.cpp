@@ -93,6 +93,7 @@ GLuint depthBuffer = 0;
 
 GLuint desktopFBO = 0;
 GLuint desktopTexture(0);
+bool videoIsNoise = true;
 GLuint videoTexture[2] = {0,0};
 #ifdef _WIN32
 bool mouseBlendAlternate(false);

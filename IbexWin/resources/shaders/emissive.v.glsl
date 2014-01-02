@@ -9,6 +9,7 @@ uniform mat4 MVP;
 uniform mat4 V;
 uniform mat4 M;
 uniform float inFade = 1.0;
+uniform vec2 offset = vec2(0,0);
 //uniform vec3 LightPosition_worldspace;
 
 // Output data; will be interpolated for each fragment
@@ -18,7 +19,7 @@ out float outFade;
 
 void main()
 {
-    UV = vertexUV;
+    UV = vertexUV+offset;
     gl_Position = MVP*vec4(vertexPosition_modelspace,1);
     outFade = inFade;
 }
