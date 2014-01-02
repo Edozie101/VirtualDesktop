@@ -18,6 +18,7 @@
 // #include <Dwmapi.h>
 
 #include <condition_variable>
+#include <algorithm>
 #include <iostream>
 #include <string>
 #include <thread>
@@ -652,14 +653,20 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	int searchRiftResolutionX = GetPrivateProfileInt(L"rift", L"resolutionX", 1280, L".\\ibex.ini");
 	int searchRiftResolutionY = GetPrivateProfileInt(L"rift", L"resolutionY", 800, L".\\ibex.ini");
 	for(int i = 0; i < monitorCount; ++i) {
-		std::cerr << "Monitor Name[" << i << "]: " << (monitors[i]) << std::endl;
-		const char *monitorName = glfwGetMonitorName(monitors[i]);
+		std::cerr << "Monitor Id[" << i << "]: " << (monitors[i]) << std::endl;
+		
+		std::string monitorName(glfwGetMonitorName(monitors[i]));
+		std::transform(monitorName.begin(), monitorName.end(), monitorName.begin(), ::tolower);
+		std::cerr << "Monitor Name[" << i << "]: " << monitorName << std::endl;
+
 		const GLFWvidmode* mode = glfwGetVideoMode(monitors[i]);
-		if((strcmp(monitorName, /*RiftMonitorName*/"Rift DK") == 0)
-			|| (mode->width == searchRiftResolutionX && mode->height == searchRiftResolutionY)) {
+		if((monitorName.find("rift dk") != std::string::npos) || (mode->width == searchRiftResolutionX && mode->height == searchRiftResolutionY)) {
 			monitor = monitors[i];
-			if(monitor == primaryMonitor) isRiftPrimaryMonitor = true;
-			break;
+			isRiftPrimaryMonitor = (monitor == primaryMonitor);
+			if(monitorName.find("rift dk") != std::string::npos) {
+				// found specifically named Rift display so can exit loop early
+				break;
+			}
 		}
 	}
 
@@ -668,8 +675,12 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	GetDesktopResolution(mainScreenHorizontal, mainScreenVertical);
 	if(isRiftPrimaryMonitor) {
 		for(int i = 0; i < monitorCount; ++i) {
-			std::cerr << "Monitor Name[" << i << "]: " << (monitors[i]) << std::endl;
-			const char *monitorName = glfwGetMonitorName(monitors[i]);
+			std::cerr << "Monitor Id[" << i << "]: " << (monitors[i]) << std::endl;
+
+			std::string monitorName(glfwGetMonitorName(monitors[i]));
+			std::transform(monitorName.begin(), monitorName.end(), monitorName.begin(), ::tolower);
+			std::cerr << "Monitor Name[" << i << "]: " << monitorName << std::endl;
+
 			const GLFWvidmode* mode = glfwGetVideoMode(monitors[i]);
 			if(monitors[i] != monitor) {
 				int xpos=0,ypos=0;
