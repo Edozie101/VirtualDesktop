@@ -293,7 +293,9 @@ void SimpleWorldRendererPlugin::renderIbexDisplayFlat(const glm::mat4 &MVP, cons
         if(IbexDisplayFlatUniformLocations[5] >= 0) glUniform1f(IbexDisplayFlatUniformLocations[5], 1.0);
         if(IbexDisplayFlatUniformLocations[6] >= 0) {
             if(randomize) {
-                glUniform2f(IbexDisplayFlatUniformLocations[6], float(rand()%1280)/1280.0f,float(rand()%720)/720.0f);
+				const float offsetU = float(rand()%1280)/1280.0f;
+				const float offsetV = float(rand()%720)/720.0f;
+                glUniform2f(IbexDisplayFlatUniformLocations[6], offsetU, offsetV);
             } else {
                 glUniform2f(IbexDisplayFlatUniformLocations[6], 0,0);
             }

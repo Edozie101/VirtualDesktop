@@ -9,6 +9,7 @@
 
 #include "IbexWinNative.h"
 #include "opengl_helpers.h"
+#include "ibex_win_utils.h"
 
 #if _USE_SIXENSE
 #include "sixense/sixense_controller.h"
@@ -290,13 +291,16 @@ static void RenderSceneCB()
 		ibex->renderer->window.setSelectedVideo(false);
 		ibex->renderer->window.setSelectedCamera(false);
 	}
+	static const GLuint staticTexture = loadTexture("\\resources\\static.jpg");
 	if(_ibexVideoPlayer != NULL) {
 		videoTexture[0] = _ibexVideoPlayer->videoTexture[0];
 		videoTexture[1] = _ibexVideoPlayer->videoTexture[1];
 		videoWidth = _ibexVideoPlayer->width;
 		videoHeight = _ibexVideoPlayer->height;
 	} else {
-		videoWidth = videoHeight = videoTexture[0] = videoTexture[1] = 0;
+		videoTexture[0] = videoTexture[1] = staticTexture;
+		videoWidth = 1280;
+		videoHeight = 720;
 	}
 
 #if _USE_SIXENSE
