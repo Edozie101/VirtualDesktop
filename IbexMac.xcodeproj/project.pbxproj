@@ -345,6 +345,10 @@
 		4CEEED7B17877DCB0067405F /* libopencv_ts.2.4.5.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4CEEED55178777830067405F /* libopencv_ts.2.4.5.dylib */; };
 		4CEEED7C17877DCB0067405F /* libopencv_video.2.4.5.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4CEEED56178777830067405F /* libopencv_video.2.4.5.dylib */; };
 		4CEEED7D17877DCB0067405F /* libopencv_videostab.2.4.5.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4CEEED57178777830067405F /* libopencv_videostab.2.4.5.dylib */; };
+		4CF1B60A1875152000F8DF0B /* IbexMonitor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CF1B6081875152000F8DF0B /* IbexMonitor.cpp */; };
+		4CF1B60B1875152000F8DF0B /* IbexMonitor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CF1B6081875152000F8DF0B /* IbexMonitor.cpp */; };
+		4CF1B60C1875152000F8DF0B /* IbexMonitor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CF1B6081875152000F8DF0B /* IbexMonitor.cpp */; };
+		4CF1B60D1875152000F8DF0B /* IbexMonitor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CF1B6081875152000F8DF0B /* IbexMonitor.cpp */; };
 		4CF354B9168D0D5000EAA2FE /* MyOpenGLView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4CF354B8168D0D5000EAA2FE /* MyOpenGLView.mm */; };
 		4CF354BC168D0E1600EAA2FE /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CF354BB168D0E1600EAA2FE /* OpenGL.framework */; };
 		4CFA17F61847D29300E8C716 /* Model.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CFA17F41847D29300E8C716 /* Model.cpp */; };
@@ -646,6 +650,9 @@
 		4CEEED55178777830067405F /* libopencv_ts.2.4.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_ts.2.4.5.dylib; path = ../../../../usr/local/Cellar/opencv/2.4.5/lib/libopencv_ts.2.4.5.dylib; sourceTree = "<group>"; };
 		4CEEED56178777830067405F /* libopencv_video.2.4.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_video.2.4.5.dylib; path = ../../../../usr/local/Cellar/opencv/2.4.5/lib/libopencv_video.2.4.5.dylib; sourceTree = "<group>"; };
 		4CEEED57178777830067405F /* libopencv_videostab.2.4.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_videostab.2.4.5.dylib; path = ../../../../usr/local/Cellar/opencv/2.4.5/lib/libopencv_videostab.2.4.5.dylib; sourceTree = "<group>"; };
+		4CF1B6081875152000F8DF0B /* IbexMonitor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IbexMonitor.cpp; sourceTree = "<group>"; };
+		4CF1B6091875152000F8DF0B /* IbexMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IbexMonitor.h; sourceTree = "<group>"; };
+		4CF1B60E1875154B00F8DF0B /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		4CF354B7168D0D5000EAA2FE /* MyOpenGLView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyOpenGLView.h; sourceTree = "<group>"; };
 		4CF354B8168D0D5000EAA2FE /* MyOpenGLView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MyOpenGLView.mm; sourceTree = "<group>"; };
 		4CF354BB168D0E1600EAA2FE /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
@@ -1034,6 +1041,7 @@
 		4CB79870168AB41E00EF5260 /* IbexMac */ = {
 			isa = PBXGroup;
 			children = (
+				4CF1B6071875152000F8DF0B /* monitor */,
 				4C9BEA7517E56A2F00662683 /* Dependencies */,
 				4C49790C17CCC6A0008DC26E /* tinyxml */,
 				4C961B5717B89DB50028D242 /* oculus */,
@@ -1109,6 +1117,16 @@
 			);
 			name = cmake;
 			path = IbexMac/cmake;
+			sourceTree = "<group>";
+		};
+		4CF1B6071875152000F8DF0B /* monitor */ = {
+			isa = PBXGroup;
+			children = (
+				4CF1B60E1875154B00F8DF0B /* CMakeLists.txt */,
+				4CF1B6081875152000F8DF0B /* IbexMonitor.cpp */,
+				4CF1B6091875152000F8DF0B /* IbexMonitor.h */,
+			);
+			path = monitor;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1403,6 +1421,7 @@
 				4C961B6217B89DB50028D242 /* Rift.cpp in Sources */,
 				4C0937A317B1F9CE004EA291 /* ScreenshotView.mm in Sources */,
 				4C011F9C1840388A002583AD /* GLSLShaderProgram.cpp in Sources */,
+				4CF1B60D1875152000F8DF0B /* IbexMonitor.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1422,6 +1441,7 @@
 				4C0D589B16AD656A007BC9CD /* distortions.cpp in Sources */,
 				4C0D589C16AD656A007BC9CD /* opengl_helpers.cpp in Sources */,
 				4CC559AF1865C26F002F7BC6 /* stb_truetype.cpp in Sources */,
+				4CF1B60B1875152000F8DF0B /* IbexMonitor.cpp in Sources */,
 				4C0D589D16AD656A007BC9CD /* RendererPlugin.cpp in Sources */,
 				4C961B4617B899860028D242 /* Filesystem.cpp in Sources */,
 				4C0D589E16AD656A007BC9CD /* iphone_orientation_listener.cpp in Sources */,
@@ -1468,6 +1488,7 @@
 				4C011F8F18402ECB002583AD /* Terrain.cpp in Sources */,
 				4C961B3117B895330028D242 /* IbexVideoPlayer.mm in Sources */,
 				4C961B4E17B899F10028D242 /* sixense_controller.cpp in Sources */,
+				4CF1B60C1875152000F8DF0B /* IbexMonitor.cpp in Sources */,
 				4C49791517CCC6A0008DC26E /* tinyxmlerror.cpp in Sources */,
 				4C6F781E16F4D6150089101F /* BaseApplication.cpp in Sources */,
 				4C6F782416F4D6150089101F /* DotSceneLoader.cpp in Sources */,
@@ -1502,6 +1523,7 @@
 				4CFB0B43168E5D840025AF0F /* distortions.cpp in Sources */,
 				4CFB0B44168E5D840025AF0F /* opengl_helpers.cpp in Sources */,
 				4CC559AE1865C26F002F7BC6 /* stb_truetype.cpp in Sources */,
+				4CF1B60A1875152000F8DF0B /* IbexMonitor.cpp in Sources */,
 				4CFB0B48168E5D960025AF0F /* RendererPlugin.cpp in Sources */,
 				4C961B4517B899860028D242 /* Filesystem.cpp in Sources */,
 				4CAC8D541690A26500341AA0 /* iphone_orientation_listener.cpp in Sources */,
