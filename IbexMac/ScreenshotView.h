@@ -12,11 +12,14 @@
 
 extern NSCondition *cocoaCondition;
 
-@interface ScreenshotView : NSView
+@interface ScreenshotView : NSView {
+    CGContextRef spriteContext;
+    NSOpenGLContext* newContext;
+    GLubyte *spriteData;
+}
 
 @property (retain,nonatomic) NSOpenGLPixelFormat *pixelFormat;
 @property (retain,nonatomic) NSOpenGLContext *share;
-@property (nonatomic) CGContextRef spriteContext;
 
 - (void)loopScreenshot;
 

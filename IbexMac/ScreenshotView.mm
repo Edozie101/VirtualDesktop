@@ -12,13 +12,13 @@
 
 @implementation ScreenshotView
 
-@synthesize spriteContext;
-
 - (id)initWithFrame:(NSRect)frame
 {
     self = [super initWithFrame:frame];
     if (self) {
         spriteContext = nil;
+        newContext = nil;
+        spriteData = NULL;
     }
     
     return self;
@@ -137,7 +137,7 @@ static inline void copyImageToBytes(const CGImageRef &img, const CGImageRef &cur
     glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
 }
 
-- (void)createGLTextureNoAlpha:(GLuint *)texName fromCGImage:(CGImageRef)img andCursor:(CGImageRef)cursorImageRef andDataCache:(GLubyte**)spriteData andClear:(bool)clear
+- (void)createGLTextureNoAlpha:(GLuint *)texName fromCGImage:(CGImageRef)img andCursor:(CGImageRef)cursorImageRef andDataCache:(GLubyte**)spriteData_ andClear:(bool)clear
 {
     bool newTexture = (*texName == 0);
 	GLuint imgW, imgH, texW, texH;
@@ -150,9 +150,9 @@ static inline void copyImageToBytes(const CGImageRef &img, const CGImageRef &cur
     texW = imgW;
     texH = imgH;
 	
-    if(*spriteData == NULL) {
+    if(*spriteData_ == NULL) {
         // Allocated memory needed for the bitmap context
-        *spriteData = (GLubyte*) calloc(texH, texW * 4);
+        *spriteData_ = (GLubyte*) calloc(texH, texW * 4);
         NSLog(@"Allocating more memory - display: %dx%d", texW, texH);
     }
 //    NSLog(@"display: %dx%d", texW, texH);
@@ -161,7 +161,7 @@ static inline void copyImageToBytes(const CGImageRef &img, const CGImageRef &cur
     
 	// Uses the bitmatp creation function provided by the Core Graphics framework.
     if(spriteContext == nil) {
-        spriteContext = CGBitmapContextCreate(*spriteData, texW, texH, 8, texW * 4, /*CGImageGetColorSpace(img)*/space, kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host);
+        spriteContext = CGBitmapContextCreate(*spriteData_, texW, texH, 8, texW * 4, space, kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host);
         
         // Translate and scale the context to draw the image upside-down (conflict in flipped-ness between GL textures and CG contexts)
         CGContextTranslateCTM(spriteContext, 0., texH);
@@ -190,7 +190,7 @@ static inline void copyImageToBytes(const CGImageRef &img, const CGImageRef &cur
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);//GL_LINEAR_MIPMAP_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texW, texH, 0, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, *spriteData);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texW, texH, 0, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, *spriteData_);
     } else {
         glBindTexture(GL_TEXTURE_2D, *texName);
 
@@ -198,7 +198,7 @@ static inline void copyImageToBytes(const CGImageRef &img, const CGImageRef &cur
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);//GL_LINEAR_MIPMAP_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         
-        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, texW, texH, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, *spriteData);
+        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, texW, texH, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, *spriteData_);
     }
 }
 
@@ -221,10 +221,7 @@ static inline void copyImageToBytes(const CGImageRef &img, const CGImageRef &cur
 }
 
 - (void)loopScreenshot {
-    static NSOpenGLContext* newContext = nil;
     newContext = [[NSOpenGLContext alloc] initWithFormat:_pixelFormat shareContext:_share];
-    static GLubyte *s = NULL;
-
     [newContext makeCurrentContext];
     
     CGRect mainDisplayRect = NSScreen.mainScreen.frame;
@@ -253,7 +250,7 @@ static inline void copyImageToBytes(const CGImageRef &img, const CGImageRef &cur
             cursorImageRef = [NSCursor.currentSystemCursor.image CGImageForProposedRect:nil context:nil hints:nil];
         }
         
-        [self createGLTextureNoAlpha:&desktopTexture fromCGImage:img andCursor:cursorImageRef andDataCache:&s andClear:NO];
+        [self createGLTextureNoAlpha:&desktopTexture fromCGImage:img andCursor:cursorImageRef andDataCache:&spriteData andClear:NO];
         
         glFlush();
         CFRelease(a);
