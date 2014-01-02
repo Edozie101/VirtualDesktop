@@ -293,11 +293,13 @@ static void RenderSceneCB()
 	}
 	static const GLuint staticTexture = loadTexture("\\resources\\static.jpg");
 	if(_ibexVideoPlayer != NULL) {
+		videoIsNoise = false;
 		videoTexture[0] = _ibexVideoPlayer->videoTexture[0];
 		videoTexture[1] = _ibexVideoPlayer->videoTexture[1];
 		videoWidth = _ibexVideoPlayer->width;
 		videoHeight = _ibexVideoPlayer->height;
 	} else {
+		videoIsNoise = true;
 		videoTexture[0] = videoTexture[1] = staticTexture;
 		videoWidth = 1280;
 		videoHeight = 720;
