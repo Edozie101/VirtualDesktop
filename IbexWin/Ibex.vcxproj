@@ -84,6 +84,7 @@
     <ClInclude Include="GL\wglext.h" />
     <ClInclude Include="guicon.h" />
     <ClInclude Include="ibex.h" />
+    <ClInclude Include="monitor\IbexMonitor.h" />
     <ClInclude Include="IbexWinNative.h" />
     <ClInclude Include="ibex_win_utils.h" />
     <ClInclude Include="include\GL\glew.h" />
@@ -123,6 +124,7 @@
     <ClCompile Include="GLSLShaderProgram.cpp" />
     <ClCompile Include="guicon.cpp" />
     <ClCompile Include="ibex.cpp" />
+    <ClCompile Include="monitor\IbexMonitor.cpp" />
     <ClCompile Include="IbexWinNative.cpp" />
     <ClCompile Include="IbexWinUtils.cpp" />
     <ClCompile Include="iphone_orientation_plugin\iphone_orientation_listener.cpp" />

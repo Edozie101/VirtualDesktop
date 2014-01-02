@@ -51,9 +51,10 @@ typedef unsigned long GLXContext;
 
 #include "distortions.h"
 
+#include "monitor/IbexMonitor.h"
+
 bool modifiedDesktop(false);
 GLuint VBO(0);
-std::condition_variable screenshotCondition;
 
 Ibex::Ibex *ibex = 0;
 GLFWwindow* glfwWindow;
@@ -197,181 +198,8 @@ static inline void cursor_callback(GLFWwindow *window, double x, double y)
 	//std::cerr << relativeMouseX << ", " << relativeMouseY << std::endl;
 }
 
-static inline void mergeMouseCursor(HDC hdcMemDC)
-{
-	static CURSORINFO cursorinfo = { 0 };
-	static ICONINFO ii = {0};
-	static HCURSOR prevCursor = 0;
-	cursorinfo.cbSize = sizeof(cursorinfo);
-
-	const bool hasCursorInfo = GetCursorInfo(&cursorinfo);
-	if(hasCursorInfo && cursorinfo.hCursor != prevCursor)  {
-		prevCursor = cursorinfo.hCursor;
-		GetIconInfo(cursorinfo.hCursor, &ii);
-	}
-
-	if(hasCursorInfo) 
-	{
-		DrawIconEx(hdcMemDC, cursorinfo.ptScreenPos.x-ii.xHotspot-physicalOffsetX,  cursorinfo.ptScreenPos.y-ii.yHotspot-physicalOffsetY, cursorinfo.hCursor, 0, 0, 0, NULL, DI_NORMAL);
-	}
-}
-
-static inline int CaptureAnImage(HWND hWnd)
-{
-	HDC hdcScreen;
-	HDC hdcWindow;
-	HDC hdcMemDC = NULL;
-	HBITMAP hbmScreen = NULL;
-	BITMAP bmpScreen;
-
-	// Retrieve the handle to a display device context for the client 
-	// area of the window. 
-	hdcScreen = GetDC(NULL);
-	hdcWindow = GetDC(hWnd);
-
-	// Create a compatible DC which is used in a BitBlt from the window DC
-	hdcMemDC = CreateCompatibleDC(hdcWindow); 
-
-	if(!hdcMemDC)
-	{
-		MessageBox(hWnd, L"CreateCompatibleDC has failed",L"Failed", MB_OK);
-		goto done;
-	}
-
-	// Get the client area for size calculation
-	RECT rcClient;
-	GetClientRect(hWnd, &rcClient);
-
-	// Create a compatible bitmap from the Window DC
-	hbmScreen = CreateCompatibleBitmap(hdcWindow, rcClient.right-rcClient.left, rcClient.bottom-rcClient.top);
-
-	if(!hbmScreen)
-	{
-		MessageBox(hWnd, L"CreateCompatibleBitmap Failed",L"Failed", MB_OK);
-		goto done;
-	}
-
-	// Select the compatible bitmap into the compatible memory DC.
-	SelectObject(hdcMemDC,hbmScreen);
-
-	// Get the BITMAP from the HBITMAP
-	GetObject(hbmScreen,sizeof(BITMAP),&bmpScreen);
-
-	BITMAPFILEHEADER   bmfHeader;    
-	BITMAPINFOHEADER   bi;
-
-	bi.biSize = sizeof(BITMAPINFOHEADER);    
-	bi.biWidth = bmpScreen.bmWidth;    
-	bi.biHeight = bmpScreen.bmHeight;  
-	bi.biPlanes = 1;    
-	bi.biBitCount = 24;    
-	bi.biCompression = BI_RGB;    
-	bi.biSizeImage = 0;  
-	bi.biXPelsPerMeter = 0;    
-	bi.biYPelsPerMeter = 0;    
-	bi.biClrUsed = 0;    
-	bi.biClrImportant = 0;
-
-	DWORD dwBmpSize = ((bmpScreen.bmWidth * bi.biBitCount + 23) / 24) * 3 * bmpScreen.bmHeight;
-
-	// Starting with 32-bit Windows, GlobalAlloc and LocalAlloc are implemented as wrapper functions that 
-	// call HeapAlloc using a handle to the process's default heap. Therefore, GlobalAlloc and LocalAlloc 
-	// have greater overhead than HeapAlloc.
-	//HANDLE hDIB = GlobalAlloc(GHND,dwBmpSize); 
-	//char *lpbitmap = (char *)GlobalLock(hDIB);    
-	static char *lpbitmap = new char[dwBmpSize];
-
-	static std::mutex screenshotMutex;
-	static std::unique_lock<std::mutex> screenshotLock(screenshotMutex);
-	screenshotCondition.wait(screenshotLock);
-
-	// Bit block transfer into our compatible memory DC.
-	if(!BitBlt(hdcMemDC, 
-		0,0, 
-		rcClient.right-rcClient.left, rcClient.bottom-rcClient.top, 
-		hdcWindow, 
-		0,0,
-		SRCCOPY | CAPTUREBLT))
-	{
-		MessageBox(hWnd, L"BitBlt has failed", L"Failed", MB_OK);
-		goto done;
-	}
-	mergeMouseCursor(hdcMemDC);
-
-
-	// Gets the "bits" from the bitmap and copies them into a buffer 
-	// which is pointed to by lpbitmap.
-	GetDIBits(hdcWindow, hbmScreen, 0,
-		(UINT)bmpScreen.bmHeight,
-		lpbitmap,
-		(BITMAPINFO *)&bi, DIB_RGB_COLORS);
-
-	if(desktopTexture) {
-		static bool used = false;
-		glBindTexture(GL_TEXTURE_2D, desktopTexture);
-		if(used) {
-			glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, bmpScreen.bmWidth, bmpScreen.bmHeight, GL_BGR, GL_UNSIGNED_BYTE, lpbitmap);
-		} else {
-			used = true;
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, bmpScreen.bmWidth, bmpScreen.bmHeight, 0,
-				GL_BGR, GL_UNSIGNED_BYTE, lpbitmap);
-			//glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_FALSE);
-		}
-		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-
-		//glBindTexture(GL_TEXTURE_2D, 0);
-	}
-
-	// free []lpbitmap;
-
-	//Unlock and Free the DIB from the heap
-	//GlobalUnlock(hDIB);    
-	//GlobalFree(hDIB);
-
-	//Clean up
-done:
-	DeleteObject(hbmScreen);
-	DeleteObject(hdcMemDC);
-	ReleaseDC(NULL,hdcScreen);
-	ReleaseDC(hWnd,hdcWindow);
-
-	return 0;
-}
-
-static HWND captureDesktopHWND = 0;
-static inline void getScreenshot() {
-	HWND hwnd = (captureDesktopHWND) ? captureDesktopHWND : GetDesktopWindow();
-	CaptureAnImage(hwnd);
-}
-
-static HGLRC loaderContext;
-static HDC hdc;
-static bool captureDesktop = true;
-static void loopScreenshot() {
-	wglMakeCurrent(hdc, loaderContext);
-	while(captureDesktop) {
-		getScreenshot();
-
-#ifdef _DEBUG
-		static double timeprev = glfwGetTime();
-		const double time = glfwGetTime();
-		timeprev = time;
-
-		static double timebase = glfwGetTime();
-		static double frame = 0;
-		++frame;
-		static char fpsString[64];
-		if (time - timebase >= 5.0) {
-			sprintf(fpsString,"FPS:%4.2f", frame*5.0/(time-timebase));
-			std::cerr << "Capture " << fpsString << std::endl;
-			timebase = time;
-			frame = 0;
-		}
-#endif
-	}
-}
-
+HDC hdc = 0;
+bool captureDesktop = true;
 HGLRC videoPlayerContext = NULL;
 Ibex::VLCVideoPlayer *_ibexVideoPlayer = NULL;
 void makeCurrentGL() {
@@ -670,6 +498,8 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 		}
 	}
 
+	// if Rift is primaryMonitor set captureDesktopHWND to second desktop so it can be captured
+	HWND captureDesktopHWND = 0;
 	int mainScreenHorizontal = 0;
 	int mainScreenVertical = 0;
 	GetDesktopResolution(mainScreenHorizontal, mainScreenVertical);
@@ -766,15 +596,16 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	hdc = GetDC(hwnd);
 	HGLRC mainContext = wglGetCurrentContext();
 
-	loaderContext = wglCreateContext(hdc);
-	wglShareLists(loaderContext, mainContext); // Order matters
+	// for some reason must do this before sharing lists of mainContext with videoPlayerContext
+	// passing in captureDesktopHWND but in future can set to specific desktop to capture when multiple monitors
+	Ibex::IbexMonitor m(hdc, mainContext, captureDesktopHWND);
 
 	videoPlayerContext = wglCreateContext(hdc);
 	wglShareLists(mainContext, videoPlayerContext);
 
 	mainThreadId = GetCurrentThreadId();
 
-	std::thread screenshotThread(loopScreenshot);
+	std::thread screenshotThread(&Ibex::IbexMonitor::loopScreenshot, &m);
 	std::thread hotkeyThread(globalHotkeyListener);
 
 	disableCompositing();
