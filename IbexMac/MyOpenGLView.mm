@@ -515,6 +515,7 @@ static CGPoint cursorPos;
     
     videoTexture[0] = _ibexVideoPlayer.videoTexture[0];
     videoTexture[1] = _ibexVideoPlayer.videoTexture[1];
+    videoIsNoise = [_ibexVideoPlayer shouldPlayStatic];
     ibex->render(timeDiff);
     
 //    glFlush();

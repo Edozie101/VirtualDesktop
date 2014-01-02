@@ -56,7 +56,7 @@ private:
 
 
 	/////////////
-	GLint IbexDisplayFlatUniformLocations[6];
+	GLint IbexDisplayFlatUniformLocations[7];
     GLint IbexDisplayFlatAttribLocations[3];
     
 	GLuint fboText;

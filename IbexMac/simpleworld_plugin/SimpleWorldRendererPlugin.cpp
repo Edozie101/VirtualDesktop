@@ -206,12 +206,12 @@ void loadShadowProgram() {
     ShadowAttribLocations[1] = glGetAttribLocation(shadowProgram.shader.program, "vertexNormal_modelspace");
     ShadowAttribLocations[2] = glGetAttribLocation(shadowProgram.shader.program, "vertexUV");
 }
-void SimpleWorldRendererPlugin::renderIbexDisplayFlat(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP, GLuint texture_)
+void SimpleWorldRendererPlugin::renderIbexDisplayFlat(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP, GLuint texture_, const bool &randomize)
 {
     static GLuint vaoIbexDisplayFlat = 0;
     static const GLfloat IbexDisplayFlatScale = 10;
     
-    static GLint IbexDisplayFlatUniformLocations[5] = { 0, 0, 0, 0, 0};
+    static GLint IbexDisplayFlatUniformLocations[7] = { 0, 0, 0, 0, 0, 0, 0};
     static GLint IbexDisplayFlatAttribLocations[3] = { 0, 0, 0 };
     
     static GLfloat IbexDisplayFlatVertices[] = {
@@ -248,6 +248,8 @@ void SimpleWorldRendererPlugin::renderIbexDisplayFlat(const glm::mat4 &MVP, cons
         IbexDisplayFlatUniformLocations[2] = glGetUniformLocation(standardShaderProgram.shader.program, "M");
         IbexDisplayFlatUniformLocations[3] = glGetUniformLocation(standardShaderProgram.shader.program, "textureIn");
         IbexDisplayFlatUniformLocations[4] = glGetUniformLocation(standardShaderProgram.shader.program, "MV");
+        IbexDisplayFlatUniformLocations[5] = glGetUniformLocation(standardShaderProgram.shader.program, "inFade");
+        IbexDisplayFlatUniformLocations[6] = glGetUniformLocation(standardShaderProgram.shader.program, "offset");
         
         IbexDisplayFlatAttribLocations[0] = glGetAttribLocation(standardShaderProgram.shader.program, "vertexPosition_modelspace");
         IbexDisplayFlatAttribLocations[1] = glGetAttribLocation(standardShaderProgram.shader.program, "vertexNormal_modelspace");
@@ -287,6 +289,15 @@ void SimpleWorldRendererPlugin::renderIbexDisplayFlat(const glm::mat4 &MVP, cons
         glUniformMatrix4fv(IbexDisplayFlatUniformLocations[1], 1, GL_FALSE, &V[0][0]);
         glUniformMatrix4fv(IbexDisplayFlatUniformLocations[2], 1, GL_FALSE, &M[0][0]);
         glUniformMatrix4fv(IbexDisplayFlatUniformLocations[4], 1, GL_FALSE, &(V*M)[0][0]);
+        
+        if(IbexDisplayFlatUniformLocations[5] >= 0) glUniform1f(IbexDisplayFlatUniformLocations[5], 1.0);
+        if(IbexDisplayFlatUniformLocations[6] >= 0) {
+            if(randomize) {
+                glUniform2f(IbexDisplayFlatUniformLocations[6], float(rand()%1280)/1280.0f,float(rand()%720)/720.0f);
+            } else {
+                glUniform2f(IbexDisplayFlatUniformLocations[6], 0,0);
+            }
+        }
         
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture_);
@@ -839,10 +850,10 @@ void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &
     
     glDisable(GL_CULL_FACE);
 	model = ibexDisplayModelTransform;
-    renderIbexDisplayFlat(PV*model, view, model, shadowPass, depthBiasMVP*model, desktopTexture);
+    renderIbexDisplayFlat(PV*model, view, model, shadowPass, depthBiasMVP*model, desktopTexture, false);
     if(renderVideoTexture) {
         model = glm::translate(model, glm::vec3(30.0f, 0.0f, 0.0f))*glm::scale(1.0f,-1.0f,1.0f);
-        renderIbexDisplayFlat(PV*model, view, model, shadowPass, depthBiasMVP*model, renderVideoTexture);
+        renderIbexDisplayFlat(PV*model, view, model, shadowPass, depthBiasMVP*model, renderVideoTexture, videoIsNoise);
     }
     glEnable(GL_CULL_FACE);
     
