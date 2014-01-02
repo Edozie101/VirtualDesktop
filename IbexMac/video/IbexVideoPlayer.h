@@ -20,9 +20,12 @@
 
 @property (retain,nonatomic) NSOpenGLPixelFormat *pixelFormat;
 @property (retain,nonatomic) NSOpenGLContext *share;
+@property (nonatomic)        GLuint staticTexture;
+@property (nonatomic)        GLuint *staticTextures;
 @property (nonatomic)        GLuint *videoTexture;
 @property (nonatomic)        Ibex::VLCVideoPlayer *player;
 
+- (bool)shouldPlayStatic;
 - (int)loadVideo:(NSString*)fileName_ andIsStereo:(bool)isStereo;
 - (int)loadCamera:(NSNumber*)cameraID andIsStereo:(bool)isStereo;
 - (GLfloat)width;

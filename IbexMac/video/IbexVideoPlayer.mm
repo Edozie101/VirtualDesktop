@@ -11,17 +11,29 @@
 
 #import "VLCVideoPlayer.h"
 
+#import "../ibex_mac_utils.h"
+
 @implementation IbexVideoPlayer
 
 - (id)init
 {
     self = [super init];
     if (self) {
-        _videoTexture = new GLuint[2];
-        _videoTexture[0] = _videoTexture[1] = 0;
+        _staticTexture = loadTexture("/resources/static.jpg");
+        _staticTextures = new GLuint[2];
+        _staticTextures[0] = _staticTextures[1] = _staticTexture;
+        _videoTexture = _staticTextures;
         _player = 0;
     }
     return self;
+}
+
+- (void)dealloc
+{
+    delete [] _staticTextures;
+    glDeleteTextures(1, &_staticTexture);
+    if(_player) delete _player;
+    _player = 0;
 }
 
 - (int)loadVideo:(NSString*)fileName andIsStereo:(bool)isStereo {
@@ -72,11 +84,15 @@
     return 0;
 }
 
+- (bool)shouldPlayStatic {
+    return (_player == 0);
+}
+
 - (GLfloat)width {
-    return (_player) ? _player->width : 0;
+    return (_player) ? _player->width : 1280;
 }
 - (GLfloat)height {
-    return (_player) ? _player->height : 0;
+    return (_player) ? _player->height : 720;
 }
 
 void setupVideoGLContext(void *data) {
