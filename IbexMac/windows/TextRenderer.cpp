@@ -361,9 +361,6 @@ void Ibex::TextRenderer::renderTextDirect(const glm::mat4 &MVP, const glm::mat4 
         if(IbexTextUniformLocations[5] >= 0) {
             glUniform4fv(IbexTextUniformLocations[5], 1, backgroundColor);
         }
-        if(IbexTextUniformLocations[6] >= 0) {
-            glUniform4fv(IbexTextUniformLocations[6], 1, textColor);
-        }
 	}
 
 	glBindVertexArray(vaoTextRenderer);
