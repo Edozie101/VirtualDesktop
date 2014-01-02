@@ -50,6 +50,8 @@ NSCondition *cocoaCondition;
 extern "C" void CGSSetConnectionProperty(int, int, CFStringRef, CFBooleanRef);
 extern "C" int _CGSDefaultConnection();
 - (void)hideCursor {
+    if(![self.window isVisible]) return;
+    
     CFStringRef propertyString;
     
     // Hack to make background cursor setting work
@@ -62,7 +64,7 @@ extern "C" int _CGSDefaultConnection();
 - (void)controlDesktopUpdate {
     [self hideCursor];
     
-    CGDisplayHideCursor(kCGDirectMainDisplay);
+    if([self.window isVisible]) CGDisplayHideCursor(kCGDirectMainDisplay);
     if(controlDesktop) {
         SetSystemUIMode (kUIModeNormal, kUIOptionDisableProcessSwitch);
         [_window setIgnoresMouseEvents:YES];
