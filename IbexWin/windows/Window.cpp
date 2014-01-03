@@ -202,7 +202,7 @@ void Ibex::Window::renderHelpWindow() {
 
 void Ibex::Window::renderFileChooser() {
     updateRender = false;
-#ifdef _WIN32
+#ifdef WIN32
 	uint listingOffset = 1;
 #else
 	uint listingOffset = 2;
@@ -506,7 +506,7 @@ int Ibex::Window::processKey(unsigned short keyCode, int down) {
     return processed;
 }
 #else
-#ifdef _WIN32
+#ifdef WIN32
 int Ibex::Window::processKey(int key, int down) {
 	int processed = 0;
 	if(visibleWindow == SettingChangeMessage) {

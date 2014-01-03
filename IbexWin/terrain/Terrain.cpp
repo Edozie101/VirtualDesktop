@@ -361,7 +361,7 @@ void Terrain::loadHeightmap(const char *filename, int width, int height)
 void Terrain::renderGround(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP, const double &time, const glm::vec3 &playerPosition) {
     //    checkForErrors();
     //    std::cerr << "Loading ground texture" << std::endl;
-#ifdef _WIN32
+#ifdef WIN32
     static const GLuint groundTexture = loadTexture("\\resources\\textures\\grass1\\grass1-diffuse.png");
     static const GLuint groundTexture1 = loadNormalTexture("\\resources\\textures\\grass1\\grass1-normal.png");
     static const GLuint groundTexture2 = loadTexture("\\resources\\textures\\brown1\\brown1-diffuse.png");

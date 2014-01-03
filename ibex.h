@@ -198,7 +198,7 @@ public:
     // Instance of the class that tracks position/orientation of desktop
     Desktop3DLocation desktop3DLocation;
 
-#ifndef _WIN32
+#ifndef WIN32
     struct timespec ts_start;
 #endif
     

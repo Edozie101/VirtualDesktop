@@ -1,7 +1,7 @@
 // IbexWinNative.cpp : Defines the entry point for the application.
 //
 
-#ifdef _WIN32
+#ifdef WIN32
 #include "video/VLCVideoPlayer.h"
 #endif
 

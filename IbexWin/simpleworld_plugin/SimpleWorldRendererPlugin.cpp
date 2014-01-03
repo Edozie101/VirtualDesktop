@@ -19,7 +19,7 @@
 #include "../iphone_orientation_plugin/iphone_orientation_listener.h"
 #include "../sixense/sixense_controller.h"
 
-#ifdef _WIN32
+#ifdef WIN32
 #include "../ibex_win_utils.h"
 #else
 #ifdef __APPLE__
@@ -152,7 +152,7 @@ GLSLShaderProgram waterShaderProgram;
 
 void SimpleWorldRendererPlugin::loadSkybox()
 {
-#ifdef _WIN32
+#ifdef WIN32
     _skybox[0] = loadTexture("\\resources\\humus-skybox\\smaller\\negz.jpg");
     _skybox[1] = loadTexture("\\resources\\humus-skybox\\smaller\\posx.jpg");
     _skybox[2] = loadTexture("\\resources\\humus-skybox\\smaller\\posz.jpg");
@@ -559,7 +559,7 @@ void SimpleWorldRendererPlugin::renderWater(const glm::mat4 &MVP, const glm::mat
 {
     //    checkForErrors();
     //    std::cerr << "Loading Water texture" << std::endl;
-    //#ifdef _WIN32
+    //#ifdef WIN32
     //    static const GLuint WaterTexture = loadTexture("\\resources\\humus-skybox\\posy.jpg");
     //    //        orientation = getRiftOrientation();
     //#else
@@ -707,7 +707,7 @@ void SimpleWorldRendererPlugin::renderGround(const glm::mat4 &MVP, const glm::ma
 {
     //    checkForErrors();
     //    std::cerr << "Loading ground texture" << std::endl;
-#ifdef _WIN32
+#ifdef WIN32
     static const GLuint groundTexture = loadTexture("\\resources\\humus-skybox\\smaller\\negy.jpg");
     //        orientation = getRiftOrientation();
 #else

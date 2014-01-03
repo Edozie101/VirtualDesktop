@@ -10,7 +10,7 @@
 
 #include <sys/types.h>
 #include <stdio.h>
-#ifdef _WIN32
+#ifdef WIN32
 #include <windows.h>
 #include <shlobj.h>
 #include <sys/stat.h>
@@ -25,7 +25,7 @@
 #include <string>
 
 std::string Filesystem::getFullPath(std::string from, std::string to) {
-#ifdef _WIN32
+#ifdef WIN32
 	if(to.size() > 0 && to[0] == '*') {
 		to = to.substr(1);
     }
@@ -41,7 +41,7 @@ std::string Filesystem::getFullPath(std::string from, std::string to) {
 }
 
 bool Filesystem::isFile(std::string path) {
-#ifdef _WIN32
+#ifdef WIN32
 	struct stat s;
 	if(stat(path.c_str(),&s) == 0) {
 		if(s.st_mode & S_IFDIR)
@@ -58,7 +58,7 @@ else
 #endif
 }
 bool Filesystem::isDirectory(std::string path) {
-#ifdef _WIN32
+#ifdef WIN32
 	struct stat s;
 	if(stat(path.c_str(),&s) == 0 && (s.st_mode & S_IFDIR))
 		return true; // dir
@@ -83,7 +83,7 @@ std::string Filesystem::navigate(std::string from, std::string to) {
 }
 
 std::string Filesystem::getHomeDirectory() {
-#ifdef _WIN32
+#ifdef WIN32
 	char path[ MAX_PATH ];
 	if (SHGetFolderPathA( NULL, CSIDL_PROFILE, NULL, 0, path ) != S_OK)
 		return "C:\\";
@@ -99,7 +99,7 @@ std::string Filesystem::getHomeDirectory() {
 std::vector<std::string> Filesystem::listDirectory(const char *directory) {
     std::vector<std::string> result;
 
-#ifdef _WIN32
+#ifdef WIN32
 	struct _finddata_t c_file;
     long hFile;
 
