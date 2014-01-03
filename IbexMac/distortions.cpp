@@ -20,7 +20,7 @@
 
 #include "oculus/Rift.h"
 
-#ifdef _WIN32
+#ifdef WIN32
 #include "ibex_win_utils.h"
 #else
 #ifdef __APPLE__

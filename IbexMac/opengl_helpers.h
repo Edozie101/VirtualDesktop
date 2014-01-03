@@ -24,7 +24,7 @@
 #include <OpenGL/gl3ext.h>
 
 #else
-#ifdef _WIN32
+#ifdef WIN32
 
 //#ifdef USE_GLEW
 //#include "GL/glew.h"

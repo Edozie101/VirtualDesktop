@@ -9,7 +9,7 @@
 // --- Standard library ------------------------------------------------------
 #include <stdlib.h>
 #include <ctype.h>
-#ifndef _WIN32
+#ifndef WIN32
 #include <unistd.h>
 #endif
 #include <time.h>
@@ -95,7 +95,7 @@ GLuint desktopFBO = 0;
 GLuint desktopTexture(0);
 bool videoIsNoise = true;
 GLuint videoTexture[2] = {0,0};
-#ifdef _WIN32
+#ifdef WIN32
 bool mouseBlendAlternate(false);
 #else
 bool mouseBlendAlternate(false);
@@ -351,7 +351,7 @@ void renderGL(Desktop3DLocation& loc, double timeDiff_, RendererPlugin *renderer
       }
 #endif
 
-#ifdef _WIN32
+#ifdef WIN32
 	  //bool r = wglSwapIntervalEXT(5);
 	  //std::cerr << "wglSwapIntervalEXT: " << r << std::endl;
 #endif
@@ -434,7 +434,7 @@ double relativeMouseY = 0;
 
 Ibex::Ibex::Ibex(int argc, char ** argv) {
     int c;
-#ifndef _WIN32
+#ifndef WIN32
     while (argc > 0 && (c = getopt(argc, argv, "oihm")) != -1)
         switch (c) {
             case 'o':
@@ -544,7 +544,7 @@ void Ibex::Ibex::render(double timeDiff) {
         renderer->reset();
     }
     
-    renderer->setDesktopTexture(desktopTexture);
+    //renderer->setDesktopTexture(desktopTexture);
     if(OGRE3D) {
         renderer->move(walkForward+sixenseWalkForward, strafeRight+sixenseStrafeRight, jump, ry, rx);
     }
