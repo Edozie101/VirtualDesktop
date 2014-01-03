@@ -325,11 +325,12 @@ static bool captureInput = true;
 static void globalHotkeyListener() {
 	//AttachThreadInput(mainThreadId,GetCurrentThreadId(),true);
 
-	RegisterHotKey(NULL, 1, MOD_CONTROL | MOD_SHIFT | MOD_NOREPEAT, 'g');
-	RegisterHotKey(NULL, 2, MOD_CONTROL | MOD_SHIFT | MOD_NOREPEAT, 'G');
-	//RegisterHotKey(NULL, 2, MOD_CONTROL | MOD_SHIFT | MOD_NOREPEAT, 'f');
-	//RegisterHotKey(NULL, 2, MOD_CONTROL | MOD_SHIFT | MOD_NOREPEAT, 'F');
-	RegisterHotKey(NULL, 2, MOD_CONTROL | MOD_SHIFT | MOD_NOREPEAT, VK_F2);
+
+	RegisterHotKey(NULL, 1, MOD_CONTROL | MOD_SHIFT /* | MOD_NOREPEAT */, 'g'); // MOD_NOREPEAT not available on XP
+	RegisterHotKey(NULL, 2, MOD_CONTROL | MOD_SHIFT /*| MOD_NOREPEAT*/, 'G'); // MOD_NOREPEAT not available on XP
+	//RegisterHotKey(NULL, 2, MOD_CONTROL | MOD_SHIFT /*| MOD_NOREPEAT*/, 'f'); // MOD_NOREPEAT not available on XP
+	//RegisterHotKey(NULL, 2, MOD_CONTROL | MOD_SHIFT /*| MOD_NOREPEAT*/, 'F'); // MOD_NOREPEAT not available on XP
+	RegisterHotKey(NULL, 2, MOD_CONTROL | MOD_SHIFT /*| MOD_NOREPEAT*/, VK_F2); // MOD_NOREPEAT not available on XP
 
 	MSG msg = {0};
 	while (GetMessage(&msg, NULL, 0, 0) && captureInput)
