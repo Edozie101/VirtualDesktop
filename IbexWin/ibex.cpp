@@ -185,58 +185,58 @@ void prep_framebuffers()
     }
     checkForErrors();
     
-  glGenFramebuffers(1, &desktopFBO);
-    if (!checkForErrors()) {
-        std::cerr << "Stage 0z - Problem generating desktop FBO" << std::endl;
-        exit(EXIT_FAILURE);
-    }
-  glBindFramebuffer(GL_FRAMEBUFFER, desktopFBO);
-    if (!checkForErrors() ) {
-        std::cerr << "Stage 0y - Problem generating desktop FBO" << std::endl;
-        exit(EXIT_FAILURE);
-    }
-  if(desktopTexture == 0) {
-    glGenTextures(1, &desktopTexture);
-  }
-  glBindTexture(GL_TEXTURE_2D, desktopTexture);
-    if (!checkForErrors()) {
-        std::cerr << "Stage 0a - Problem generating desktop FBO" << std::endl;
-        exit(EXIT_FAILURE);
-    }
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    if (!checkForErrors()) {
-        std::cerr << "Stage 0b - Problem generating desktop FBO" << std::endl;
-        exit(EXIT_FAILURE);
-    }
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    if (!checkForErrors()) {
-        std::cerr << "Stage 0c - Problem generating desktop FBO" << std::endl;
-        exit(EXIT_FAILURE);
-    }
-#ifdef __APPLE__
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, physicalWidth, physicalHeight, 0, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, 0);
-#else
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, physicalWidth, physicalHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
-#endif
-    
-    if (!checkForErrors()) {
-        std::cerr << "Stage 0d - Problem generating desktop FBO" << std::endl;
-        exit(EXIT_FAILURE);
-    }
-  glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, desktopTexture, 0);
-  // Set the list of draw buffers.
-  GLenum DrawBuffers[1] = {GL_COLOR_ATTACHMENT0};
-  glDrawBuffers(1, DrawBuffers); // "1" is the size of DrawBuffers
-
-  if (!checkForErrors() ||
-      glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-    std::cerr << "Stage 0e - Problem generating desktop FBO" << std::endl;
-    exit(EXIT_FAILURE);
-  }
-  glBindFramebuffer(GL_FRAMEBUFFER, 0);
-  glBindTexture(GL_TEXTURE_2D, 0);
+//  glGenFramebuffers(1, &desktopFBO);
+//    if (!checkForErrors()) {
+//        std::cerr << "Stage 0z - Problem generating desktop FBO" << std::endl;
+//        exit(EXIT_FAILURE);
+//    }
+//  glBindFramebuffer(GL_FRAMEBUFFER, desktopFBO);
+//    if (!checkForErrors() ) {
+//        std::cerr << "Stage 0y - Problem generating desktop FBO" << std::endl;
+//        exit(EXIT_FAILURE);
+//    }
+//  if(desktopTexture == 0) {
+//    glGenTextures(1, &desktopTexture);
+//  }
+//  glBindTexture(GL_TEXTURE_2D, desktopTexture);
+//    if (!checkForErrors()) {
+//        std::cerr << "Stage 0a - Problem generating desktop FBO" << std::endl;
+//        exit(EXIT_FAILURE);
+//    }
+//  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+//    if (!checkForErrors()) {
+//        std::cerr << "Stage 0b - Problem generating desktop FBO" << std::endl;
+//        exit(EXIT_FAILURE);
+//    }
+//  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+//  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+//  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+//    if (!checkForErrors()) {
+//        std::cerr << "Stage 0c - Problem generating desktop FBO" << std::endl;
+//        exit(EXIT_FAILURE);
+//    }
+//#ifdef __APPLE__
+//  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, physicalWidth, physicalHeight, 0, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, 0);
+//#else
+//  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, physicalWidth, physicalHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+//#endif
+//    
+//    if (!checkForErrors()) {
+//        std::cerr << "Stage 0d - Problem generating desktop FBO" << std::endl;
+//        exit(EXIT_FAILURE);
+//    }
+//  glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, desktopTexture, 0);
+//  // Set the list of draw buffers.
+//  GLenum DrawBuffers[1] = {GL_COLOR_ATTACHMENT0};
+//  glDrawBuffers(1, DrawBuffers); // "1" is the size of DrawBuffers
+//
+//  if (!checkForErrors() ||
+//      glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+//    std::cerr << "Stage 0e - Problem generating desktop FBO" << std::endl;
+//    exit(EXIT_FAILURE);
+//  }
+//  glBindFramebuffer(GL_FRAMEBUFFER, 0);
+//  glBindTexture(GL_TEXTURE_2D, 0);
     
     regenerateMainFBORenderDepthBuffer();
 }
@@ -544,7 +544,7 @@ void Ibex::Ibex::render(double timeDiff) {
         renderer->reset();
     }
     
-    renderer->setDesktopTexture(desktopTexture);
+    //renderer->setDesktopTexture(desktopTexture);
     if(OGRE3D) {
         renderer->move(walkForward+sixenseWalkForward, strafeRight+sixenseStrafeRight, jump, ry, rx);
     }

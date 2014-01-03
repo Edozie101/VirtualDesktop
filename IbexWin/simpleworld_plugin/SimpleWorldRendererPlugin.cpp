@@ -39,6 +39,7 @@
 #include "ShadowBufferRenderer.h"
 
 #include "Model.h"
+#include "../monitor/IbexMonitor.h"
 
 glm::vec3 lightInvDir;
 
@@ -852,9 +853,10 @@ void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &
     
     glDisable(GL_CULL_FACE);
 	model = ibexDisplayModelTransform;
-    renderIbexDisplayFlat(PV*model, view, model, shadowPass, depthBiasMVP*model, desktopTexture, false);
+    //renderIbexDisplayFlat(PV*model, view, model, shadowPass, depthBiasMVP*model, desktopTexture, false);
+	ibexMonitor->renderIbexDisplayFlat(PV*model, view, model, shadowPass, depthBiasMVP*model);
     if(renderVideoTexture) {
-        model = glm::translate(model, glm::vec3(30.0f, 0.0f, 0.0f))*glm::scale(1.0f,-1.0f,1.0f);
+        model = glm::translate(model, glm::vec3(20.0f+20.0f+5.0f, 0.0f, 0.0f))*glm::scale(1.0f,-1.0f,1.0f);
         renderIbexDisplayFlat(PV*model, view, model, shadowPass, depthBiasMVP*model, renderVideoTexture, videoIsNoise);
     }
     glEnable(GL_CULL_FACE);

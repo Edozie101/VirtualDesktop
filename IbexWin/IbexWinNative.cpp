@@ -59,6 +59,7 @@ GLuint VBO(0);
 
 Ibex::Ibex *ibex = 0;
 GLFWwindow* glfwWindow;
+Ibex::IbexMonitor *ibexMonitor = 0;
 
 static inline void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {//int key, int action) {
 	int down = action != GLFW_RELEASE;
@@ -271,8 +272,8 @@ static void RenderSceneCB()
 	POINT p;
 	if (GetCursorPos(&p))
 	{
-		cursorPosX = p.x-physicalOffsetX;
-		cursorPosY = physicalHeight-p.y-physicalOffsetY;
+		cursorPosX = p.x;//-physicalOffsetX;
+		cursorPosY = p.y;///*physicalHeight*/-p.y-physicalOffsetY;
 	}
 
 	if(ibex != NULL && (ibex->renderer->window.getSelectedVideo() || ibex->renderer->window.getSelectedCamera())) {
@@ -484,6 +485,9 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	GLFWmonitor** monitors = glfwGetMonitors(&monitorCount);
 	GLFWmonitor* primaryMonitor = glfwGetPrimaryMonitor();
 
+	std::vector<RECT> monitorRECTs;
+	std::vector<HWND> monitorHWNDs;
+	std::vector<Ibex::IbexMonitor*> ibexMonitors;
 	bool isRiftPrimaryMonitor = false;
 	int searchRiftResolutionX = GetPrivateProfileInt(L"rift", L"resolutionX", 1280, L".\\ibex.ini");
 	int searchRiftResolutionY = GetPrivateProfileInt(L"rift", L"resolutionY", 800, L".\\ibex.ini");
@@ -510,35 +514,65 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	int mainScreenHorizontal = 0;
 	int mainScreenVertical = 0;
 	GetDesktopResolution(mainScreenHorizontal, mainScreenVertical);
-	if(isRiftPrimaryMonitor) {
-		for(int i = 0; i < monitorCount; ++i) {
-			std::cerr << "Monitor Id[" << i << "]: " << (monitors[i]) << std::endl;
+	//if(isRiftPrimaryMonitor) {
+	//	for(int i = 0; i < monitorCount; ++i) {
+	//		std::cerr << "Monitor Id[" << i << "]: " << (monitors[i]) << std::endl;
 
-			std::string monitorName(glfwGetMonitorName(monitors[i]));
-			std::transform(monitorName.begin(), monitorName.end(), monitorName.begin(), ::tolower);
-			std::cerr << "Monitor Name[" << i << "]: " << monitorName << std::endl;
+	//		std::string monitorName(glfwGetMonitorName(monitors[i]));
+	//		std::transform(monitorName.begin(), monitorName.end(), monitorName.begin(), ::tolower);
+	//		std::cerr << "Monitor Name[" << i << "]: " << monitorName << std::endl;
 
-			const GLFWvidmode* mode = glfwGetVideoMode(monitors[i]);
-			if(monitors[i] != monitor) {
-				int xpos=0,ypos=0;
-				glfwGetMonitorPos(monitors[i], &xpos, &ypos);
+	//		const GLFWvidmode* mode = glfwGetVideoMode(monitors[i]);
+	//		if(monitors[i] != monitor) {
+	//			int xpos=0,ypos=0;
+	//			glfwGetMonitorPos(monitors[i], &xpos, &ypos);
 
-				physicalOffsetX = xpos;
-				physicalOffsetY = ypos;
-				physicalWidth = mode->width;
-				physicalHeight = mode->height;
+	//			physicalOffsetX = xpos;
+	//			physicalOffsetY = ypos;
+	//			physicalWidth = mode->width;
+	//			physicalHeight = mode->height;
 
-				POINT p;
-				p.x = xpos;
-				p.y = ypos;
-				captureDesktopHWND = WindowFromPoint(p);
+	//			POINT p;
+	//			p.x = xpos;
+	//			p.y = ypos;
+	//			captureDesktopHWND = WindowFromPoint(p);
 
-				break;
-			}
-		}
+	//			//break;
+	//			monitorHWNDs.push_back(captureDesktopHWND);
+	//		}
+	//	}
+	//}
+	for(int i = 0; i < monitorCount; ++i) {
+		std::cerr << "Monitor Id[" << i << "]: " << (monitors[i]) << std::endl;
+
+		std::string monitorName(glfwGetMonitorName(monitors[i]));
+		std::transform(monitorName.begin(), monitorName.end(), monitorName.begin(), ::tolower);
+		std::cerr << "Monitor Name[" << i << "]: " << monitorName << std::endl;
+
+		const GLFWvidmode* mode = glfwGetVideoMode(monitors[i]);
+		//if(monitors[i] != monitor || isRiftPrimaryMonitor) {
+			int xpos=0,ypos=0;
+			glfwGetMonitorPos(monitors[i], &xpos, &ypos);
+
+			physicalOffsetX = xpos;
+			physicalOffsetY = ypos;
+			//physicalWidth = mode->width;
+			//physicalHeight = mode->height;
+
+			POINT p;
+			p.x = xpos;
+			p.y = ypos;
+			HWND hwnd = WindowFromPoint(p);
+
+			RECT rcClient;
+			SetRect(&rcClient, xpos, ypos, xpos+mode->width, ypos+mode->height);
+			monitorRECTs.push_back(rcClient);
+			monitorHWNDs.push_back(hwnd);
+		//}
 	}
-	physicalWidth = mainScreenHorizontal;//1280;//1920;//(false) ? 1920 : width;
-	physicalHeight = mainScreenVertical;//800;//1080;//(false) ? 1080 : height;
+
+	//physicalWidth = mainScreenHorizontal;//1280;//1920;//(false) ? 1920 : width;
+	//physicalHeight = mainScreenVertical;//800;//1080;//(false) ? 1080 : height;
 
 	int xpos = 0;
 	int ypos = 0;
@@ -605,14 +639,23 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 
 	// for some reason must do this before sharing lists of mainContext with videoPlayerContext
 	// passing in captureDesktopHWND but in future can set to specific desktop to capture when multiple monitors
-	Ibex::IbexMonitor m(hdc, mainContext, captureDesktopHWND);
+	//Ibex::IbexMonitor m(hdc, mainContext, captureDesktopHWND);
+	//ibexMonitors.push_back(new Ibex::IbexMonitor(hdc, mainContext, monitorRECTs));
+	ibexMonitor = new Ibex::IbexMonitor(hdc, mainContext, monitorRECTs);
 
 	videoPlayerContext = wglCreateContext(hdc);
 	wglShareLists(mainContext, videoPlayerContext);
 
 	mainThreadId = GetCurrentThreadId();
 
-	std::thread screenshotThread(&Ibex::IbexMonitor::loopScreenshot, &m);
+	//std::thread screenshotThread(&Ibex::IbexMonitor::loopScreenshot, &m);
+	std::thread screenshotThread(&Ibex::IbexMonitor::loopScreenshot, ibexMonitor);
+	//int i = 0;
+	//for(Ibex::IbexMonitor *m : ibexMonitors) {
+	//	if(i++ == 0) continue;
+	//	std::thread *screenshotThread = new std::thread(&Ibex::IbexMonitor::loopScreenshot, m);
+	//	//break;
+	//}
 	std::thread hotkeyThread(globalHotkeyListener);
 
 	disableCompositing();
@@ -637,7 +680,7 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	captureInput = false;
 	std::terminate();
 
-	screenshotThread.join();
+	//screenshotThread.join();
 	hotkeyThread.join();
 
 	return 0;

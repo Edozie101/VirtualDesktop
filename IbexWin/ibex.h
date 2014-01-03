@@ -59,7 +59,7 @@ extern unsigned long window;
 
 extern bool done;
 extern int physicalOffsetX,physicalOffsetY;
-extern float physicalWidth,physicalHeight;
+//extern float physicalWidth,physicalHeight;
 extern float windowWidth, windowHeight;
 extern float videoWidth,videoHeight;
 extern float width,height;
@@ -69,7 +69,7 @@ extern double IOD;
 
 extern Window overlay;
 extern float top, bottom;
-extern unsigned int desktopTexture;
+//extern unsigned int desktopTexture;
 extern GLuint desktopFBO;
 extern bool videoIsNoise;
 extern GLuint videoTexture[2];
