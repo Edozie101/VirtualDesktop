@@ -30,7 +30,7 @@ screenshotMutex()
 #endif
 
 #ifdef WIN32
-::Ibex::IbexMonitor::IbexMonitor(const HDC &hdc, const HGLRC &mainContext, const std::vector<RECT> &desktopRects) :
+Ibex::IbexMonitor::IbexMonitor(const HDC &hdc, const HGLRC &mainContext, const std::vector<RECT> &desktopRects) :
 screenshotMutex()
 	,screenshotLock(0)
 	,desktopRects(desktopRects)
@@ -38,8 +38,6 @@ screenshotMutex()
 	,loaderContext(wglCreateContext(hdc))
 	,captureDesktop(true)
 	,prevCursor(0)
-	,lpbitmap(0)
-	,used(false)
 	,timeprev(glfwGetTime())
 	,timebase(glfwGetTime())
 	,frame(0)
@@ -73,7 +71,7 @@ screenshotMutex()
 }
 #endif
 
-::Ibex::IbexMonitor::~IbexMonitor(void)
+Ibex::IbexMonitor::~IbexMonitor(void)
 {
 }
 
@@ -83,6 +81,8 @@ void Ibex::IbexMonitor::initializeTextures() {
 		const int w = desktopRects[i].right-desktopRects[i].left;
 		const int h = desktopRects[i].bottom-desktopRects[i].top;
 		
+		usedTexture.push_back(false);
+		bitmapCache.push_back(0);
 		heightRatios.push_back(float(h)/float(w));
 		desktopTextures.push_back(0);
 		glGenTextures(1, &desktopTextures[i]);
@@ -253,8 +253,11 @@ inline void Ibex::IbexMonitor::mergeMouseCursor(HDC hdcMemDC)
 	}
 }
 
-inline int Ibex::IbexMonitor::CaptureAnImage(HWND hWnd, const RECT &rcClient, const GLuint &desktopTexture)
+inline int Ibex::IbexMonitor::CaptureAnImage(const HWND &hWnd, const int &desktopNum)
 {
+	const RECT &rcClient = desktopRects[desktopNum];
+	const GLuint &desktopTexture =  desktopTextures[desktopNum];
+
 	//HDC hdcScreen;
 	HDC hdcWindow;
 	HDC hdcMemDC = NULL;
@@ -313,11 +316,13 @@ inline int Ibex::IbexMonitor::CaptureAnImage(HWND hWnd, const RECT &rcClient, co
 	// call HeapAlloc using a handle to the process's default heap. Therefore, GlobalAlloc and LocalAlloc 
 	// have greater overhead than HeapAlloc.
 	//HANDLE hDIB = GlobalAlloc(GHND,dwBmpSize); 
-	//char *lpbitmap = (char *)GlobalLock(hDIB);    
+	//char *lpbitmap = (char *)GlobalLock(hDIB); 
+	char *lpbitmap = bitmapCache[desktopNum];
 	if(lpbitmap == 0) {
 		DWORD dwBmpSize = ((bmpScreen.bmWidth * bi.biBitCount + 23) / 24) * 3 * bmpScreen.bmHeight;
 
 		lpbitmap = new char[dwBmpSize];
+		bitmapCache[desktopNum] = lpbitmap;
 	}
 	screenshotCondition.wait(*screenshotLock);
 
@@ -344,10 +349,10 @@ inline int Ibex::IbexMonitor::CaptureAnImage(HWND hWnd, const RECT &rcClient, co
 
 	if(desktopTexture) {
 		glBindTexture(GL_TEXTURE_2D, desktopTexture);
-		if(used) {
+		if(usedTexture[desktopNum]) {
 			glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, bmpScreen.bmWidth, bmpScreen.bmHeight, GL_BGR, GL_UNSIGNED_BYTE, lpbitmap);
 		} else {
-			//used = true;
+			usedTexture[desktopNum] = true;
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, bmpScreen.bmWidth, bmpScreen.bmHeight, 0,
 				GL_BGR, GL_UNSIGNED_BYTE, lpbitmap);
 			//glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_FALSE);
@@ -377,7 +382,7 @@ done:
 void Ibex::IbexMonitor::getScreenshot() {
 	static HWND hwnd = GetDesktopWindow();
 	for(int i = 0; i < desktopRects.size(); ++i) {
-		CaptureAnImage(hwnd, desktopRects[i], desktopTextures[i]);
+		CaptureAnImage(hwnd, i);
 	}
 }
 

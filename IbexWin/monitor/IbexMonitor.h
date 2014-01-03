@@ -43,11 +43,13 @@ public:
 
 #ifdef WIN32
 	void mergeMouseCursor(HDC hdcMemDC);
-	int CaptureAnImage(HWND hWnd, const RECT &rcClient, const GLuint &desktopTexture);
+	int CaptureAnImage(const HWND &hWnd, const int &desktopNum);
 	void getScreenshot();
 	void loopScreenshot();
 
 private:
+	std::vector<bool> usedTexture;
+	std::vector<char*> bitmapCache;
 	std::vector<RECT> desktopRects;
 	std::vector<GLuint> desktopTextures;
 	std::vector<float> heightRatios;
@@ -58,9 +60,6 @@ private:
 	CURSORINFO cursorinfo;
 	ICONINFO ii;
 	HCURSOR prevCursor;
-
-	char *lpbitmap;
-	bool used;
 
 	double timeprev;
 	double timebase;
