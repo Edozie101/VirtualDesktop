@@ -68,6 +68,9 @@ private:
 #endif
 	std::mutex screenshotMutex;
 	std::unique_lock<std::mutex> *screenshotLock;
+
+	float initialOffsetX;
+	float initialOffsetY;
 };
 
 }

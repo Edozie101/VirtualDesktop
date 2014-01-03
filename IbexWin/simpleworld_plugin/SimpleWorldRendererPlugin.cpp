@@ -834,7 +834,7 @@ void SimpleWorldRendererPlugin::init() {
 }
 
 void SimpleWorldRendererPlugin::reset() {
-    ibexDisplayModelTransform = glm::mat4(glm::translate(glm::mat4(), glm::vec3(0.0f, 0.0f, -10.0f)));
+    ibexDisplayModelTransform = glm::translate(0.0f, 0.0f, -10.0f);
 	_bringUpIbexDisplay = true;
 }
 
@@ -895,7 +895,7 @@ void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &
             
             if(viewablePosition.z < -200) continue;
             
-            model = glm::translate(glm::mat4(), glm::vec3(position));
+            model = glm::translate(glm::vec3(position));
             model = glm::scale(model, 40.0f, 40.0f, 40.0f);
             treeModel.renderScene(standardShaderProgram.shader.program, PV*model, view, model, shadowPass, depthBiasMVP*model);
         }
@@ -906,7 +906,7 @@ void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		if(showGround) {
-			model = glm::translate(glm::mat4(), -glm::vec3(playerPosition_.x, 0, playerPosition_.z));
+			model = glm::translate(-playerPosition_.x, 0.0f, -playerPosition_.z);
 			renderWater(PV*model, view, model, shadowPass, depthBiasMVP*model, time);
 		}
 
@@ -973,7 +973,7 @@ void SimpleWorldRendererPlugin::step(Desktop3DLocation &loc, double timeDiff_, c
     glm::mat4 proj;
     glm::mat4 orthoProj;
     
-    glm::mat4 playerRotation(glm::rotate(glm::mat4(1.0f), (float)loc.getXRotation(), glm::vec3(1, 0, 0)));
+    glm::mat4 playerRotation(glm::rotate((float)loc.getXRotation(), 1.0f, 0.0f, 0.0f));
     playerRotation = glm::rotate(playerRotation, (float)loc.getYRotation(), glm::vec3(0, 1, 0));
     static OVR::Matrix4f currentOrientation;
     if(!lockHeadTracking) currentOrientation = getRiftOrientationNative();
@@ -996,8 +996,7 @@ void SimpleWorldRendererPlugin::step(Desktop3DLocation &loc, double timeDiff_, c
 		glm::mat4 playerCamera2(glm::translate(rot,
 									           playerPosition));
 		glm::vec3 p(glm::mat4(glm::inverse(playerCamera2)) * glm::vec4(0,0,-10,1));
-		ibexDisplayModelTransform = glm::translate(glm::mat4(),
-												   glm::vec3(p.x,p.y,p.z))*glm::inverse(rot);
+		ibexDisplayModelTransform = glm::translate(p)*glm::inverse(rot);
 
 		firstBringUpDisplay = false;
     }

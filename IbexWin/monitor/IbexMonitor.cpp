@@ -23,6 +23,8 @@ std::condition_variable screenshotCondition;
 ::Ibex::IbexMonitor::IbexMonitor() :
 screenshotMutex()
 	,screenshotLock(0)
+	,initialOffsetX(0)
+	,initialOffsetY(0)
 {
 }
 #endif
@@ -42,10 +44,19 @@ screenshotMutex()
 	,timebase(glfwGetTime())
 	,frame(0)
 	,fpsString()
+	,initialOffsetX(0)
+	,initialOffsetY(0)
 {
 	//bool result = wglShareLists(loaderContext, mainContext); // Order matters
 	bool result = wglShareLists(mainContext, loaderContext); // Order matters
 	std::cerr << "Initialized IbexMonitor shareGLLists: " << result << std::endl;
+
+	for(const RECT &r : desktopRects) {
+		if(r.top == 0 && r.left == 0) {
+			initialOffsetX = float(r.right-r.left)/2.0;
+			initialOffsetY = float(r.bottom-r.top)/2.0;
+		}
+	}
 
 	memset(&cursorinfo, 0, sizeof(CURSORINFO));
 	memset(&ii, 0, sizeof(ICONINFO));
@@ -97,16 +108,16 @@ void ::Ibex::IbexMonitor::initializeTextures() {
 void ::Ibex::IbexMonitor::renderIbexDisplayFlat(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP)
 {
 	static GLuint vaoIbexDisplayFlat = 0;
-	static const GLfloat IbexDisplayFlatScale = 10;
+	static const GLfloat IbexDisplayFlatScale = 1.0f;//10;
 
 	static GLint IbexDisplayFlatUniformLocations[7] = { 0, 0, 0, 0, 0, 0, 0};
 	static GLint IbexDisplayFlatAttribLocations[3] = { 0, 0, 0 };
 
 	static GLfloat IbexDisplayFlatVertices[] = {
-		-1.0,  -1, 0.0, 0, 0, -1, 0, 0,
+		0.0, 0, 0.0, 0, 0, -1, 0, 1,
+		1.0, 0.0, 0.0, 0, 0, -1, 1, 1,
 		1.0, -1.0, 0.0, 0, 0, -1, 1, 0,
-		1.0, 1.0, 0.0, 0, 0, -1, 1, 1,
-		-1.0, 1.0, 0.0, 0, 0, -1, 0, 1,
+		0.0, -1.0, 0.0, 0, 0, -1, 0, 0,
 	};
 	static GLuint vboIbexDisplayFlatVertices = 0;
 
@@ -120,12 +131,12 @@ void ::Ibex::IbexMonitor::renderIbexDisplayFlat(const glm::mat4 &MVP, const glm:
 	if(first) {
 		first = false;
 
-		for(int i = 0; i < sizeof(IbexDisplayFlatVertices)/sizeof(GLfloat); ++i) {
-			if(i%8 < 3)
-				IbexDisplayFlatVertices[i] *= IbexDisplayFlatScale;
-			//if(i%8 == 1)
-			//	IbexDisplayFlatVertices[i] *= height/width;
-		}
+		//for(int i = 0; i < sizeof(IbexDisplayFlatVertices)/sizeof(GLfloat); ++i) {
+		//	if(i%8 < 3)
+		//		IbexDisplayFlatVertices[i] *= IbexDisplayFlatScale;
+		//	//if(i%8 == 1)
+		//	//	IbexDisplayFlatVertices[i] *= height/width;
+		//}
 
 		if(standardShaderProgram.shader.program == 0) standardShaderProgram.loadShaderProgram(mResourcePath, "/resources/shaders/emissive.v.glsl", "/resources/shaders/emissive.f.glsl");
 		glUseProgram(standardShaderProgram.shader.program);
@@ -169,8 +180,19 @@ void ::Ibex::IbexMonitor::renderIbexDisplayFlat(const glm::mat4 &MVP, const glm:
 	}
 
 	for(int i = 0; i < desktopTextures.size(); ++i) {
-		glm::mat4 translate = glm::translate(glm::mat4(), i*20.0f, (1.0f-heightRatios[i])/2.0f*20.0f, 0.0f);
-		glm::mat4 scale = glm::scale(1.0f, heightRatios[i], 1.0f);
+		float x = 0;
+		float y = 0;
+		float w = 1;
+		float h = 1;
+#ifdef WIN32
+		const RECT &r = desktopRects[i];
+		x = r.left;
+		y = -r.top;
+		w = r.right-r.left;
+		h = r.bottom-r.top;
+#endif
+		glm::mat4 translate = glm::translate((x-initialOffsetX)/100.0f, (y+initialOffsetY)/100.0f, 0.0f);
+		glm::mat4 scale = glm::scale(w/100.0f, h/100.0f, 1.0f);
 		glm::mat4 MVP2(MVP*translate*scale);
 		glm::mat4 M2(M*translate*scale);
 
