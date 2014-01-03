@@ -60,6 +60,16 @@ screenshotMutex()
 
 	memset(&cursorinfo, 0, sizeof(CURSORINFO));
 	memset(&ii, 0, sizeof(ICONINFO));
+
+	float minX = 0, maxX = 0, minY = 0, maxY = 0;
+	for(int i = 0; i < desktopRects.size(); ++i) {
+		minX = std::min(minX, (float)desktopRects[i].left);
+		maxX = std::max(maxX, (float)desktopRects[i].right);
+		minY = std::min(minY, (float)desktopRects[i].top);
+		maxY = std::max(maxY, (float)desktopRects[i].bottom);
+	}
+
+	monitorBounds = glm::vec4(minX-initialOffsetX, -minY+initialOffsetY, maxX-initialOffsetX, -maxY+initialOffsetY)/100.0f;
 }
 #endif
 
@@ -67,7 +77,7 @@ screenshotMutex()
 {
 }
 
-void ::Ibex::IbexMonitor::initializeTextures() {
+void Ibex::IbexMonitor::initializeTextures() {
 #ifdef WIN32
 	for(int i = 0; i < desktopRects.size(); ++i) {
 		const int w = desktopRects[i].right-desktopRects[i].left;
@@ -105,7 +115,7 @@ void ::Ibex::IbexMonitor::initializeTextures() {
 #endif
 }
 
-void ::Ibex::IbexMonitor::renderIbexDisplayFlat(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP)
+void Ibex::IbexMonitor::renderIbexDisplayFlat(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP)
 {
 	static GLuint vaoIbexDisplayFlat = 0;
 	static const GLfloat IbexDisplayFlatScale = 1.0f;//10;
@@ -221,8 +231,12 @@ void ::Ibex::IbexMonitor::renderIbexDisplayFlat(const glm::mat4 &MVP, const glm:
 	}
 }
 
+glm::vec4 Ibex::IbexMonitor::getBounds() {
+	return monitorBounds;
+}
+
 #ifdef WIN32
-inline void ::Ibex::IbexMonitor::mergeMouseCursor(HDC hdcMemDC)
+inline void Ibex::IbexMonitor::mergeMouseCursor(HDC hdcMemDC)
 {
 	return;
 	cursorinfo.cbSize = sizeof(cursorinfo);
@@ -239,7 +253,7 @@ inline void ::Ibex::IbexMonitor::mergeMouseCursor(HDC hdcMemDC)
 	}
 }
 
-inline int ::Ibex::IbexMonitor::CaptureAnImage(HWND hWnd, const RECT &rcClient, const GLuint &desktopTexture)
+inline int Ibex::IbexMonitor::CaptureAnImage(HWND hWnd, const RECT &rcClient, const GLuint &desktopTexture)
 {
 	//HDC hdcScreen;
 	HDC hdcWindow;
@@ -360,14 +374,14 @@ done:
 	return 0;
 }
 
-void ::Ibex::IbexMonitor::getScreenshot() {
+void Ibex::IbexMonitor::getScreenshot() {
 	static HWND hwnd = GetDesktopWindow();
 	for(int i = 0; i < desktopRects.size(); ++i) {
 		CaptureAnImage(hwnd, desktopRects[i], desktopTextures[i]);
 	}
 }
 
-void ::Ibex::IbexMonitor::loopScreenshot() {
+void Ibex::IbexMonitor::loopScreenshot() {
 	screenshotLock = new std::unique_lock<std::mutex>(screenshotMutex);
 
 	wglMakeCurrent(hdc, loaderContext);

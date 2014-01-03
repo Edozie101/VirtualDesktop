@@ -856,7 +856,8 @@ void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &
     //renderIbexDisplayFlat(PV*model, view, model, shadowPass, depthBiasMVP*model, desktopTexture, false);
 	ibexMonitor->renderIbexDisplayFlat(PV*model, view, model, shadowPass, depthBiasMVP*model);
     if(renderVideoTexture) {
-        model = glm::translate(model, glm::vec3(20.0f+20.0f+5.0f, 0.0f, 0.0f))*glm::scale(1.0f,-1.0f,1.0f);
+		glm::vec4 bounds(ibexMonitor->getBounds());
+        model = glm::translate(model, glm::vec3(bounds[2]+10.0f+1.0f, 0.0f, 0.0f))*glm::scale(1.0f,-1.0f,1.0f);
         renderIbexDisplayFlat(PV*model, view, model, shadowPass, depthBiasMVP*model, renderVideoTexture, videoIsNoise);
     }
     glEnable(GL_CULL_FACE);

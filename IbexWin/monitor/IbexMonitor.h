@@ -39,12 +39,13 @@ public:
 	void initializeTextures();
 	void renderIbexDisplayFlat(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP);
 
+	glm::vec4 getBounds();
+
 #ifdef WIN32
 	void mergeMouseCursor(HDC hdcMemDC);
 	int CaptureAnImage(HWND hWnd, const RECT &rcClient, const GLuint &desktopTexture);
 	void getScreenshot();
 	void loopScreenshot();
-
 
 private:
 	std::vector<RECT> desktopRects;
@@ -71,6 +72,7 @@ private:
 
 	float initialOffsetX;
 	float initialOffsetY;
+	glm::vec4 monitorBounds;
 };
 
 }
