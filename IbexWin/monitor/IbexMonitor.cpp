@@ -2,7 +2,6 @@
 
 #include "../opengl_helpers.h"
 
-
 #include <condition_variable>
 #include <algorithm>
 #include <iostream>
@@ -21,7 +20,8 @@ std::condition_variable screenshotCondition;
 
 #ifdef __APPLE__
 ::Ibex::IbexMonitor::IbexMonitor() :
-screenshotMutex()
+     screenshotMutex()
+    ,desktopTextures()
 	,screenshotLock(0)
 	,initialOffsetX(0)
 	,initialOffsetY(0)
@@ -49,25 +49,10 @@ screenshotMutex()
 	bool result = wglShareLists(mainContext, loaderContext); // Order matters
 	std::cerr << "Initialized IbexMonitor shareGLLists: " << result << std::endl;
 
-	for(const RECT &r : desktopRects) {
-		if(r.top == 0 && r.left == 0) {
-			initialOffsetX = float(r.right-r.left)/2.0;
-			initialOffsetY = float(r.bottom-r.top)/2.0;
-		}
-	}
-
 	memset(&cursorinfo, 0, sizeof(CURSORINFO));
 	memset(&ii, 0, sizeof(ICONINFO));
-
-	float minX = 0, maxX = 0, minY = 0, maxY = 0;
-	for(int i = 0; i < desktopRects.size(); ++i) {
-		minX = std::min(minX, (float)desktopRects[i].left);
-		maxX = std::max(maxX, (float)desktopRects[i].right);
-		minY = std::min(minY, (float)desktopRects[i].top);
-		maxY = std::max(maxY, (float)desktopRects[i].bottom);
-	}
-
-	monitorBounds = glm::vec4(minX-initialOffsetX, -minY+initialOffsetY, maxX-initialOffsetX, -maxY+initialOffsetY)/100.0f;
+    
+    initializeBounds();
 }
 #endif
 
@@ -75,14 +60,33 @@ Ibex::IbexMonitor::~IbexMonitor(void)
 {
 }
 
+void Ibex::IbexMonitor::initializeBounds() {
+    for(const RECT &r : desktopRects) {
+		if(r.top == 0 && r.left == 0) {
+			initialOffsetX = float(r.right-r.left)/2.0;
+			initialOffsetY = float(r.bottom-r.top)/2.0;
+		}
+	}
+    
+    float minX = 0, maxX = 0, minY = 0, maxY = 0;
+	for(int i = 0; i < desktopRects.size(); ++i) {
+		minX = std::min(minX, (float)desktopRects[i].left);
+		maxX = std::max(maxX, (float)desktopRects[i].right);
+		minY = std::min(minY, (float)desktopRects[i].top);
+		maxY = std::max(maxY, (float)desktopRects[i].bottom);
+	}
+    
+	monitorBounds = glm::vec4(minX-initialOffsetX, -minY+initialOffsetY, maxX-initialOffsetX, -maxY+initialOffsetY)/100.0f;
+}
 void Ibex::IbexMonitor::initializeTextures() {
-#ifdef WIN32
 	for(int i = 0; i < desktopRects.size(); ++i) {
 		const int w = desktopRects[i].right-desktopRects[i].left;
 		const int h = desktopRects[i].bottom-desktopRects[i].top;
 		
 		usedTexture.push_back(false);
+#ifdef WIN32
 		bitmapCache.push_back(0);
+#endif
 		heightRatios.push_back(float(h)/float(w));
 		desktopTextures.push_back(0);
 		glGenTextures(1, &desktopTextures[i]);
@@ -112,13 +116,14 @@ void Ibex::IbexMonitor::initializeTextures() {
 		glBindTexture(GL_TEXTURE_2D, 0);
 		checkForErrors();
 	}
-#endif
+    
+    initializeBounds();
 }
 
 void Ibex::IbexMonitor::renderIbexDisplayFlat(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP)
 {
 	static GLuint vaoIbexDisplayFlat = 0;
-	static const GLfloat IbexDisplayFlatScale = 1.0f;//10;
+	//static const GLfloat IbexDisplayFlatScale = 1.0f;//10;
 
 	static GLint IbexDisplayFlatUniformLocations[7] = { 0, 0, 0, 0, 0, 0, 0};
 	static GLint IbexDisplayFlatAttribLocations[3] = { 0, 0, 0 };
@@ -194,13 +199,13 @@ void Ibex::IbexMonitor::renderIbexDisplayFlat(const glm::mat4 &MVP, const glm::m
 		float y = 0;
 		float w = 1;
 		float h = 1;
-#ifdef WIN32
+
 		const RECT &r = desktopRects[i];
 		x = r.left;
 		y = -r.top;
 		w = r.right-r.left;
 		h = r.bottom-r.top;
-#endif
+        
 		glm::mat4 translate = glm::translate((x-initialOffsetX)/100.0f, (y+initialOffsetY)/100.0f, 0.0f);
 		glm::mat4 scale = glm::scale(w/100.0f, h/100.0f, 1.0f);
 		glm::mat4 MVP2(MVP*translate*scale);

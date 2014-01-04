@@ -19,6 +19,8 @@
 #include "opengl_helpers.h"
 
 #include "oculus/Rift.h"
+#undef new
+#undef delete
 
 #ifdef WIN32
 #include "ibex_win_utils.h"

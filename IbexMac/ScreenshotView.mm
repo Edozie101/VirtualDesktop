@@ -8,6 +8,9 @@
 
 #import "ScreenshotView.h"
 
+#import "monitor/IbexMonitor.h"
+#import "simpleworld_plugin/SimpleWorldRendererPlugin.h"
+
 #include "ibex.h"
 
 @implementation ScreenshotView
@@ -225,7 +228,7 @@ static inline void copyImageToBytes(const CGImageRef &img, const CGImageRef &cur
     [newContext makeCurrentContext];
     
     CGRect mainDisplayRect = NSScreen.mainScreen.frame;
-    mainDisplayRect = CGRectMake(0, 0, physicalWidth, physicalHeight);
+    //mainDisplayRect = CGRectMake(0, 0, physicalWidth, physicalHeight);
   
     [newContext makeCurrentContext];
     while(1) {
@@ -250,11 +253,58 @@ static inline void copyImageToBytes(const CGImageRef &img, const CGImageRef &cur
             cursorImageRef = [NSCursor.currentSystemCursor.image CGImageForProposedRect:nil context:nil hints:nil];
         }
         
+        GLuint desktopTexture = 0;
         [self createGLTextureNoAlpha:&desktopTexture fromCGImage:img andCursor:cursorImageRef andDataCache:&spriteData andClear:NO];
         
         glFlush();
         CFRelease(a);
         CGImageRelease(img);
+    }
+}
+
+- (void)initMonitorScreens {
+    screens = [NSArray arrayWithArray:NSScreen.screens];
+    for(NSScreen *screen in screens) {
+        ibexMonitor->desktopRects.push_back(RECT(screen.frame.origin.x,screen.frame.origin.y,screen.frame.origin.x+screen.frame.size.width,screen.frame.origin.y+screen.frame.size.height));
+    }
+    
+    ibexMonitor->initializeTextures();
+}
+
+- (void)loopScreenshotAllDesktops {
+    newContext = [[NSOpenGLContext alloc] initWithFormat:_pixelFormat shareContext:_share];
+    [newContext makeCurrentContext];
+    
+    [self initMonitorScreens];
+    while(1) {
+        [cocoaCondition lock];
+        [cocoaCondition wait];
+        [cocoaCondition unlock];
+        
+        done = 0;
+        for(int i = 0; i < screens.count; ++i) {
+            NSScreen *screen = screens[i];
+            CFArrayRef a = CGWindowListCreate(
+                                              kCGWindowListOptionOnScreenBelowWindow,
+                                              (CGWindowID)_window.windowNumber
+                                              );
+            
+            CGImageRef img = CGWindowListCreateImageFromArray(
+                                                              screen.frame,
+                                                              a,
+                                                              kCGWindowImageDefault
+                                                              );
+            
+            CGImageRef cursorImageRef = nil;
+            if(NSCursor.currentSystemCursor != nil) {
+                cursorImageRef = [NSCursor.currentSystemCursor.image CGImageForProposedRect:nil context:nil hints:nil];
+            }
+            
+            [self createGLTextureNoAlpha:&ibexMonitor->desktopTextures[i] fromCGImage:img andCursor:cursorImageRef andDataCache:&spriteData andClear:NO];
+            CFRelease(a);
+            CGImageRelease(img);
+        }
+        glFlush();
     }
 }
 

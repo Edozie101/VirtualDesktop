@@ -34,6 +34,10 @@
 
 #include "RendererPlugin.h"
 #include "oculus/Rift.h"
+#undef new
+#undef delete
+
+#include "monitor/IbexMonitor.h"
 
 bool doubleBuffered = true;
 char mResourcePath[1024];
@@ -41,6 +45,7 @@ char mResourcePath[1024];
 @implementation MyOpenGLView
 
 static Ibex::Ibex *ibex = nil;
+Ibex::IbexMonitor *ibexMonitor = 0;
 
 static EventHandlerUPP hotKeyFunction;
 
@@ -93,7 +98,8 @@ static OSStatus hotKeyHandler(EventHandlerCallRef nextHandler,EventRef theEvent,
         {
             MyOpenGLView *obj =  (__bridge MyOpenGLView*)userData;
             if(!controlDesktop) {
-                CGDisplayMoveCursorToPoint(kCGDirectMainDisplay, CGPointMake(cursorPosX, physicalHeight-cursorPosY));
+                // TODO: restore to original display and position
+                //CGDisplayMoveCursorToPoint(kCGDirectMainDisplay, CGPointMake(cursorPosX, physicalHeight-cursorPosY));
             }
             controlDesktop = !controlDesktop;
             
@@ -424,15 +430,11 @@ static GLuint desktopTextures[2] = {0, 0};
 }
 
 static CGPoint cursorPos;
-- (GLuint)getScreenshot {
-    {
-        cursorPos = NSEvent.mouseLocation;
-        CGPoint hotSpot = NSCursor.currentSystemCursor.hotSpot;
-        cursorPos.x -= hotSpot.x;
-        cursorPos.y += hotSpot.y;
-    }
-    
-    return desktopTexture;
+- (void)getMousePosition {
+    cursorPos = NSEvent.mouseLocation;
+    CGPoint hotSpot = NSCursor.currentSystemCursor.hotSpot;
+    cursorPos.x -= hotSpot.x;
+    cursorPos.y += hotSpot.y;
 }
 
 - (CVReturn)getFrameForTime:(const CVTimeStamp*)time
@@ -478,9 +480,10 @@ static CGPoint cursorPos;
     dispatch_once(&onceToken, ^{
         glFlush();
         @autoreleasepool {
+            ibexMonitor = new Ibex::IbexMonitor();
             _screenshotView.pixelFormat = self.pixelFormat;
             _screenshotView.share = self.openGLContext;
-            [_screenshotView performSelectorInBackground:@selector(loopScreenshot) withObject:nil];
+            [_screenshotView performSelectorInBackground:@selector(loopScreenshotAllDesktops) withObject:nil];
         }
     });
     
@@ -490,6 +493,7 @@ static CGPoint cursorPos;
         _ibexVideoPlayer.share = self.openGLContext;
 //        [_ibexVideoPlayer performSelectorInBackground:@selector(loadVideo:andIsStereo:) withObject:@[<movieFilePath>,@false]];
     });
+    
     if(ibex != nil && (ibex->renderer->window.getSelectedVideo() || ibex->renderer->window.getSelectedCamera())) {
         if(ibex->renderer->window.getSelectedVideo()) {
             NSString *videoPath = [NSString stringWithUTF8String:ibex->renderer->window.getSelectedVideoPath().c_str()];
@@ -505,7 +509,7 @@ static CGPoint cursorPos;
     videoWidth = [_ibexVideoPlayer width];
     videoHeight = [_ibexVideoPlayer height];
     
-    [self getScreenshot];
+    [self getMousePosition];
     if(controlDesktop) {
         cursorPosX = cursorPos.x;
         cursorPosY = cursorPos.y;

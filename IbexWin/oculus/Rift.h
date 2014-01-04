@@ -9,6 +9,8 @@
 #define Rift_H_
 
 #include "OVR.h"
+#undef new
+#undef delete
 
 extern OVR::Ptr<OVR::DeviceManager> pManager;
 extern OVR::Ptr<OVR::HMDDevice> pHMD;

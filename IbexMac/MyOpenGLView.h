@@ -25,7 +25,7 @@ extern NSCondition *cocoaCondition;
 @property (retain,nonatomic) ScreenshotView *screenshotView;
 @property (retain,nonatomic) IbexVideoPlayer *ibexVideoPlayer;
 
-- (GLuint)getScreenshot;
+- (void)getMousePosition;
 - (CVReturn)getFrameForTime:(const CVTimeStamp*)outputTime;
 
 @end

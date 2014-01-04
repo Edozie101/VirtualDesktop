@@ -16,11 +16,14 @@ extern NSCondition *cocoaCondition;
     CGContextRef spriteContext;
     NSOpenGLContext* newContext;
     GLubyte *spriteData;
+    
+    NSArray *screens;
 }
 
 @property (retain,nonatomic) NSOpenGLPixelFormat *pixelFormat;
 @property (retain,nonatomic) NSOpenGLContext *share;
 
 - (void)loopScreenshot;
+- (void)loopScreenshotAllDesktops;
 
 @end

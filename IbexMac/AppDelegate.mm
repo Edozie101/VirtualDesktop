@@ -20,6 +20,8 @@
 #import <IOKit/graphics/IOGraphicsLib.h>
 
 #include "oculus/Rift.h"
+#undef new
+#undef delete
 
 bool modifiedDesktop(false);
 
@@ -79,11 +81,11 @@ bool modifiedDesktop(false);
     r.origin = CGPointMake(0,0);
     r.size = NSScreen.mainScreen.frame.size;
     
-    physicalWidth = r.size.width;
-    physicalHeight = r.size.height;
+    //physicalWidth = r.size.width;
+    //physicalHeight = r.size.height;
     
-    width = physicalWidth;
-    height = physicalHeight;
+    width = r.size.width; //physicalWidth;
+    height = r.size.height; //physicalHeight;
     windowWidth = width;
     windowHeight = height;
     

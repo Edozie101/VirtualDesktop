@@ -53,6 +53,9 @@
 #include "ibex.h"
 
 #include "oculus/Rift.h"
+#undef new
+#undef delete
+
 #include "sixense/sixense_controller.h"
 
 GLfloat top, bottom;

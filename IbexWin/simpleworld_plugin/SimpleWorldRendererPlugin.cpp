@@ -34,6 +34,8 @@
 #include "SimpleWorldRendererPlugin.h"
 
 #include "../oculus/Rift.h"
+#undef new
+#undef delete
 
 #include "../GLSLShaderProgram.h"
 #include "ShadowBufferRenderer.h"
