@@ -10,6 +10,8 @@
 
 #import <Cocoa/Cocoa.h>
 
+#include <vector>
+
 extern NSCondition *cocoaCondition;
 
 @interface ScreenshotView : NSView {
@@ -18,6 +20,7 @@ extern NSCondition *cocoaCondition;
     GLubyte *spriteData;
     
     NSArray *screens;
+    std::vector<CGRect> cgRects;
 }
 
 @property (retain,nonatomic) NSOpenGLPixelFormat *pixelFormat;

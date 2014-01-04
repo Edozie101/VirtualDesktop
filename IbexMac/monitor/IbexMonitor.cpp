@@ -202,7 +202,11 @@ void Ibex::IbexMonitor::renderIbexDisplayFlat(const glm::mat4 &MVP, const glm::m
 
 		const RECT &r = desktopRects[i];
 		x = r.left;
+#ifdef WIN32
 		y = -r.top;
+#else
+        y = r.top;
+#endif
 		w = r.right-r.left;
 		h = r.bottom-r.top;
         

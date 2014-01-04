@@ -140,7 +140,7 @@ static inline void copyImageToBytes(const CGImageRef &img, const CGImageRef &cur
     glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
 }
 
-- (void)createGLTextureNoAlpha:(GLuint *)texName fromCGImage:(CGImageRef)img andCursor:(CGImageRef)cursorImageRef andDataCache:(GLubyte**)spriteData_ andClear:(bool)clear andSpriteContext:(CGContextRef*)spriteContext_
+- (void)createGLTextureNoAlpha:(GLuint *)texName fromCGImage:(CGImageRef)img andCursor:(CGImageRef)cursorImageRef andDataCache:(GLubyte**)spriteData_ andClear:(bool)clear andSpriteContext:(CGContextRef*)spriteContext_ andScreenRect:(CGRect)rect
 {
     bool newTexture = (*texName == 0);
 	GLuint imgW, imgH, texW, texH;
@@ -178,8 +178,11 @@ static inline void copyImageToBytes(const CGImageRef &img, const CGImageRef &cur
     }
 
 	CGContextDrawImage(*spriteContext_, r, img);
-    const CGRect mouseRect = CGRectMake(cursorPosX, cursorPosY-mouseH, mouseW, mouseH);
-    CGContextDrawImage(*spriteContext_, mouseRect, cursorImageRef);
+    if(cursorPosX >= rect.origin.x && cursorPosX < rect.origin.x+rect.size.width &&
+       cursorPosX >= rect.origin.y && cursorPosY < rect.origin.y+rect.size.height) {
+        const CGRect mouseRect = CGRectMake(cursorPosX-rect.origin.x, cursorPosY-rect.origin.y-mouseH, mouseW, mouseH);
+        CGContextDrawImage(*spriteContext_, mouseRect, cursorImageRef);
+    }
     
     glPixelStorei(GL_UNPACK_ROW_LENGTH, (GLint)texW);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -254,7 +257,7 @@ static inline void copyImageToBytes(const CGImageRef &img, const CGImageRef &cur
         }
         
         GLuint desktopTexture = 0;
-        [self createGLTextureNoAlpha:&desktopTexture fromCGImage:img andCursor:cursorImageRef andDataCache:&spriteData andClear:NO andSpriteContext:&spriteContext];
+        [self createGLTextureNoAlpha:&desktopTexture fromCGImage:img andCursor:cursorImageRef andDataCache:&spriteData andClear:NO andSpriteContext:&spriteContext andScreenRect:mainDisplayRect];
         
         glFlush();
         CFRelease(a);
@@ -264,10 +267,29 @@ static inline void copyImageToBytes(const CGImageRef &img, const CGImageRef &cur
 
 - (void)initMonitorScreens {
     screens = [NSArray arrayWithArray:NSScreen.screens];
-    for(NSScreen *screen in screens) {
-        ibexMonitor->desktopRects.push_back(RECT(screen.frame.origin.x,screen.frame.origin.y,screen.frame.origin.x+screen.frame.size.width,screen.frame.origin.y+screen.frame.size.height));
+//    for(int i = 0; i < screens.count; ++i) {
+//        // screen.frame is WRONG, origin is incorrect, _frame is correct :(
+//        NSScreen *screen = screens[i];
+//        NSLog(@"1Screen: %@", NSStringFromRect(screen.frame));
+//        NSLog(@"2Screen: %@", NSStringFromRect([screen convertRectFromBacking:screen.frame]));
+//        NSLog(@"3Screen: %@", NSStringFromRect([screen convertRectToBacking:screen.frame]));
+//        NSLog(@"4Screen: %@", NSStringFromRect([screen backingAlignedRect:screen.frame options:NSAlignAllEdgesNearest]));
+//        NSRect frame = screen->_frame;
+//        NSLog(@"5Screen: %@", NSStringFromRect(frame));
+//        ibexMonitor->desktopRects.push_back(RECT(screen.frame.origin.x,screen.frame.origin.y,screen.frame.origin.x+screen.frame.size.width,screen.frame.origin.y+screen.frame.size.height));
+//        ibexMonitor->bitmapCache.push_back(0);
+//    }
+    
+    CGDirectDisplayID *onlineDisplays = new CGDirectDisplayID[16];
+    uint32_t displayCount;
+    CGGetOnlineDisplayList(16, onlineDisplays, &displayCount);
+    for(int i = 0; i < displayCount; ++i) {
+        const CGRect r = CGDisplayBounds(onlineDisplays[i]);
+        ibexMonitor->desktopRects.push_back(RECT(r.origin.x,r.origin.y,r.origin.x+r.size.width,r.origin.y+r.size.height));
+        cgRects.push_back(r);
         ibexMonitor->bitmapCache.push_back(0);
     }
+//    exit(0);
     
     ibexMonitor->initializeTextures();
 }
@@ -290,15 +312,17 @@ static inline void copyImageToBytes(const CGImageRef &img, const CGImageRef &cur
         [cocoaCondition unlock];
         
         done = 0;
+        CFArrayRef a = CGWindowListCreate(
+                                          kCGWindowListOptionOnScreenBelowWindow,
+                                          (CGWindowID)_window.windowNumber
+                                          );
+        
         for(int i = 0; i < screens.count; ++i) {
-            NSScreen *screen = screens[i];
-            CFArrayRef a = CGWindowListCreate(
-                                              kCGWindowListOptionOnScreenBelowWindow,
-                                              (CGWindowID)_window.windowNumber
-                                              );
+//            NSScreen *screen = screens[i];
             
+            // screen.frame is WRONG
             CGImageRef img = CGWindowListCreateImageFromArray(
-                                                              screen.frame,
+                                                              cgRects[i],//screen.frame, //CGRectMake(1440,260,1136,640),
                                                               a,
                                                               kCGWindowImageDefault
                                                               );
@@ -310,12 +334,13 @@ static inline void copyImageToBytes(const CGImageRef &img, const CGImageRef &cur
 //            [self savePNGImage:img path:[NSString stringWithFormat:@"/Users/hesh/%d.png",i]];
             
             GLubyte** _spriteData = &ibexMonitor->bitmapCache[i];
-            [self createGLTextureNoAlpha:&ibexMonitor->desktopTextures[i] fromCGImage:img andCursor:cursorImageRef andDataCache:_spriteData andClear:NO andSpriteContext:&spriteContexts[i]];
+            [self createGLTextureNoAlpha:&ibexMonitor->desktopTextures[i] fromCGImage:img andCursor:cursorImageRef andDataCache:_spriteData andClear:NO andSpriteContext:&spriteContexts[i] andScreenRect:cgRects[i]];
             
-            glFlush();
-            CFRelease(a);
             CGImageRelease(img);
         }
+        glFlush();
+        CFRelease(a);
+        
 //        exit(0);
     }
 }
