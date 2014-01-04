@@ -370,8 +370,16 @@ int Ibex::Window::processKey(unsigned short keyCode, int down) {
         case kVK_UpArrow:
         case kVK_ANSI_W:
             if(down) {
-                --selectedFile;
-                if(visibleWindow == InfoWindow) {
+                if(selectedFile > 0) {
+					--selectedFile;
+				} else {
+					if(visibleWindow == FileChooser) {
+						selectedFile = directoryList.size()-1;
+					} else if(visibleWindow == CameraChooser) {
+						selectedFile = cameras.size()-1;
+					}
+				}
+                if(visibleWindow == FileChooser) {
                     if(directoryList.size() < 1)selectedFile = 0;
                     else if(selectedFile >= directoryList.size()) selectedFile = directoryList.size()-1;
                 } else if(visibleWindow == CameraChooser) {
@@ -386,12 +394,10 @@ int Ibex::Window::processKey(unsigned short keyCode, int down) {
         case kVK_ANSI_S:
             if(down) {
                 ++selectedFile;
-                if(visibleWindow == InfoWindow) {
-                    if(directoryList.size() < 1)selectedFile = 0;
-                    else selectedFile %= directoryList.size();
+                if(visibleWindow == FileChooser) {
+                    selectedFile %= directoryList.size();
                 } else if(visibleWindow == CameraChooser) {
-                    if(cameras.size() < 1)selectedFile = 0;
-                    else selectedFile %= cameras.size();
+                    selectedFile %= cameras.size();
                 }
                 updateRender = true;
             }
@@ -529,8 +535,16 @@ int Ibex::Window::processKey(int key, int down) {
         case 'w':
 		case GLFW_KEY_UP:
             if(down) {
-                --selectedFile;
-                if(visibleWindow == InfoWindow) {
+				if(selectedFile > 0) {
+					--selectedFile;
+				} else {
+					if(visibleWindow == FileChooser) {
+						selectedFile = directoryList.size()-1;
+					} else if(visibleWindow == CameraChooser) {
+						selectedFile = cameras.size()-1;
+					}
+				}
+                if(visibleWindow == FileChooser) {
                     if(directoryList.size() < 1)selectedFile = 0;
                     else if(selectedFile >= directoryList.size()) selectedFile = directoryList.size()-1;
                 } else if(visibleWindow == CameraChooser) {
@@ -545,12 +559,10 @@ int Ibex::Window::processKey(int key, int down) {
 		case 's':
             if(down) {
                 ++selectedFile;
-                if(visibleWindow == InfoWindow) {
-                    if(directoryList.size() < 1)selectedFile = 0;
-                    else selectedFile %= directoryList.size();
+                if(visibleWindow == FileChooser) {
+                    selectedFile %= directoryList.size();
                 } else if(visibleWindow == CameraChooser) {
-                    if(cameras.size() < 1)selectedFile = 0;
-                    else selectedFile %= cameras.size();
+                    selectedFile %= cameras.size();
                 }
             }
             
