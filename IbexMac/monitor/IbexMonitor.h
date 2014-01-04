@@ -68,6 +68,10 @@ private:
 #endif
     
 public:
+#ifdef __APPLE__
+    std::vector<GLubyte*> bitmapCache;
+#endif
+    
     std::vector<bool> usedTexture;
 	std::vector<RECT> desktopRects;
 	std::vector<GLuint> desktopTextures;

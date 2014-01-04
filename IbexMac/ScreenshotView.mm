@@ -266,6 +266,7 @@ static inline void copyImageToBytes(const CGImageRef &img, const CGImageRef &cur
     screens = [NSArray arrayWithArray:NSScreen.screens];
     for(NSScreen *screen in screens) {
         ibexMonitor->desktopRects.push_back(RECT(screen.frame.origin.x,screen.frame.origin.y,screen.frame.origin.x+screen.frame.size.width,screen.frame.origin.y+screen.frame.size.height));
+        ibexMonitor->bitmapCache.push_back(0);
     }
     
     ibexMonitor->initializeTextures();
@@ -300,7 +301,8 @@ static inline void copyImageToBytes(const CGImageRef &img, const CGImageRef &cur
                 cursorImageRef = [NSCursor.currentSystemCursor.image CGImageForProposedRect:nil context:nil hints:nil];
             }
             
-            [self createGLTextureNoAlpha:&ibexMonitor->desktopTextures[i] fromCGImage:img andCursor:cursorImageRef andDataCache:&spriteData andClear:NO];
+            GLubyte** _spriteData = &ibexMonitor->bitmapCache[i];
+            [self createGLTextureNoAlpha:&ibexMonitor->desktopTextures[i] fromCGImage:img andCursor:cursorImageRef andDataCache:_spriteData andClear:NO];
             CFRelease(a);
             CGImageRelease(img);
         }
