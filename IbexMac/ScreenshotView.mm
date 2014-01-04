@@ -140,7 +140,7 @@ static inline void copyImageToBytes(const CGImageRef &img, const CGImageRef &cur
     glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
 }
 
-- (void)createGLTextureNoAlpha:(GLuint *)texName fromCGImage:(CGImageRef)img andCursor:(CGImageRef)cursorImageRef andDataCache:(GLubyte**)spriteData_ andClear:(bool)clear
+- (void)createGLTextureNoAlpha:(GLuint *)texName fromCGImage:(CGImageRef)img andCursor:(CGImageRef)cursorImageRef andDataCache:(GLubyte**)spriteData_ andClear:(bool)clear andSpriteContext:(CGContextRef*)spriteContext_
 {
     bool newTexture = (*texName == 0);
 	GLuint imgW, imgH, texW, texH;
@@ -153,7 +153,7 @@ static inline void copyImageToBytes(const CGImageRef &img, const CGImageRef &cur
     texW = imgW;
     texH = imgH;
 	
-    if(*spriteData_ == NULL) {
+    if(*spriteData_ == 0) {
         // Allocated memory needed for the bitmap context
         *spriteData_ = (GLubyte*) calloc(texH, texW * 4);
         NSLog(@"Allocating more memory - display: %dx%d", texW, texH);
@@ -163,23 +163,23 @@ static inline void copyImageToBytes(const CGImageRef &img, const CGImageRef &cur
     static CGColorSpaceRef space = CGColorSpaceCreateDeviceRGB();
     
 	// Uses the bitmatp creation function provided by the Core Graphics framework.
-    if(spriteContext == nil) {
-        spriteContext = CGBitmapContextCreate(*spriteData_, texW, texH, 8, texW * 4, space, kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host);
+    if(*spriteContext_ == nil) {
+        *spriteContext_ = CGBitmapContextCreate(*spriteData_, texW, texH, 8, texW * 4, space, kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host);
         
         // Translate and scale the context to draw the image upside-down (conflict in flipped-ness between GL textures and CG contexts)
-        CGContextTranslateCTM(spriteContext, 0., texH);
-        CGContextScaleCTM(spriteContext, 1., -1.);
+        CGContextTranslateCTM(*spriteContext_, 0., texH);
+        CGContextScaleCTM(*spriteContext_, 1., -1.);
     }
     
     // After you create the context, you can draw the sprite image to the context.
     const CGRect r = CGRectMake(0.0, 0.0, imgW, imgH);
     if(clear) {
-        CGContextClearRect(spriteContext, r);
+        CGContextClearRect(*spriteContext_, r);
     }
 
-	CGContextDrawImage(spriteContext, r, img);
+	CGContextDrawImage(*spriteContext_, r, img);
     const CGRect mouseRect = CGRectMake(cursorPosX, cursorPosY-mouseH, mouseW, mouseH);
-    CGContextDrawImage(spriteContext, mouseRect, cursorImageRef);
+    CGContextDrawImage(*spriteContext_, mouseRect, cursorImageRef);
     
     glPixelStorei(GL_UNPACK_ROW_LENGTH, (GLint)texW);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -254,7 +254,7 @@ static inline void copyImageToBytes(const CGImageRef &img, const CGImageRef &cur
         }
         
         GLuint desktopTexture = 0;
-        [self createGLTextureNoAlpha:&desktopTexture fromCGImage:img andCursor:cursorImageRef andDataCache:&spriteData andClear:NO];
+        [self createGLTextureNoAlpha:&desktopTexture fromCGImage:img andCursor:cursorImageRef andDataCache:&spriteData andClear:NO andSpriteContext:&spriteContext];
         
         glFlush();
         CFRelease(a);
@@ -276,7 +276,14 @@ static inline void copyImageToBytes(const CGImageRef &img, const CGImageRef &cur
     newContext = [[NSOpenGLContext alloc] initWithFormat:_pixelFormat shareContext:_share];
     [newContext makeCurrentContext];
     
+    //NSScreen *appScreen = [self window].screen;
+    
     [self initMonitorScreens];
+    
+    std::vector<CGContextRef> spriteContexts;
+    for(int i = 0; i < screens.count; ++i) {
+        spriteContexts.push_back(0);
+    }
     while(1) {
         [cocoaCondition lock];
         [cocoaCondition wait];
@@ -300,13 +307,16 @@ static inline void copyImageToBytes(const CGImageRef &img, const CGImageRef &cur
             if(NSCursor.currentSystemCursor != nil) {
                 cursorImageRef = [NSCursor.currentSystemCursor.image CGImageForProposedRect:nil context:nil hints:nil];
             }
+//            [self savePNGImage:img path:[NSString stringWithFormat:@"/Users/hesh/%d.png",i]];
             
             GLubyte** _spriteData = &ibexMonitor->bitmapCache[i];
-            [self createGLTextureNoAlpha:&ibexMonitor->desktopTextures[i] fromCGImage:img andCursor:cursorImageRef andDataCache:_spriteData andClear:NO];
+            [self createGLTextureNoAlpha:&ibexMonitor->desktopTextures[i] fromCGImage:img andCursor:cursorImageRef andDataCache:_spriteData andClear:NO andSpriteContext:&spriteContexts[i]];
+            
+            glFlush();
             CFRelease(a);
             CGImageRelease(img);
         }
-        glFlush();
+//        exit(0);
     }
 }
 
