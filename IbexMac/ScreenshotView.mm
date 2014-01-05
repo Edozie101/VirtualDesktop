@@ -140,7 +140,7 @@ static inline void copyImageToBytes(const CGImageRef &img, const CGImageRef &cur
     glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
 }
 
-- (void)createGLTextureNoAlpha:(GLuint *)texName fromCGImage:(CGImageRef)img andCursor:(CGImageRef)cursorImageRef andDataCache:(GLubyte**)spriteData_ andClear:(bool)clear andSpriteContext:(CGContextRef*)spriteContext_ andScreenRect:(CGRect)rect
+- (void)createGLTextureNoAlpha:(GLuint *)texName fromCGImage:(CGImageRef)img andCursor:(CGImageRef)cursorImageRef andDataCache:(GLubyte**)spriteData_ andClear:(bool)clear andSpriteContext:(CGContextRef*)spriteContext_ andScreenRect:(CGRect)rect andHotspot:(NSPoint)hotspot
 {
     bool newTexture = (*texName == 0);
 	GLuint imgW, imgH, texW, texH;
@@ -186,7 +186,7 @@ static inline void copyImageToBytes(const CGImageRef &img, const CGImageRef &cur
 //    NSLog(@"%@, %d, %d, %f", NSStringFromRect(rect), cursorPosX, cursorPosY, float(mouseH));
     if(cursorPosX >= rect.origin.x && cursorPosX < rect.origin.x+rect.size.width &&
        cursorPosX >= rect.origin.y && cursorPosY < rect.origin.y+rect.size.height) {
-        const CGRect mouseRect = CGRectMake(cursorPosX-rect.origin.x, cursorPosY+rect.origin.y-mouseH/2.0, mouseW, mouseH);
+        const CGRect mouseRect = CGRectMake(cursorPosX-hotspot.x-rect.origin.x, cursorPosY+hotspot.y+rect.origin.y-mouseH, mouseW, mouseH);
         CGContextDrawImage(*spriteContext_, mouseRect, cursorImageRef);
     }
     
@@ -263,7 +263,7 @@ static inline void copyImageToBytes(const CGImageRef &img, const CGImageRef &cur
         }
         
         GLuint desktopTexture = 0;
-        [self createGLTextureNoAlpha:&desktopTexture fromCGImage:img andCursor:cursorImageRef andDataCache:&spriteData andClear:NO andSpriteContext:&spriteContext andScreenRect:mainDisplayRect];
+        [self createGLTextureNoAlpha:&desktopTexture fromCGImage:img andCursor:cursorImageRef andDataCache:&spriteData andClear:NO andSpriteContext:&spriteContext andScreenRect:mainDisplayRect andHotspot:CGPointZero];
         
         glFlush();
         CFRelease(a);
@@ -334,13 +334,15 @@ static inline void copyImageToBytes(const CGImageRef &img, const CGImageRef &cur
                                                               );
             
             CGImageRef cursorImageRef = nil;
+            NSPoint hotspot = CGPointZero;
             if(NSCursor.currentSystemCursor != nil) {
                 cursorImageRef = [NSCursor.currentSystemCursor.image CGImageForProposedRect:nil context:nil hints:nil];
+                hotspot = NSCursor.currentSystemCursor.hotSpot;
             }
 //            [self savePNGImage:img path:[NSString stringWithFormat:@"/Users/hesh/%d.png",i]];
             
             GLubyte** _spriteData = &ibexMonitor->bitmapCache[i];
-            [self createGLTextureNoAlpha:&ibexMonitor->desktopTextures[i] fromCGImage:img andCursor:cursorImageRef andDataCache:_spriteData andClear:NO andSpriteContext:&spriteContexts[i] andScreenRect:cgRects[i]];
+            [self createGLTextureNoAlpha:&ibexMonitor->desktopTextures[i] fromCGImage:img andCursor:cursorImageRef andDataCache:_spriteData andClear:NO andSpriteContext:&spriteContexts[i] andScreenRect:cgRects[i] andHotspot:hotspot];
             
             CGImageRelease(img);
         }
