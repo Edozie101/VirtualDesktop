@@ -179,16 +179,10 @@ static inline void copyImageToBytes(const CGImageRef &img, const CGImageRef &cur
 
     CGEventRef event = CGEventCreate(NULL);
     CGPoint cursor = CGEventGetLocation(event);
-    GLuint cursorPosX = cursor.x;
-    GLuint cursorPosY = rect.size.height-cursor.y;
     CFRelease(event);
 	CGContextDrawImage(*spriteContext_, r, img);
-//    NSLog(@"%@, %d, %d, %f", NSStringFromRect(rect), cursorPosX, cursorPosY, float(mouseH));
-    if(cursorPosX >= rect.origin.x && cursorPosX < rect.origin.x+rect.size.width &&
-       cursorPosX >= rect.origin.y && cursorPosY < rect.origin.y+rect.size.height) {
-        const CGRect mouseRect = CGRectMake(cursorPosX-hotspot.x-rect.origin.x, cursorPosY+hotspot.y+rect.origin.y-mouseH, mouseW, mouseH);
-        CGContextDrawImage(*spriteContext_, mouseRect, cursorImageRef);
-    }
+    const CGRect mouseRect = CGRectMake(cursor.x-hotspot.x-rect.origin.x, rect.size.height-cursor.y+hotspot.y+rect.origin.y-mouseH, mouseW, mouseH);
+    CGContextDrawImage(*spriteContext_, mouseRect, cursorImageRef);
     
     glPixelStorei(GL_UNPACK_ROW_LENGTH, (GLint)texW);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
