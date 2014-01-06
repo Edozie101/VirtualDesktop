@@ -1,0 +1,2 @@
+Application icons in case one wants to do a launcher on OSX:
+NSImage *iconImage = [[NSWorkspace sharedWorkspace] iconForFile:@"path"];

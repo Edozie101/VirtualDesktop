@@ -202,19 +202,11 @@ void Ibex::IbexMonitor::renderIbexDisplayFlat(const glm::mat4 &MVP, const glm::m
 
 		const RECT &r = desktopRects[i];
 		x = r.left;
-#ifdef WIN32
 		y = -r.top;
-#else
-        y = r.top;
-#endif
 		w = r.right-r.left;
 		h = r.bottom-r.top;
         
-#ifdef WIN32
         glm::mat4 translate = glm::translate((x-initialOffsetX)/100.0f, (y+initialOffsetY)/100.0f, 0.0f);
-#else
-		glm::mat4 translate = glm::translate((x-initialOffsetX)/100.0f, (-y+initialOffsetY)/100.0f, 0.0f);
-#endif
 		glm::mat4 scale = glm::scale(w/100.0f, h/100.0f, 1.0f);
 		glm::mat4 MVP2(MVP*translate*scale);
 		glm::mat4 M2(M*translate*scale);

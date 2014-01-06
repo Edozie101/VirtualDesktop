@@ -25,7 +25,7 @@ extern std::condition_variable screenshotCondition;
 #ifdef __APPLE__
 typedef struct __RECT {
     const int left,right,top,bottom;
-    __RECT(const int &l, const int &t, const int &r, const int &b)
+    __RECT(int l, int t, int r, int b)
         : left(l),right(r),top(t),bottom(b) {}
 } RECT;
 #endif
@@ -68,6 +68,10 @@ private:
 #endif
     
 public:
+#ifdef __APPLE__
+    std::vector<GLubyte*> bitmapCache;
+#endif
+    
     std::vector<bool> usedTexture;
 	std::vector<RECT> desktopRects;
 	std::vector<GLuint> desktopTextures;
