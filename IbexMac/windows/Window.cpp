@@ -37,6 +37,7 @@ bool endsWith(std::string const &inputString, std::string const &ending)
 Ibex::Window::Window() : visibleWindow(NoWindow),previousVisibleWindow(NoWindow),sizeToFit(false) {
     directoryChanged = true;
     isStereoVideo = 0;
+    isSBSVideo = 0;
     selectedFile = 0;
     selectedVideo = false;
     currentPath = Filesystem::getHomeDirectory();
@@ -159,9 +160,11 @@ void Ibex::Window::renderInfoWindow() {
     std::vector<std::string> lines;
 	lines.push_back(" H. Help ");
     lines.push_back(" 1. Load Video ");
-    lines.push_back(" 2. Load Stereo Video ");
-    lines.push_back(" 3. Camera ");
-    lines.push_back(" 4. Stereo Camera ");
+    lines.push_back(" 2. Load SBS Stereo Video ");
+    lines.push_back(" 3. Load SBS Rift Stereo Video ");
+    lines.push_back(" 4. Load Interlaced Stereo Video ");
+    lines.push_back(" 5. Camera ");
+    lines.push_back(" 6. Stereo Camera ");
     lines.push_back(" ");
     lines.push_back(fpsString);
     textRenderer->renderTextToFramebuffer(0, 0, lines, std::vector<bool>());
@@ -279,6 +282,7 @@ void Ibex::Window::reset() {
 	selectedFile = 0;
 	selectedCamera = 0;
 	isStereoVideo = 0;
+    isSBSVideo = 0;
 	selectedCameraID = 0;
 	visibleWindow = InfoWindow;
 }
@@ -465,13 +469,16 @@ int Ibex::Window::processKey(unsigned short keyCode, int down) {
             
             processed = 1;
             break;
+        case kVK_ANSI_4:
+        case kVK_ANSI_3:
         case kVK_ANSI_2:
         case kVK_ANSI_1:
             if(down) {
                 if(visibleWindow != FileChooser) {
                     directoryList.clear();
                     selectedFile = 0;
-                    isStereoVideo = (keyCode == kVK_ANSI_2);
+                    isStereoVideo = (keyCode == kVK_ANSI_4);// || (keyCode == kVK_ANSI_3) || (keyCode == kVK_ANSI_2);
+                    isSBSVideo = (keyCode == kVK_ANSI_3) || (keyCode == kVK_ANSI_2);
                     directoryChanged = true;
                 }
                 if(visibleWindow == InfoWindow) {
@@ -482,14 +489,14 @@ int Ibex::Window::processKey(unsigned short keyCode, int down) {
             
             processed = 1;
             break;
-        case kVK_ANSI_4:
-        case kVK_ANSI_3:
+        case kVK_ANSI_5:
+        case kVK_ANSI_6:
             if(down) {
                 if(visibleWindow != FileChooser) {
                     directoryList.clear();
                     selectedCamera = 0;
                     selectedCameraID = -1;
-                    isStereoVideo = (keyCode == kVK_ANSI_4);
+                    isStereoVideo = (keyCode == kVK_ANSI_6);
                     directoryChanged = true;
                 }
                 if(visibleWindow == InfoWindow) {

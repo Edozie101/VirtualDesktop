@@ -497,7 +497,11 @@ static CGPoint cursorPos;
     if(ibex != nil && (ibex->renderer->window.getSelectedVideo() || ibex->renderer->window.getSelectedCamera())) {
         if(ibex->renderer->window.getSelectedVideo()) {
             NSString *videoPath = [NSString stringWithUTF8String:ibex->renderer->window.getSelectedVideoPath().c_str()];
-            [_ibexVideoPlayer performSelectorInBackground:@selector(loadVideo:andIsStereo:) withObject:@[videoPath,(ibex->renderer->window.getIsStereoVideo())?@YES : @NO]];
+            [_ibexVideoPlayer performSelectorInBackground:@selector(loadVideo:andIsStereo:andIsSBS:) withObject:@[videoPath,
+                  (ibex->renderer->window.getIsStereoVideo())?@YES : @NO,
+                  [NSNumber numberWithUnsignedInt:ibex->renderer->window.getSBSVideo()]
+                 ]
+             ];
         } else {
             NSNumber *cameraID = [NSNumber numberWithInt:ibex->renderer->window.getSelectedCameraID()];
             [_ibexVideoPlayer performSelectorInBackground:@selector(loadCamera:andIsStereo:) withObject:@[cameraID,(ibex->renderer->window.getIsStereoVideo())?@YES : @NO]];
@@ -521,6 +525,7 @@ static CGPoint cursorPos;
     
     videoTexture[0] = _ibexVideoPlayer.videoTexture[0];
     videoTexture[1] = _ibexVideoPlayer.videoTexture[1];
+    isSBSVideo = _ibexVideoPlayer.isSBS;
     videoIsNoise = [_ibexVideoPlayer shouldPlayStatic];
     ibex->render(timeDiff);
     

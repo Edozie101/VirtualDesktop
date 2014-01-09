@@ -23,10 +23,11 @@
 @property (nonatomic)        GLuint staticTexture;
 @property (nonatomic)        GLuint *staticTextures;
 @property (nonatomic)        GLuint *videoTexture;
+@property (nonatomic)        GLuint isSBS;
 @property (nonatomic)        Ibex::VLCVideoPlayer *player;
 
 - (bool)shouldPlayStatic;
-- (int)loadVideo:(NSString*)fileName_ andIsStereo:(bool)isStereo;
+- (int)loadVideo:(NSString*)fileName andIsStereo:(bool)isStereo andIsSBS:(unsigned int)isSBS;
 - (int)loadCamera:(NSNumber*)cameraID andIsStereo:(bool)isStereo;
 - (GLfloat)width;
 - (GLfloat)height;

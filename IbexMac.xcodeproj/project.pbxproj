@@ -510,6 +510,7 @@
 		4C2DE2FD168B30CC003BEB56 /* ScreenGrabber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScreenGrabber.h; sourceTree = "<group>"; };
 		4C2DE2FE168B30CC003BEB56 /* ScreenGrabber.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScreenGrabber.m; sourceTree = "<group>"; };
 		4C33AA3316970C3B001A1EFC /* IbexMac.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = IbexMac.entitlements; sourceTree = "<group>"; };
+		4C3D9C63187B3F04007211CE /* NOTES */ = {isa = PBXFileReference; lastKnownFileType = text; path = NOTES; sourceTree = "<group>"; };
 		4C41231F16936E4F008F5B15 /* IbexMacUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IbexMacUtils.h; sourceTree = "<group>"; };
 		4C41232016936E4F008F5B15 /* IbexMacUtils.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IbexMacUtils.mm; sourceTree = "<group>"; };
 		4C46D7C616F2B93D00B5DD9E /* libsixense_utils_x64.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsixense_utils_x64.dylib; path = /usr/local/lib/libsixense_utils_x64.dylib; sourceTree = "<absolute>"; };
@@ -934,6 +935,7 @@
 		4CB7985B168AB41E00EF5260 = {
 			isa = PBXGroup;
 			children = (
+				4C3D9C63187B3F04007211CE /* NOTES */,
 				4C961B3C17B897490028D242 /* CMakeLists.txt */,
 				4CD81A3F17C98C1200C94D83 /* cmake */,
 				4CB79870168AB41E00EF5260 /* IbexMac */,

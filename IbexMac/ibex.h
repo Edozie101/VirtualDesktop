@@ -73,6 +73,7 @@ extern float top, bottom;
 extern GLuint desktopFBO;
 extern bool videoIsNoise;
 extern GLuint videoTexture[2];
+extern bool isSBSVideo;
 extern bool mouseBlendAlternate;
 extern unsigned int cursor;
 extern int cursorSize;

@@ -98,6 +98,7 @@ GLuint desktopFBO = 0;
 //GLuint desktopTexture(0);
 bool videoIsNoise = true;
 GLuint videoTexture[2] = {0,0};
+bool isSBSVideo = false;
 #ifdef WIN32
 bool mouseBlendAlternate(false);
 #else

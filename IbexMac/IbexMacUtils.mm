@@ -16,8 +16,68 @@
 #import <Foundation/Foundation.h>
 
 #import "ibex_mac_utils.h"
+#import "filesystem/Filesystem.h"
 
 #include "string.h"
+#include <vector>
+#include <string>
+
+static void *createApplicationListImage(const char *path_, size_t &width, size_t &height) {
+    const bool flip = true;
+    
+    std::vector<std::string> appDirectory = Filesystem::listDirectory("/Applications");
+
+    int appCount = 0;
+    for(int i = 0; i < appDirectory.size(); ++i) {
+        if(appDirectory[i].find(".app") == std::string::npos) continue;
+        ++appCount;
+    }
+    
+    for(int i = 0; i < appDirectory.size(); ++i) {
+        if(appDirectory[i].find(".app") == std::string::npos) continue;
+        
+        const char *path = appDirectory[i].c_str();
+        
+        // NSLog(@"%s", path);
+        NSURL *URL = [NSURL fileURLWithPath:[NSString stringWithCString:path encoding:NSASCIIStringEncoding]];
+        NSLog(@"%@", URL);
+        CFURLRef url = (__bridge CFURLRef)URL;
+        CGImageSourceRef myImageSourceRef = CGImageSourceCreateWithURL(url, NULL);
+        CGImageRef myImageRef = CGImageSourceCreateImageAtIndex (myImageSourceRef, 0, NULL);
+        
+        width = CGImageGetWidth(myImageRef);
+        height = CGImageGetHeight(myImageRef);
+        CGRect rect = CGRectMake(0, 0, width, height);
+        void * myData = calloc(width * 4, height);
+        CGColorSpaceRef space = CGColorSpaceCreateDeviceRGB();
+        CGContextRef myBitmapContext = CGBitmapContextCreate(myData,
+                                                             width, height, 8,
+                                                             width*4, space,
+                                                             kCGBitmapByteOrder32Host |
+                                                             kCGImageAlphaPremultipliedFirst);
+        if(!flip) {
+            CGContextTranslateCTM(myBitmapContext, 0, height);
+            CGContextScaleCTM(myBitmapContext, 1.0, -1.0);
+        }
+        CGContextSetBlendMode(myBitmapContext, kCGBlendModeCopy);
+        CGContextDrawImage(myBitmapContext, rect, myImageRef);
+        CGContextRelease(myBitmapContext);
+        
+        CGColorSpaceRelease(space);
+        CGImageRelease(myImageRef);
+        CFRelease(myImageSourceRef);
+    }
+    
+    return 0;//myData;
+}
+
+void loadApplicationIcons() {
+    std::vector<std::string> listOfApplicationPaths;
+    for(int i = 0; i < listOfApplicationPaths.size(); ++i) {
+        NSString *path = [NSString stringWithCString:listOfApplicationPaths[i].c_str() encoding:[NSString defaultCStringEncoding]];
+        NSImage *iconImage = [[NSWorkspace sharedWorkspace] iconForFile:path];
+    }
+}
 
 static void *getImageData(const char *path_, size_t &width, size_t &height, bool flip, bool isAbsolutePath, bool disableAlpha) {
     char path[2048];

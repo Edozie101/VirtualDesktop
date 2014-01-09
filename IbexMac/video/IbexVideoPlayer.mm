@@ -36,11 +36,12 @@
     _player = 0;
 }
 
-- (int)loadVideo:(NSString*)fileName andIsStereo:(bool)isStereo {
+- (int)loadVideo:(NSString*)fileName andIsStereo:(bool)isStereo andIsSBS:(unsigned int)isSBS {
     if([fileName isKindOfClass:NSArray.class]) {
         NSArray *a = (NSArray*)fileName;
         fileName = a[0];
         isStereo = ((NSNumber*)a[1]).integerValue;
+        isSBS = ((NSNumber*)a[2]).unsignedIntValue;
     }
     
     if(_player) {
@@ -53,6 +54,7 @@
     _player = new Ibex::VLCVideoPlayer();
     
     _videoTexture = _player->videoTexture;
+    _isSBS = isSBS;
     _player->playVideo(fileName.UTF8String, isStereo, 0, 0, (__bridge_retained void*)newContext);//(__bridge_retained void *)self);
     //[NSOpenGLContext clearCurrentContext];
     
@@ -78,6 +80,7 @@
     _player = new Ibex::VLCVideoPlayer();
     
     _videoTexture = _player->videoTexture;
+    _isSBS = 0;
     _player->openCamera(isStereo, cameraID.intValue);
     [NSOpenGLContext clearCurrentContext];
     
