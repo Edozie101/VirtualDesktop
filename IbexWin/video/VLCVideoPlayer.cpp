@@ -34,8 +34,16 @@
 void(*makeCurrentGL)();
 #endif
 
+#if __APPLE__
+#define IBEX_VIDEO_GL_PIX_FORMAT GL_UNSIGNED_INT_8_8_8_8_REV
+#else
+#define IBEX_VIDEO_GL_PIX_FORMAT GL_UNSIGNED_BYTE
+#endif
+
 static unsigned int VIDEOWIDTH=1280;
 static unsigned int VIDEOHEIGHT=720;
+
+static bool first = true;
 
 void setupVideoGLContext(void *data);
 
@@ -55,8 +63,42 @@ struct context {
 	context() : init(false) {
 	}
 };
+static uint32_t *pixels = 0;
 
-static uint32_t *pixels;
+// libvlc_video_format_cb
+unsigned my_libvlc_video_format_cb(void **opaque, char *chroma,
+                                   unsigned *width_, unsigned *height_,
+                                   unsigned *pitches,
+                                   unsigned *lines) {
+    strcpy(chroma, "RV32");
+    
+//    if(*width_ <= 1280 && *height_ <= 720) {
+    VIDEOWIDTH = *width_;
+    VIDEOHEIGHT = *height_;
+//    }
+    //    width = *width_;
+    //    height = *height_;
+    
+//    uint32_t **data = (uint32_t**)opaque;
+//    data = new uint32_t*[1];
+//    data[0] = new uint32_t[*width_ * *height_ * 4];
+//    
+//    if(pixels != 0) {
+//        delete [] pixels;
+//    }
+//    pixels = new uint32_t[VIDEOWIDTH*VIDEOHEIGHT*4];
+//    memset(pixels, 0, sizeof(uint32_t)*VIDEOWIDTH*VIDEOHEIGHT*4);
+    *pitches = VIDEOWIDTH*4;//new uint32_t[VIDEOWIDTH*VIDEOHEIGHT*4];
+    *lines = *height_;
+    return 1;
+}
+// libvlc_video_cleanup_cb
+void my_libvlc_video_cleanup_cb(void *opaque) {
+//    uint32_t **data = (uint32_t**)opaque;
+//    delete [] data[0];
+//    delete [] data;
+}
+
 // VLC prepares to render a video frame.
 static void *vlclock(void *data, void **p_pixels) {
   // lock mutex for texture update
@@ -119,38 +161,41 @@ static void vlcdisplay(void *data, void *id) {
           
         unsigned int width,height;
         if(libvlc_video_get_size(c->mp, 0, &width, & height) == 0) {
+//            first = true;
           c->player->width = width;
           c->player->height = height;
             std::cerr << "***************** " << VIDEOWIDTH << "x" << VIDEOHEIGHT << " ==> " << width << "x" << height << std::endl;
+//            if(VIDEOWIDTH != width && VIDEOHEIGHT != height) {
+//                VIDEOWIDTH = width;
+//                VIDEOHEIGHT = height;
+//                libvlc_video_set_format(c->mp, "RV32", VIDEOWIDTH, VIDEOHEIGHT, VIDEOWIDTH*sizeof(uint32_t));
+//                return;
+//            }
         }
-    
-        isStereo = false;
   }
 
   const GLuint width = VIDEOWIDTH;
   const GLuint height = VIDEOHEIGHT;
-  static bool first = true;
+//  const GLuint width = c->player->width;
+//  const GLuint height = c->player->height;
   if(isStereo) {
-#if __APPLE__
-#define IBEX_VIDEO_GL_PIX_FORMAT GL_UNSIGNED_INT_8_8_8_8_REV
-#else
-#define IBEX_VIDEO_GL_PIX_FORMAT GL_UNSIGNED_BYTE
-#endif
     glBindTexture(GL_TEXTURE_2D, videoTexture[1]);
-    int stride = width*2;
+      GLint stride = width*2;
+//      std::cerr << width << " " << stride << std::endl;
     glPixelStorei(GL_UNPACK_ROW_LENGTH,stride);
+    glPixelStorei(GL_UNPACK_ALIGNMENT,1);
     if(first) {
       glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height/2, 0,
 		   GL_BGRA, IBEX_VIDEO_GL_PIX_FORMAT, pixels);
       glBindTexture(GL_TEXTURE_2D, videoTexture[0]);
       glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height/2, 0,
-		   GL_BGRA, IBEX_VIDEO_GL_PIX_FORMAT, pixels+(width*3));
+		   GL_BGRA, IBEX_VIDEO_GL_PIX_FORMAT, &pixels[width]);
     } else {
       glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height/2,
 		      GL_BGRA, IBEX_VIDEO_GL_PIX_FORMAT, pixels);
       glBindTexture(GL_TEXTURE_2D, videoTexture[0]);
       glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height/2,
-		      GL_BGRA, IBEX_VIDEO_GL_PIX_FORMAT , pixels+(width*3));
+		      GL_BGRA, IBEX_VIDEO_GL_PIX_FORMAT , &pixels[width]);
     }
   } else {
     glBindTexture(GL_TEXTURE_2D, videoTexture[0]);
@@ -206,7 +251,7 @@ int Ibex::VLCVideoPlayer::playVLCVideo(const char *fileName, Display *dpy, GLXDr
 	
     int action = 0, pause = 0;
     context = new struct context();
-    context->isStereo = 0;
+    context->isStereo = isStereo;
     context->videoTexture = videoTexture;
     context->player = this;
     context->dpy = dpy;
@@ -236,8 +281,12 @@ int Ibex::VLCVideoPlayer::playVLCVideo(const char *fileName, Display *dpy, GLXDr
     pixels = new uint32_t[VIDEOWIDTH*VIDEOHEIGHT*4];
     memset(pixels, 0, sizeof(uint32_t)*VIDEOWIDTH*VIDEOHEIGHT*4);
     libvlc_video_set_callbacks(mp, vlclock, vlcunlock, vlcdisplay, context);
-    libvlc_video_set_format(mp, "RV32", VIDEOWIDTH, VIDEOHEIGHT, VIDEOWIDTH*sizeof(uint32_t));
+    //libvlc_video_set_format(mp, "RV32", VIDEOWIDTH, VIDEOHEIGHT, VIDEOWIDTH*sizeof(uint32_t));
     //libvlc_video_set_format(mp, "YUYV", VIDEOWIDTH, VIDEOHEIGHT, VIDEOWIDTH*2);
+    libvlc_video_set_format_callbacks(mp,
+                                           my_libvlc_video_format_cb,
+                                           my_libvlc_video_cleanup_cb );
+
     
     if(libvlc_video_get_size(mp, 0, &width, & height) == 0) {
         VIDEOWIDTH = width;
@@ -311,6 +360,7 @@ Ibex::VLCVideoPlayer::~VLCVideoPlayer() {
 
 int Ibex::VLCVideoPlayer::playVideo(const char *fileName, bool isStereo, Display *dpy, GLXDrawable root, const void *data)
 {
+    first = true;
     this->data = (void*)data;
 	//createVideoTextures(isStereo, VIDEOWIDTH, VIDEOHEIGHT);
 	this->isStereo = isStereo;
@@ -360,6 +410,7 @@ void Ibex::VLCVideoPlayer::initOpenCV(bool isStereo, int cameraId) {
 }
 
 int Ibex::VLCVideoPlayer::openCamera(bool isStereo, int cameraId) {
+  first = true;
   done = false;
   if(!openCVInited) {
     initOpenCV(isStereo, cameraId);
@@ -451,8 +502,8 @@ void Ibex::VLCVideoPlayer::createVideoTextures(bool isStereo, int width, int hei
       fprintf(stderr,"Stage 0c - Problem generating videoTexture FBO");
       exit(EXIT_FAILURE);
     }
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, width, height, 0,
-		 GL_RGB, GL_UNSIGNED_BYTE, 0);
+      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, (isStereo)?height/2:height, 0,
+		 GL_BGRA, IBEX_VIDEO_GL_PIX_FORMAT, 0);
     if (!checkForErrors()) {
       fprintf(stderr,"Stage 0d - Problem generating videoTexture FBO");
       exit(EXIT_FAILURE);

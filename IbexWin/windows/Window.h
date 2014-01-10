@@ -40,6 +40,7 @@ public:
     void changedSettingMessage(const std::string &message);
     void update(const double &timeDelta);
     bool getIsStereoVideo() { return isStereoVideo; }
+    unsigned int  getSBSVideo() { return isSBSVideo; }
     bool getSelectedVideo() { return selectedVideo; }
     bool getSelectedCamera() { return selectedCamera; }
     bool setSelectedVideo(bool selectedVideo_) { selectedVideo = selectedVideo_; return selectedVideo; }
@@ -70,6 +71,7 @@ private:
 private:
     bool selectedVideo;
     bool isStereoVideo;
+    unsigned int isSBSVideo;
 public:
     std::string videoPath;
     

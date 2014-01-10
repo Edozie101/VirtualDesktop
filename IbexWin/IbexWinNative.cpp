@@ -218,7 +218,7 @@ static void playVideo() {
 		delete _ibexVideoPlayer;
 	}
 	_ibexVideoPlayer = new Ibex::VLCVideoPlayer();
-
+	isSBSVideo = ibex->renderer->window.getSBSVideo();
 	_ibexVideoPlayer->playVideo(ibex->renderer->window.getSelectedVideoPath().c_str(),ibex->renderer->window.getIsStereoVideo(), 0, 0, &makeCurrentGL);
 }
 static void playCamera() {
@@ -230,6 +230,7 @@ static void playCamera() {
 	} else {
 		_ibexVideoPlayer->stopCapturing();
 	}
+	isSBSVideo = 0;
 	_ibexVideoPlayer->openCamera(ibex->renderer->window.getIsStereoVideo(), ibex->renderer->window.getSelectedCameraID());
 }
 
