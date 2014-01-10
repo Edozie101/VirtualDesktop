@@ -592,30 +592,34 @@ int Ibex::Window::processKey(int key, int down) {
             break;
         case '1':
         case '2':
-            if(!down) {
-                if(visibleWindow == InfoWindow) {
-					reset();
+		case '3':
+		case '4':
+            if(down) {
+                if(visibleWindow != FileChooser) {
                     directoryList.clear();
                     selectedFile = 0;
-                    isStereoVideo = (key == '2');
+                    isStereoVideo = (key == '4');// || (keyCode == kVK_ANSI_3) || (keyCode == kVK_ANSI_2);
+                    isSBSVideo = (key == '3') || (key == '2');
                     directoryChanged = true;
                 }
                 if(visibleWindow == InfoWindow) {
                     visibleWindow = FileChooser;
                 }
+                updateRender = true;
             }
             
             processed = 1;
             break;
-        case '3':
-		case '4':
+            break;
+        case '5':
+		case '6':
             if(!down) {
                 if(visibleWindow == InfoWindow) {
 					reset();
                     directoryList.clear();
                     selectedCamera = 0;
                     selectedCameraID = -1;
-                    isStereoVideo = (key == '4');
+                    isStereoVideo = (key == '6');
                     directoryChanged = true;
                 }
                 if(visibleWindow == InfoWindow) {

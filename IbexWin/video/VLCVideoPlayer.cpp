@@ -180,9 +180,8 @@ static void vlcdisplay(void *data, void *id) {
 //  const GLuint height = c->player->height;
   if(isStereo) {
     glBindTexture(GL_TEXTURE_2D, videoTexture[1]);
-      GLint stride = width*2;
 //      std::cerr << width << " " << stride << std::endl;
-    glPixelStorei(GL_UNPACK_ROW_LENGTH,stride);
+    glPixelStorei(GL_UNPACK_ROW_LENGTH,width*2);
     glPixelStorei(GL_UNPACK_ALIGNMENT,1);
     if(first) {
       glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height/2, 0,
@@ -199,6 +198,8 @@ static void vlcdisplay(void *data, void *id) {
     }
   } else {
     glBindTexture(GL_TEXTURE_2D, videoTexture[0]);
+	glPixelStorei(GL_UNPACK_ROW_LENGTH,width);
+    glPixelStorei(GL_UNPACK_ALIGNMENT,1);
     if(first) {
       glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0,
       	   GL_BGRA, IBEX_VIDEO_GL_PIX_FORMAT, pixels);
@@ -427,8 +428,8 @@ int Ibex::VLCVideoPlayer::openCamera(bool isStereo, int cameraId) {
       const GLenum formatIn = (numBytes == 4) ? GL_BGRA : GL_BGR;
       if(isStereo) {
 	glBindTexture(GL_TEXTURE_2D, videoTexture[1]);
-	const int stride = width*2;
-	glPixelStorei(GL_UNPACK_ROW_LENGTH,stride);
+	glPixelStorei(GL_UNPACK_ROW_LENGTH,width*2);
+    glPixelStorei(GL_UNPACK_ALIGNMENT,1);
 	if(first) {
 	  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, width, height/2, 0,
 		       formatIn, GL_UNSIGNED_BYTE, cameraCapture->imageData);
@@ -444,9 +445,8 @@ int Ibex::VLCVideoPlayer::openCamera(bool isStereo, int cameraId) {
 	}
       } else {
 	glBindTexture(GL_TEXTURE_2D, videoTexture[0]);
-	const int stride = width;
-	glPixelStorei(GL_UNPACK_ROW_LENGTH,stride);
-	glPixelStorei(GL_UNPACK_ALIGNMENT,1);
+	glPixelStorei(GL_UNPACK_ROW_LENGTH,width);
+    glPixelStorei(GL_UNPACK_ALIGNMENT,1);
 	if(first) {
 	  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, width, height, 0,
 		       formatIn, GL_UNSIGNED_BYTE, cameraCapture->imageData);

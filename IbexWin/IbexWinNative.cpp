@@ -216,6 +216,7 @@ static void playVideo() {
 
 	if(_ibexVideoPlayer != NULL) {
 		delete _ibexVideoPlayer;
+		_ibexVideoPlayer = NULL;
 	}
 	_ibexVideoPlayer = new Ibex::VLCVideoPlayer();
 	isSBSVideo = ibex->renderer->window.getSBSVideo();
