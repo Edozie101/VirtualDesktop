@@ -159,7 +159,7 @@ GLuint createApplicationListImage(const char *path_, size_t &width, size_t &heig
     const bool flip = true;
     const int iconRes = 96;
     const int iconSpacing = 16;
-    std::vector<std::string> appDirectory = Filesystem::listDirectory("/Applications");
+    std::vector<std::string> appDirectory = Filesystem::listDirectory(path_);
     
     int appCount = 0;
     for(int i = 0; i < appDirectory.size(); ++i) {
