@@ -155,15 +155,10 @@ extern "C" GLuint loadCubemapTextures(const char *path_[6]) {
     return myTextureName;
 }
 
-
-
-
-
-
-
 GLuint createApplicationListImage(const char *path_, size_t &width, size_t &height) {
     const bool flip = true;
     const int iconRes = 96;
+    const int iconSpacing = 16;
     std::vector<std::string> appDirectory = Filesystem::listDirectory("/Applications");
     
     int appCount = 0;
@@ -175,8 +170,8 @@ GLuint createApplicationListImage(const char *path_, size_t &width, size_t &heig
     const int vert = 8;
     const int horiz = ceil(float(appCount)/float(vert));
     
-    width = horiz*iconRes;
-    height = vert*iconRes;
+    width = horiz*(iconRes+2*iconSpacing);
+    height = vert*(iconRes+2*iconSpacing);
     void * myData = calloc(width * 4, height);
     CGColorSpaceRef space = CGColorSpaceCreateDeviceRGB();
     CGContextRef myBitmapContext = CGBitmapContextCreate(myData,
@@ -184,8 +179,9 @@ GLuint createApplicationListImage(const char *path_, size_t &width, size_t &heig
                                                          width*4, space,
                                                          kCGBitmapByteOrder32Host |
                                                          kCGImageAlphaPremultipliedFirst);
-    CGContextSetFillColorWithColor(myBitmapContext, NSColor.clearColor.CGColor);
-    CGContextClearRect(myBitmapContext, CGRectMake(0, 0, width, height));
+    CGContextSetFillColorWithColor(myBitmapContext, [NSColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:1.0].CGColor);//NSColor.clearColor.CGColor);
+//    CGContextClearRect(myBitmapContext, CGRectMake(0, 0, width, height));
+    CGContextFillRect(myBitmapContext, CGRectMake(0, 0, width, height));
     
     for(int i = 0, count = 0; i < appDirectory.size(); ++i) {
         if(appDirectory[i].find(".app") == std::string::npos) continue;
@@ -203,13 +199,13 @@ GLuint createApplicationListImage(const char *path_, size_t &width, size_t &heig
 //        savePNGImage(myImageRef, @"/Users/hesh/iconTest.png");
 //        exit(0);
         
-        CGRect rect = CGRectMake((count/vert)*iconRes, (count%vert)*iconRes, iconRes, iconRes);
+        CGRect rect = CGRectMake((count/vert)*(iconRes+2*iconSpacing)+iconSpacing, (vert-(count%vert)-1)*(iconRes+2*iconSpacing)+iconSpacing, iconRes, iconRes);
         
         if(!flip) {
-            CGContextTranslateCTM(myBitmapContext, 0, iconRes);
+            CGContextTranslateCTM(myBitmapContext, 0, iconRes+2*iconSpacing);
             CGContextScaleCTM(myBitmapContext, 1.0, -1.0);
         }
-        CGContextSetBlendMode(myBitmapContext, kCGBlendModeCopy);
+        CGContextSetBlendMode(myBitmapContext, kCGBlendModeNormal);
         CGContextDrawImage(myBitmapContext, rect, myImageRef);
         
         ++count;
