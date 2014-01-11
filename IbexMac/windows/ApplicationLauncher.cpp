@@ -12,7 +12,7 @@
 #include "../ibex_win_utils.h"
 #endif
 #ifdef __APPLE__
-#include "ibex_mac_utils.h"
+#include "../ibex_mac_utils.h"
 #endif
 
 #include "../simpleworld_plugin/SimpleWorldRendererPlugin.h"
