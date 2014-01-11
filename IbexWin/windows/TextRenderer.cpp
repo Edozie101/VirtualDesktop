@@ -74,6 +74,8 @@ void Ibex::TextRenderer::initializeFont()
 
 	// can free ttf_buffer at this point
     if(ftex == 0) glGenTextures(1, &ftex);
+    glPixelStorei(GL_UNPACK_ROW_LENGTH, (GLint)1024);
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 	glBindTexture(GL_TEXTURE_2D, ftex);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
