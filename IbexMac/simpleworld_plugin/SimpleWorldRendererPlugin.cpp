@@ -1020,6 +1020,9 @@ void SimpleWorldRendererPlugin::step(Desktop3DLocation &loc, double timeDiff_, c
         window.changedSettingMessage(settingChangedMessage);
     }
     window.update(timeDiff_);
+    int selectedX = 0;
+    int selectedY = 0;
+    applicationLauncher->update(selectedX, selectedY);
     
     glm::mat4 modelView;
     glm::mat4 view;

@@ -20,6 +20,6 @@ extern char mResourcePath[1024];
 extern "C" GLuint loadNormalTexture(const char *path_);
 extern "C" GLuint loadTexture(const char *path_, bool flip=true, bool isAbsolutePath=false, bool disableAlpha=false, void *myDataIn=0, size_t widthIn=0, size_t heightIn=0);
 extern "C" GLuint loadCubemapTextures(const char *path_[6]);
-extern "C" GLuint createApplicationListImage(const char *path_, size_t &width, size_t &height);
+extern "C" GLuint createApplicationListImage(const char *path_, size_t &width, size_t &height, int &selectedX, int &selectedY);
 
 #endif

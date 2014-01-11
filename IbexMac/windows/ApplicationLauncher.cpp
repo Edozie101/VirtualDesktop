@@ -22,9 +22,28 @@
 Ibex::ApplicationLauncher::ApplicationLauncher() : ww(0),
                                                    hh(0),
                                                    appTexture(0),
+                                                   appSelectionTexture(0),
+                                                   selectedX(0),
+                                                   selectedY(0),
                                                    first(true) {
 }
 
+void Ibex::ApplicationLauncher::update(int &selectedX_, int &selectedY_) {
+    if(appSelectionTexture == 0) {
+        appSelectionTexture = loadTexture("/resources/app-launcher-selection-frame.jpg");
+    }
+    if(appTexture == 0 || selectedX_ != selectedX || selectedY_ != selectedY) {
+        if(appTexture) {
+            glDeleteTextures(1, &appTexture);
+            appTexture = 0;
+        }
+    #ifdef __APPLE__
+        appTexture = createApplicationListImage("/Applications", ww, hh, selectedX_, selectedY_);
+    #endif
+        selectedX = selectedX_;
+        selectedY = selectedY_;
+    }
+}
 void Ibex::ApplicationLauncher::render(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP)
 {
 #ifndef __APPLE__
@@ -53,13 +72,6 @@ void Ibex::ApplicationLauncher::render(const glm::mat4 &MVP, const glm::mat4 &V,
     
     if(first) {
         first = false;
-        if(appTexture) {
-            glDeleteTextures(1, &appTexture);
-            appTexture = 0;
-        }
-#ifdef __APPLE__
-        appTexture = createApplicationListImage("/Applications", ww, hh);
-#endif
         
         for(int i = 0; i < sizeof(IbexDisplayFlatVertices)/sizeof(GLfloat); ++i) {
             if(i%8 < 3)

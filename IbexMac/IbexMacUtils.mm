@@ -155,7 +155,7 @@ extern "C" GLuint loadCubemapTextures(const char *path_[6]) {
     return myTextureName;
 }
 
-GLuint createApplicationListImage(const char *path_, size_t &width, size_t &height) {
+GLuint createApplicationListImage(const char *path_, size_t &width, size_t &height, int &selectedX, int &selectedY) {
     const bool flip = true;
     const int iconRes = 96;
     const int iconSpacing = 16;
@@ -169,6 +169,8 @@ GLuint createApplicationListImage(const char *path_, size_t &width, size_t &heig
     
     const int vert = 8;
     const int horiz = ceil(float(appCount)/float(vert));
+    selectedX %= horiz;
+    selectedY %= vert;
     
     width = horiz*(iconRes+2*iconSpacing);
     height = vert*(iconRes+2*iconSpacing);
@@ -210,6 +212,32 @@ GLuint createApplicationListImage(const char *path_, size_t &width, size_t &heig
         
         ++count;
     }
+    // draw frame
+    char path[2048];
+    strcpy(path, mResourcePath);
+#ifdef WIN32
+    strcat(path, "\\resources\\app-launcher-selection-frame.png");
+#else
+    strcat(path, "/resources/app-launcher-selection-frame.png");
+#endif
+    NSImage *iconImage = [[NSImage alloc] initWithContentsOfFile:@(path)];
+    
+    // NSLog(@"%s", path);
+    NSRect r = NSRectFromCGRect(CGRectMake(0.0f,0.0f,iconRes,iconRes));
+    CGImageRef myImageRef = [iconImage CGImageForProposedRect:&r context:nil hints:nil];
+    //        savePNGImage(myImageRef, @"/Users/hesh/iconTest.png");
+    //        exit(0);
+    CGRect rectFrame = CGRectMake(selectedX*(iconRes+2*iconSpacing), (vert-selectedY-1)*(iconRes+2*iconSpacing), iconRes+2*iconSpacing, iconRes+2*iconSpacing);
+    
+    if(!flip) {
+        CGContextTranslateCTM(myBitmapContext, 0, iconRes+2*iconSpacing);
+        CGContextScaleCTM(myBitmapContext, 1.0, -1.0);
+    }
+    CGContextSetBlendMode(myBitmapContext, kCGBlendModeNormal);
+    CGContextDrawImage(myBitmapContext, rectFrame, myImageRef);
+    ////////////////////////
+    
+    
     CGContextRelease(myBitmapContext);
     CGColorSpaceRelease(space);
     

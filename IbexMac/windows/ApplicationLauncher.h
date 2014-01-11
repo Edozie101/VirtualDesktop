@@ -24,13 +24,18 @@ class ApplicationLauncher
 {
 public:
     ApplicationLauncher();
+    void update(int &selectedX_, int &selectedY_);
     void render(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP);
     
 private:
     size_t ww;
     size_t hh;
     GLuint appTexture;
+    GLuint appSelectionTexture;
     bool first;
+    
+    int selectedX;
+    int selectedY;
 };
     
 }
