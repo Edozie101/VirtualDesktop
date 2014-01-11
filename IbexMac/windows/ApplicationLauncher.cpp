@@ -30,7 +30,7 @@ Ibex::ApplicationLauncher::ApplicationLauncher() : ww(0),
 
 void Ibex::ApplicationLauncher::update(int &selectedX_, int &selectedY_) {
     if(appSelectionTexture == 0) {
-        appSelectionTexture = loadTexture("/resources/app-launcher-selection-frame.jpg");
+        appSelectionTexture = loadTexture("/resources/app-launcher-selection-frame.png");
     }
     if(appTexture == 0 || selectedX_ != selectedX || selectedY_ != selectedY) {
         if(appTexture) {
