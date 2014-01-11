@@ -22,61 +22,22 @@
 #include <vector>
 #include <string>
 
-static void *createApplicationListImage(const char *path_, size_t &width, size_t &height) {
-    const bool flip = true;
+static void savePNGImage(CGImageRef imageRef, NSString *path)
+{
+    NSURL *fileURL = [NSURL fileURLWithPath:path];
+    CGImageDestinationRef dr = CGImageDestinationCreateWithURL((__bridge CFURLRef)fileURL, kUTTypePNG , 1, NULL);
     
-    std::vector<std::string> appDirectory = Filesystem::listDirectory("/Applications");
-
-    int appCount = 0;
-    for(int i = 0; i < appDirectory.size(); ++i) {
-        if(appDirectory[i].find(".app") == std::string::npos) continue;
-        ++appCount;
+    if(dr != nil) {
+        CGImageDestinationAddImage(dr, imageRef, NULL);
+        CGImageDestinationFinalize(dr);
+        
+        CFRelease(dr);
+    } else {
+        NSLog(@"File path: %@", fileURL);
+        NSLog(@"ERROR saving");
+        return;
     }
-    
-    for(int i = 0; i < appDirectory.size(); ++i) {
-        if(appDirectory[i].find(".app") == std::string::npos) continue;
-        
-        const char *path = appDirectory[i].c_str();
-        
-        // NSLog(@"%s", path);
-        NSURL *URL = [NSURL fileURLWithPath:[NSString stringWithCString:path encoding:NSASCIIStringEncoding]];
-        NSLog(@"%@", URL);
-        CFURLRef url = (__bridge CFURLRef)URL;
-        CGImageSourceRef myImageSourceRef = CGImageSourceCreateWithURL(url, NULL);
-        CGImageRef myImageRef = CGImageSourceCreateImageAtIndex (myImageSourceRef, 0, NULL);
-        
-        width = CGImageGetWidth(myImageRef);
-        height = CGImageGetHeight(myImageRef);
-        CGRect rect = CGRectMake(0, 0, width, height);
-        void * myData = calloc(width * 4, height);
-        CGColorSpaceRef space = CGColorSpaceCreateDeviceRGB();
-        CGContextRef myBitmapContext = CGBitmapContextCreate(myData,
-                                                             width, height, 8,
-                                                             width*4, space,
-                                                             kCGBitmapByteOrder32Host |
-                                                             kCGImageAlphaPremultipliedFirst);
-        if(!flip) {
-            CGContextTranslateCTM(myBitmapContext, 0, height);
-            CGContextScaleCTM(myBitmapContext, 1.0, -1.0);
-        }
-        CGContextSetBlendMode(myBitmapContext, kCGBlendModeCopy);
-        CGContextDrawImage(myBitmapContext, rect, myImageRef);
-        CGContextRelease(myBitmapContext);
-        
-        CGColorSpaceRelease(space);
-        CGImageRelease(myImageRef);
-        CFRelease(myImageSourceRef);
-    }
-    
-    return 0;//myData;
-}
-
-void loadApplicationIcons() {
-    std::vector<std::string> listOfApplicationPaths;
-    for(int i = 0; i < listOfApplicationPaths.size(); ++i) {
-        NSString *path = [NSString stringWithCString:listOfApplicationPaths[i].c_str() encoding:[NSString defaultCStringEncoding]];
-        NSImage *iconImage = [[NSWorkspace sharedWorkspace] iconForFile:path];
-    }
+    //    exit(0);
 }
 
 static void *getImageData(const char *path_, size_t &width, size_t &height, bool flip, bool isAbsolutePath, bool disableAlpha) {
@@ -123,12 +84,12 @@ static void *getImageData(const char *path_, size_t &width, size_t &height, bool
 extern "C" GLuint loadNormalTexture(const char *path_) {
     return loadTexture(path_, false, false, true);
 }
-extern "C" GLuint loadTexture(const char *path_, bool flip, bool isAbsolutePath, bool disableAlpha) {
-    GLuint myTextureName;
+extern "C" GLuint loadTexture(const char *path_, bool flip, bool isAbsolutePath, bool disableAlpha, void *myDataIn, size_t widthIn, size_t heightIn) {
+    GLuint myTextureName = 0;
     
-    size_t width = 0;
-    size_t height = 0;
-    void *myData = getImageData(path_, width, height, flip, isAbsolutePath, disableAlpha);
+    size_t width = widthIn;
+    size_t height = heightIn;
+    void *myData = (myDataIn == 0) ? getImageData(path_, width, height, flip, isAbsolutePath, disableAlpha) : myDataIn;
     
     glPixelStorei(GL_UNPACK_ROW_LENGTH, (GLint)width);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -148,9 +109,10 @@ extern "C" GLuint loadTexture(const char *path_, bool flip, bool isAbsolutePath,
     
     glTexImage2D(GL_TEXTURE_2D, 0, ((disableAlpha) ? GL_RGB8 : GL_RGBA8), (GLint)width, (GLint)height, 0, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, myData);
     glGenerateMipmap(GL_TEXTURE_2D);
-    free(myData);
+    if(myDataIn == 0) {
+        free(myData);
+    }
     glBindTexture(GL_TEXTURE_2D, 0);
-    
     return myTextureName;
 }
 
@@ -192,6 +154,84 @@ extern "C" GLuint loadCubemapTextures(const char *path_[6]) {
     
     return myTextureName;
 }
+
+
+
+
+
+
+
+GLuint createApplicationListImage(const char *path_, size_t &width, size_t &height) {
+    const bool flip = true;
+    const int iconRes = 96;
+    std::vector<std::string> appDirectory = Filesystem::listDirectory("/Applications");
+    
+    int appCount = 0;
+    for(int i = 0; i < appDirectory.size(); ++i) {
+        if(appDirectory[i].find(".app") == std::string::npos) continue;
+        ++appCount;
+    }
+    
+    const int vert = 8;
+    const int horiz = ceil(float(appCount)/float(vert));
+    
+    width = horiz*iconRes;
+    height = vert*iconRes;
+    void * myData = calloc(width * 4, height);
+    CGColorSpaceRef space = CGColorSpaceCreateDeviceRGB();
+    CGContextRef myBitmapContext = CGBitmapContextCreate(myData,
+                                                         width, height, 8,
+                                                         width*4, space,
+                                                         kCGBitmapByteOrder32Host |
+                                                         kCGImageAlphaPremultipliedFirst);
+    CGContextSetFillColorWithColor(myBitmapContext, NSColor.clearColor.CGColor);
+    CGContextClearRect(myBitmapContext, CGRectMake(0, 0, width, height));
+    
+    for(int i = 0, count = 0; i < appDirectory.size(); ++i) {
+        if(appDirectory[i].find(".app") == std::string::npos) continue;
+        
+        const std::string s(Filesystem::getFullPath(std::string("/Applications"), appDirectory[i].c_str()));
+        const char *path = s.c_str();
+        
+//        std::cerr << "***** ICON FOR: " << path << std::endl;
+        
+        NSImage *iconImage = [[NSWorkspace sharedWorkspace] iconForFile:[NSString stringWithCString:path encoding:[NSString defaultCStringEncoding]]];
+        
+        // NSLog(@"%s", path);
+        NSRect r = NSRectFromCGRect(CGRectMake(0.0f,0.0f,iconRes,iconRes));
+        CGImageRef myImageRef = [iconImage CGImageForProposedRect:&r context:nil hints:nil];
+//        savePNGImage(myImageRef, @"/Users/hesh/iconTest.png");
+//        exit(0);
+        
+        CGRect rect = CGRectMake((count/vert)*iconRes, (count%vert)*iconRes, iconRes, iconRes);
+        
+        if(!flip) {
+            CGContextTranslateCTM(myBitmapContext, 0, iconRes);
+            CGContextScaleCTM(myBitmapContext, 1.0, -1.0);
+        }
+        CGContextSetBlendMode(myBitmapContext, kCGBlendModeCopy);
+        CGContextDrawImage(myBitmapContext, rect, myImageRef);
+        
+        ++count;
+    }
+    CGContextRelease(myBitmapContext);
+    CGColorSpaceRelease(space);
+    
+    GLuint texture = loadTexture("", false, false, false, myData, width, height);
+//    GLuint texture = loadTexture("/resources/humus-skybox/smaller/negz.jpg");
+    free(myData);
+    
+    return texture;
+}
+
+//void loadApplicationIcons() {
+//    std::vector<std::string> listOfApplicationPaths;
+//    for(int i = 0; i < listOfApplicationPaths.size(); ++i) {
+//        NSString *path = [NSString stringWithCString:listOfApplicationPaths[i].c_str() encoding:[NSString defaultCStringEncoding]];
+//        NSImage *iconImage = [[NSWorkspace sharedWorkspace] iconForFile:path];
+//    }
+//}
+
 
 @implementation IbexMacUtils
 

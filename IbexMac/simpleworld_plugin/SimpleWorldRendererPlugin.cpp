@@ -54,8 +54,12 @@ void copyMatrix(glm::mat4 &modelView, const float M[4][4]) {
 }
 //////
 
-void SimpleWorldRendererPlugin::renderApplicationLauncher(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP, GLuint texture_, const bool &randomize)
+void SimpleWorldRendererPlugin::renderApplicationLauncher(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP)
 {
+#ifndef __APPLE__
+    return;
+#endif
+    
     static GLuint vaoIbexDisplayFlat = 0;
     static const GLfloat IbexDisplayFlatScale = 10;
     
@@ -76,9 +80,15 @@ void SimpleWorldRendererPlugin::renderApplicationLauncher(const glm::mat4 &MVP, 
     };
     static GLuint vboIbexDisplayFlatIndices = 0;
     
+    static size_t ww = 0;
+    static size_t hh = 0;
+    static GLuint appTexture = 0;
     static bool first = true;
     if(first) {
         first = false;
+#ifdef __APPLE__
+        appTexture = createApplicationListImage("/Applications", ww, hh);
+#endif
         
         for(int i = 0; i < sizeof(IbexDisplayFlatVertices)/sizeof(GLfloat); ++i) {
             if(i%8 < 3)
@@ -127,7 +137,7 @@ void SimpleWorldRendererPlugin::renderApplicationLauncher(const glm::mat4 &MVP, 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboIbexDisplayFlatIndices);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(IbexDisplayFlatIndices), IbexDisplayFlatIndices, GL_STATIC_DRAW);
     }
-    
+
     if(shadowPass) {
         glUseProgram(shadowProgram.shader.program);
         glUniformMatrix4fv(ShadowUniformLocations[0], 1, GL_FALSE, &MVP[0][0]);
@@ -140,17 +150,11 @@ void SimpleWorldRendererPlugin::renderApplicationLauncher(const glm::mat4 &MVP, 
         
         if(IbexDisplayFlatUniformLocations[5] >= 0) glUniform1f(IbexDisplayFlatUniformLocations[5], 1.0);
         if(IbexDisplayFlatUniformLocations[6] >= 0) {
-            if(randomize) {
-				const float offsetU = float(rand()%1280)/1280.0f;
-				const float offsetV = float(rand()%720)/720.0f;
-                glUniform2f(IbexDisplayFlatUniformLocations[6], offsetU, offsetV);
-            } else {
-                glUniform2f(IbexDisplayFlatUniformLocations[6], 0,0);
-            }
+            glUniform2f(IbexDisplayFlatUniformLocations[6], 0,0);
         }
         
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, texture_);
+        glBindTexture(GL_TEXTURE_2D, appTexture);
         glUniform1i(IbexDisplayFlatUniformLocations[3], 0);
     }
     
@@ -996,6 +1000,7 @@ void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &
     //renderIbexDisplayFlat(PV*model, view, model, shadowPass, depthBiasMVP*model, desktopTexture, false);
 	ibexMonitor->renderIbexDisplayFlat(PV*model, view, model, shadowPass, depthBiasMVP*model);
     if(renderVideoTexture) {
+        model = ibexDisplayModelTransform;
 		glm::vec4 bounds(ibexMonitor->getBounds());
         model = glm::translate(model, glm::vec3(bounds[2]+10.0f+1.0f, 0.0f, 0.0f))*glm::scale(1.0f,-1.0f,1.0f);
         if(isSBSVideo) {
@@ -1046,17 +1051,25 @@ void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &
         }
         glEnable(GL_CULL_FACE);
     }
+    
 	 if(!shadowPass) {
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
+         
 		if(showGround) {
 			model = glm::translate(-playerPosition_.x, 0.0f, -playerPosition_.z);
 			renderWater(PV*model, view, model, shadowPass, depthBiasMVP*model, time);
 		}
-
+         
 		model = glm::mat4();
         window.render(orthoProj/**model*/, view, model, shadowPass, depthBiasMVP/**model*/, timeDiff_);
+         
+         model = ibexDisplayModelTransform;
+         glm::vec4 bounds(ibexMonitor->getBounds());
+         model = glm::translate(model, glm::vec3(bounds[0]-10.0f-1.0f, 0.0f, 0.0f))*glm::scale(1.0f,-1.0f,1.0f);
+         glDisable(GL_CULL_FACE);
+         renderApplicationLauncher(PV*model, view, model, shadowPass, depthBiasMVP*model);
+         glEnable(GL_CULL_FACE);
 
         glDisable(GL_BLEND);
     }
