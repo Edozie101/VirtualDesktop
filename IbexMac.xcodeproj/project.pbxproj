@@ -136,6 +136,10 @@
 		4C238E18172C6BAD009C22A6 /* libovr.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CA92BC31729FB1F00994379 /* libovr.a */; };
 		4C2DE2FF168B30CC003BEB56 /* ScreenGrabber.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C2DE2FE168B30CC003BEB56 /* ScreenGrabber.m */; };
 		4C41232116936E4F008F5B15 /* IbexMacUtils.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4C41232016936E4F008F5B15 /* IbexMacUtils.mm */; };
+		4C41C6AE1880D759000F21B0 /* ApplicationLauncher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C41C6AC1880D759000F21B0 /* ApplicationLauncher.cpp */; };
+		4C41C6AF1880D759000F21B0 /* ApplicationLauncher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C41C6AC1880D759000F21B0 /* ApplicationLauncher.cpp */; };
+		4C41C6B01880D759000F21B0 /* ApplicationLauncher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C41C6AC1880D759000F21B0 /* ApplicationLauncher.cpp */; };
+		4C41C6B11880D759000F21B0 /* ApplicationLauncher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C41C6AC1880D759000F21B0 /* ApplicationLauncher.cpp */; };
 		4C46D7C816F2B93D00B5DD9E /* libsixense_utils_x64.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C46D7C616F2B93D00B5DD9E /* libsixense_utils_x64.dylib */; };
 		4C46D7C916F2B93D00B5DD9E /* libsixense_x64.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C46D7C716F2B93D00B5DD9E /* libsixense_x64.dylib */; };
 		4C49791317CCC6A0008DC26E /* tinystr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C49790D17CCC6A0008DC26E /* tinystr.cpp */; };
@@ -513,6 +517,8 @@
 		4C3D9C63187B3F04007211CE /* NOTES */ = {isa = PBXFileReference; lastKnownFileType = text; path = NOTES; sourceTree = "<group>"; };
 		4C41231F16936E4F008F5B15 /* IbexMacUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IbexMacUtils.h; sourceTree = "<group>"; };
 		4C41232016936E4F008F5B15 /* IbexMacUtils.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IbexMacUtils.mm; sourceTree = "<group>"; };
+		4C41C6AC1880D759000F21B0 /* ApplicationLauncher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ApplicationLauncher.cpp; sourceTree = "<group>"; };
+		4C41C6AD1880D759000F21B0 /* ApplicationLauncher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApplicationLauncher.h; sourceTree = "<group>"; };
 		4C46D7C616F2B93D00B5DD9E /* libsixense_utils_x64.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsixense_utils_x64.dylib; path = /usr/local/lib/libsixense_utils_x64.dylib; sourceTree = "<absolute>"; };
 		4C46D7C716F2B93D00B5DD9E /* libsixense_x64.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsixense_x64.dylib; path = /usr/local/lib/libsixense_x64.dylib; sourceTree = "<absolute>"; };
 		4C49790D17CCC6A0008DC26E /* tinystr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tinystr.cpp; sourceTree = "<group>"; };
@@ -865,6 +871,8 @@
 			isa = PBXGroup;
 			children = (
 				4C961B1D17B8949C0028D242 /* CMakeLists.txt */,
+				4C41C6AC1880D759000F21B0 /* ApplicationLauncher.cpp */,
+				4C41C6AD1880D759000F21B0 /* ApplicationLauncher.h */,
 				4CC559A61865C26F002F7BC6 /* TextRenderer.cpp */,
 				4CC559A71865C26F002F7BC6 /* TextRenderer.h */,
 				4CC559A81865C26F002F7BC6 /* stb_truetype.cpp */,
@@ -1413,6 +1421,7 @@
 				4C09379717B1F9CE004EA291 /* iphone_orientation_listener.cpp in Sources */,
 				4C09379817B1F9CE004EA291 /* glew.c in Sources */,
 				4CC559AD1865C26F002F7BC6 /* TextRenderer.cpp in Sources */,
+				4C41C6B11880D759000F21B0 /* ApplicationLauncher.cpp in Sources */,
 				4C961B3A17B895330028D242 /* VLCVideoPlayer.cpp in Sources */,
 				4C09379917B1F9CE004EA291 /* IbexMacUtils.mm in Sources */,
 				4C09379A17B1F9CE004EA291 /* utils.cpp in Sources */,
@@ -1435,6 +1444,7 @@
 				4C961B5417B89A780028D242 /* SimpleWorldRendererPlugin.cpp in Sources */,
 				4C0D589616AD656A007BC9CD /* main.mm in Sources */,
 				4C0D589716AD656A007BC9CD /* AppDelegate.mm in Sources */,
+				4C41C6AF1880D759000F21B0 /* ApplicationLauncher.cpp in Sources */,
 				4CA379681844467D0048B227 /* ShadowBufferRenderer.cpp in Sources */,
 				4C0D589816AD656A007BC9CD /* ScreenGrabber.m in Sources */,
 				4C961B3017B895330028D242 /* IbexVideoPlayer.mm in Sources */,
@@ -1474,6 +1484,7 @@
 				4C6B99D516F4C17E00C5C725 /* AppDelegate.mm in Sources */,
 				4C6B99D616F4C17E00C5C725 /* ScreenGrabber.m in Sources */,
 				4C6B99D716F4C17E00C5C725 /* MyOpenGLView.mm in Sources */,
+				4C41C6B01880D759000F21B0 /* ApplicationLauncher.cpp in Sources */,
 				4C6B99D916F4C17E00C5C725 /* distortions.cpp in Sources */,
 				4C6B99DA16F4C17E00C5C725 /* opengl_helpers.cpp in Sources */,
 				4CC559B01865C26F002F7BC6 /* stb_truetype.cpp in Sources */,
@@ -1517,6 +1528,7 @@
 				4C961B5317B89A780028D242 /* SimpleWorldRendererPlugin.cpp in Sources */,
 				4CB79877168AB41E00EF5260 /* main.mm in Sources */,
 				4C961B2417B8949C0028D242 /* Window.cpp in Sources */,
+				4C41C6AE1880D759000F21B0 /* ApplicationLauncher.cpp in Sources */,
 				4CA379671844467D0048B227 /* ShadowBufferRenderer.cpp in Sources */,
 				4CB7987E168AB41E00EF5260 /* AppDelegate.mm in Sources */,
 				4C961B2F17B895330028D242 /* IbexVideoPlayer.mm in Sources */,

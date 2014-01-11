@@ -31,6 +31,10 @@ extern GLint ShadowAttribLocations[3];
 
 extern glm::vec3 lightInvDir;
 
+namespace Ibex {
+class ApplicationLauncher;
+}
+
 class SimpleWorldRendererPlugin : public RendererPlugin {
 public:
     SimpleWorldRendererPlugin();
@@ -43,7 +47,6 @@ public:
     void renderGround(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP, const double &time);
     void renderIbexDisplayFlat(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP, GLuint texture_, const bool &randomize, const int &leftRightBoth);
     void renderWater(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP, const double &time);
-    void renderApplicationLauncher(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP);
     
     void init();
     void reset();
@@ -67,6 +70,7 @@ private:
     Model treeModel;
     
     GLuint renderVideoTexture;
+    Ibex::ApplicationLauncher *applicationLauncher;
 };
 
 #endif /* SIMPLEWORLDRENDERERPLUGIN_H_ */
