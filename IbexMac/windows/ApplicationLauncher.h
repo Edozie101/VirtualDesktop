@@ -24,8 +24,18 @@ class ApplicationLauncher
 {
 public:
     ApplicationLauncher();
-    void update(int &selectedX_, int &selectedY_);
+    void update();
     void render(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP);
+
+#ifdef __APPLE__
+    int processKey(unsigned short keyCode, int down);
+#else
+#ifdef WIN32
+    int processKey(int key, int down);
+#else
+    int processKey(XIDeviceEvent *event, bool down);
+#endif
+#endif
     
 private:
     size_t ww;
@@ -36,6 +46,8 @@ private:
     
     int selectedX;
     int selectedY;
+    int newX;
+    int newY;
 };
     
 }

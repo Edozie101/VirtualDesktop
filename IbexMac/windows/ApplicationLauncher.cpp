@@ -12,6 +12,7 @@
 #include "../ibex_win_utils.h"
 #endif
 #ifdef __APPLE__
+#include <Carbon/Carbon.h>
 #include "../ibex_mac_utils.h"
 #endif
 
@@ -25,23 +26,25 @@ Ibex::ApplicationLauncher::ApplicationLauncher() : ww(0),
                                                    appSelectionTexture(0),
                                                    selectedX(0),
                                                    selectedY(0),
+                                                   newX(0),
+                                                   newY(0),
                                                    first(true) {
 }
 
-void Ibex::ApplicationLauncher::update(int &selectedX_, int &selectedY_) {
+void Ibex::ApplicationLauncher::update() {
     if(appSelectionTexture == 0) {
         appSelectionTexture = loadTexture("/resources/app-launcher-selection-frame.png");
     }
-    if(appTexture == 0 || selectedX_ != selectedX || selectedY_ != selectedY) {
+    if(appTexture == 0 || newX != selectedX || newY != selectedY) {
         if(appTexture) {
             glDeleteTextures(1, &appTexture);
             appTexture = 0;
         }
     #ifdef __APPLE__
-        appTexture = createApplicationListImage("/Applications", ww, hh, selectedX_, selectedY_);
+        appTexture = createApplicationListImage("/Applications", ww, hh, newX, newY);
     #endif
-        selectedX = selectedX_;
-        selectedY = selectedY_;
+        selectedX = newX;
+        selectedY = newY;
     }
 }
 void Ibex::ApplicationLauncher::render(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP)
@@ -144,3 +147,110 @@ void Ibex::ApplicationLauncher::render(const glm::mat4 &MVP, const glm::mat4 &V,
     glBindVertexArray(vaoIbexDisplayFlat);
     glDrawElements(GL_TRIANGLES, sizeof(IbexDisplayFlatIndices)/sizeof(GLushort), GL_UNSIGNED_SHORT, 0);
 }
+
+#ifdef __APPLE__
+int Ibex::ApplicationLauncher::processKey(unsigned short keyCode, int down) {
+    int processed = 0;
+    
+    switch(keyCode) {
+        case kVK_UpArrow:
+        case kVK_ANSI_W:
+            if(down) {
+                newY = ++selectedY;
+            }
+            processed = 1;
+            break;
+        case kVK_DownArrow:
+        case kVK_ANSI_S:
+            if(down) {
+                newY = selectedY;
+            }
+            processed = 1;
+            break;
+        case kVK_LeftArrow:
+        case kVK_ANSI_A:
+            if(down) {
+                newX = --selectedX;
+            }
+            processed = 1;
+            break;
+        case kVK_RightArrow:
+        case kVK_ANSI_D:
+            if(down) {
+                newX = ++selectedX;
+            }
+            processed = 1;
+            break;
+        case kVK_Return:
+            if(down) {
+            }
+            
+            processed = 1;
+            break;
+        case kVK_Escape:
+            processed = 1;
+            break;
+    }
+    return processed;
+}
+#else
+#ifdef WIN32
+int Ibex::ApplicationLauncher::processKey(int key, int down) {
+	int processed = 0;
+    switch(key) {
+		case 'W':
+        case 'w':
+		case GLFW_KEY_UP:
+            if(down) {
+                newY = ++selectedY;
+            }
+            processed = 1;
+            break;
+		case GLFW_KEY_DOWN:
+		case 'S':
+		case 's':
+            if(down) {
+                newY = --selectedY;
+            }
+            
+            processed = 1;
+            break;
+		case 'D':
+        case 'd':
+		case GLFW_KEY_RIGHT:
+            if(down) {
+                newX = ++selectedX;
+            }
+            processed = 1;
+            break;
+		case GLFW_KEY_LEFT:
+		case 'A':
+		case 'a':
+            if(down) {
+                newX = --selectedX;
+            }
+            
+            processed = 1;
+            break;
+		case GLFW_KEY_ENTER:
+			if(!down) {
+            }
+            
+            processed = 1;
+            break;
+            // case 27: // ESCAPE
+		case GLFW_KEY_ESCAPE:
+			if(!down) {
+			}
+            
+            processed = 1;
+    }
+    return processed;
+}
+#else
+int Ibex::ApplicationLauncher::processKey(XIDeviceEvent *event, bool down) {
+    int processed = 0;
+    return processed;
+}
+#endif
+#endif
