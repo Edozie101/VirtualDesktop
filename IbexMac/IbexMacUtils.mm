@@ -21,6 +21,7 @@
 #include "string.h"
 #include <vector>
 #include <string>
+#include <utility>
 
 static void savePNGImage(CGImageRef imageRef, NSString *path)
 {
@@ -155,7 +156,7 @@ extern "C" GLuint loadCubemapTextures(const char *path_[6]) {
     return myTextureName;
 }
 
-GLuint createApplicationListImage(const char *path_, size_t &width, size_t &height, int &selectedX, int &selectedY) {
+GLuint createApplicationListImage(const char *path_, size_t &width, size_t &height, int &selectedX, int &selectedY, std::map<std::pair<int,int>,std::string> &applicationList) {
     const bool flip = true;
     const int iconRes = 96;
     const int iconSpacing = 16;
@@ -185,11 +186,17 @@ GLuint createApplicationListImage(const char *path_, size_t &width, size_t &heig
 //    CGContextClearRect(myBitmapContext, CGRectMake(0, 0, width, height));
     CGContextFillRect(myBitmapContext, CGRectMake(0, 0, width, height));
     
+    applicationList.clear();
     for(int i = 0, count = 0; i < appDirectory.size(); ++i) {
         if(appDirectory[i].find(".app") == std::string::npos) continue;
+        const int x = (count/vert);
+        const int y = (vert-(count%vert)-1);
+        const int yApp = (count%vert);
         
         const std::string s(Filesystem::getFullPath(std::string("/Applications"), appDirectory[i].c_str()));
         const char *path = s.c_str();
+        
+        applicationList[std::pair<int,int>(x,yApp)] = s;
         
 //        std::cerr << "***** ICON FOR: " << path << std::endl;
         
@@ -200,8 +207,8 @@ GLuint createApplicationListImage(const char *path_, size_t &width, size_t &heig
         CGImageRef myImageRef = [iconImage CGImageForProposedRect:&r context:nil hints:nil];
 //        savePNGImage(myImageRef, @"/Users/hesh/iconTest.png");
 //        exit(0);
+        CGRect rect = CGRectMake(x*(iconRes+2*iconSpacing)+iconSpacing, y*(iconRes+2*iconSpacing)+iconSpacing, iconRes, iconRes);
         
-        CGRect rect = CGRectMake((count/vert)*(iconRes+2*iconSpacing)+iconSpacing, (vert-(count%vert)-1)*(iconRes+2*iconSpacing)+iconSpacing, iconRes, iconRes);
         
         if(!flip) {
             CGContextTranslateCTM(myBitmapContext, 0, iconRes+2*iconSpacing);

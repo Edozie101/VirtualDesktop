@@ -11,6 +11,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
@@ -38,6 +39,8 @@ public:
 #endif
     
 private:
+    std::map<std::pair<int,int>,std::string> applicationList;
+    
     size_t ww;
     size_t hh;
     GLuint appTexture;

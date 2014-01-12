@@ -113,6 +113,8 @@ bool modifiedDesktop(false);
     [window_ setStyleMask:NSBorderlessWindowMask];
     [window_ setLevel:NSScreenSaverWindowLevel];
     [window_ makeKeyAndOrderFront:self];
+    [NSApp activateIgnoringOtherApps:YES];
+    [[NSRunningApplication currentApplication] activateWithOptions:NSApplicationActivateAllWindows];
 }
 - (void)makeWindowRegular:(NSWindow*)window_ {
     [window_ setExcludedFromWindowsMenu:YES];
@@ -132,36 +134,63 @@ bool modifiedDesktop(false);
 }
 
 - (void)launchApplication:(NSString*)applicationPath {
-    if(launchedApplication != nil) {
-        [launchedApplication removeObserver:self forKeyPath:@"isTerminated"];
-        launchedApplication = nil;
-        [self makeWindowTopLevel:mainWindow];
-    }
-    
-    if([[NSWorkspace sharedWorkspace] launchApplication:applicationPath] == NO) {
-        [self makeWindowTopLevel:mainWindow];
-        return;
-    }
-    bool found = false;
-    while(!found) {
-        for(NSRunningApplication *app in [[NSWorkspace sharedWorkspace] runningApplications]) {
-            if([[app.executableURL absoluteString] rangeOfString:applicationPath].location != NSNotFound) {
-                launchedApplication = app;
-                [launchedApplication addObserver:self
-                                      forKeyPath:@"isTerminated"
-                                         options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld)
-                                         context:NULL];
-                NSLog(@"Launched application: %@", launchedApplication);
-                found = true;
-                [self makeWindowRegular:mainWindow];
-                break;
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+        if(launchedApplication != nil) {
+            [launchedApplication removeObserver:self forKeyPath:@"isTerminated"];
+            launchedApplication = nil;
+            [self makeWindowTopLevel:mainWindow];
+        }
+        
+        if([[NSWorkspace sharedWorkspace] launchApplication:applicationPath] == NO) {
+            [self makeWindowTopLevel:mainWindow];
+            return;
+        }
+        NSURL *appURL = [[NSURL alloc] initFileURLWithPath:applicationPath];
+        if(appURL == nil) {
+            return;
+        }
+        launchedApplication = [[NSWorkspace sharedWorkspace] launchApplicationAtURL:appURL options:(NSWorkspaceLaunchAsync | NSWorkspaceLaunchWithoutActivation) configuration:nil error:nil];
+        if(launchedApplication == nil) {
+            [self makeWindowTopLevel:mainWindow];
+            return;
+        }
+        [launchedApplication addObserver:self
+                              forKeyPath:@"isTerminated"
+                                 options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld)
+                                 context:NULL];
+        /*
+        bool found = false;
+        NSDate *start = [NSDate date];
+        while(!found) {
+            for(NSRunningApplication *app in [[NSWorkspace sharedWorkspace] runningApplications]) {
+                if([[app.executableURL absoluteString] rangeOfString:applicationPath].location != NSNotFound) {
+                    launchedApplication = app;
+                    [launchedApplication addObserver:self
+                                          forKeyPath:@"isTerminated"
+                                             options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld)
+                                             context:NULL];
+                    NSLog(@"Launched application: %@", launchedApplication);
+                    found = true;
+                    [self makeWindowRegular:mainWindow];
+                    break;
+                }
+            }
+            if([[NSDate date] timeIntervalSinceDate:start] > 5.0) {
+                [self makeWindowTopLevel:mainWindow];
+                return;
             }
         }
-    }
-    if(launchedApplication.terminated == YES) {
-        [self makeWindowTopLevel:mainWindow];
-        return;
-    }
+         */
+        if(launchedApplication.terminated == YES) {
+            [self makeWindowTopLevel:mainWindow];
+            return;
+        }
+        [self makeWindowRegular:mainWindow];
+    });
+}
+void launchApplication(const std::string &applicationPath) {
+    AppDelegate *appDelegate = (AppDelegate*)[[NSApplication sharedApplication] delegate];
+    [appDelegate launchApplication:@(applicationPath.c_str())];
 }
 
 NSWindow* myWindow;

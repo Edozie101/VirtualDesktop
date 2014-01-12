@@ -14,6 +14,9 @@
 #ifdef __APPLE__
 #include <Carbon/Carbon.h>
 #include "../ibex_mac_utils.h"
+
+void launchApplication(const std::string &applicationPath);
+
 #endif
 
 #include "../simpleworld_plugin/SimpleWorldRendererPlugin.h"
@@ -41,7 +44,7 @@ void Ibex::ApplicationLauncher::update() {
             appTexture = 0;
         }
     #ifdef __APPLE__
-        appTexture = createApplicationListImage("/Applications", ww, hh, newX, newY);
+        appTexture = createApplicationListImage("/Applications", ww, hh, newX, newY, applicationList);
     #endif
         selectedX = newX;
         selectedY = newY;
@@ -183,6 +186,8 @@ int Ibex::ApplicationLauncher::processKey(unsigned short keyCode, int down) {
             break;
         case kVK_Return:
             if(down) {
+                std::string path = applicationList[std::pair<int,int>(selectedX,selectedY)];
+                launchApplication(path);
             }
             
             processed = 1;
