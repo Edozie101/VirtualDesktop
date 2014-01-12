@@ -170,6 +170,8 @@ GLuint createApplicationListImage(const char *path_, size_t &width, size_t &heig
     
     const int vert = 8;
     const int horiz = ceil(float(appCount)/float(vert));
+    while(selectedX < 0) selectedX += horiz;
+    while(selectedY < 0) selectedY += vert;
     selectedX %= horiz;
     selectedY %= vert;
     
