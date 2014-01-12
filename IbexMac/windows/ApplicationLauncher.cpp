@@ -188,6 +188,7 @@ int Ibex::ApplicationLauncher::processKey(unsigned short keyCode, int down) {
             processed = 1;
             break;
         case kVK_Escape:
+            showApplicationLauncher = false;
             processed = 1;
             break;
     }
