@@ -31,10 +31,6 @@ extern GLint ShadowAttribLocations[3];
 
 extern glm::vec3 lightInvDir;
 
-namespace Ibex {
-class ApplicationLauncher;
-}
-
 class SimpleWorldRendererPlugin : public RendererPlugin {
 public:
     SimpleWorldRendererPlugin();
@@ -70,7 +66,6 @@ private:
     Model treeModel;
     
     GLuint renderVideoTexture;
-    Ibex::ApplicationLauncher *applicationLauncher;
 };
 
 #endif /* SIMPLEWORLDRENDERERPLUGIN_H_ */

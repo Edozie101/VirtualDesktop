@@ -31,6 +31,7 @@
 #include "sixense/sixense_controller.h"
 
 #include "windows/Window.h"
+#include "windows/ApplicationLauncher.h"
 
 #include "RendererPlugin.h"
 #include "oculus/Rift.h"
@@ -562,8 +563,18 @@ static CGPoint cursorPos;
     if(showDialog) {
         processed = ibex->renderer->window.processKey(theEvent.keyCode, 1);
     }
+    if(showApplicationLauncher) {
+        processed = ibex->renderer->applicationLauncher->processKey(theEvent.keyCode, 1);
+    }
     if(!processed) {
         switch(theEvent.keyCode) {
+            case kVK_Escape:
+                showApplicationLauncher = false;
+                showDialog = false;
+                break;
+            case kVK_ANSI_O:
+                showApplicationLauncher = !showApplicationLauncher;
+                break;
             case kVK_UpArrow:
             case kVK_ANSI_W:
                 walkForward = 1;
@@ -615,6 +626,9 @@ static CGPoint cursorPos;
     int processed = 0;
     if(showDialog) {
         processed = ibex->renderer->window.processKey(theEvent.keyCode, 0);
+    }
+    if(showApplicationLauncher) {
+        processed = ibex->renderer->applicationLauncher->processKey(theEvent.keyCode, 0);
     }
     if(!processed) {
         switch(theEvent.keyCode) {

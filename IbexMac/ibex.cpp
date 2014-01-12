@@ -65,6 +65,7 @@ DisplayShape displayShape = FlatDisplay;
 
 bool controlDesktop         = 0;
 bool showDialog             = false;
+bool showApplicationLauncher= false;
 bool bringUpIbexDisplay     = false;
 
 // external variables

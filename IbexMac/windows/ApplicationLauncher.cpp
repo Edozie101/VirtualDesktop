@@ -156,28 +156,28 @@ int Ibex::ApplicationLauncher::processKey(unsigned short keyCode, int down) {
         case kVK_UpArrow:
         case kVK_ANSI_W:
             if(down) {
-                newY = ++selectedY;
+                newY = selectedY-1;
             }
             processed = 1;
             break;
         case kVK_DownArrow:
         case kVK_ANSI_S:
             if(down) {
-                newY = selectedY;
+                newY = selectedY+1;
             }
             processed = 1;
             break;
         case kVK_LeftArrow:
         case kVK_ANSI_A:
             if(down) {
-                newX = --selectedX;
+                newX = selectedX-1;
             }
             processed = 1;
             break;
         case kVK_RightArrow:
         case kVK_ANSI_D:
             if(down) {
-                newX = ++selectedX;
+                newX = selectedX+1;
             }
             processed = 1;
             break;
@@ -202,7 +202,7 @@ int Ibex::ApplicationLauncher::processKey(int key, int down) {
         case 'w':
 		case GLFW_KEY_UP:
             if(down) {
-                newY = ++selectedY;
+                newY = selectedY+1;
             }
             processed = 1;
             break;
@@ -210,7 +210,7 @@ int Ibex::ApplicationLauncher::processKey(int key, int down) {
 		case 'S':
 		case 's':
             if(down) {
-                newY = --selectedY;
+                newY = selectedY-1;
             }
             
             processed = 1;
@@ -219,7 +219,7 @@ int Ibex::ApplicationLauncher::processKey(int key, int down) {
         case 'd':
 		case GLFW_KEY_RIGHT:
             if(down) {
-                newX = ++selectedX;
+                newX = selectedX+1;
             }
             processed = 1;
             break;
@@ -227,7 +227,7 @@ int Ibex::ApplicationLauncher::processKey(int key, int down) {
 		case 'A':
 		case 'a':
             if(down) {
-                newX = --selectedX;
+                newX = selectedX-1;
             }
             
             processed = 1;

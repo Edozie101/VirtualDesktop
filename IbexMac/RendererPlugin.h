@@ -16,6 +16,10 @@ typedef unsigned long Window;
 typedef unsigned long GLXContext;
 #endif
 
+namespace Ibex {
+    class ApplicationLauncher;
+}
+
 class RendererPlugin {
 public:
   virtual ~RendererPlugin();
@@ -50,6 +54,7 @@ public:
     
 public:
     ::Ibex::Window window;
+    ::Ibex::ApplicationLauncher *applicationLauncher;
 };
 
 #endif /* RENDERERPLUGIN_H_ */
