@@ -126,7 +126,7 @@ void renderCylindricalDisplay(double r, double numHorizontalLines, double numVer
     //    glPopMatrix();
 }
 
-SimpleWorldRendererPlugin::SimpleWorldRendererPlugin() : _bringUpIbexDisplay(true) {
+SimpleWorldRendererPlugin::SimpleWorldRendererPlugin() : _bringUpIbexDisplay(true),_bringUpAppLauncher(true) {
     reset();
 }
 SimpleWorldRendererPlugin::~SimpleWorldRendererPlugin() {
@@ -134,6 +134,9 @@ SimpleWorldRendererPlugin::~SimpleWorldRendererPlugin() {
 
 void SimpleWorldRendererPlugin::bringUpIbexDisplay() {
     _bringUpIbexDisplay = true;
+}
+void SimpleWorldRendererPlugin::bringUpAppLauncher() {
+    _bringUpAppLauncher = true;
 }
 // ---------------------------------------------------------------------------
 // Function: loadSkybox
@@ -872,7 +875,9 @@ void SimpleWorldRendererPlugin::init() {
 
 void SimpleWorldRendererPlugin::reset() {
     ibexDisplayModelTransform = glm::translate(0.0f, 0.0f, -10.0f);
+    appLauncherModelTransform = ibexDisplayModelTransform;
 	_bringUpIbexDisplay = true;
+    _bringUpAppLauncher = true;
 }
 
 void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &orthoProj, const glm::mat4 &view_, const glm::mat4 &playerCamera_, const glm::mat4 &playerRotation_, const glm::vec3 &playerPosition_, bool shadowPass, const glm::mat4 &depthBiasMVP, const double &timeDiff_, const double &time, const int &leftRight) {
@@ -954,15 +959,20 @@ void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &
 			renderWater(PV*model, view, model, shadowPass, depthBiasMVP*model, time);
 		}
          
-		model = glm::mat4();
+        model = glm::mat4();
         window.render(orthoProj/**model*/, view, model, shadowPass, depthBiasMVP/**model*/, timeDiff_);
          
-         model = ibexDisplayModelTransform;
-         glm::vec4 bounds(ibexMonitor->getBounds());
-         model = glm::translate(model, glm::vec3(bounds[0]-10.0f-1.0f, 0.0f, 0.0f))*glm::scale(1.0f,-1.0f,1.0f);
-         glDisable(GL_CULL_FACE);
-         applicationLauncher->render(PV*model, view, model, shadowPass, depthBiasMVP*model);
-         glEnable(GL_CULL_FACE);
+        if(showApplicationLauncher) {
+            //model = ibexDisplayModelTransform;
+            //glm::vec4 bounds(ibexMonitor->getBounds());
+            //model = glm::translate(model, glm::vec3(bounds[0]-10.0f-1.0f, 0.0f, 0.0f))*glm::scale(1.0f,-1.0f,1.0f);
+            model = appLauncherModelTransform*glm::scale(1.0f,-1.0f,1.0f);
+            glDisable(GL_CULL_FACE);
+            glDisable(GL_DEPTH_TEST);
+            applicationLauncher->render(PV*model, view, model, shadowPass, depthBiasMVP*model);
+            glEnable(GL_DEPTH_TEST);
+            glEnable(GL_CULL_FACE);
+        }
 
         glDisable(GL_BLEND);
     }
@@ -1043,14 +1053,19 @@ void SimpleWorldRendererPlugin::step(Desktop3DLocation &loc, double timeDiff_, c
     
     
 	static bool firstBringUpDisplay = true;
-    if(_bringUpIbexDisplay) {
-        _bringUpIbexDisplay = false;
-
+    if(_bringUpIbexDisplay || _bringUpAppLauncher) {
 		glm::mat4 rot(firstBringUpDisplay ? glm::mat4() : (orientationRift*playerRotation));
 		glm::mat4 playerCamera2(glm::translate(rot,
 									           playerPosition));
 		glm::vec3 p(glm::mat4(glm::inverse(playerCamera2)) * glm::vec4(0,0,-10,1));
-		ibexDisplayModelTransform = glm::translate(p)*glm::inverse(rot);
+        if(_bringUpIbexDisplay) {
+            _bringUpIbexDisplay = false;
+            ibexDisplayModelTransform = glm::translate(p)*glm::inverse(rot);
+        }
+        if(_bringUpAppLauncher) {
+            _bringUpAppLauncher = false;
+            appLauncherModelTransform = glm::translate(p)*glm::inverse(rot);
+        }
 
 		firstBringUpDisplay = false;
     }

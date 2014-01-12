@@ -51,6 +51,7 @@ public:
   virtual bool needsSwapBuffers() { return false; }
     
     virtual void bringUpIbexDisplay() {}
+    virtual void bringUpAppLauncher() {}
     
 public:
     ::Ibex::Window window;

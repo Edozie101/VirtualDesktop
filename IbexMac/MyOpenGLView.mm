@@ -574,6 +574,7 @@ static CGPoint cursorPos;
                 break;
             case kVK_ANSI_O:
                 showApplicationLauncher = !showApplicationLauncher;
+                bringUpAppLauncher = showApplicationLauncher;
                 break;
             case kVK_UpArrow:
             case kVK_ANSI_W:

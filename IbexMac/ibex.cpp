@@ -67,6 +67,7 @@ bool controlDesktop         = 0;
 bool showDialog             = false;
 bool showApplicationLauncher= false;
 bool bringUpIbexDisplay     = false;
+bool bringUpAppLauncher     = false;
 
 // external variables
 bool resetPosition          = 0;
@@ -556,6 +557,10 @@ void Ibex::Ibex::render(double timeDiff) {
     if(bringUpIbexDisplay) {
         bringUpIbexDisplay = false;
         renderer->bringUpIbexDisplay();
+    }
+    if(bringUpAppLauncher) {
+        bringUpAppLauncher = false;
+        renderer->bringUpAppLauncher();
     }
     renderer->processEvents();
     

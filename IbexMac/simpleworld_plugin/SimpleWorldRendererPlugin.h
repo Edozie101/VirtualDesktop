@@ -50,6 +50,7 @@ public:
     bool needsSwapBuffers();
     
     void bringUpIbexDisplay();
+    void bringUpAppLauncher();
     
     Window getWindowID();
 private:
@@ -61,7 +62,9 @@ private:
     Terrain terrain;
     
     bool _bringUpIbexDisplay;
+    bool _bringUpAppLauncher;
     glm::mat4 ibexDisplayModelTransform;
+    glm::mat4 appLauncherModelTransform;
     
     Model treeModel;
     
