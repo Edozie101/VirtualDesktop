@@ -209,7 +209,10 @@ GLuint createApplicationListImage(const char *path_, size_t &width, size_t &heig
         CGImageRef myImageRef = [iconImage CGImageForProposedRect:&r context:nil hints:nil];
 //        savePNGImage(myImageRef, @"/Users/hesh/iconTest.png");
 //        exit(0);
-        CGRect rect = CGRectMake(x*(iconRes+2*iconSpacing)+iconSpacing, y*(iconRes+2*iconSpacing)+iconSpacing, iconRes, iconRes);
+        
+        CGRect rect = (x == selectedX && yApp == selectedY) ?
+            CGRectMake(x*(iconRes+2*iconSpacing)+0.5*iconSpacing, y*(iconRes+2*iconSpacing)+0.5*iconSpacing, iconRes+1*iconSpacing, iconRes+1*iconSpacing) :
+            CGRectMake(x*(iconRes+2*iconSpacing)+iconSpacing, y*(iconRes+2*iconSpacing)+iconSpacing, iconRes, iconRes);
         
         
         if(!flip) {
