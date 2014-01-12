@@ -106,6 +106,64 @@ bool modifiedDesktop(false);
     [serverController startService];
 }
 
+- (void)makeWindowTopLevel:(NSWindow*)window_ {
+    [window_ setExcludedFromWindowsMenu:YES];
+    [window_ setMovableByWindowBackground:YES];
+    [window_ setExcludedFromWindowsMenu:YES];
+    [window_ setStyleMask:NSBorderlessWindowMask];
+    [window_ setLevel:NSScreenSaverWindowLevel];
+    [window_ makeKeyAndOrderFront:self];
+}
+- (void)makeWindowRegular:(NSWindow*)window_ {
+    [window_ setExcludedFromWindowsMenu:YES];
+    [window_ setMovableByWindowBackground:YES];
+    [window_ setExcludedFromWindowsMenu:YES];
+    [window_ setStyleMask:NSBorderlessWindowMask];
+    [window_ setLevel:NSNormalWindowLevel];
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath
+                      ofObject:(id)object
+                        change:(NSDictionary *)change
+                       context:(void *)context {
+    [launchedApplication removeObserver:self forKeyPath:@"isTerminated"];
+    launchedApplication = nil;
+    [self makeWindowTopLevel:mainWindow];
+}
+
+- (void)launchApplication:(NSString*)applicationPath {
+    if(launchedApplication != nil) {
+        [launchedApplication removeObserver:self forKeyPath:@"isTerminated"];
+        launchedApplication = nil;
+        [self makeWindowTopLevel:mainWindow];
+    }
+    
+    if([[NSWorkspace sharedWorkspace] launchApplication:applicationPath] == NO) {
+        [self makeWindowTopLevel:mainWindow];
+        return;
+    }
+    bool found = false;
+    while(!found) {
+        for(NSRunningApplication *app in [[NSWorkspace sharedWorkspace] runningApplications]) {
+            if([[app.executableURL absoluteString] rangeOfString:applicationPath].location != NSNotFound) {
+                launchedApplication = app;
+                [launchedApplication addObserver:self
+                                      forKeyPath:@"isTerminated"
+                                         options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld)
+                                         context:NULL];
+                NSLog(@"Launched application: %@", launchedApplication);
+                found = true;
+                [self makeWindowRegular:mainWindow];
+                break;
+            }
+        }
+    }
+    if(launchedApplication.terminated == YES) {
+        [self makeWindowTopLevel:mainWindow];
+        return;
+    }
+}
+
 NSWindow* myWindow;
 NSWindow *mainWindow;
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
@@ -116,8 +174,8 @@ NSWindow *mainWindow;
     
     CGRect mainDisplayRect = NSScreen.mainScreen.frame;
     
-    [_window setFrame:mainDisplayRect display:YES];
     ScreenshotView *screenshotView = [[ScreenshotView alloc] initWithFrame:mainDisplayRect];
+    [_window setFrame:mainDisplayRect display:YES];
     [_window setContentView:screenshotView];
     [_window setExcludedFromWindowsMenu:YES];
     [_window setMovableByWindowBackground:YES];
@@ -160,6 +218,12 @@ NSWindow *mainWindow;
     [mainWindow setExcludedFromWindowsMenu:YES];
     [mainWindow makeMainWindow];
     [mainWindow makeKeyAndOrderFront:self];
+    
+//    double delayInSeconds = 5.0;
+//    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+//    dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+//        [self launchApplication:@"/Applications/TextEdit.app"];
+//    });
 }
 
 @end

@@ -28,6 +28,7 @@ extern "C" {
 #endif
     
     ServerController *serverController;
+    NSRunningApplication *launchedApplication;
 }
 
 @property (assign) IBOutlet NSWindow *window;
