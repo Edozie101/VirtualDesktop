@@ -128,6 +128,7 @@ bool modifiedDesktop(false);
                       ofObject:(id)object
                         change:(NSDictionary *)change
                        context:(void *)context {
+    [fullScreenView resumeRendering];
     [launchedApplication removeObserver:self forKeyPath:@"isTerminated"];
     launchedApplication = nil;
     [self makeWindowTopLevel:mainWindow];
@@ -149,39 +150,18 @@ bool modifiedDesktop(false);
         if(appURL == nil) {
             return;
         }
-        launchedApplication = [[NSWorkspace sharedWorkspace] launchApplicationAtURL:appURL options:(NSWorkspaceLaunchAsync | NSWorkspaceLaunchWithoutActivation) configuration:nil error:nil];
+        launchedApplication = [[NSWorkspace sharedWorkspace] launchApplicationAtURL:appURL options:NSWorkspaceLaunchDefault configuration:nil error:nil];
         if(launchedApplication == nil) {
             [self makeWindowTopLevel:mainWindow];
             return;
         }
+        [fullScreenView pauseRendering];
         [launchedApplication addObserver:self
                               forKeyPath:@"isTerminated"
                                  options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld)
                                  context:NULL];
-        /*
-        bool found = false;
-        NSDate *start = [NSDate date];
-        while(!found) {
-            for(NSRunningApplication *app in [[NSWorkspace sharedWorkspace] runningApplications]) {
-                if([[app.executableURL absoluteString] rangeOfString:applicationPath].location != NSNotFound) {
-                    launchedApplication = app;
-                    [launchedApplication addObserver:self
-                                          forKeyPath:@"isTerminated"
-                                             options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld)
-                                             context:NULL];
-                    NSLog(@"Launched application: %@", launchedApplication);
-                    found = true;
-                    [self makeWindowRegular:mainWindow];
-                    break;
-                }
-            }
-            if([[NSDate date] timeIntervalSinceDate:start] > 5.0) {
-                [self makeWindowTopLevel:mainWindow];
-                return;
-            }
-        }
-         */
         if(launchedApplication.terminated == YES) {
+            [fullScreenView resumeRendering];
             [self makeWindowTopLevel:mainWindow];
             return;
         }

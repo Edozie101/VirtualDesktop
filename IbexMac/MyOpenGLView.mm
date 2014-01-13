@@ -199,6 +199,12 @@ static CVReturn MyDisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTime
     CVReturn result = [((__bridge MyOpenGLView*)displayLinkContext) getFrameForTime:outputTime];
     return result;
 }
+- (void)pauseRendering {
+    CVDisplayLinkStop(displayLink);
+}
+- (void)resumeRendering {
+    CVDisplayLinkStart(displayLink);
+}
 
 - (void)dealloc
 {

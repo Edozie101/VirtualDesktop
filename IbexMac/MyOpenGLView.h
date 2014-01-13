@@ -27,5 +27,7 @@ extern NSCondition *cocoaCondition;
 
 - (void)getMousePosition;
 - (CVReturn)getFrameForTime:(const CVTimeStamp*)outputTime;
+- (void)pauseRendering;
+- (void)resumeRendering;
 
 @end
