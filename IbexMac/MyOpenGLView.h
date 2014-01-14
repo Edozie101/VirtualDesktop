@@ -29,5 +29,6 @@ extern NSCondition *cocoaCondition;
 - (CVReturn)getFrameForTime:(const CVTimeStamp*)outputTime;
 - (void)pauseRendering;
 - (void)resumeRendering;
+- (void)controlDesktopUpdate;
 
 @end

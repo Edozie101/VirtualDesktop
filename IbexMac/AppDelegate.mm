@@ -107,16 +107,20 @@ bool modifiedDesktop(false);
 }
 
 - (void)makeWindowTopLevel:(NSWindow*)window_ {
+    [window_ setCollectionBehavior:NSWindowCollectionBehaviorMoveToActiveSpace];
     [window_ setExcludedFromWindowsMenu:YES];
     [window_ setMovableByWindowBackground:YES];
     [window_ setExcludedFromWindowsMenu:YES];
     [window_ setStyleMask:NSBorderlessWindowMask];
     [window_ setLevel:NSScreenSaverWindowLevel];
     [window_ makeKeyAndOrderFront:self];
+    [window_ setOrderedIndex:0];
     [NSApp activateIgnoringOtherApps:YES];
     [[NSRunningApplication currentApplication] activateWithOptions:NSApplicationActivateAllWindows];
+    [fullScreenView controlDesktopUpdate];
 }
 - (void)makeWindowRegular:(NSWindow*)window_ {
+    [window_ setCollectionBehavior:NSWindowCollectionBehaviorMoveToActiveSpace];
     [window_ setExcludedFromWindowsMenu:YES];
     [window_ setMovableByWindowBackground:YES];
     [window_ setExcludedFromWindowsMenu:YES];
@@ -128,16 +132,23 @@ bool modifiedDesktop(false);
                       ofObject:(id)object
                         change:(NSDictionary *)change
                        context:(void *)context {
-    [fullScreenView resumeRendering];
-    [launchedApplication removeObserver:self forKeyPath:@"isTerminated"];
-    launchedApplication = nil;
-    [self makeWindowTopLevel:mainWindow];
+    if([keyPath isEqualToString:@"isTerminated"] && [object isTerminated]) {
+        [fullScreenView resumeRendering];
+        
+        // can't check to see if registered as observer for KVO!
+        @try {
+            [launchedApplication removeObserver:self forKeyPath:NSStringFromSelector(@selector(isTerminated))];
+        } @catch (NSException * __unused exception) {}
+        
+        launchedApplication = nil;
+        [self makeWindowTopLevel:mainWindow];
+    }
 }
 
 - (void)launchApplication:(NSString*)applicationPath {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
         if(launchedApplication != nil) {
-            [launchedApplication removeObserver:self forKeyPath:@"isTerminated"];
+            [launchedApplication removeObserver:self forKeyPath:NSStringFromSelector(@selector(isTerminated))];
             launchedApplication = nil;
             [self makeWindowTopLevel:mainWindow];
         }
@@ -156,16 +167,11 @@ bool modifiedDesktop(false);
             return;
         }
         [fullScreenView pauseRendering];
+        [self makeWindowRegular:mainWindow];
         [launchedApplication addObserver:self
                               forKeyPath:@"isTerminated"
-                                 options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld)
+                                 options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld | NSKeyValueObservingOptionInitial)
                                  context:NULL];
-        if(launchedApplication.terminated == YES) {
-            [fullScreenView resumeRendering];
-            [self makeWindowTopLevel:mainWindow];
-            return;
-        }
-        [self makeWindowRegular:mainWindow];
     });
 }
 void launchApplication(const std::string &applicationPath) {
