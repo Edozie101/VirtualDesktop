@@ -156,16 +156,20 @@ extern "C" GLuint loadCubemapTextures(const char *path_[6]) {
     return myTextureName;
 }
 
-GLuint createApplicationListImage(const char *path_, size_t &width, size_t &height, int &selectedX, int &selectedY, std::map<std::pair<int,int>,std::string> &applicationList) {
+GLuint createApplicationListImage(const std::vector<std::string> &paths, size_t &width, size_t &height, int &selectedX, int &selectedY, std::map<std::pair<int,int>,std::string> &applicationList) {
     const bool flip = true;
     const int iconRes = 96;
     const int iconSpacing = 16;
-    std::vector<std::string> appDirectory = Filesystem::listDirectory(path_);
     
     int appCount = 0;
-    for(int i = 0; i < appDirectory.size(); ++i) {
-        if(appDirectory[i].find(".app") == std::string::npos) continue;
-        ++appCount;
+    
+    for(int p = 0; p < paths.size(); ++p) {
+        const char *path_ = paths[p].c_str();
+        std::vector<std::string> appDirectory = Filesystem::listDirectory(path_);
+        for(int i = 0; i < appDirectory.size(); ++i) {
+            if(appDirectory[i].find(".app") == std::string::npos) continue;
+            ++appCount;
+        }
     }
     
     const int vert = 8;
@@ -188,41 +192,47 @@ GLuint createApplicationListImage(const char *path_, size_t &width, size_t &heig
 //    CGContextClearRect(myBitmapContext, CGRectMake(0, 0, width, height));
     CGContextFillRect(myBitmapContext, CGRectMake(0, 0, width, height));
     
+    int count = 0;
     applicationList.clear();
-    for(int i = 0, count = 0; i < appDirectory.size(); ++i) {
-        if(appDirectory[i].find(".app") == std::string::npos) continue;
-        const int x = (count/vert);
-        const int y = (vert-(count%vert)-1);
-        const int yApp = (count%vert);
+    for(int p = 0; p < paths.size(); ++p) {
+        const char *path_ = paths[p].c_str();
+        std::vector<std::string> appDirectory = Filesystem::listDirectory(path_);
         
-        const std::string s(Filesystem::getFullPath(std::string("/Applications"), appDirectory[i].c_str()));
-        const char *path = s.c_str();
-        
-        applicationList[std::pair<int,int>(x,yApp)] = s;
-        
-//        std::cerr << "***** ICON FOR: " << path << std::endl;
-        
-        NSImage *iconImage = [[NSWorkspace sharedWorkspace] iconForFile:[NSString stringWithCString:path encoding:[NSString defaultCStringEncoding]]];
-        
-        // NSLog(@"%s", path);
-        NSRect r = NSRectFromCGRect(CGRectMake(0.0f,0.0f,iconRes,iconRes));
-        CGImageRef myImageRef = [iconImage CGImageForProposedRect:&r context:nil hints:nil];
-//        savePNGImage(myImageRef, @"/Users/hesh/iconTest.png");
-//        exit(0);
-        
-        CGRect rect = (x == selectedX && yApp == selectedY) ?
-            CGRectMake(x*(iconRes+2*iconSpacing)+0.5*iconSpacing, y*(iconRes+2*iconSpacing)+0.5*iconSpacing, iconRes+1*iconSpacing, iconRes+1*iconSpacing) :
-            CGRectMake(x*(iconRes+2*iconSpacing)+iconSpacing, y*(iconRes+2*iconSpacing)+iconSpacing, iconRes, iconRes);
-        
-        
-        if(!flip) {
-            CGContextTranslateCTM(myBitmapContext, 0, iconRes+2*iconSpacing);
-            CGContextScaleCTM(myBitmapContext, 1.0, -1.0);
+        for(int i = 0; i < appDirectory.size(); ++i) {
+            if(appDirectory[i].find(".app") == std::string::npos) continue;
+            const int x = (count/vert);
+            const int y = (vert-(count%vert)-1);
+            const int yApp = (count%vert);
+            
+            const std::string s(Filesystem::getFullPath(std::string(path_), appDirectory[i].c_str()));
+            const char *path = s.c_str();
+            
+            applicationList[std::pair<int,int>(x,yApp)] = s;
+            
+    //        std::cerr << "***** ICON FOR: " << path << std::endl;
+            
+            NSImage *iconImage = [[NSWorkspace sharedWorkspace] iconForFile:[NSString stringWithCString:path encoding:[NSString defaultCStringEncoding]]];
+            
+            // NSLog(@"%s", path);
+            NSRect r = NSRectFromCGRect(CGRectMake(0.0f,0.0f,iconRes,iconRes));
+            CGImageRef myImageRef = [iconImage CGImageForProposedRect:&r context:nil hints:nil];
+    //        savePNGImage(myImageRef, @"/Users/hesh/iconTest.png");
+    //        exit(0);
+            
+            CGRect rect = (x == selectedX && yApp == selectedY) ?
+                CGRectMake(x*(iconRes+2*iconSpacing)+0.5*iconSpacing, y*(iconRes+2*iconSpacing)+0.5*iconSpacing, iconRes+1*iconSpacing, iconRes+1*iconSpacing) :
+                CGRectMake(x*(iconRes+2*iconSpacing)+iconSpacing, y*(iconRes+2*iconSpacing)+iconSpacing, iconRes, iconRes);
+            
+            
+            if(!flip) {
+                CGContextTranslateCTM(myBitmapContext, 0, iconRes+2*iconSpacing);
+                CGContextScaleCTM(myBitmapContext, 1.0, -1.0);
+            }
+            CGContextSetBlendMode(myBitmapContext, kCGBlendModeNormal);
+            CGContextDrawImage(myBitmapContext, rect, myImageRef);
+            
+            ++count;
         }
-        CGContextSetBlendMode(myBitmapContext, kCGBlendModeNormal);
-        CGContextDrawImage(myBitmapContext, rect, myImageRef);
-        
-        ++count;
     }
     // draw frame
     char path[2048];

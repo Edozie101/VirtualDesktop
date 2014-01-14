@@ -43,8 +43,10 @@ void Ibex::ApplicationLauncher::update() {
             glDeleteTextures(1, &appTexture);
             appTexture = 0;
         }
+        std::vector<std::string> directories;
     #ifdef __APPLE__
-        appTexture = createApplicationListImage("/Applications", ww, hh, newX, newY, applicationList);
+        directories.push_back("/Applications");
+        appTexture = createApplicationListImage(directories, ww, hh, newX, newY, applicationList);
     #endif
         selectedX = newX;
         selectedY = newY;
@@ -188,8 +190,8 @@ int Ibex::ApplicationLauncher::processKey(unsigned short keyCode, int down) {
             if(down) {
                 std::string path = applicationList[std::pair<int,int>(selectedX,selectedY)];
                 launchApplication(path);
+                showApplicationLauncher = false;
             }
-            
             processed = 1;
             break;
         case kVK_Escape:
@@ -240,8 +242,8 @@ int Ibex::ApplicationLauncher::processKey(int key, int down) {
             break;
 		case GLFW_KEY_ENTER:
 			if(!down) {
+                showApplicationLauncher = false;
             }
-            
             processed = 1;
             break;
             // case 27: // ESCAPE
