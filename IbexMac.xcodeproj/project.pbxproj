@@ -132,7 +132,7 @@
 		4C0E54A4188658430027940B /* PreferencesWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4C0E54A0188658430027940B /* PreferencesWindowController.mm */; };
 		4C0E54AA18866A8F0027940B /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CB7986A168AB41E00EF5260 /* Cocoa.framework */; };
 		4C0E54B018866A8F0027940B /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4C0E54AE18866A8F0027940B /* InfoPlist.strings */; };
-		4C0E54B218866A8F0027940B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C0E54B118866A8F0027940B /* main.m */; };
+		4C0E54B218866A8F0027940B /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4C0E54B118866A8F0027940B /* main.mm */; };
 		4C0E54B618866A8F0027940B /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 4C0E54B418866A8F0027940B /* Credits.rtf */; };
 		4C0E54BC18866A8F0027940B /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4C0E54BA18866A8F0027940B /* MainMenu.xib */; };
 		4C0E54BE18866A8F0027940B /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4C0E54BD18866A8F0027940B /* Images.xcassets */; };
@@ -541,7 +541,7 @@
 		4C0E54A918866A8F0027940B /* IbexConfig.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IbexConfig.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C0E54AD18866A8F0027940B /* IbexConfig-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "IbexConfig-Info.plist"; sourceTree = "<group>"; };
 		4C0E54AF18866A8F0027940B /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		4C0E54B118866A8F0027940B /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		4C0E54B118866A8F0027940B /* main.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
 		4C0E54B318866A8F0027940B /* IbexConfig-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "IbexConfig-Prefix.pch"; sourceTree = "<group>"; };
 		4C0E54B518866A8F0027940B /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
 		4C0E54BB18866A8F0027940B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
@@ -919,7 +919,7 @@
 			children = (
 				4C0E54AD18866A8F0027940B /* IbexConfig-Info.plist */,
 				4C0E54AE18866A8F0027940B /* InfoPlist.strings */,
-				4C0E54B118866A8F0027940B /* main.m */,
+				4C0E54B118866A8F0027940B /* main.mm */,
 				4C0E54B318866A8F0027940B /* IbexConfig-Prefix.pch */,
 				4C0E54B418866A8F0027940B /* Credits.rtf */,
 			);
@@ -1665,7 +1665,7 @@
 			files = (
 				4C0E54DA18866B8E0027940B /* PreferencesWindowController.mm in Sources */,
 				4C0E54D918866AF00027940B /* AppDelegate.mm in Sources */,
-				4C0E54B218866A8F0027940B /* main.m in Sources */,
+				4C0E54B218866A8F0027940B /* main.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2500,6 +2500,7 @@
 				4C0E54D318866A8F0027940B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		4C0E54D418866A8F0027940B /* Build configuration list for PBXNativeTarget "IbexConfigTests" */ = {
 			isa = XCConfigurationList;
@@ -2508,6 +2509,7 @@
 				4C0E54D618866A8F0027940B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		4C6B99FC16F4C17E00C5C725 /* Build configuration list for PBXNativeTarget "IbexMacOgre3D" */ = {
 			isa = XCConfigurationList;
