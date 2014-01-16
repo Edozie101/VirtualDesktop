@@ -45,7 +45,8 @@ void Ibex::ApplicationLauncher::update() {
         }
         std::vector<std::string> directories;
     #ifdef __APPLE__
-        directories.push_back("/Applications");
+        //directories.push_back("/Applications");
+        directories = getApplicationDirectoryFromPreferences();
         appTexture = createApplicationListImage(directories, ww, hh, newX, newY, applicationList);
     #endif
         selectedX = newX;

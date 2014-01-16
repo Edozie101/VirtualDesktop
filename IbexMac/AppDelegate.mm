@@ -104,6 +104,8 @@ bool modifiedDesktop(false);
         rift = r;
     }
     
+    _preferencesControllerWindow = [[PreferencesWindowController alloc] initWithWindowNibName:@"PreferencesWindow"];
+    
     serverController = [[ServerController alloc] init];
     [serverController startService];
 }
@@ -244,9 +246,7 @@ NSWindow *mainWindow;
 }
 
 - (IBAction)preferencesClicked:(id)sender {
-    preferencesControllerWindow = [[PreferencesWindowController alloc] initWithWindowNibName:@"PreferencesWindow"];
-//    [preferencesControllerWindow.window setLevel:NSScreenSaverWindowLevel];
-    [preferencesControllerWindow showWindow:self];
+    [_preferencesControllerWindow showWindow:self];
 }
 
 @end

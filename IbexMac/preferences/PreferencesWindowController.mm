@@ -10,6 +10,14 @@
 
 @implementation PreferencesWindowController
 
+- (id)initWithWindow:(NSWindow *)window {
+    self = [super initWithWindow:window];
+    if(self != nil) {
+        [self loadPreferences];
+    }
+    return self;
+}
+
 - (void)windowDidLoad {
     [self loadPreferences];
 }

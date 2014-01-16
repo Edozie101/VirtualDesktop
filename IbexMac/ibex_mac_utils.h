@@ -26,5 +26,5 @@ extern "C" GLuint loadNormalTexture(const char *path_);
 extern "C" GLuint loadTexture(const char *path_, bool flip=true, bool isAbsolutePath=false, bool disableAlpha=false, void *myDataIn=0, size_t widthIn=0, size_t heightIn=0);
 extern "C" GLuint loadCubemapTextures(const char *path_[6]);
 extern "C" GLuint createApplicationListImage(const std::vector<std::string> &paths, size_t &width, size_t &height, int &selectedX, int &selectedY, std::map<std::pair<int,int>,std::string> &applicationList);
-
+extern "C" std::vector<std::string> getApplicationDirectoryFromPreferences();
 #endif

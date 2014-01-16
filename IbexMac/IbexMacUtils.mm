@@ -17,6 +17,8 @@
 
 #import "ibex_mac_utils.h"
 #import "filesystem/Filesystem.h"
+#import "AppDelegate.h"
+#import "preferences/PreferencesWindowController.h"
 
 #include "string.h"
 #include <vector>
@@ -156,6 +158,16 @@ extern "C" GLuint loadCubemapTextures(const char *path_[6]) {
     return myTextureName;
 }
 
+std::vector<std::string> getApplicationDirectoryFromPreferences() {
+    std::vector<std::string> results;
+    
+    AppDelegate *appDelegate = (AppDelegate*)[[NSApplication sharedApplication] delegate];
+    for(NSString *appOrDirectory in appDelegate.preferencesControllerWindow.appLauncherFileList) {
+        results.push_back(appOrDirectory.cString);
+    }
+    return results;
+}
+
 GLuint createApplicationListImage(const std::vector<std::string> &paths, size_t &width, size_t &height, int &selectedX, int &selectedY, std::map<std::pair<int,int>,std::string> &applicationList) {
     const bool flip = true;
     const int iconRes = 96;
@@ -174,6 +186,8 @@ GLuint createApplicationListImage(const std::vector<std::string> &paths, size_t 
     
     const int vert = 8;
     const int horiz = ceil(float(appCount)/float(vert));
+    if(horiz == 0 || vert == 0) return 0;
+    
     while(selectedX < 0) selectedX += horiz;
     while(selectedY < 0) selectedY += vert;
     selectedX %= horiz;

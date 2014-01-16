@@ -30,13 +30,14 @@ extern "C" {
     
     ServerController *serverController;
     NSRunningApplication *launchedApplication;
-    PreferencesWindowController *preferencesControllerWindow;
 }
 
 @property (assign) IBOutlet NSWindow *window;
 //@property (retain,nonatomic) IBOutlet NSWindow *window;
 @property (retain,nonatomic) NSWindow *retainedWindow;
 @property (retain,nonatomic) NSOpenGLPixelFormat* pixelFormat;
+
+@property (retain,nonatomic) PreferencesWindowController *preferencesControllerWindow;
 
 - (IBAction)preferencesClicked:(id)sender;
 
