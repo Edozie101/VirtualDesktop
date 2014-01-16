@@ -142,6 +142,7 @@
 		4C0E54D918866AF00027940B /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4C0E54D718866AF00027940B /* AppDelegate.mm */; };
 		4C0E54DA18866B8E0027940B /* PreferencesWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4C0E54A0188658430027940B /* PreferencesWindowController.mm */; };
 		4C0E54DF188761320027940B /* PreferencesWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4C0E54DD188761320027940B /* PreferencesWindow.xib */; };
+		4C0EE1671887F9EC009CA4D3 /* Filesystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C961B3F17B899860028D242 /* Filesystem.cpp */; };
 		4C19BFE9172CD56400B7599D /* VideoDecodeAcceleration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C19BFE8172CD56400B7599D /* VideoDecodeAcceleration.framework */; };
 		4C1DD38C16F4F91F00302EFA /* Plugin_ParticleFX.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C6411AD16F4C30200132076 /* Plugin_ParticleFX.dylib */; };
 		4C1DD38D16F4F92500302EFA /* Plugin_ParticleFX.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6411AD16F4C30200132076 /* Plugin_ParticleFX.dylib */; };
@@ -1667,6 +1668,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4C0EE1671887F9EC009CA4D3 /* Filesystem.cpp in Sources */,
 				4C0E54DA18866B8E0027940B /* PreferencesWindowController.mm in Sources */,
 				4C0E54D918866AF00027940B /* AppDelegate.mm in Sources */,
 				4C0E54B218866A8F0027940B /* main.mm in Sources */,

@@ -258,6 +258,7 @@ IF(APPLE)
     add_executable(IbexConfig MACOSX_BUNDLE WIN32 ${SRC_IBEXCONFIG})
     target_link_libraries(IbexConfig
         ibex_preferences
+        ibex_filesystem
         ${EXTRA_LIBS}
         ${OSX_LIBS}
     )

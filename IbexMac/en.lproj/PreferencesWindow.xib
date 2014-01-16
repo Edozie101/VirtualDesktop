@@ -9,6 +9,7 @@
                 <outlet property="fileListTableView" destination="1rN-Ku-lxC" id="tgw-bN-cdc"/>
                 <outlet property="resolutionXTextField" destination="kn7-X8-ChO" id="eop-Qb-rbE"/>
                 <outlet property="resolutionYTextField" destination="CgG-md-CFg" id="3S6-eI-4bl"/>
+                <outlet property="window" destination="1" id="VNw-2r-1sW"/>
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>

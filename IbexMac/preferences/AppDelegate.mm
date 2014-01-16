@@ -21,7 +21,6 @@
     [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"ApplePersistenceIgnoreState"];
     
     controllerWindow = [[PreferencesWindowController alloc] initWithWindowNibName:@"PreferencesWindow"];
-//    [controllerWindow.window setLevel:NSScreenSaverWindowLevel];
     [controllerWindow showWindow:self];
 }
 

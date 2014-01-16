@@ -7,18 +7,22 @@
 //
 
 #import "PreferencesWindowController.h"
+#import "../filesystem/Filesystem.h"
 
 @implementation PreferencesWindowController
 
 - (id)initWithWindow:(NSWindow *)window {
     self = [super initWithWindow:window];
     if(self != nil) {
+        self.window.delegate = self;
         [self loadPreferences];
     }
     return self;
 }
 
 - (void)windowDidLoad {
+    self.window.delegate = self;
+    [self.window registerForDraggedTypes:[NSArray arrayWithObjects:NSFilenamesPboardType, nil]];
     [self loadPreferences];
 }
 
@@ -88,6 +92,43 @@
     // Return the result
     return result;
     
+}
+
+- (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)sender {
+    NSPasteboard *pboard;
+    NSDragOperation sourceDragMask;
+    
+    sourceDragMask = [sender draggingSourceOperationMask];
+    pboard = [sender draggingPasteboard];
+    
+    if ( [[pboard types] containsObject:NSFilenamesPboardType] ) {
+        if (sourceDragMask & NSDragOperationLink) {
+            return NSDragOperationLink;
+        } else if (sourceDragMask & NSDragOperationCopy) {
+            return NSDragOperationCopy;
+        }
+    }
+    return NSDragOperationNone;
+}
+
+- (BOOL)performDragOperation:(id <NSDraggingInfo>)sender
+{
+    NSPasteboard *pboard = [sender draggingPasteboard];
+    
+    if ( [[pboard types] containsObject:NSFilenamesPboardType] ) {
+        NSArray *files = [pboard propertyListForType:NSFilenamesPboardType];
+        for(NSString *file in files) {
+            NSLog(@"dropped: %@", file);
+            if(Filesystem::isDirectory(file.UTF8String)) {
+                if(![_appLauncherFileList containsObject:file]) {
+                    [_appLauncherFileList addObject:file];
+                }
+            }
+        }
+        [_fileListTableView reloadData];
+    }
+    
+    return YES;
 }
 
 
