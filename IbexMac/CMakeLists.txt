@@ -266,16 +266,10 @@ IF(APPLE)
       # set how it shows up in the Info.plist file
   SET(MACOSX_BUNDLE_ICON_FILE IbexConfig)
 
-  # set where in the bundle to put the icns file
-#  SET_SOURCE_FILES_PROPERTIES(${CMAKE_CURRENT_SOURCE_DIR}/ibex.icns PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
-  # include the icns file in the target
-#  SET(SRC_IBEXCONFIG ${SRC_IBEXCONFIG} ibex.iconset)
-
 # These variables are specific to our plist and are NOT standard CMake variables
-set_target_properties(IbexConfig PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${PROJECT_SOURCE_DIR}/MacOSXBundleInfo.plist.in")
-set_target_properties(IbexConfig PROPERTIES MACOSX_BUNDLE_NSMAIN_NIB_FILE "MainMenu")
+set_target_properties(IbexConfig PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${PROJECT_SOURCE_DIR}/IbexConfigMacOSXBundleInfo.plist.in")
+set_target_properties(IbexConfig PROPERTIES MACOSX_BUNDLE_NSMAIN_NIB_FILE "MainMenuIbexConfig")
 set_target_properties(IbexConfig PROPERTIES MACOSX_BUNDLE_NSPRINCIPAL_CLASS "NSApplication")
-
 
 INSTALL(TARGETS IbexConfig
     BUNDLE DESTINATION . COMPONENT Runtime
@@ -284,7 +278,6 @@ INSTALL(TARGETS IbexConfig
     
 INSTALL(CODE "
     execute_process(COMMAND \"iconutil\" --convert icns --output \"${CMAKE_INSTALL_PREFIX}/IbexConfig.app/Contents/Resources/ibex.icns\" \"${PROJECT_SOURCE_DIR}/ibex.iconset\")
-    #execute_process(COMMAND rm \"${CMAKE_INSTALL_PREFIX}/IbexConfig.app/Contents/Resources/ibex.iconset\")
     ")
 
 ENDIF(APPLE)
@@ -425,21 +418,24 @@ IF(APPLE)
                                  " COMPONENT Runtime)
     endforeach()
     
+    set (IbexConfig_XIBS
+      MainMenuIbexConfig PreferencesWindow
+    )
     
     # Make sure the 'Resources' Directory is correctly created before we build
     add_custom_command (TARGET IbexConfig PRE_BUILD
                           COMMAND mkdir -p "${CMAKE_INSTALL_PREFIX}/IbexConfig.app/Contents/Resources")
 
     # Compile the .xib files using the 'ibtool' program with the destination being the app package
-    foreach(xib ${ibex_XIBS})
+    foreach(xib ${IbexConfig_XIBS})
       add_custom_command (TARGET IbexConfig POST_BUILD
                           COMMAND ${IBTOOL} --errors --warnings --notices --output-format human-readable-text
-                                  --compile "${CMAKE_INSTALL_PREFIX}/ibex.app/Contents/Resources/${xib}.nib"
+                                  --compile "${CMAKE_INSTALL_PREFIX}/IbexConfig.app/Contents/Resources/${xib}.nib"
                                  ${PROJECT_SOURCE_DIR}/en.lproj/${xib}.xib
                           DEPENDS ${xib}
                           COMMENT "Compiling ${PROJECT_SOURCE_DIR}/en.lproj/${xib}.xib")
     endforeach()
-    foreach(xib ${ibex_XIBS})
+    foreach(xib ${IbexConfig_XIBS})
       INSTALL(CODE "
           execute_process(COMMAND \"${IBTOOL} --errors --warnings --notices --output-format human-readable-text
                                   --compile ${CMAKE_INSTALL_PREFIX}/IbexConfig.app/Contents/Resources/${xib}.nib
@@ -460,4 +456,5 @@ IF(APPLE)
     include(CPack)
     
   add_custom_target(ibex_run COMMAND open ./ibex.app DEPENDS install)
+  add_custom_target(IbexConfig_run COMMAND open ./IbexConfig.app DEPENDS install)
 ENDIF(APPLE)
