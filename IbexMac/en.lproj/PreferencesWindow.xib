@@ -90,27 +90,27 @@
                         <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     </box>
                     <box autoresizesSubviews="NO" fixedFrame="YES" title="App Launcher Directories and Apps" borderType="line" translatesAutoresizingMaskIntoConstraints="NO" id="cPO-Eu-hbq">
-                        <rect key="frame" x="5" y="6" width="244" height="349"/>
+                        <rect key="frame" x="5" y="6" width="556" height="349"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <view key="contentView">
-                            <rect key="frame" x="1" y="1" width="242" height="333"/>
+                            <rect key="frame" x="1" y="1" width="554" height="333"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <scrollView fixedFrame="YES" autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oGy-YX-jHE">
-                                    <rect key="frame" x="18" y="14" width="206" height="290"/>
+                                    <rect key="frame" x="18" y="14" width="518" height="290"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                     <clipView key="contentView" ambiguous="YES" misplaced="YES" id="GXr-yg-VGy">
-                                        <rect key="frame" x="1" y="17" width="204" height="272"/>
+                                        <rect key="frame" x="1" y="17" width="516" height="272"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <subviews>
                                             <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="firstColumnOnly" multipleSelection="NO" autosaveColumns="NO" typeSelect="NO" headerView="1q3-es-690" id="1rN-Ku-lxC">
-                                                <rect key="frame" x="0.0" y="0.0" width="204" height="272"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="516" height="272"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <size key="intercellSpacing" width="3" height="2"/>
                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                 <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                                 <tableColumns>
-                                                    <tableColumn width="201" minWidth="40" maxWidth="1000" id="L3X-pY-fWu">
+                                                    <tableColumn width="513" minWidth="40" maxWidth="1000" id="L3X-pY-fWu">
                                                         <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Apps and App Dirs">
                                                             <font key="font" metaFont="smallSystem"/>
                                                             <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -141,12 +141,12 @@
                                         <autoresizingMask key="autoresizingMask"/>
                                     </scroller>
                                     <tableHeaderView key="headerView" id="1q3-es-690">
-                                        <rect key="frame" x="0.0" y="0.0" width="204" height="17"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="516" height="17"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                     </tableHeaderView>
                                 </scrollView>
                                 <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="RvH-id-65k">
-                                    <rect key="frame" x="202" y="307" width="22" height="22"/>
+                                    <rect key="frame" x="514" y="307" width="22" height="22"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                     <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" image="NSRemoveTemplate" imagePosition="only" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="kZx-K0-9SG">
                                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -157,7 +157,7 @@
                                     </connections>
                                 </button>
                                 <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6HM-6r-VEt">
-                                    <rect key="frame" x="175" y="307" width="22" height="22"/>
+                                    <rect key="frame" x="487" y="307" width="22" height="22"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                     <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" image="NSAddTemplate" imagePosition="only" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="d6T-YR-mF3">
                                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -184,7 +184,7 @@
                         <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     </box>
                     <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="aYG-F1-6kW">
-                        <rect key="frame" x="482" y="3" width="82" height="32"/>
+                        <rect key="frame" x="482" y="424" width="82" height="32"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <buttonCell key="cell" type="push" title="Save" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="TLU-gL-QUO">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -195,7 +195,7 @@
                         </connections>
                     </button>
                     <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="4EF-nw-LCc">
-                        <rect key="frame" x="400" y="3" width="82" height="32"/>
+                        <rect key="frame" x="400" y="424" width="82" height="32"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <buttonCell key="cell" type="push" title="Reset" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="GwJ-6d-mSp">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>

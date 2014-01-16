@@ -210,7 +210,13 @@ GLuint createApplicationListImage(const std::vector<std::string> &paths, size_t 
     applicationList.clear();
     for(int p = 0; p < paths.size(); ++p) {
         const char *path_ = paths[p].c_str();
-        std::vector<std::string> appDirectory = Filesystem::listDirectory(path_);
+        std::vector<std::string> appDirectory;
+        if(Filesystem::isDirectory(path_) && std::string(path_).find(".app") == std::string::npos) {
+            appDirectory = Filesystem::listDirectory(path_);
+        } else {
+            appDirectory.push_back(path_);
+            std::cerr << path_ << std::endl;
+        }
         
         for(int i = 0; i < appDirectory.size(); ++i) {
             if(appDirectory[i].find(".app") == std::string::npos) continue;

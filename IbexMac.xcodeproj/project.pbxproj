@@ -173,6 +173,9 @@
 		4C61AC3916F9272000F98776 /* MyOgreView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4C61AC3816F9272000F98776 /* MyOgreView.mm */; };
 		4C6411A716F4C2D700132076 /* libsixense_utils_x64.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C46D7C616F2B93D00B5DD9E /* libsixense_utils_x64.dylib */; };
 		4C6411A816F4C2D700132076 /* libsixense_x64.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C46D7C716F2B93D00B5DD9E /* libsixense_x64.dylib */; };
+		4C68BFB018881CCC00E9F89A /* PreferencesWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4C0E54DD188761320027940B /* PreferencesWindow.xib */; };
+		4C68BFB118881CCD00E9F89A /* PreferencesWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4C0E54DD188761320027940B /* PreferencesWindow.xib */; };
+		4C68BFB218881CD900E9F89A /* PreferencesWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4C0E54DD188761320027940B /* PreferencesWindow.xib */; };
 		4C6B99D416F4C17E00C5C725 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4CB79876168AB41E00EF5260 /* main.mm */; };
 		4C6B99D516F4C17E00C5C725 /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4CB7987D168AB41E00EF5260 /* AppDelegate.mm */; };
 		4C6B99D616F4C17E00C5C725 /* ScreenGrabber.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C2DE2FE168B30CC003BEB56 /* ScreenGrabber.m */; };
@@ -244,7 +247,6 @@
 		4C76498F16965A67009CF2EC /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C76498E16965A67009CF2EC /* Carbon.framework */; };
 		4C7DC92A1887AAA4006D865E /* MainMenuIbexConfig.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4C7DC9281887AAA4006D865E /* MainMenuIbexConfig.xib */; };
 		4C7EE90C1887AE2700F2C54E /* PreferencesWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4C0E54DD188761320027940B /* PreferencesWindow.xib */; };
-		4C7EE90D1887AE2D00F2C54E /* PreferencesWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4C0E54DD188761320027940B /* PreferencesWindow.xib */; };
 		4C8758431697E5200022583D /* ibex.iconset in Resources */ = {isa = PBXBuildFile; fileRef = 4C8758421697E5200022583D /* ibex.iconset */; };
 		4C936064172A282100A94980 /* ScreenshotView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4C936063172A282100A94980 /* ScreenshotView.mm */; };
 		4C936065172A282100A94980 /* ScreenshotView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4C936063172A282100A94980 /* ScreenshotView.mm */; };
@@ -1433,10 +1435,10 @@
 				4C0937D017B1F9CE004EA291 /* InfoPlist.strings in Resources */,
 				4C0937D117B1F9CE004EA291 /* Credits.rtf in Resources */,
 				4C961B2317B8949C0028D242 /* CMakeLists.txt in Resources */,
+				4C68BFB218881CD900E9F89A /* PreferencesWindow.xib in Resources */,
 				4C9BEA7917E56A2F00662683 /* Dependencies in Resources */,
 				4C011F9618403037002583AD /* CMakeLists.txt in Resources */,
 				4C0937D217B1F9CE004EA291 /* MainMenu.xib in Resources */,
-				4C7EE90D1887AE2D00F2C54E /* PreferencesWindow.xib in Resources */,
 				4C961B5E17B89DB50028D242 /* CMakeLists.txt in Resources */,
 				4C961B4417B899860028D242 /* CMakeLists.txt in Resources */,
 				4C0937D317B1F9CE004EA291 /* resources in Resources */,
@@ -1451,6 +1453,7 @@
 				4C0D58AF16AD656A007BC9CD /* InfoPlist.strings in Resources */,
 				4C0D58B016AD656A007BC9CD /* Credits.rtf in Resources */,
 				4C961B2117B8949C0028D242 /* CMakeLists.txt in Resources */,
+				4C68BFB118881CCD00E9F89A /* PreferencesWindow.xib in Resources */,
 				4C9BEA7717E56A2F00662683 /* Dependencies in Resources */,
 				4C011F9418403037002583AD /* CMakeLists.txt in Resources */,
 				4C0D58B116AD656A007BC9CD /* MainMenu.xib in Resources */,
@@ -1488,6 +1491,7 @@
 				4C6B99F716F4C17E00C5C725 /* InfoPlist.strings in Resources */,
 				4C6B99F816F4C17E00C5C725 /* Credits.rtf in Resources */,
 				4C961B2217B8949C0028D242 /* CMakeLists.txt in Resources */,
+				4C68BFB018881CCC00E9F89A /* PreferencesWindow.xib in Resources */,
 				4C9BEA7817E56A2F00662683 /* Dependencies in Resources */,
 				4C011F9518403037002583AD /* CMakeLists.txt in Resources */,
 				4C6B99F916F4C17E00C5C725 /* MainMenu.xib in Resources */,

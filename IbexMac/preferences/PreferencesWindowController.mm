@@ -138,7 +138,7 @@
         NSArray *files = [pboard propertyListForType:NSFilenamesPboardType];
         for(NSString *file in files) {
             NSLog(@"dropped: %@", file);
-            if(Filesystem::isDirectory(file.UTF8String)) {
+            if(Filesystem::isDirectory(file.UTF8String) || [file rangeOfString:@".app"].location != NSNotFound) {
                 if(![_appLauncherFileList containsObject:file]) {
                     [_appLauncherFileList addObject:file];
                 }
