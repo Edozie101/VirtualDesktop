@@ -19,6 +19,10 @@
 - (IBAction)resetButtonClicked:(id)sender;
 - (IBAction)saveButtonClicked:(id)sender;
 
+- (IBAction)deleteButtonClicked:(id)sender;
+- (IBAction)moveUpButtonClicked:(id)sender;
+- (IBAction)moveDownButtonClicked:(id)sender;
+
 @property (nonatomic) int resolutionX;
 @property (nonatomic) int resolutionY;
 @property (nonatomic,retain) NSMutableArray *appLauncherFileList;

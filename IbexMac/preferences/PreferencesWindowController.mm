@@ -61,6 +61,25 @@
     [self loadPreferences];
 }
 
+- (IBAction)deleteButtonClicked:(id)sender {
+    if(_fileListTableView.selectedRow > -1) {
+        [_appLauncherFileList removeObjectAtIndex:_fileListTableView.selectedRow];
+        [_fileListTableView reloadData];
+    }
+}
+- (IBAction)moveUpButtonClicked:(id)sender {
+    if(_fileListTableView.selectedRow > 0) {
+        [_appLauncherFileList exchangeObjectAtIndex:_fileListTableView.selectedRow withObjectAtIndex:_fileListTableView.selectedRow-1];
+        [_fileListTableView reloadData];
+    }
+}
+- (IBAction)moveDownButtonClicked:(id)sender {
+    if(_fileListTableView.selectedRow > -1 && _fileListTableView.selectedRow < _appLauncherFileList.count-1) {
+        [_appLauncherFileList exchangeObjectAtIndex:_fileListTableView.selectedRow withObjectAtIndex:_fileListTableView.selectedRow+1];
+        [_fileListTableView reloadData];
+    }
+}
+
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView {
     return _appLauncherFileList.count;
 }
