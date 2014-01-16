@@ -15,8 +15,8 @@
 }
 
 - (void)loadPreferences {
-    defaults = [NSUserDefaults standardUserDefaults];
-    [defaults addSuiteNamed:@"IbexSharedConfiguration"];
+    defaults = [[NSUserDefaults alloc] initWithSuiteName:@"IbexSharedConfiguration"];//[NSUserDefaults standardUserDefaults];
+//    [defaults addSuiteNamed:@"IbexSharedConfiguration"];
     [defaults registerDefaults:@{@"resolutionX": @1280,
                                  @"resolutionY": @800,
                                  @"appLauncherFileList": @[@"/Applications"]}];
@@ -30,11 +30,17 @@
     [_fileListTableView reloadData];
 }
 - (IBAction)resetButtonClicked:(id)sender {
-    NSString *domainName = [[NSBundle mainBundle] bundleIdentifier];
-    [defaults removePersistentDomainForName:domainName];
+    NSArray *keys = defaults.dictionaryRepresentation.allKeys;
+    for(NSString *key in keys) {
+        [defaults removeObjectForKey:key];
+    }
+    [defaults synchronize];
     [self loadPreferences];
 }
 - (IBAction)saveButtonClicked:(id)sender {
+    _resolutionX = (int)_resolutionXTextField.integerValue;
+    _resolutionY = (int)_resolutionYTextField.integerValue;
+    
     [defaults setInteger:_resolutionX forKey:@"resolutionX"];
     [defaults setInteger:_resolutionY forKey:@"resolutionY"];
     [defaults setObject:_appLauncherFileList forKey:@"appLauncherFileList"];
