@@ -4,6 +4,11 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
+		<key>IbexConfig.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>4</integer>
+		</dict>
 		<key>IbexMac.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -33,6 +38,16 @@
 			<true/>
 		</dict>
 		<key>4C0D589416AD656A007BC9CD</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>4C0E54A818866A8E0027940B</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>4C0E54C218866A8F0027940B</key>
 		<dict>
 			<key>primary</key>
 			<true/>

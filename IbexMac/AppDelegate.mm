@@ -23,6 +23,8 @@
 #undef new
 #undef delete
 
+#include "preferences/PreferencesWindowController.h"
+
 bool modifiedDesktop(false);
 
 @interface NSScreen (DisplayName)
@@ -239,6 +241,12 @@ NSWindow *mainWindow;
 //    dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
 //        [self launchApplication:@"/Applications/TextEdit.app"];
 //    });
+}
+
+- (IBAction)preferencesClicked:(id)sender {
+    preferencesControllerWindow = [[PreferencesWindowController alloc] initWithWindowNibName:@"PreferencesWindow"];
+//    [preferencesControllerWindow.window setLevel:NSScreenSaverWindowLevel];
+    [preferencesControllerWindow showWindow:self];
 }
 
 @end

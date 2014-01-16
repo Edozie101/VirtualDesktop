@@ -13,6 +13,7 @@
 @class MyOpenGLView;
 @class MyOgreView;
 @class ServerController;
+@class PreferencesWindowController;
 
 extern "C" {
     typedef int CGSConnectionID;
@@ -29,11 +30,14 @@ extern "C" {
     
     ServerController *serverController;
     NSRunningApplication *launchedApplication;
+    PreferencesWindowController *preferencesControllerWindow;
 }
 
 @property (assign) IBOutlet NSWindow *window;
 //@property (retain,nonatomic) IBOutlet NSWindow *window;
 @property (retain,nonatomic) NSWindow *retainedWindow;
 @property (retain,nonatomic) NSOpenGLPixelFormat* pixelFormat;
+
+- (IBAction)preferencesClicked:(id)sender;
 
 @end

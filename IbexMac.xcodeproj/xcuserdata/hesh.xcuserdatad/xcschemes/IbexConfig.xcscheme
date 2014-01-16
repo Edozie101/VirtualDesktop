@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "4C09378D17B1F9CE004EA291"
-               BuildableName = "IbexMacReleaseVLC.app"
-               BlueprintName = "IbexMacReleaseVLC"
+               BlueprintIdentifier = "4C0E54A818866A8E0027940B"
+               BuildableName = "IbexConfig.app"
+               BlueprintName = "IbexConfig"
                ReferencedContainer = "container:IbexMac.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -32,9 +32,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "4C09378D17B1F9CE004EA291"
-            BuildableName = "IbexMacReleaseVLC.app"
-            BlueprintName = "IbexMacReleaseVLC"
+            BlueprintIdentifier = "4C0E54A818866A8E0027940B"
+            BuildableName = "IbexConfig.app"
+            BlueprintName = "IbexConfig"
             ReferencedContainer = "container:IbexMac.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -51,18 +51,13 @@
       <BuildableProductRunnable>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "4C09378D17B1F9CE004EA291"
-            BuildableName = "IbexMacReleaseVLC.app"
-            BlueprintName = "IbexMacReleaseVLC"
+            BlueprintIdentifier = "4C0E54A818866A8E0027940B"
+            BuildableName = "IbexConfig.app"
+            BlueprintName = "IbexConfig"
             ReferencedContainer = "container:IbexMac.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
-         <AdditionalOption
-            key = "MallocScribble"
-            value = ""
-            isEnabled = "YES">
-         </AdditionalOption>
       </AdditionalOptions>
    </LaunchAction>
    <ProfileAction
@@ -74,9 +69,9 @@
       <BuildableProductRunnable>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "4C09378D17B1F9CE004EA291"
-            BuildableName = "IbexMacReleaseVLC.app"
-            BlueprintName = "IbexMacReleaseVLC"
+            BlueprintIdentifier = "4C0E54A818866A8E0027940B"
+            BuildableName = "IbexConfig.app"
+            BlueprintName = "IbexConfig"
             ReferencedContainer = "container:IbexMac.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

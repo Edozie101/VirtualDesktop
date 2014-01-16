@@ -24,7 +24,7 @@ IF(APPLE)
     SET (CMAKE_C_COMPILER             "/usr/bin/clang")
     SET (CMAKE_CXX_COMPILER             "/usr/bin/clang++")
 
-   SET(CMAKE_OSX_DEPLOYMENT_TARGET "10.9" CACHE STRING "Deployment target for OSX" FORCE)
+   #SET(CMAKE_OSX_DEPLOYMENT_TARGET 10.9 CACHE STRING "Deployment target for OSX" FORCE)
    
    set(Boost_USE_STATIC_LIBS ON)
     set(Boost_USE_MULTITHREADED ON)
@@ -75,9 +75,9 @@ IF(APPLE)
           #boost_thread-mt boost_atomic-mt boost_chrono-mt boost_date_time-mt
    )
    
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DBOOST_ALL_NO_LIB -fvisibility-inlines-hidden -Wno-sign-conversion -arch x86_64 -Wall -g -O0 -ggdb -fobjc-arc -DHAVE_LIBJPEG=1 ${OCULUS_INCLUDE_FLAGS} ${VLC_INCLUDE_FLAGS}  -mmacosx-version-min=10.8")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DBOOST_ALL_NO_LIB -fvisibility-inlines-hidden -Wno-sign-conversion -arch x86_64 -std=c++11 -stdlib=libc++ -Wall -frtti -fexceptions -g  -O0 -ggdb -fobjc-arc -DHAVE_LIBJPEG=1 ${OCULUS_INCLUDE_FLAGS} ${VLC_INCLUDE_FLAGS}  -mmacosx-version-min=10.8")
-    set(ibex PROPERTIES LINK_FLAGS  -fobjc-link-runtime -mmacosx-version-min=10.8)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DBOOST_ALL_NO_LIB -fvisibility-inlines-hidden -Wno-sign-conversion -arch x86_64 -Wall -g -O0 -ggdb -fobjc-arc -DHAVE_LIBJPEG=1 ${OCULUS_INCLUDE_FLAGS} ${VLC_INCLUDE_FLAGS}  -mmacosx-version-min=10.9")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DBOOST_ALL_NO_LIB -fvisibility-inlines-hidden -Wno-sign-conversion -arch x86_64 -std=c++11 -stdlib=libc++ -Wall -frtti -fexceptions -g  -O0 -ggdb -fobjc-arc -DHAVE_LIBJPEG=1 ${OCULUS_INCLUDE_FLAGS} ${VLC_INCLUDE_FLAGS}  -mmacosx-version-min=10.9")
+    set(ibex PROPERTIES LINK_FLAGS  -fobjc-link-runtime -mmacosx-version-min=10.9)
 ENDIF (APPLE)
 
 IF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
@@ -151,6 +151,7 @@ add_subdirectory(sixense)
 add_subdirectory(oculus)
 add_subdirectory(terrain)
 add_subdirectory(monitor)
+add_subdirectory(preferences)
 
 IF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     set(LINUX_SOURCES opengl_setup_x11.cpp opengl_setup_x11.h)
@@ -179,7 +180,7 @@ set(RESOURCES README.md COPYING AUTHORS)
 IF(APPLE)
     include (InstallRequiredSystemLibraries)
 
-    set(RESOURCES MainWindow.xib)
+    set(RESOURCES MainWindow.xib preferences/PreferencesWindow.xib)
 
     set(OSX_SOURCES
         main.mm
@@ -221,6 +222,7 @@ target_link_libraries(ibex
     ibex_sixense
     ibex_terrain
     ibex_monitor
+    ibex_preferences
     ${SIXENSE_LIBS}
     ${LINUX_LIBS}
      ibex_oculus
@@ -341,7 +343,7 @@ IF(APPLE)
 
     # these are the OS X Interface Builder Files
     set (ibex_XIBS
-      MainMenu
+      MainMenu PreferencesWindow
     )
 
     # Make sure we can find the 'ibtool' program. If we can NOT find it we
