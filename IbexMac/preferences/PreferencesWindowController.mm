@@ -15,39 +15,36 @@
 }
 
 - (void)loadPreferences {
-    CFStringRef appRef = CFSTR("com.hwahba.ibex.ibex");
-    CFStringRef textColorKey = CFSTR("defaultTextColor");
-    CFStringRef textColor;
+    defaults = [NSUserDefaults standardUserDefaults];
+    [defaults addSuiteNamed:@"IbexSharedConfiguration"];
+    [defaults registerDefaults:@{@"resolutionX": @1280,
+                                 @"resolutionY": @800,
+                                 @"appLauncherFileList": @[@"/Applications"]}];
+    _resolutionX = (int)[defaults integerForKey:@"resolutionX"];
+    _resolutionY = (int)[defaults integerForKey:@"resolutionY"];
+    _appLauncherFileList = [NSMutableArray arrayWithArray:[defaults arrayForKey:@"appLauncherFileList"]];
     
-    // Read the preference.
-    textColor = (CFStringRef)CFPreferencesCopyAppValue(textColorKey, appRef); // kCFPreferencesCurrentApplication
-    
-    Boolean validValue = false;
-    CFStringRef resolutionXKey = CFSTR("resolutionX");
-    CFStringRef resolutionYKey = CFSTR("resolutionY");
-    _resolutionX = (int)CFPreferencesGetAppIntegerValue(resolutionXKey, appRef, &validValue);
-    if(!validValue) {
-        _resolutionX = 1280;
-    }
-    _resolutionY = (int)CFPreferencesGetAppIntegerValue(resolutionYKey, appRef, &validValue);
-    if(!validValue) {
-        _resolutionY = 800;
-    }
-    
-    [_resolutionXTextField setIntegerValue:_resolutionX];
-    [_resolutionYTextField setIntegerValue:_resolutionY];
+    _resolutionXTextField.stringValue = [NSNumber numberWithInt:_resolutionX].stringValue;
+    _resolutionYTextField.stringValue = [NSNumber numberWithInt:_resolutionY].stringValue;
     
     [_fileListTableView reloadData];
 }
 - (IBAction)resetButtonClicked:(id)sender {
-    
+    NSString *domainName = [[NSBundle mainBundle] bundleIdentifier];
+    [defaults removePersistentDomainForName:domainName];
+    [self loadPreferences];
 }
 - (IBAction)saveButtonClicked:(id)sender {
-    
+    [defaults setInteger:_resolutionX forKey:@"resolutionX"];
+    [defaults setInteger:_resolutionY forKey:@"resolutionY"];
+    [defaults setObject:_appLauncherFileList forKey:@"appLauncherFileList"];
+     bool result = [defaults synchronize];
+    NSLog(@"%d", result);
+    [self loadPreferences];
 }
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView {
-    return 1;//nameArray.count;
+    return _appLauncherFileList.count;
 }
 
 - (NSView *)tableView:(NSTableView *)tableView
@@ -72,7 +69,7 @@
     // result is now guaranteed to be valid, either as a reused cell
     // or as a new cell, so set the stringValue of the cell to the
     // nameArray value at row
-    result.stringValue = @"/Applications";//[self.nameArray objectAtIndex:row];
+    result.stringValue = _appLauncherFileList[row];
     
     // Return the result
     return result;

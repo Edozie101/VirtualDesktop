@@ -12,13 +12,16 @@
 
 #import <Foundation/Foundation.h>
 
-@interface PreferencesWindowController : NSWindowController<NSWindowDelegate,NSTableViewDataSource,NSTableViewDelegate>
+@interface PreferencesWindowController : NSWindowController<NSWindowDelegate,NSTableViewDataSource,NSTableViewDelegate> {
+    NSUserDefaults *defaults;
+}
 
 - (IBAction)resetButtonClicked:(id)sender;
 - (IBAction)saveButtonClicked:(id)sender;
 
 @property (nonatomic) int resolutionX;
 @property (nonatomic) int resolutionY;
+@property (nonatomic,retain) NSMutableArray *appLauncherFileList;
 
 @property (nonatomic,retain) IBOutlet NSTextField *resolutionXTextField;
 @property (nonatomic,retain) IBOutlet NSTextField *resolutionYTextField;
