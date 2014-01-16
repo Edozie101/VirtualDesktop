@@ -163,7 +163,7 @@ std::vector<std::string> getApplicationDirectoryFromPreferences() {
     
     AppDelegate *appDelegate = (AppDelegate*)[[NSApplication sharedApplication] delegate];
     for(NSString *appOrDirectory in appDelegate.preferencesControllerWindow.appLauncherFileList) {
-        results.push_back(appOrDirectory.cString);
+        results.push_back(appOrDirectory.UTF8String);
     }
     return results;
 }
