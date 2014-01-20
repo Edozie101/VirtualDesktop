@@ -595,7 +595,6 @@
 		4C6411B216F4C30200132076 /* libOgrePaging.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libOgrePaging.dylib; sourceTree = "<group>"; };
 		4C6411B316F4C30200132076 /* Plugin_BSPSceneManager.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = Plugin_BSPSceneManager.dylib; sourceTree = "<group>"; };
 		4C6B99FF16F4C17E00C5C725 /* IbexMacOgre.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IbexMacOgre.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		4C6B9A0016F4C17E00C5C725 /* IbexMacOgre-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "IbexMacOgre-Info.plist"; path = "/Users/hesh/Documents/ibex/ibex/IbexMacOgre-Info.plist"; sourceTree = "<absolute>"; };
 		4C6D8CBF16F401B100C4638B /* BulletCollision.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BulletCollision.framework; path = /Library/Frameworks/BulletCollision.framework; sourceTree = "<absolute>"; };
 		4C6D8CC016F401B100C4638B /* BulletDynamics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BulletDynamics.framework; path = /Library/Frameworks/BulletDynamics.framework; sourceTree = "<absolute>"; };
 		4C6D8CC116F401B100C4638B /* BulletMultiThreaded.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BulletMultiThreaded.framework; path = /Library/Frameworks/BulletMultiThreaded.framework; sourceTree = "<absolute>"; };
@@ -1072,7 +1071,6 @@
 				4C0E54C918866A8F0027940B /* IbexConfigTests */,
 				4CB79869168AB41E00EF5260 /* Frameworks */,
 				4CB79867168AB41E00EF5260 /* Products */,
-				4C6B9A0016F4C17E00C5C725 /* IbexMacOgre-Info.plist */,
 				4C0937F417B1F9CE004EA291 /* IbexMacReleaseVLC-Info.plist */,
 			);
 			sourceTree = "<group>";
