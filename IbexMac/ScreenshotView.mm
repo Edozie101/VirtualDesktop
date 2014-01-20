@@ -267,28 +267,17 @@ static inline void copyImageToBytes(const CGImageRef &img, const CGImageRef &cur
 
 - (void)initMonitorScreens {
     screens = [NSArray arrayWithArray:NSScreen.screens];
-//    for(int i = 0; i < screens.count; ++i) {
-//        // screen.frame is WRONG, origin is incorrect, _frame is correct :(
-//        NSScreen *screen = screens[i];
-//        NSLog(@"1Screen: %@", NSStringFromRect(screen.frame));
-//        NSLog(@"2Screen: %@", NSStringFromRect([screen convertRectFromBacking:screen.frame]));
-//        NSLog(@"3Screen: %@", NSStringFromRect([screen convertRectToBacking:screen.frame]));
-//        NSLog(@"4Screen: %@", NSStringFromRect([screen backingAlignedRect:screen.frame options:NSAlignAllEdgesNearest]));
-//        NSRect frame = screen->_frame;
-//        NSLog(@"5Screen: %@", NSStringFromRect(frame));
-//        ibexMonitor->desktopRects.push_back(RECT(screen.frame.origin.x,screen.frame.origin.y,screen.frame.origin.x+screen.frame.size.width,screen.frame.origin.y+screen.frame.size.height));
-//        ibexMonitor->bitmapCache.push_back(0);
-//    }
-    
     CGDirectDisplayID *onlineDisplays = new CGDirectDisplayID[16];
     uint32_t displayCount;
     CGGetOnlineDisplayList(16, onlineDisplays, &displayCount);
-    for(int i = 0; i < displayCount; ++i) {
-        const CGRect r = CGDisplayBounds(onlineDisplays[i]);
+    for(NSScreen *screen in NSScreen.screens) {
+        const CGRect r = screen.frame;
         ibexMonitor->desktopRects.push_back(RECT(r.origin.x,r.origin.y,r.origin.x+r.size.width,r.origin.y+r.size.height));
+        ibexMonitor->desktopScaleFactors.push_back(screen.backingScaleFactor);
         cgRects.push_back(r);
         ibexMonitor->bitmapCache.push_back(0);
     }
+
 //    exit(0);
     
     ibexMonitor->initializeTextures();

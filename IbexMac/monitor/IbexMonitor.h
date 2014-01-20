@@ -74,6 +74,7 @@ public:
     
     std::vector<bool> usedTexture;
 	std::vector<RECT> desktopRects;
+    std::vector<float> desktopScaleFactors;
 	std::vector<GLuint> desktopTextures;
 	std::vector<float> heightRatios;
     
