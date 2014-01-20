@@ -2,22 +2,4 @@
 <Bucket
    type = "1"
    version = "2.0">
-   <Breakpoints>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "IbexMac/IbexMacUtils.mm"
-            timestampString = "411573560.013797"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "218"
-            endingLineNumber = "218"
-            landmarkName = "createApplicationListImage(const std::vector&lt;std::string&gt; &amp;paths, size_t &amp;width, size_t &amp;height, int &amp;selectedX, int &amp;selectedY, std::map&lt;std::pair&lt;int,int&gt;,std::string&gt; &amp;applicationList)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-   </Breakpoints>
 </Bucket>

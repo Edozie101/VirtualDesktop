@@ -48,6 +48,11 @@ screenshotMutex()
 	//bool result = wglShareLists(loaderContext, mainContext); // Order matters
 	bool result = wglShareLists(mainContext, loaderContext); // Order matters
 	std::cerr << "Initialized IbexMonitor shareGLLists: " << result << std::endl;
+    
+    desktopScaleFactors.clear();
+    for(int i = 0; i < desktopRects.size(); ++i) {
+        desktopScaleFactors.push_back(1.0f);
+    }
 
 	memset(&cursorinfo, 0, sizeof(CURSORINFO));
 	memset(&ii, 0, sizeof(ICONINFO));
@@ -80,8 +85,8 @@ void Ibex::IbexMonitor::initializeBounds() {
 }
 void Ibex::IbexMonitor::initializeTextures() {
 	for(int i = 0; i < desktopRects.size(); ++i) {
-		const int w = desktopRects[i].right-desktopRects[i].left;
-		const int h = desktopRects[i].bottom-desktopRects[i].top;
+		const int w = (desktopRects[i].right-desktopRects[i].left)*desktopScaleFactors[i];
+		const int h = (desktopRects[i].bottom-desktopRects[i].top)*desktopScaleFactors[i];
 		
 		usedTexture.push_back(false);
 #ifdef WIN32
