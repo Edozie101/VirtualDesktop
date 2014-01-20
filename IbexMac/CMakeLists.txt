@@ -24,7 +24,7 @@ IF(APPLE)
     SET (CMAKE_C_COMPILER             "/usr/bin/clang")
     SET (CMAKE_CXX_COMPILER             "/usr/bin/clang++")
 
-   #SET(CMAKE_OSX_DEPLOYMENT_TARGET 10.9 CACHE STRING "Deployment target for OSX" FORCE)
+   SET(CMAKE_OSX_DEPLOYMENT_TARGET 10.9 CACHE STRING "Deployment target for OSX" FORCE)
    
    set(Boost_USE_STATIC_LIBS ON)
     set(Boost_USE_MULTITHREADED ON)
