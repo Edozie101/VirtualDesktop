@@ -104,7 +104,9 @@ extern std::string settingChangedMessage;
 
 extern bool controlDesktop;
 extern bool showDialog;
+extern bool showApplicationLauncher;
 extern bool bringUpIbexDisplay;
+extern bool bringUpAppLauncher;
 
 extern double relativeMouseX;
 extern double relativeMouseY;

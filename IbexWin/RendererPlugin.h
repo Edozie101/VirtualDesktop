@@ -16,6 +16,10 @@ typedef unsigned long Window;
 typedef unsigned long GLXContext;
 #endif
 
+namespace Ibex {
+    class ApplicationLauncher;
+}
+
 class RendererPlugin {
 public:
   virtual ~RendererPlugin();
@@ -38,7 +42,7 @@ public:
   virtual void processEvents() {}
 
   // move
-  virtual void move(int forward_, int right_, bool jump_, double relativeMouseX_, double relativeMouseY_) {}
+    virtual void move(int forward_, int right_, bool jump_, double relativeMouseX_, double relativeMouseY_) {}
 
   // single step in engine/world simulation
     virtual void step(Desktop3DLocation &loc_, double timeDiff_, const double &time_) = 0;
@@ -47,9 +51,11 @@ public:
   virtual bool needsSwapBuffers() { return false; }
     
     virtual void bringUpIbexDisplay() {}
+    virtual void bringUpAppLauncher() {}
     
 public:
     ::Ibex::Window window;
+    ::Ibex::ApplicationLauncher *applicationLauncher;
 };
 
 #endif /* RENDERERPLUGIN_H_ */

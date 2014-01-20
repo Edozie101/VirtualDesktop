@@ -17,5 +17,9 @@
 #include <memory.h>
 #include <tchar.h>
 
+#include <Shlobj.h>
+#include <Shellapi.h>
+#include <Strsafe.h>
+
 
 // TODO: reference additional headers your program requires here

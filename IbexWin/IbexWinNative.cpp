@@ -53,6 +53,7 @@ typedef unsigned long GLXContext;
 #include "distortions.h"
 
 #include "monitor/IbexMonitor.h"
+#include "windows/ApplicationLauncher.h"
 
 bool modifiedDesktop(false);
 GLuint VBO(0);
@@ -66,6 +67,9 @@ static inline void key_callback(GLFWwindow* window, int key, int scancode, int a
 	int processed = 0;
 	if(showDialog) {
 		processed = ibex->renderer->window.processKey(key, down);
+	}
+	if(showApplicationLauncher) {
+		processed = ibex->renderer->applicationLauncher->processKey(key, down);
 	}
 	if(!processed) {
 		switch (key)
@@ -147,6 +151,12 @@ static inline void key_callback(GLFWwindow* window, int key, int scancode, int a
 
 			if(!down) {
 				displayShape = (displayShape == FlatDisplay) ? SphericalDisplay : FlatDisplay;
+			}
+			break;
+		case 'o':
+		case 'O':
+			if(!down) {
+				showApplicationLauncher = !showApplicationLauncher;
 			}
 			break;
         case 'h':

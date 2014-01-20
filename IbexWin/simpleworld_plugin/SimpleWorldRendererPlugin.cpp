@@ -42,6 +42,7 @@
 
 #include "Model.h"
 #include "../monitor/IbexMonitor.h"
+#include "../windows/ApplicationLauncher.h"
 
 glm::vec3 lightInvDir;
 
@@ -52,112 +53,8 @@ void copyMatrix(glm::mat4 &modelView, const float M[4][4]) {
         }
     }
 }
-//////
 
-void SimpleWorldRendererPlugin::renderApplicationLauncher(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP, GLuint texture_, const bool &randomize)
-{
-    static GLuint vaoIbexDisplayFlat = 0;
-    static const GLfloat IbexDisplayFlatScale = 10;
-    
-    static GLint IbexDisplayFlatUniformLocations[7] = { 0, 0, 0, 0, 0, 0, 0};
-    static GLint IbexDisplayFlatAttribLocations[3] = { 0, 0, 0 };
-    
-    static GLfloat IbexDisplayFlatVertices[] = {
-        -1.0,  -1, 0.0, 0, 0, -1, 0, 0,
-        1.0, -1.0, 0.0, 0, 0, -1, 1, 0,
-        1.0, 1.0, 0.0, 0, 0, -1, 1, 1,
-        -1.0, 1.0, 0.0, 0, 0, -1, 0, 1,
-    };
-    static GLuint vboIbexDisplayFlatVertices = 0;
-    
-    static GLushort IbexDisplayFlatIndices[] = {
-        0, 1, 2,
-        0, 2, 3
-    };
-    static GLuint vboIbexDisplayFlatIndices = 0;
-    
-    static bool first = true;
-    if(first) {
-        first = false;
-        
-        for(int i = 0; i < sizeof(IbexDisplayFlatVertices)/sizeof(GLfloat); ++i) {
-            if(i%8 < 3)
-                IbexDisplayFlatVertices[i] *= IbexDisplayFlatScale;
-            if(i%8 == 1)
-                IbexDisplayFlatVertices[i] *= height/width;
-        }
-        
-		if(standardShaderProgram.shader.program == 0) standardShaderProgram.loadShaderProgram(mResourcePath, "/resources/shaders/emissive.v.glsl", "/resources/shaders/emissive.f.glsl");
-        glUseProgram(standardShaderProgram.shader.program);
-        
-        
-        IbexDisplayFlatUniformLocations[0] = glGetUniformLocation(standardShaderProgram.shader.program, "MVP");
-        IbexDisplayFlatUniformLocations[1] = glGetUniformLocation(standardShaderProgram.shader.program, "V");
-        IbexDisplayFlatUniformLocations[2] = glGetUniformLocation(standardShaderProgram.shader.program, "M");
-        IbexDisplayFlatUniformLocations[3] = glGetUniformLocation(standardShaderProgram.shader.program, "textureIn");
-        IbexDisplayFlatUniformLocations[4] = glGetUniformLocation(standardShaderProgram.shader.program, "MV");
-        IbexDisplayFlatUniformLocations[5] = glGetUniformLocation(standardShaderProgram.shader.program, "inFade");
-        IbexDisplayFlatUniformLocations[6] = glGetUniformLocation(standardShaderProgram.shader.program, "offset");
-        
-        IbexDisplayFlatAttribLocations[0] = glGetAttribLocation(standardShaderProgram.shader.program, "vertexPosition_modelspace");
-        IbexDisplayFlatAttribLocations[1] = glGetAttribLocation(standardShaderProgram.shader.program, "vertexNormal_modelspace");
-        IbexDisplayFlatAttribLocations[2] = glGetAttribLocation(standardShaderProgram.shader.program, "vertexUV");
-        
-        glUseProgram(0);
-        
-        std::cerr << "setup_buffers" << std::endl;
-        checkForErrors();
-        glGenVertexArrays(1,&vaoIbexDisplayFlat);
-        
-        checkForErrors();
-        std::cerr << "gen vaoIbexDisplayFlat done" << std::endl;
-        
-        glBindVertexArray(vaoIbexDisplayFlat);
-        glGenBuffers(1, &vboIbexDisplayFlatVertices);
-        glBindBuffer(GL_ARRAY_BUFFER, vboIbexDisplayFlatVertices);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(IbexDisplayFlatVertices), IbexDisplayFlatVertices, GL_STATIC_DRAW);
-        
-        glEnableVertexAttribArray(IbexDisplayFlatAttribLocations[0]);
-        glVertexAttribPointer(IbexDisplayFlatAttribLocations[0], 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*8, 0);
-        glEnableVertexAttribArray(IbexDisplayFlatAttribLocations[2]);
-        glVertexAttribPointer(IbexDisplayFlatAttribLocations[2], 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*8, (GLvoid*) (sizeof(GLfloat) * 6));
-        
-        
-        glGenBuffers(1, &vboIbexDisplayFlatIndices);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboIbexDisplayFlatIndices);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(IbexDisplayFlatIndices), IbexDisplayFlatIndices, GL_STATIC_DRAW);
-    }
-    
-    if(shadowPass) {
-        glUseProgram(shadowProgram.shader.program);
-        glUniformMatrix4fv(ShadowUniformLocations[0], 1, GL_FALSE, &MVP[0][0]);
-    } else {
-        glUseProgram(standardShaderProgram.shader.program);
-        glUniformMatrix4fv(IbexDisplayFlatUniformLocations[0], 1, GL_FALSE, &MVP[0][0]);
-        glUniformMatrix4fv(IbexDisplayFlatUniformLocations[1], 1, GL_FALSE, &V[0][0]);
-        glUniformMatrix4fv(IbexDisplayFlatUniformLocations[2], 1, GL_FALSE, &M[0][0]);
-        glUniformMatrix4fv(IbexDisplayFlatUniformLocations[4], 1, GL_FALSE, &(V*M)[0][0]);
-        
-        if(IbexDisplayFlatUniformLocations[5] >= 0) glUniform1f(IbexDisplayFlatUniformLocations[5], 1.0);
-        if(IbexDisplayFlatUniformLocations[6] >= 0) {
-            if(randomize) {
-				const float offsetU = float(rand()%1280)/1280.0f;
-				const float offsetV = float(rand()%720)/720.0f;
-                glUniform2f(IbexDisplayFlatUniformLocations[6], offsetU, offsetV);
-            } else {
-                glUniform2f(IbexDisplayFlatUniformLocations[6], 0,0);
-            }
-        }
-        
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, texture_);
-        glUniform1i(IbexDisplayFlatUniformLocations[3], 0);
-    }
-    
-    glBindVertexArray(vaoIbexDisplayFlat);
-    glDrawElements(GL_TRIANGLES, sizeof(IbexDisplayFlatIndices)/sizeof(GLushort), GL_UNSIGNED_SHORT, 0);
-}
-//////////
+////////
 
 void renderSphericalDisplay(double r, double numHorizontalLines, double numVerticalLines, double width, double height) {
     //    glPushMatrix();
@@ -229,7 +126,7 @@ void renderCylindricalDisplay(double r, double numHorizontalLines, double numVer
     //    glPopMatrix();
 }
 
-SimpleWorldRendererPlugin::SimpleWorldRendererPlugin() : _bringUpIbexDisplay(true) {
+SimpleWorldRendererPlugin::SimpleWorldRendererPlugin() : _bringUpIbexDisplay(true),_bringUpAppLauncher(true) {
     reset();
 }
 SimpleWorldRendererPlugin::~SimpleWorldRendererPlugin() {
@@ -237,6 +134,9 @@ SimpleWorldRendererPlugin::~SimpleWorldRendererPlugin() {
 
 void SimpleWorldRendererPlugin::bringUpIbexDisplay() {
     _bringUpIbexDisplay = true;
+}
+void SimpleWorldRendererPlugin::bringUpAppLauncher() {
+    _bringUpAppLauncher = true;
 }
 // ---------------------------------------------------------------------------
 // Function: loadSkybox
@@ -975,7 +875,9 @@ void SimpleWorldRendererPlugin::init() {
 
 void SimpleWorldRendererPlugin::reset() {
     ibexDisplayModelTransform = glm::translate(0.0f, 0.0f, -10.0f);
+    appLauncherModelTransform = ibexDisplayModelTransform;
 	_bringUpIbexDisplay = true;
+    _bringUpAppLauncher = true;
 }
 
 void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &orthoProj, const glm::mat4 &view_, const glm::mat4 &playerCamera_, const glm::mat4 &playerRotation_, const glm::vec3 &playerPosition_, bool shadowPass, const glm::mat4 &depthBiasMVP, const double &timeDiff_, const double &time, const int &leftRight) {
@@ -996,6 +898,7 @@ void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &
     //renderIbexDisplayFlat(PV*model, view, model, shadowPass, depthBiasMVP*model, desktopTexture, false);
 	ibexMonitor->renderIbexDisplayFlat(PV*model, view, model, shadowPass, depthBiasMVP*model);
     if(renderVideoTexture) {
+        model = ibexDisplayModelTransform;
 		glm::vec4 bounds(ibexMonitor->getBounds());
         model = glm::translate(model, glm::vec3(bounds[2]+10.0f+1.0f, 0.0f, 0.0f))*glm::scale(1.0f,-1.0f,1.0f);
         if(isSBSVideo) {
@@ -1046,17 +949,30 @@ void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &
         }
         glEnable(GL_CULL_FACE);
     }
+    
 	 if(!shadowPass) {
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
+         
 		if(showGround) {
 			model = glm::translate(-playerPosition_.x, 0.0f, -playerPosition_.z);
 			renderWater(PV*model, view, model, shadowPass, depthBiasMVP*model, time);
 		}
-
-		model = glm::mat4();
+         
+        model = glm::mat4();
         window.render(orthoProj/**model*/, view, model, shadowPass, depthBiasMVP/**model*/, timeDiff_);
+         
+        if(showApplicationLauncher) {
+            //model = ibexDisplayModelTransform;
+            //glm::vec4 bounds(ibexMonitor->getBounds());
+            //model = glm::translate(model, glm::vec3(bounds[0]-10.0f-1.0f, 0.0f, 0.0f))*glm::scale(1.0f,-1.0f,1.0f);
+            model = appLauncherModelTransform*glm::scale(1.0f,-1.0f,1.0f);
+            glDisable(GL_CULL_FACE);
+            glDisable(GL_DEPTH_TEST);
+            applicationLauncher->render(PV*model, view, model, shadowPass, depthBiasMVP*model);
+            glEnable(GL_DEPTH_TEST);
+            glEnable(GL_CULL_FACE);
+        }
 
         glDisable(GL_BLEND);
     }
@@ -1083,6 +999,8 @@ void SimpleWorldRendererPlugin::step(Desktop3DLocation &loc, double timeDiff_, c
     static bool first = true;
     if(first) {
         first = false;
+        
+        applicationLauncher = new Ibex::ApplicationLauncher();
         
         char path[2048];
         strcpy(path, mResourcePath);
@@ -1112,6 +1030,7 @@ void SimpleWorldRendererPlugin::step(Desktop3DLocation &loc, double timeDiff_, c
         window.changedSettingMessage(settingChangedMessage);
     }
     window.update(timeDiff_);
+    applicationLauncher->update();
     
     glm::mat4 modelView;
     glm::mat4 view;
@@ -1134,14 +1053,19 @@ void SimpleWorldRendererPlugin::step(Desktop3DLocation &loc, double timeDiff_, c
     
     
 	static bool firstBringUpDisplay = true;
-    if(_bringUpIbexDisplay) {
-        _bringUpIbexDisplay = false;
-
+    if(_bringUpIbexDisplay || _bringUpAppLauncher) {
 		glm::mat4 rot(firstBringUpDisplay ? glm::mat4() : (orientationRift*playerRotation));
 		glm::mat4 playerCamera2(glm::translate(rot,
 									           playerPosition));
 		glm::vec3 p(glm::mat4(glm::inverse(playerCamera2)) * glm::vec4(0,0,-10,1));
-		ibexDisplayModelTransform = glm::translate(p)*glm::inverse(rot);
+        if(_bringUpIbexDisplay) {
+            _bringUpIbexDisplay = false;
+            ibexDisplayModelTransform = glm::translate(p)*glm::inverse(rot);
+        }
+        if(_bringUpAppLauncher) {
+            _bringUpAppLauncher = false;
+            appLauncherModelTransform = glm::translate(p)*glm::inverse(rot);
+        }
 
 		firstBringUpDisplay = false;
     }

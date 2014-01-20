@@ -30,6 +30,12 @@ std::string Filesystem::getFullPath(std::string from, std::string to) {
 		to = to.substr(1);
     }
     std::string path = from+"\\"+to;
+	std::wstring wideDir(path.begin(), path.end());
+	wchar_t lpDst[4096];
+	if(ExpandEnvironmentStrings(wideDir.data(), lpDst, 4096-2)) {
+		wideDir = std::wstring(lpDst);
+		path = std::string(wideDir.begin(), wideDir.end());
+	}
     return path;
 #else
     if(to.size() > 0 && to[0] == '*') {
@@ -60,6 +66,12 @@ else
 bool Filesystem::isDirectory(std::string path) {
 #ifdef WIN32
 	struct stat s;
+	std::wstring wideDir(path.begin(), path.end());
+	wchar_t lpDst[4096];
+	if(ExpandEnvironmentStrings(wideDir.data(), lpDst, 4096-2)) {
+		wideDir = std::wstring(lpDst);
+		path = std::string(wideDir.begin(), wideDir.end());
+	}
 	if(stat(path.c_str(),&s) == 0 && (s.st_mode & S_IFDIR))
 		return true; // dir
 	else
@@ -105,6 +117,12 @@ std::vector<std::string> Filesystem::listDirectory(const char *directory) {
 
 	std::string dir(directory);
 	dir += "\\*";
+	std::wstring wideDir(dir.begin(), dir.end());
+	wchar_t lpDst[4096];
+	if(ExpandEnvironmentStrings(wideDir.data(), lpDst, 4096-2)) {
+		wideDir = std::wstring(lpDst);
+		dir = std::string(wideDir.begin(), wideDir.end());
+	}
     /* Find first .c file in current directory */
     if((hFile = _findfirst(dir.c_str(), &c_file )) == -1L)
        printf("No files in current directory: %s\n", directory);

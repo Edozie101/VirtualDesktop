@@ -141,6 +141,9 @@
     <ClInclude Include="monitor\IbexMonitor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="windows\ApplicationLauncher.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="distortions.cpp">
@@ -234,6 +237,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="monitor\IbexMonitor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="windows\ApplicationLauncher.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

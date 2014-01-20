@@ -43,7 +43,6 @@ public:
     void renderGround(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP, const double &time);
     void renderIbexDisplayFlat(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP, GLuint texture_, const bool &randomize, const int &leftRightBoth);
     void renderWater(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP, const double &time);
-    void renderApplicationLauncher(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP, GLuint texture_, const bool &randomize);
     
     void init();
     void reset();
@@ -51,6 +50,7 @@ public:
     bool needsSwapBuffers();
     
     void bringUpIbexDisplay();
+    void bringUpAppLauncher();
     
     Window getWindowID();
 private:
@@ -62,7 +62,9 @@ private:
     Terrain terrain;
     
     bool _bringUpIbexDisplay;
+    bool _bringUpAppLauncher;
     glm::mat4 ibexDisplayModelTransform;
+    glm::mat4 appLauncherModelTransform;
     
     Model treeModel;
     

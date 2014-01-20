@@ -189,6 +189,7 @@ void Ibex::Window::renderHelpWindow() {
     lines.push_back(" / - toggle dialog (including help) ");
     lines.push_back(" W/S - forward/back   A/D - left/right ");
     lines.push_back(" Shift - run          R - reset ");
+	lines.push_back(" O - Application Launcher ");
 #ifdef WIN32
 	lines.push_back(" Cntrl+Shift+G - toggle control desktop ");
 #else
@@ -199,7 +200,6 @@ void Ibex::Window::renderHelpWindow() {
     lines.push_back(" Fn+Shift+F2 - lower rendering quality ");
 #endif
     lines.push_back(" L - lock head-tracking   U - walk follows view ");
-    lines.push_back(" U - toggle walking follows view ");
     textRenderer->renderTextToFramebuffer(0, 0, lines, std::vector<bool>());
 }
 
