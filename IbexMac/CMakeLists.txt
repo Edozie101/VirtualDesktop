@@ -204,6 +204,7 @@ set(SRC ${SRC}
     GL/glew.c
     utils.cpp utils.h
     GLSLShaderProgram.cpp GLSLShaderProgram.h
+    simpleworld_plugin/Rectangle.cpp simpleworld_plugin/Rectangle.h
     simpleworld_plugin/SimpleWorldRendererPlugin.cpp simpleworld_plugin/SimpleWorldRendererPlugin.h
     simpleworld_plugin/ShadowBufferRenderer.cpp simpleworld_plugin/ShadowBufferRenderer.h
     simpleworld_plugin/Model.cpp simpleworld_plugin/Model.h

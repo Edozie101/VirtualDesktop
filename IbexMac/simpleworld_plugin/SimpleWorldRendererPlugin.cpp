@@ -44,6 +44,8 @@
 #include "../monitor/IbexMonitor.h"
 #include "../windows/ApplicationLauncher.h"
 
+#include "Rectangle.h"
+
 glm::vec3 lightInvDir;
 
 void copyMatrix(glm::mat4 &modelView, const float M[4][4]) {
@@ -213,142 +215,6 @@ void loadShadowProgram() {
     ShadowAttribLocations[0] = glGetAttribLocation(shadowProgram.shader.program, "vertexPosition_modelspace");
     ShadowAttribLocations[1] = glGetAttribLocation(shadowProgram.shader.program, "vertexNormal_modelspace");
     ShadowAttribLocations[2] = glGetAttribLocation(shadowProgram.shader.program, "vertexUV");
-}
-void SimpleWorldRendererPlugin::renderIbexDisplayFlat(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP, GLuint texture_, const bool &randomize, const int &leftRightBoth)
-{
-    //
-    // leftRightBoth: 0 is both, 1 is left, 2 is right
-    //
-    static GLuint vaoIbexDisplayFlat = 0;
-    static const GLfloat IbexDisplayFlatScale = 10;
-    
-    static GLint IbexDisplayFlatUniformLocations[7] = { 0, 0, 0, 0, 0, 0, 0};
-    static GLint IbexDisplayFlatAttribLocations[3] = { 0, 0, 0 };
-    
-    static GLfloat IbexDisplayFlatVertices[] = {
-        -1.0,  -1, 0.0, 0, 0, -1, 0, 0,
-        1.0, -1.0, 0.0, 0, 0, -1, 1, 0,
-        1.0, 1.0, 0.0, 0, 0, -1, 1, 1,
-        -1.0, 1.0, 0.0, 0, 0, -1, 0, 1,
-        
-        // left
-        -0.5,  -1, 0.0, 0, 0, -1, 0, 0,
-        0.5, -1.0, 0.0, 0, 0, -1, 0.49999999, 0,
-        0.5, 1.0, 0.0, 0, 0, -1, 0.49999999, 1,
-        -0.5, 1.0, 0.0, 0, 0, -1, 0, 1,
-        
-        // right
-        -0.5,  -1, 0.0, 0, 0, -1, 0.5, 0,
-        0.5, -1.0, 0.0, 0, 0, -1, 1, 0,
-        0.5, 1.0, 0.0, 0, 0, -1, 1, 1,
-        -0.5, 1.0, 0.0, 0, 0, -1, 0.5, 1,
-    };
-    static GLuint vboIbexDisplayFlatVertices = 0;
-    
-    static GLushort IbexDisplayFlatIndices[] = {
-        0, 1, 2,
-        0, 2, 3,
-        
-        // left
-        0+4, 1+4, 2+4,
-        0+4, 2+4, 3+4,
-        
-        // right
-        0+8, 1+8, 2+8,
-        0+8, 2+8, 3+8,
-    };
-    static GLuint vboIbexDisplayFlatIndices = 0;
-    
-    static bool first = true;
-    if(first) {
-        first = false;
-        
-        for(int i = 0; i < sizeof(IbexDisplayFlatVertices)/sizeof(GLfloat); ++i) {
-            if(i%8 < 3)
-                IbexDisplayFlatVertices[i] *= IbexDisplayFlatScale;
-            if(i%8 == 1)
-                IbexDisplayFlatVertices[i] *= height/width;
-        }
-        
-		if(standardShaderProgram.shader.program == 0) standardShaderProgram.loadShaderProgram(mResourcePath, "/resources/shaders/emissive.v.glsl", "/resources/shaders/emissive.f.glsl");
-        glUseProgram(standardShaderProgram.shader.program);
-        
-        
-        IbexDisplayFlatUniformLocations[0] = glGetUniformLocation(standardShaderProgram.shader.program, "MVP");
-        IbexDisplayFlatUniformLocations[1] = glGetUniformLocation(standardShaderProgram.shader.program, "V");
-        IbexDisplayFlatUniformLocations[2] = glGetUniformLocation(standardShaderProgram.shader.program, "M");
-        IbexDisplayFlatUniformLocations[3] = glGetUniformLocation(standardShaderProgram.shader.program, "textureIn");
-        IbexDisplayFlatUniformLocations[4] = glGetUniformLocation(standardShaderProgram.shader.program, "MV");
-        IbexDisplayFlatUniformLocations[5] = glGetUniformLocation(standardShaderProgram.shader.program, "inFade");
-        IbexDisplayFlatUniformLocations[6] = glGetUniformLocation(standardShaderProgram.shader.program, "offset");
-        
-        IbexDisplayFlatAttribLocations[0] = glGetAttribLocation(standardShaderProgram.shader.program, "vertexPosition_modelspace");
-        IbexDisplayFlatAttribLocations[1] = glGetAttribLocation(standardShaderProgram.shader.program, "vertexNormal_modelspace");
-        IbexDisplayFlatAttribLocations[2] = glGetAttribLocation(standardShaderProgram.shader.program, "vertexUV");
-        
-        glUseProgram(0);
-        
-        std::cerr << "setup_buffers" << std::endl;
-        checkForErrors();
-        glGenVertexArrays(1,&vaoIbexDisplayFlat);
-        
-        checkForErrors();
-        std::cerr << "gen vaoIbexDisplayFlat done" << std::endl;
-        
-        glBindVertexArray(vaoIbexDisplayFlat);
-        glGenBuffers(1, &vboIbexDisplayFlatVertices);
-        glBindBuffer(GL_ARRAY_BUFFER, vboIbexDisplayFlatVertices);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(IbexDisplayFlatVertices), IbexDisplayFlatVertices, GL_STATIC_DRAW);
-        
-        glEnableVertexAttribArray(IbexDisplayFlatAttribLocations[0]);
-        glVertexAttribPointer(IbexDisplayFlatAttribLocations[0], 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*8, 0);
-        glEnableVertexAttribArray(IbexDisplayFlatAttribLocations[2]);
-        glVertexAttribPointer(IbexDisplayFlatAttribLocations[2], 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*8, (GLvoid*) (sizeof(GLfloat) * 6));
-        
-        
-        glGenBuffers(1, &vboIbexDisplayFlatIndices);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboIbexDisplayFlatIndices);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(IbexDisplayFlatIndices), IbexDisplayFlatIndices, GL_STATIC_DRAW);
-    }
-    
-    if(shadowPass) {
-        glUseProgram(shadowProgram.shader.program);
-        glUniformMatrix4fv(ShadowUniformLocations[0], 1, GL_FALSE, &MVP[0][0]);
-    } else {
-        glUseProgram(standardShaderProgram.shader.program);
-        glUniformMatrix4fv(IbexDisplayFlatUniformLocations[0], 1, GL_FALSE, &MVP[0][0]);
-        glUniformMatrix4fv(IbexDisplayFlatUniformLocations[1], 1, GL_FALSE, &V[0][0]);
-        glUniformMatrix4fv(IbexDisplayFlatUniformLocations[2], 1, GL_FALSE, &M[0][0]);
-        glUniformMatrix4fv(IbexDisplayFlatUniformLocations[4], 1, GL_FALSE, &(V*M)[0][0]);
-        
-        if(IbexDisplayFlatUniformLocations[5] >= 0) glUniform1f(IbexDisplayFlatUniformLocations[5], 1.0);
-        if(IbexDisplayFlatUniformLocations[6] >= 0) {
-            if(randomize) {
-				const float offsetU = float(rand()%1280)/1280.0f;
-				const float offsetV = float(rand()%720)/720.0f;
-                glUniform2f(IbexDisplayFlatUniformLocations[6], offsetU, offsetV);
-            } else {
-                glUniform2f(IbexDisplayFlatUniformLocations[6], 0,0);
-            }
-        }
-        
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, texture_);
-        glUniform1i(IbexDisplayFlatUniformLocations[3], 0);
-    }
-    
-    glBindVertexArray(vaoIbexDisplayFlat);
-    switch(leftRightBoth) {
-    case 0:
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
-        break;
-    case 1:
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, (void*)(sizeof(GLushort)*6));
-        break;
-    case 2:
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, (void*)(sizeof(GLushort)*12));
-        break;
-    }
 }
 
 // ---------------------------------------------------------------------------
@@ -898,13 +764,14 @@ void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &
     //renderIbexDisplayFlat(PV*model, view, model, shadowPass, depthBiasMVP*model, desktopTexture, false);
 	ibexMonitor->renderIbexDisplayFlat(PV*model, view, model, shadowPass, depthBiasMVP*model);
     if(renderVideoTexture) {
+        static Ibex::Rectangle videoDisplay(10.0f);
         model = ibexDisplayModelTransform;
 		glm::vec4 bounds(ibexMonitor->getBounds());
         model = glm::translate(model, glm::vec3(bounds[2]+10.0f+1.0f, 0.0f, 0.0f))*glm::scale(1.0f,-1.0f,1.0f);
         if(isSBSVideo) {
-            renderIbexDisplayFlat(PV*model, view, model, shadowPass, depthBiasMVP*model, renderVideoTexture, videoIsNoise, leftRight+1);
+            videoDisplay.render(PV*model, view, model, shadowPass, depthBiasMVP*model, renderVideoTexture, videoIsNoise, leftRight+1);
         } else {
-            renderIbexDisplayFlat(PV*model, view, model, shadowPass, depthBiasMVP*model, renderVideoTexture, videoIsNoise, 0);
+            videoDisplay.render(PV*model, view, model, shadowPass, depthBiasMVP*model, renderVideoTexture, videoIsNoise, 0);
         }
     }
     glEnable(GL_CULL_FACE);

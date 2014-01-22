@@ -248,6 +248,10 @@
 		4C7DC92A1887AAA4006D865E /* MainMenuIbexConfig.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4C7DC9281887AAA4006D865E /* MainMenuIbexConfig.xib */; };
 		4C7EE90C1887AE2700F2C54E /* PreferencesWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4C0E54DD188761320027940B /* PreferencesWindow.xib */; };
 		4C8758431697E5200022583D /* ibex.iconset in Resources */ = {isa = PBXBuildFile; fileRef = 4C8758421697E5200022583D /* ibex.iconset */; };
+		4C8B4B91188FF61B00203444 /* Rectangle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C8B4B8F188FF61B00203444 /* Rectangle.cpp */; };
+		4C8B4B92188FF61B00203444 /* Rectangle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C8B4B8F188FF61B00203444 /* Rectangle.cpp */; };
+		4C8B4B93188FF61B00203444 /* Rectangle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C8B4B8F188FF61B00203444 /* Rectangle.cpp */; };
+		4C8B4B94188FF61B00203444 /* Rectangle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C8B4B8F188FF61B00203444 /* Rectangle.cpp */; };
 		4C936064172A282100A94980 /* ScreenshotView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4C936063172A282100A94980 /* ScreenshotView.mm */; };
 		4C936065172A282100A94980 /* ScreenshotView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4C936063172A282100A94980 /* ScreenshotView.mm */; };
 		4C936066172A282100A94980 /* ScreenshotView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4C936063172A282100A94980 /* ScreenshotView.mm */; };
@@ -620,6 +624,8 @@
 		4C7BA95F17BDB33500115494 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		4C7DC9291887AAA4006D865E /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = IbexMac/en.lproj/MainMenuIbexConfig.xib; sourceTree = SOURCE_ROOT; };
 		4C8758421697E5200022583D /* ibex.iconset */ = {isa = PBXFileReference; lastKnownFileType = folder.iconset; path = ibex.iconset; sourceTree = "<group>"; };
+		4C8B4B8F188FF61B00203444 /* Rectangle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Rectangle.cpp; sourceTree = "<group>"; };
+		4C8B4B90188FF61B00203444 /* Rectangle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Rectangle.h; sourceTree = "<group>"; };
 		4C936062172A282100A94980 /* ScreenshotView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScreenshotView.h; sourceTree = "<group>"; };
 		4C936063172A282100A94980 /* ScreenshotView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScreenshotView.mm; sourceTree = "<group>"; };
 		4C961B1D17B8949C0028D242 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
@@ -1046,6 +1052,8 @@
 				4CA379661844467D0048B227 /* ShadowBufferRenderer.h */,
 				4CFA17F41847D29300E8C716 /* Model.cpp */,
 				4CFA17F51847D29300E8C716 /* Model.h */,
+				4C8B4B8F188FF61B00203444 /* Rectangle.cpp */,
+				4C8B4B90188FF61B00203444 /* Rectangle.h */,
 			);
 			path = simpleworld_plugin;
 			sourceTree = "<group>";
@@ -1612,6 +1620,7 @@
 				4C0E54A4188658430027940B /* PreferencesWindowController.mm in Sources */,
 				4C09379817B1F9CE004EA291 /* glew.c in Sources */,
 				4CC559AD1865C26F002F7BC6 /* TextRenderer.cpp in Sources */,
+				4C8B4B94188FF61B00203444 /* Rectangle.cpp in Sources */,
 				4C41C6B11880D759000F21B0 /* ApplicationLauncher.cpp in Sources */,
 				4C961B3A17B895330028D242 /* VLCVideoPlayer.cpp in Sources */,
 				4C09379917B1F9CE004EA291 /* IbexMacUtils.mm in Sources */,
@@ -1657,6 +1666,7 @@
 				4C011F8E18402ECB002583AD /* Terrain.cpp in Sources */,
 				4C0E54A2188658430027940B /* PreferencesWindowController.mm in Sources */,
 				4C0D58A116AD656A007BC9CD /* utils.cpp in Sources */,
+				4C8B4B92188FF61B00203444 /* Rectangle.cpp in Sources */,
 				4C961B4D17B899F10028D242 /* sixense_controller.cpp in Sources */,
 				4C0D58A216AD656A007BC9CD /* ibex.cpp in Sources */,
 				4C0D58A316AD656A007BC9CD /* MyWindow.mm in Sources */,
@@ -1695,6 +1705,7 @@
 				4C6B99D516F4C17E00C5C725 /* AppDelegate.mm in Sources */,
 				4C6B99D616F4C17E00C5C725 /* ScreenGrabber.m in Sources */,
 				4C6B99D716F4C17E00C5C725 /* MyOpenGLView.mm in Sources */,
+				4C8B4B93188FF61B00203444 /* Rectangle.cpp in Sources */,
 				4C41C6B01880D759000F21B0 /* ApplicationLauncher.cpp in Sources */,
 				4C6B99D916F4C17E00C5C725 /* distortions.cpp in Sources */,
 				4C6B99DA16F4C17E00C5C725 /* opengl_helpers.cpp in Sources */,
@@ -1762,6 +1773,7 @@
 				4C011F8D18402ECB002583AD /* Terrain.cpp in Sources */,
 				4C0E54A1188658430027940B /* PreferencesWindowController.mm in Sources */,
 				4CAC8D581690A2C100341AA0 /* utils.cpp in Sources */,
+				4C8B4B91188FF61B00203444 /* Rectangle.cpp in Sources */,
 				4C961B4C17B899F10028D242 /* sixense_controller.cpp in Sources */,
 				4CFB0B4B168E5DFA0025AF0F /* ibex.cpp in Sources */,
 				4C4C3C0A1694689400D2285F /* MyWindow.mm in Sources */,
