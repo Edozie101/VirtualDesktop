@@ -248,7 +248,6 @@ glm::vec4 Ibex::IbexMonitor::getBounds() {
 #ifdef WIN32
 inline void Ibex::IbexMonitor::mergeMouseCursor(HDC hdcMemDC)
 {
-	return;
 	cursorinfo.cbSize = sizeof(cursorinfo);
 
 	const bool hasCursorInfo = GetCursorInfo(&cursorinfo);

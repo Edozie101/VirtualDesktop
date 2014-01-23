@@ -602,10 +602,7 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	}
 
 	initRift();
-	_TCHAR renderScaleString[1000];
-	_TCHAR *stopString;
-	GetPrivateProfileString(L"rift", L"renderScale", L"0", renderScaleString, sizeof(renderScaleString), L".\\ibex.ini");
-	double overrideRenderScale = wcstod(renderScaleString, &stopString);
+	double overrideRenderScale = GetPrivateProfileInt(L"rift", L"renderScale", 0, L".\\ibex.ini");
 	if(overrideRenderScale >= 1.0) {
 		setRenderScale(overrideRenderScale);
 	}
