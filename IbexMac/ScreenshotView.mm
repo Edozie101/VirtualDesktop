@@ -271,18 +271,26 @@ static inline void copyImageToBytes(const CGImageRef &img, const CGImageRef &cur
 
 - (void)initMonitorScreens {
     screens = [NSArray arrayWithArray:NSScreen.screens];
-    CGDirectDisplayID *onlineDisplays = new CGDirectDisplayID[16];
+    CGDirectDisplayID *onlineDisplays = new CGDirectDisplayID[32];
     uint32_t displayCount;
-    CGGetOnlineDisplayList(16, onlineDisplays, &displayCount);
-    for(NSScreen *screen in NSScreen.screens) {
-        const CGRect r = screen.frame;
+    CGGetOnlineDisplayList(32, onlineDisplays, &displayCount);
+    for(int i = 0; i < displayCount; ++i) {
+        const CGRect r = CGDisplayBounds(onlineDisplays[i]);
         ibexMonitor->desktopRects.push_back(RECT(r.origin.x,r.origin.y,r.origin.x+r.size.width,r.origin.y+r.size.height));
-        ibexMonitor->desktopScaleFactors.push_back(screen.backingScaleFactor);
+        bool found = false;
+        for(NSScreen *screen in NSScreen.screens) {
+            CGDirectDisplayID screenId = ((NSNumber*)[screen.deviceDescription objectForKey:@"NSScreenNumber"]).unsignedIntValue;
+            if(screenId == onlineDisplays[i]) {
+                found = true;
+                ibexMonitor->desktopScaleFactors.push_back(screen.backingScaleFactor);
+            }
+        }
+        if(!found) {
+            ibexMonitor->desktopScaleFactors.push_back(1.0f);
+        }
         cgRects.push_back(r);
         ibexMonitor->bitmapCache.push_back(0);
     }
-
-//    exit(0);
     
     ibexMonitor->initializeTextures();
 }
@@ -303,30 +311,36 @@ static inline void copyImageToBytes(const CGImageRef &img, const CGImageRef &cur
         [cocoaCondition unlock];
         
         done = 0;
-        CFArrayRef a = CGWindowListCreate(
+        const CFArrayRef a = CGWindowListCreate(
                                           kCGWindowListOptionOnScreenBelowWindow,
                                           (CGWindowID)_window.windowNumber
                                           );
         
-        CGEventRef event = CGEventCreate(NULL);
-        CGPoint cursor = CGEventGetLocation(event);
+        const CGEventRef event = CGEventCreate(NULL);
+        const CGPoint cursor = CGEventGetLocation(event);
         CFRelease(event);
+        CGImageRef cursorImageRef = nil;
+        NSPoint hotspot = CGPointZero;
+        if(NSCursor.currentSystemCursor != nil) {
+            cursorImageRef = [NSCursor.currentSystemCursor.image CGImageForProposedRect:nil context:nil hints:nil];
+            hotspot = NSCursor.currentSystemCursor.hotSpot;
+        }
+        
+        
         for(int i = 0; i < screens.count; ++i) {
-            NSScreen *screen = screens[i];
+            const NSScreen *screen = screens[i];
             
             // screen.frame is WRONG
-            CGImageRef img = CGWindowListCreateImageFromArray(
+            const CGImageRef img = CGWindowListCreateImageFromArray(
                                                               cgRects[i],//screen.frame, //CGRectMake(1440,260,1136,640),
                                                               a,
                                                               kCGWindowImageDefault
                                                               );
-            CGImageRef cursorImageRef = nil;
-            NSPoint hotspot = CGPointZero;
-            if(NSCursor.currentSystemCursor != nil) {
-                cursorImageRef = [NSCursor.currentSystemCursor.image CGImageForProposedRect:nil context:nil hints:nil];
-                hotspot = NSCursor.currentSystemCursor.hotSpot;
-            }
+            
+//            if(i == 1) {
 //            [self savePNGImage:img path:[NSString stringWithFormat:@"/Users/hesh/%d.png",i]];
+//                exit(0);
+//            }
             
             GLubyte** _spriteData = &ibexMonitor->bitmapCache[i];
             [self createGLTextureNoAlpha:&ibexMonitor->desktopTextures[i] fromCGImage:img andCursor:cursorImageRef andDataCache:_spriteData andClear:NO andSpriteContext:&spriteContexts[i] andScreenRect:cgRects[i] andHotspot:hotspot andCursorPosition:cursor andScaleFactor:screen.backingScaleFactor];
