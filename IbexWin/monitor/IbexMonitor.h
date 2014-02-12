@@ -20,6 +20,8 @@
 
 #include "../GLSLShaderProgram.h"
 
+#include "../simpleworld_plugin/Rectangle.h"
+
 extern std::condition_variable screenshotCondition;
 
 #ifdef __APPLE__
@@ -50,13 +52,18 @@ public:
 	glm::vec4 getBounds();
     void initializeBounds();
     
+    bool lineIntersects(const glm::vec4 &p0, const glm::vec4 &p1, const glm::mat4 &V, const glm::mat4 &M) const;
+    
 #ifdef WIN32
 	void mergeMouseCursor(HDC hdcMemDC);
 	int CaptureAnImage(const HWND &hWnd, const int &desktopNum);
 	void getScreenshot();
 	void loopScreenshot();
-    
+#endif
+
 private:
+    ::Ibex::Rectangle rectangle;
+#ifdef WIN32
     std::vector<char*> bitmapCache;
 	HGLRC loaderContext;
 	HDC hdc;

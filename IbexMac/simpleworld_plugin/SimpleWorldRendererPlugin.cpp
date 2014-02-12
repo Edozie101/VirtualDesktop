@@ -760,14 +760,23 @@ void SimpleWorldRendererPlugin::render(const glm::mat4 &proj_, const glm::mat4 &
     glm::mat4 PV(proj_*view);
     
     glDisable(GL_CULL_FACE);
+    static const Ibex::Rectangle videoDisplay(10.0f);
 	model = ibexDisplayModelTransform;
-    //renderIbexDisplayFlat(PV*model, view, model, shadowPass, depthBiasMVP*model, desktopTexture, false);
 	ibexMonitor->renderIbexDisplayFlat(PV*model, view, model, shadowPass, depthBiasMVP*model);
+//    const static glm::vec4 p0(0,0,0, 1);
+//    const static glm::vec4 p1(0,0,-100, 1);
+//    if(ibexMonitor->lineIntersects(p0, p1, view, model)) {
+//        //        static int i = 0;
+//        //        std::cerr << "*** looking at display " << i++ << " ***" << std::endl;
+//        ibexMonitor->renderIbexDisplayFlat(PV*model, view, model, shadowPass, depthBiasMVP*model);
+//    } else {
+//        videoDisplay.render(PV*model, view, model, shadowPass, depthBiasMVP*model, renderVideoTexture, videoIsNoise, 0);
+//    }
     if(renderVideoTexture) {
-        static Ibex::Rectangle videoDisplay(10.0f);
         model = ibexDisplayModelTransform;
 		glm::vec4 bounds(ibexMonitor->getBounds());
-        model = glm::translate(model, glm::vec3(bounds[2]+10.0f+1.0f, 0.0f, 0.0f))*glm::scale(1.0f,-1.0f,1.0f);
+        static const glm::mat4 scale = glm::scale(1.0f,-1.0f,1.0f);
+        model = glm::translate(model, glm::vec3(bounds[2]+10.0f+1.0f, 0.0f, 0.0f))*scale;
         if(isSBSVideo) {
             videoDisplay.render(PV*model, view, model, shadowPass, depthBiasMVP*model, renderVideoTexture, videoIsNoise, leftRight+1);
         } else {
@@ -937,6 +946,12 @@ void SimpleWorldRendererPlugin::step(Desktop3DLocation &loc, double timeDiff_, c
 		firstBringUpDisplay = false;
     }
     
+//    const static glm::vec4 p0(0,0,0, 1);
+//    const static glm::vec4 p1(0,0,-100, 1);
+//    if(ibexMonitor->lineIntersects(p0, p1, playerCamera, ibexDisplayModelTransform)) {
+//        static int i = 0;
+////        std::cerr << "*** looking at display " << i++ << " ***" << std::endl;
+//    }
     
     //    static glm::mat4 lightView = glm::lookAt(glm::vec3(0.f,0.f,0.f), glm::vec3(4.f,4.f,4.f), glm::vec3(0,1,0));
     //    static glm::mat4 lightProj = glm::ortho(-100.f, 100.f, -100.f, 100.f, -100.f, 100.f);
@@ -983,8 +998,8 @@ void SimpleWorldRendererPlugin::step(Desktop3DLocation &loc, double timeDiff_, c
         glViewport(stereo.VP.x*renderScale,stereo.VP.y*renderScale,stereo.VP.w*renderScale,stereo.VP.h*renderScale);
         glScissor(stereo.VP.x*renderScale,stereo.VP.y*renderScale,stereo.VP.w*renderScale,stereo.VP.h*renderScale);
         
-        copyMatrix(view,stereo.ViewAdjust.Transposed().M);
-        copyMatrix(proj, (orientation*stereo.Projection.Transposed()).M);
+        copyMatrix(view,(orientation*stereo.ViewAdjust.Transposed()).M);
+        copyMatrix(proj, (stereo.Projection.Transposed()).M);
         copyMatrix(orthoProj, (stereo.OrthoProjection.Transposed()).M);
         
         if(useLightPerspective) {

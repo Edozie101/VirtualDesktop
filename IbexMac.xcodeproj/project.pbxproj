@@ -152,6 +152,10 @@
 		4C1DD39116F4F96000302EFA /* Plugin_OctreeSceneManager.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C6411B116F4C30200132076 /* Plugin_OctreeSceneManager.dylib */; };
 		4C238E18172C6BAD009C22A6 /* libovr.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CA92BC31729FB1F00994379 /* libovr.a */; };
 		4C2DE2FF168B30CC003BEB56 /* ScreenGrabber.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C2DE2FE168B30CC003BEB56 /* ScreenGrabber.m */; };
+		4C30867918A7F5B1000DB6B0 /* GeometricUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C30867718A7F5B1000DB6B0 /* GeometricUtils.cpp */; };
+		4C30867A18A7F5B1000DB6B0 /* GeometricUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C30867718A7F5B1000DB6B0 /* GeometricUtils.cpp */; };
+		4C30867B18A7F5B1000DB6B0 /* GeometricUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C30867718A7F5B1000DB6B0 /* GeometricUtils.cpp */; };
+		4C30867C18A7F5B1000DB6B0 /* GeometricUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C30867718A7F5B1000DB6B0 /* GeometricUtils.cpp */; };
 		4C41232116936E4F008F5B15 /* IbexMacUtils.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4C41232016936E4F008F5B15 /* IbexMacUtils.mm */; };
 		4C41C6AE1880D759000F21B0 /* ApplicationLauncher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C41C6AC1880D759000F21B0 /* ApplicationLauncher.cpp */; };
 		4C41C6AF1880D759000F21B0 /* ApplicationLauncher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C41C6AC1880D759000F21B0 /* ApplicationLauncher.cpp */; };
@@ -567,6 +571,8 @@
 		4C19BFE8172CD56400B7599D /* VideoDecodeAcceleration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = VideoDecodeAcceleration.framework; path = System/Library/Frameworks/VideoDecodeAcceleration.framework; sourceTree = SDKROOT; };
 		4C2DE2FD168B30CC003BEB56 /* ScreenGrabber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScreenGrabber.h; sourceTree = "<group>"; };
 		4C2DE2FE168B30CC003BEB56 /* ScreenGrabber.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScreenGrabber.m; sourceTree = "<group>"; };
+		4C30867718A7F5B1000DB6B0 /* GeometricUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GeometricUtils.cpp; sourceTree = "<group>"; };
+		4C30867818A7F5B1000DB6B0 /* GeometricUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeometricUtils.h; sourceTree = "<group>"; };
 		4C33AA3316970C3B001A1EFC /* IbexMac.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = IbexMac.entitlements; sourceTree = "<group>"; };
 		4C3D9C63187B3F04007211CE /* NOTES */ = {isa = PBXFileReference; lastKnownFileType = text; path = NOTES; sourceTree = "<group>"; };
 		4C41231F16936E4F008F5B15 /* IbexMacUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IbexMacUtils.h; sourceTree = "<group>"; };
@@ -1054,6 +1060,8 @@
 				4CFA17F51847D29300E8C716 /* Model.h */,
 				4C8B4B8F188FF61B00203444 /* Rectangle.cpp */,
 				4C8B4B90188FF61B00203444 /* Rectangle.h */,
+				4C30867718A7F5B1000DB6B0 /* GeometricUtils.cpp */,
+				4C30867818A7F5B1000DB6B0 /* GeometricUtils.h */,
 			);
 			path = simpleworld_plugin;
 			sourceTree = "<group>";
@@ -1630,6 +1638,7 @@
 				4C09379D17B1F9CE004EA291 /* ServerController.mm in Sources */,
 				4C961B4817B899860028D242 /* Filesystem.cpp in Sources */,
 				4C961B6217B89DB50028D242 /* Rift.cpp in Sources */,
+				4C30867C18A7F5B1000DB6B0 /* GeometricUtils.cpp in Sources */,
 				4C0937A317B1F9CE004EA291 /* ScreenshotView.mm in Sources */,
 				4C011F9C1840388A002583AD /* GLSLShaderProgram.cpp in Sources */,
 				4CF1B60D1875152000F8DF0B /* IbexMonitor.cpp in Sources */,
@@ -1645,6 +1654,7 @@
 				4C0D589616AD656A007BC9CD /* main.mm in Sources */,
 				4C0D589716AD656A007BC9CD /* AppDelegate.mm in Sources */,
 				4C41C6AF1880D759000F21B0 /* ApplicationLauncher.cpp in Sources */,
+				4C30867A18A7F5B1000DB6B0 /* GeometricUtils.cpp in Sources */,
 				4CA379681844467D0048B227 /* ShadowBufferRenderer.cpp in Sources */,
 				4C0D589816AD656A007BC9CD /* ScreenGrabber.m in Sources */,
 				4C961B3017B895330028D242 /* IbexVideoPlayer.mm in Sources */,
@@ -1716,6 +1726,7 @@
 				4C6B99DE16F4C17E00C5C725 /* IbexMacUtils.mm in Sources */,
 				4C49791617CCC6A0008DC26E /* tinyxmlparser.cpp in Sources */,
 				4C6B99DF16F4C17E00C5C725 /* utils.cpp in Sources */,
+				4C30867B18A7F5B1000DB6B0 /* GeometricUtils.cpp in Sources */,
 				4C0E54A3188658430027940B /* PreferencesWindowController.mm in Sources */,
 				4C961B3517B895330028D242 /* VideoPlayer.cpp in Sources */,
 				4C6B99E016F4C17E00C5C725 /* ibex.cpp in Sources */,
@@ -1752,6 +1763,7 @@
 				4CB79877168AB41E00EF5260 /* main.mm in Sources */,
 				4C961B2417B8949C0028D242 /* Window.cpp in Sources */,
 				4C41C6AE1880D759000F21B0 /* ApplicationLauncher.cpp in Sources */,
+				4C30867918A7F5B1000DB6B0 /* GeometricUtils.cpp in Sources */,
 				4CA379671844467D0048B227 /* ShadowBufferRenderer.cpp in Sources */,
 				4CB7987E168AB41E00EF5260 /* AppDelegate.mm in Sources */,
 				4C961B2F17B895330028D242 /* IbexVideoPlayer.mm in Sources */,

@@ -16,8 +16,6 @@
 #include "../ibex.h"
 #include "../simpleworld_plugin/SimpleWorldRendererPlugin.h"
 
-#include "../simpleworld_plugin/Rectangle.h"
-
 std::condition_variable screenshotCondition;
 
 #ifdef __APPLE__
@@ -27,6 +25,7 @@ std::condition_variable screenshotCondition;
 	,screenshotLock(0)
 	,initialOffsetX(0)
 	,initialOffsetY(0)
+    ,rectangle(0.5f)
 {
 }
 #endif
@@ -46,6 +45,7 @@ screenshotMutex()
 	,fpsString()
 	,initialOffsetX(0)
 	,initialOffsetY(0)
+    ,rectangle(0.5f)
 {
 	//bool result = wglShareLists(loaderContext, mainContext); // Order matters
 	bool result = wglShareLists(mainContext, loaderContext); // Order matters
@@ -129,7 +129,7 @@ void Ibex::IbexMonitor::initializeTextures() {
 
 void Ibex::IbexMonitor::renderIbexDisplayFlat(const glm::mat4 &MVP, const glm::mat4 &V, const glm::mat4 &M, bool shadowPass, const glm::mat4 &depthMVP)
 {
-    static ::Ibex::Rectangle rectangle(0.5f);
+    
 	for(int i = 0; i < desktopTextures.size(); ++i) {
         const RECT &r = desktopRects[i];
         const float w = r.right-r.left;
@@ -146,6 +146,26 @@ void Ibex::IbexMonitor::renderIbexDisplayFlat(const glm::mat4 &MVP, const glm::m
 	}
 }
 
+bool Ibex::IbexMonitor::lineIntersects(const glm::vec4 &p0, const glm::vec4 &p1, const glm::mat4 &V, const glm::mat4 &M) const {
+    bool intersects = false;
+    
+    for(int i = 0; i < 1; ++i) {//desktopTextures.size(); ++i) {
+        const RECT &r = desktopRects[i];
+        const float w = r.right-r.left;
+        const float h = r.bottom-r.top;
+        const float x = r.left+w/2.0f;
+        const float y = -r.top-h/2.0f;
+        
+        const glm::mat4 translate = glm::translate((x-initialOffsetX)/100.0f, (y+initialOffsetY)/100.0f, 0.0f);
+        const glm::mat4 scale = glm::scale(w/100.0f, h/100.0f*w/h, 1.0f);
+        const glm::mat4 M2(M*translate*scale);
+        
+        intersects |= rectangle.lineIntersects(p0, p1, V, M2);
+	}
+    
+    return intersects;
+}
+
 glm::vec4 Ibex::IbexMonitor::getBounds() {
 	return monitorBounds;
 }
@@ -153,7 +173,6 @@ glm::vec4 Ibex::IbexMonitor::getBounds() {
 #ifdef WIN32
 inline void Ibex::IbexMonitor::mergeMouseCursor(HDC hdcMemDC)
 {
-	return;
 	cursorinfo.cbSize = sizeof(cursorinfo);
 
 	const bool hasCursorInfo = GetCursorInfo(&cursorinfo);
