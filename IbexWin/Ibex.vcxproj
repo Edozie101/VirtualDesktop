@@ -99,7 +99,9 @@
     <ClInclude Include="RendererPlugin.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="ServerController.h" />
+    <ClInclude Include="simpleworld_plugin\GeometricUtils.h" />
     <ClInclude Include="simpleworld_plugin\Model.h" />
+    <ClInclude Include="simpleworld_plugin\Rectangle.h" />
     <ClInclude Include="simpleworld_plugin\ShadowBufferRenderer.h" />
     <ClInclude Include="simpleworld_plugin\SimpleWorldRendererPlugin.h" />
     <ClInclude Include="sixense\sixense_controller.h" />
@@ -132,7 +134,9 @@
     <ClCompile Include="oculus\Rift.cpp" />
     <ClCompile Include="opengl_helpers.cpp" />
     <ClCompile Include="RendererPlugin.cpp" />
+    <ClCompile Include="simpleworld_plugin\GeometricUtils.cpp" />
     <ClCompile Include="simpleworld_plugin\Model.cpp" />
+    <ClCompile Include="simpleworld_plugin\Rectangle.cpp" />
     <ClCompile Include="simpleworld_plugin\ShadowBufferRenderer.cpp" />
     <ClCompile Include="simpleworld_plugin\SimpleWorldRendererPlugin.cpp" />
     <ClCompile Include="sixense\sixense_controller.cpp" />
