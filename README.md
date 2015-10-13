@@ -27,10 +27,10 @@ obtain those skills. As a result, things are going to move very slowly for a whi
 but they should pick up speed as I become familiar with what I'm doing.
 
 ## Launch
-Default simple renderer: `./ibex`
-Fancy Irrlicht renderer with Quake 3 level: `./ibex -i`
-Ogre3D renderer with simple terrain and water: `./ibex -o`
-Disable Side-by-Side rendering: `-m` (for mono)  
+* Default simple renderer: `./ibex`
+* Fancy Irrlicht renderer with Quake 3 level: `./ibex -i`
+* Ogre3D renderer with simple terrain and water: `./ibex -o`
+* Disable Side-by-Side rendering: `-m` (for mono)  
 
 ## Controls
 
