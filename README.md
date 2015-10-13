@@ -22,7 +22,7 @@ of reviving it.
 
 I am fascinated by the idea of virtual workspaces. I think they have the potential to be
 hugely transformative. I am a total novice when it comes to most of what this project
-entails (3D graphics, x-platform development, `C++`, &c.), but I am very motivated to
+entails (3D graphics, x-platform development in `C`/`C++`, &c.), but I am very motivated to
 obtain those skills. As a result, things are going to move very slowly for a while,
 but they should pick up speed as I become familiar with what I'm doing.
 
