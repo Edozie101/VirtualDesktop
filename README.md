@@ -62,12 +62,12 @@ around from there.
 XCode 5.0.2+, OSX 10.9 (Mavericks), Intel HD3000 or better (OpenGL 3.3+) - Build and run
 from XCode, check the project dependencies to find out where the bullet3d physics library
 and sixense SDK need to go to build properly.  OculusSDK needs to be placed at the same
-level as your checked-out git repo for ibex and it must be version 0.2.5 or later.  You'll
-need to rebuild the libovr.a library with C++ RTTI and Exceptions enabled or else it won't
-link properly with ibex.
+level as your checked-out git repo for VirtualDesktop and it must be version 0.2.5 or later.
+You'll need to rebuild the libovr.a library with C++ RTTI and Exceptions enabled or else it
+won't link properly with VirtualDesktop.
 
-The [Oculus SDK] and [sixense SDK] must be installed at the same level as the ibex repository
-directory:
+The [Oculus SDK] and [sixense SDK] must be installed at the same level as the VirtualDesktop
+repository:
 
 ```
 * Parent Directory:
@@ -108,18 +108,18 @@ sudo make install
 
 Updated cmake install method for regular build:
 ```sh
-# at the same level as the ibex checkout directory
+# at the same level as the VirtualDesktop checkout directory
 mkdir build
 cmake -DCMAKE_INSTALL_PREFIX:PATH=`pwd` ../ibex/IbexMac
 # or with Ogre
-# cmake -DCMAKE_INSTALL_PREFIX:PATH=`pwd` ../ibex/IbexMac -DOGRE=1
+cmake -DCMAKE_INSTALL_PREFIX:PATH=`pwd` ../ibex/IbexMac -DOGRE=1
 make install
 ```
 
 or
 
 ```sh
-# at the same level as the ibex checkout directory
+# at the same level as the VirtualDesktop checkout directory
 mkdir build
 cmake -DCMAKE_INSTALL_PREFIX:PATH=`pwd` ../ibex/IbexMac -G Xcode
 # or with Ogre
@@ -128,9 +128,12 @@ cmake -DCMAKE_INSTALL_PREFIX:PATH=`pwd` ../ibex/IbexMac -G Xcode
 ```
 
 ### Windows
-Visual Studio 2012 - Build and run from Visual Studio, Rift SDK must be at same level as ibex folder and named: OculusSDK.
+Visual Studio 2012 - Build and run from Visual Studio, Rift SDK must be at same level as
+VirtualDesktop folder and named: OculusSDK.
 
-You also need to have ffmpeg installed where VS can find it.  I recommend the builds from ([http://ffmpeg.zeranoe.com/builds](http://ffmpeg.zeranoe.com/builds/ "http://ffmpeg.zeranoe.com/builds/")).  You should download the 32-bit shared and dev builds and extract them at the same level as ibex.
+You also need to have ffmpeg installed where VS can find it.  I recommend the builds from
+([http://ffmpeg.zeranoe.com/builds](http://ffmpeg.zeranoe.com/builds/ "http://ffmpeg.zeranoe.com/builds/")).
+You should download the 32-bit shared and dev builds and extract them at the same level as VirtualDesktop.
 
 The [Oculus SDK] and [sixense SDK] must also be extracted at the same level as your repository.
 
